@@ -1,0 +1,3463 @@
+{
+  "schema": "titan.certification-slice-verification/v1",
+  "mission": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+  "recorded_at": "2026-10-01T22:50:00Z",
+  "kind": "EXECUTED_SLICE_CHECKS_NOT_PRODUCTION_CERTIFICATION",
+  "base_revision": "6a88cdf92cf0f69fc2a51162f5b471f9438d1c12",
+  "comparison_baseline": "c24acaf2dca02bd79c2d66357c684e69e259458f",
+  "baseline_delta": "Only documentation changed between comparison baseline and final base; no package/service/script source changes.",
+  "environment": {
+    "node": "24.19.0",
+    "pnpm": "9.12.0",
+    "installed_typescript": "5.8.3",
+    "standalone_typecheck_typescript": "5.7.3",
+    "dependency_mode": "Frozen install failed. Diagnostic install used --lockfile=false --ignore-scripts and workspace-local cache. better-sqlite3 subsequently rebuilt successfully. No package or lockfile changes committed.",
+    "physical_devices": "NOT_AVAILABLE",
+    "production_hosts": "NOT_CONTACTED"
+  },
+  "tested_source_hashes": [
+    {
+      "path": "packages/titan-platform/src/certification-matrix.ts",
+      "sha256": "a450f158b77ba203d361e9c3234d0e7221410bbcc420f551a160b2dc82fcac92"
+    },
+    {
+      "path": "packages/titan-platform/tests/certification-matrix.test.mjs",
+      "sha256": "2cda4df32bda08084fd53be6cfcfdab4c5c3a940e00b467d760b4a9b175a93bd"
+    },
+    {
+      "path": "packages/titan-platform/tests/fixtures/certification-inputs.mjs",
+      "sha256": "770ab288f52ff601d7fd68ea7cc10b7d2677696a16611841460c0781829b3f8d"
+    },
+    {
+      "path": "scripts/certify-release.mjs",
+      "sha256": "e5bcac57972094691cbc431879867560344a227a4737edc1b5da9dea1efc5b1a"
+    },
+    {
+      "path": "scripts/generate-readiness-snapshot.mjs",
+      "sha256": "788096c44d9a8ebf67b2ec3eb9ab33b0a46c6fa5f3ca18377878f895cf83d2e0"
+    },
+    {
+      "path": "scripts/certification/certify-release.test.mjs",
+      "sha256": "4ca204002c42dd882e7bc7dd8011bddcbe4f67d082ec7b72eac257e5a7ac2fe5"
+    },
+    {
+      "path": "scripts/certification/readiness-snapshot.test.mjs",
+      "sha256": "9cbfd64302a8d2fb8b2390a41751b43ac36872bbb42bfcefe15e882d107c3fd5"
+    }
+  ],
+  "commands": [
+    {
+      "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+      "status": "PASS",
+      "detail": "24 tests; initial empty and mandatory SKIPPED regressions failed before implementation. Object-status regression also observed red before fix."
+    },
+    {
+      "command": "node --test scripts/certification/*.test.mjs",
+      "status": "PASS",
+      "detail": "8 tests: 6 real subprocess CLI positive/negative/handoff tests and 2 source snapshot tests. Fixture success is synthetic, not production certification."
+    },
+    {
+      "command": "node scripts/generate-readiness-snapshot.mjs --check",
+      "status": "PASS",
+      "detail": "Deterministic 28-area source snapshot; eligibility_input=false, production DENIED_MISSING_EVIDENCE."
+    },
+    {
+      "command": "npx --yes --package typescript@5.7.3 tsc --noEmit --target ES2022 --module NodeNext --moduleResolution NodeNext --strict packages/titan-platform/src/certification-matrix.ts",
+      "status": "PASS",
+      "detail": "Pinned standalone strict typecheck; one own envelope narrowing error fixed before final pass."
+    },
+    {
+      "command": "pnpm --filter @titan-zero/titan-platform typecheck",
+      "status": "PASS",
+      "detail": "Exit 0 using pinned pnpm9.12."
+    },
+    {
+      "command": "pnpm --filter @titan-zero/titan-platform build",
+      "status": "PASS",
+      "detail": "Exit 0. No tsconfig exclusions/index exports changed."
+    },
+    {
+      "command": "pnpm --filter @titan-zero/titan-platform test",
+      "status": "FAIL",
+      "detail": "After matching build: slice683 total/570pass/111fail/2skip; detached baseline659 total/546pass/111fail/2skip. Exact failure-name sets identical, no new failures;24 added regressions pass."
+    },
+    {
+      "command": "node --test packages/deployment/release-lifecycle.test.mjs packages/observability/contracts.test.mjs packages/tools/accepted-evidence-ledger.test.mjs packages/tools/decision-lifecycle.test.mjs",
+      "status": "PASS",
+      "detail": "11 tests across adjacent release/observability/evidence/decision contracts, including negative company/provenance cases. Not full production integration."
+    },
+    {
+      "command": "pnpm install --frozen-lockfile --store-dir <workspace-cache>",
+      "status": "FAIL",
+      "detail": "ERR_PNPM_OUTDATED_LOCKFILE: apps/web/package.json has @types/better-sqlite3 absent from lockfile specifiers. Owned by #1084/#648; not changed here."
+    },
+    {
+      "command": "pnpm install --lockfile=false --ignore-scripts --store-dir <workspace-cache>",
+      "status": "PASS",
+      "detail": "Diagnostic dependency install only; peer warnings for existing Zod/MCP dependencies. Frozen reproducibility remains failed."
+    },
+    {
+      "command": "npm_config_cache=<workspace-cache>/npm npm_config_devdir=<workspace-cache>/node-gyp XDG_CACHE_HOME=<workspace-cache>/xdg pnpm --store-dir <workspace-cache>/store rebuild better-sqlite3",
+      "status": "PASS",
+      "detail": "Workspace-local cache fixed initial readonly-home/cache failures; native addon built successfully."
+    },
+    {
+      "command": "pnpm --filter @titan-zero/storage test",
+      "status": "PASS",
+      "detail": "4 tests after native addon rebuild."
+    },
+    {
+      "command": "pnpm test",
+      "status": "BLOCKED",
+      "detail": "Final root test attempt: services/workforce tsx CLI cannot listen on its local IPC socket (EPERM /tmp/tsx-1000/*.pipe). Initial missing native addon was fixed and storage retested. Recursive test pipeline did not complete."
+    },
+    {
+      "command": "pnpm gate:fast",
+      "status": "FAIL",
+      "detail": "Stops in lint on five unchanged services/worker @typescript-eslint/no-unused-expressions errors. Later gate stages not reached."
+    },
+    {
+      "command": "pnpm gate",
+      "status": "FAIL",
+      "detail": "Same five worker lint errors. Full integration/E2E/recovery stage not reached; no Docker executable present."
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "detail": "No whitespace errors."
+    },
+    {
+      "command": "cd services/workforce && node --import tsx --test src/*.test.ts",
+      "status": "PASS",
+      "detail": "19 tests pass using the supported Node loader invocation without tsx CLI IPC. Additional targeted evidence only; official pnpm test remains blocked and no package scripts were changed."
+    }
+  ],
+  "scale_fixture": {
+    "kind": "SYNTHETIC",
+    "projections": 6300,
+    "required_cells": 56700,
+    "serialized_eligibility_bytes": 31936161,
+    "size_limit_bytes": 67108864,
+    "binding": "One shared canonical input key, bounded per-cell reference; no quadratic full-key duplication."
+  },
+  "package_test_order_dependency": "A clean pnpm test without preceding build has541pass/113fail/2skip at baseline: titan-builder-field-mapping.test.mjs and titan-builder-prop-schema.test.mjs import dist/ rather than .test-dist/. Matching pnpm build first yields546pass/111fail/2skip. This build-order effect was independently reproduced by the concurrent web repair worker; it is not suppression or a source regression. Existing reproducibility ownership: #648/#1153.",
+  "unchanged_package_failures": [
+    "Builder API obtains projection plan from server runtime handoff rather than client DTO input",
+    "Generate route obtains server-owned signals",
+    "agent profiles expose focused command sets",
+    "creates an authority-neutral company-scoped surface projection",
+    "governed install requires explicit approval",
+    "hub projection excludes explicitly non-customer-safe semantic items",
+    "live canvas consumes mapped preview props",
+    "preview route installs server capability-owned provider",
+    "profile authorization fails closed",
+    "shared client reads a projection and submits only validated intents",
+    "studio can receive runtime previews without persisting them into Builder document",
+    "studio consumes server runtime previews and clears stale data on edits",
+    "tests/business-ops-crm-booking-library-parity.test.mjs",
+    "tests/business-ops-field-library-parity.test.mjs",
+    "tests/business-ops-finance-library-parity.test.mjs",
+    "tests/business-ops-operations-convergence.test.mjs",
+    "tests/business-ops-people-reach-library-parity.test.mjs",
+    "tests/capability-registry-library-parity.test.mjs",
+    "tests/cleaning-vertical-pass02.test.mjs",
+    "tests/cleaning-vertical-pass03.test.mjs",
+    "tests/cleaning-vertical-pass04.test.mjs",
+    "tests/cleaning-vertical-pass05.test.mjs",
+    "tests/cleaning-vertical-pass06.test.mjs",
+    "tests/cleaning-vertical-pass07.test.mjs",
+    "tests/cleaning-vertical-pass08.test.mjs",
+    "tests/cleaning-vertical-pass09.test.mjs",
+    "tests/cleaning-vertical-pass10.test.mjs",
+    "tests/distributed-contracts.test.mjs",
+    "tests/five-tier-call-qualification.test.mjs",
+    "tests/interface-runtime-native.test.mjs",
+    "tests/knowledge-authority-library-parity.test.mjs",
+    "tests/licensed-trades-pass02.test.mjs",
+    "tests/licensed-trades-pass03.test.mjs",
+    "tests/licensed-trades-pass04.test.mjs",
+    "tests/licensed-trades-pass05.test.mjs",
+    "tests/licensed-trades-pass06.test.mjs",
+    "tests/licensed-trades-pass07.test.mjs",
+    "tests/licensed-trades-pass08.test.mjs",
+    "tests/licensed-trades-pass09.test.mjs",
+    "tests/licensed-trades-pass10.test.mjs",
+    "tests/native-agents.test.mjs",
+    "tests/prime-library-parity.test.mjs",
+    "tests/retriever-native-pass02.test.mjs",
+    "tests/retriever-native-pass03-lifecycle.test.mjs",
+    "tests/retriever-native-pass04-surface-bridge.test.mjs",
+    "tests/retriever-native-pass06-recovery.test.mjs",
+    "tests/retriever-native-pass07-retirement-ledger.test.mjs",
+    "tests/retriever-native-pass08-regression-certification.test.mjs",
+    "tests/titan-builder-auto-binding.test.mjs",
+    "tests/titan-builder-binding-policy.test.mjs",
+    "tests/titan-builder-projection-providers.test.mjs",
+    "tests/titan-builder-runtime-bridge.test.mjs",
+    "tests/titan-builder-signal-priority.test.mjs",
+    "tests/titan-connect-connector-contract.test.mjs",
+    "tests/titan-connector-credential.test.mjs",
+    "tests/titan-cost-sovereignty.test.mjs",
+    "tests/titan-mcp-host-contract.test.mjs",
+    "tests/titan-storage-convergence.test.mjs",
+    "tests/workforce-capacity-pass02.test.mjs",
+    "tests/workforce-capacity-pass03.test.mjs",
+    "tests/workforce-capacity-pass04.test.mjs",
+    "tests/workforce-capacity-pass05.test.mjs",
+    "tests/workforce-capacity-pass06.test.mjs",
+    "tests/workforce-capacity-pass07.test.mjs",
+    "tests/workforce-capacity-pass08.test.mjs",
+    "tests/workforce-capacity-pass09.test.mjs",
+    "tests/workforce-capacity-pass10-certification.test.mjs",
+    "tests/workforce-context-access.test.mjs",
+    "tests/workforce-context-assembler.test.mjs",
+    "tests/workforce-context-checkpoint.test.mjs",
+    "tests/workforce-context-compaction.test.mjs",
+    "tests/workforce-context-continuity.test.mjs",
+    "tests/workforce-context-contract.test.mjs",
+    "tests/workforce-context-diagnostics.test.mjs",
+    "tests/workforce-context-freshness.test.mjs",
+    "tests/workforce-context-handoff.test.mjs",
+    "tests/workforce-context-projection.test.mjs",
+    "tests/workforce-delegation-pass01.test.mjs",
+    "tests/workforce-delegation-pass02.test.mjs",
+    "tests/workforce-delegation-pass03.test.mjs",
+    "tests/workforce-delegation-pass04.test.mjs",
+    "tests/workforce-delegation-pass05.test.mjs",
+    "tests/workforce-delegation-pass06.test.mjs",
+    "tests/workforce-delegation-pass07.test.mjs",
+    "tests/workforce-delegation-pass08.test.mjs",
+    "tests/workforce-delegation-pass09.test.mjs",
+    "tests/workforce-delegation-pass10.test.mjs",
+    "tests/workforce-hierarchy-diagnostics.test.mjs",
+    "tests/workforce-hierarchy-e2e.test.mjs",
+    "tests/workforce-lifecycle-configuration.test.mjs",
+    "tests/workforce-lifecycle-contracts.test.mjs",
+    "tests/workforce-lifecycle-health.test.mjs",
+    "tests/workforce-lifecycle-migration.test.mjs",
+    "tests/workforce-lifecycle-pass10-chaos.test.mjs",
+    "tests/workforce-lifecycle-registration.test.mjs",
+    "tests/workforce-lifecycle-replacement.test.mjs",
+    "tests/workforce-lifecycle-retirement.test.mjs",
+    "tests/workforce-lifecycle-transitions.test.mjs",
+    "tests/workforce-lifecycle-ui-integration.test.mjs",
+    "tests/workforce-native-booking.test.mjs",
+    "tests/workforce-native-contracts.test.mjs",
+    "tests/workforce-native-customer-care.test.mjs",
+    "tests/workforce-native-governance.test.mjs",
+    "tests/workforce-native-jobs.test.mjs",
+    "tests/workforce-native-pass10-certification.test.mjs",
+    "tests/workforce-native-reception.test.mjs",
+    "tests/workforce-native-sales.test.mjs",
+    "tests/workforce-native-scheduling.test.mjs",
+    "tests/workforce-native-workflow.test.mjs",
+    "tests/workforce-roadmap-impact.test.mjs",
+    "workforce-native and workforce-delegation public exports coexist"
+  ],
+  "gate_lint_failures": [
+    "services/worker/src/booking-confirmed.ts:113:7",
+    "services/worker/src/client-reactivation.ts:102:11",
+    "services/worker/src/estimate-followup.ts:96:11",
+    "services/worker/src/invoice-followup.ts:65:134",
+    "services/worker/src/review-request.ts:71:11"
+  ],
+  "not_run": [
+    "Full HTTP/database integration and Playwright E2E gate stages",
+    "Physical PWA/native mobile devices",
+    "Disposable or production DirectAdmin install/update/rollback",
+    "Trusted production registry/scope receipt collection",
+    "Actual #1068 conformance output ingestion",
+    "#322 deployment consumer enforcement",
+    "Publishing/deployment"
+  ],
+  "production_eligible": false,
+  "mission_complete": false,
+  "risk": "Pure and fixture consumer tests cannot prove coverage completeness or authentic receipts; canonical production producer and release consumer remain unimplemented.",
+  "refresh_history": [
+    {
+      "recorded_at": "2026-10-02T07:12:05Z",
+      "workspace_base": "16ba374ab1e46e49793117453016d9c1e6d680f0",
+      "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh of the 28-row source-only readiness snapshot and current main source hashes. Prior verification history above is retained. Production eligibility stays denied; published state, runtime, integration, deployment, live host and physical-device states are not promoted.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce"
+      ],
+      "related_owner_lanes_observed_open": [
+        {
+          "issue": 811,
+          "pull_request": 1201,
+          "state": "OPEN"
+        },
+        {
+          "issue": 302,
+          "pull_request": 1183,
+          "state": "OPEN"
+        },
+        {
+          "issue": 1049,
+          "pull_request": 1204,
+          "state": "OPEN"
+        },
+        {
+          "issue": 1182,
+          "pull_request": 1188,
+          "state": "OPEN"
+        }
+      ],
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/README.md",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "f90d74e88bd36f8a76595e46df517ee6414ca2676ef3aad6b0060526cb0d495a"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/install.sh",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "22b045a09d36c5bb5a2ecacb98bed027e4a2543fc476b1875af28b1cce9d9129"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "a762ab35e48d246552957be4c21ecc66d87ccfc4b2526aee71fcc4df1d8f181d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.test.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "d597ca290a7112f8c6138652c0131f8f6d7c64a66fe69704256de305166afadc"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/update.sh",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "615bd8fdc8173a239e748b2318c453fd8ec9f2168d5b18c9f0a1e1a5f14d897d"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "c31fa8c05a814f8af1ee7d21cd8aea15d5ff46bbf0551639b491b642df54ca7f"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "e62b5bf82fc4a5aac045df80559245648af00d34ab4489d81122d8c045cb174c"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "ac149c8d8f5437da60a86c0c0af149dc19c70c1e715ceb05980d67e9cca61e49"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_replay_service.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "c0d22db94f6657cb9141d58e74af5b94e3a1b6818678966ca27d89c3640e6444"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "89635fea135fb5e504ba8c8670ab28c8c1d3aa6b0785ef925767cd94e20ea1ef"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/mobile_release_certification_test.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "004244f67dcaa0488a8e10565db47f5d90f2435be8740445afa53518be9a32f1"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_conversation_gateway_test.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "47a17aa2b809b61b90626644b0bea2110c1afd039dd3c0d9484644ea12013453"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "3893289c4537cae33ca2e028f981e78d670bc3ac8b1c92af2148ba3ea2ee74fc"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/README.md",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "f442880e78b50b1d795a4df38a6f34695c208f63e004d2e5560cac929ec4efda"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/sw.js",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "98351d60c2b61845db249783a7023dfc227fdd85ea62194fd806c79cad7725cc"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/browser-regression.test.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "25b6ee654a1b13b2e0ee5ccb610bedd1d3d4d3b296f36a1fb784d2e759dd1d39"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/contracts.test.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "711dc0f4b93b223f6f50c77f4f03d8f9e8e0f686650ef83f6a833060c0428caa"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/layout.tsx",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "b5ee6527166b608bb1ddb87cc8cd12e106586801da800bde8ada8ec5c5053ffb"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/package.json",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "infra/compose.vps.yml",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/field-service-runtime.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "6767b3641a0205a919bdd065f00834268d824dfdfca59c9aab9d386468f697df"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.test.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "be8737e06b779ee08680e4a89b99533a7f5853a1bec98b5ce6fb54bf2c7e8ff4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "2b884bffa0c8efed15fdd2b0277823458908301ddfd8fc7f824b078a0ceeb3af"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.test.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "c97eb8a3a7ec983450eeff6a021f6896ebdbafc1ada0a90665393628051109b7"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "1171c5ebb27e67bff8aaf905938f854417dfc3ed92cd7772f7511c54eb67e416"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.test.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "2c185b26049d18e8ebe34b5a9428a3fc12cd0abb6185f0e6718f94c235fa2669"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "7dd98a53c988edfc12a51570269880fa2b58f9c39c44b8f65bac8114be190aa5"
+        }
+      ],
+      "commands": [
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 regression tests pass."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 CLI and source snapshot tests pass."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Deterministic current-main-bound 28-row snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm --filter @titan-zero/pwa typecheck",
+          "status": "PASS",
+          "detail": "PWA syntax/typecheck script exits 0."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm --filter @titan-zero/pwa build",
+          "status": "PASS",
+          "detail": "PWA build exits 0; deterministic shell cache identifier 870ef67ef9dbdd4c."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm --filter @titan-zero/pwa test",
+          "status": "PASS",
+          "detail": "7/7 contract and headless Chromium browser tests pass. Chromium was installed under /tmp only."
+        },
+        {
+          "command": "node --test apps/directadmin/server-node/runtime.test.mjs",
+          "status": "PASS",
+          "detail": "15/15 loopback health-bridge tests pass; this is local test evidence, not host commissioning."
+        },
+        {
+          "command": "cd services/workforce && node --import tsx --test src/*.test.ts",
+          "status": "PASS",
+          "detail": "21/21 tests pass, including SQLite runtime composition, company/message idempotency, completed replay after bootstrap restart, continuation scoping, and /ready after local host restart. Test fixtures do not establish a deployed hosted service."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store corepack pnpm gate:fast",
+          "status": "FAIL",
+          "detail": "Lint completes; gate stops at existing duplicate migration prefixes 151-183 (TASK-128). Later gate stages are not reached."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store corepack pnpm gate",
+          "status": "FAIL",
+          "detail": "Same existing duplicate migration prefixes stop the full gate before later stages."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm build",
+          "status": "FAIL",
+          "detail": "Workspace build stops in apps/llm-plugin with 33 missing zod/v3 and zod/v4-mini resolution errors. packages/titan-platform, apps/pwa, and core TypeScript packages completed before the failure."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm test",
+          "status": "FAIL",
+          "detail": "packages/titan-platform reports 922 tests: 848 passed and 72 failed. Failures span existing test-build artifact/import and source-assertion expectations. The same root run passes PWA 7/7 and Workforce 21/21; do not treat the aggregate as a pass."
+        },
+        {
+          "command": "flutter test test/titan_conversation_gateway_test.dart test/titan_shell_conversation_test.dart test/mobile_release_certification_test.dart",
+          "status": "NOT_RUN",
+          "detail": "Neither Flutter nor Dart is installed in this execution environment; no native mobile test run or device certification is claimed."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in the tracked refresh."
+        }
+      ],
+      "live_host": "NOT_CONTACTED",
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T07:30:14Z",
+      "workspace_base": "118a13fe076d053129cf73a49b77d3ca302784c6",
+      "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh of source evidence after latest main merged Workforce #811/#1201 and PWA #1171/#1176. Audited client/host compatibility, current source hashes and local verification. Existing history remains unchanged; production eligibility stays denied and deployment/runtime/device states are not promoted.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "web-ui"
+      ],
+      "related_owner_lanes_observed": [
+        {
+          "issue": 811,
+          "issue_state": "OPEN",
+          "pull_request": 1201,
+          "pull_request_state": "MERGED",
+          "pull_request_merged_at": "2026-10-02T07:02:31Z"
+        },
+        {
+          "issue": 1171,
+          "issue_state": "OPEN",
+          "pull_request": 1176,
+          "pull_request_state": "MERGED",
+          "pull_request_merged_at": "2026-10-02T05:49:57Z"
+        },
+        {
+          "issue": 302,
+          "issue_state": "OPEN",
+          "pull_request": 1183,
+          "pull_request_state": "OPEN"
+        },
+        {
+          "issue": 1049,
+          "issue_state": "OPEN",
+          "pull_request": 1204,
+          "pull_request_state": "OPEN"
+        },
+        {
+          "issue": 1182,
+          "issue_state": "OPEN",
+          "pull_request": 1188,
+          "pull_request_state": "OPEN"
+        }
+      ],
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/README.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "f442880e78b50b1d795a4df38a6f34695c208f63e004d2e5560cac929ec4efda"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/sw.js",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "98351d60c2b61845db249783a7023dfc227fdd85ea62194fd806c79cad7725cc"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/browser-regression.test.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "25b6ee654a1b13b2e0ee5ccb610bedd1d3d4d3b296f36a1fb784d2e759dd1d39"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/contracts.test.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "711dc0f4b93b223f6f50c77f4f03d8f9e8e0f686650ef83f6a833060c0428caa"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c31fa8c05a814f8af1ee7d21cd8aea15d5ff46bbf0551639b491b642df54ca7f"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "e62b5bf82fc4a5aac045df80559245648af00d34ab4489d81122d8c045cb174c"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "ac149c8d8f5437da60a86c0c0af149dc19c70c1e715ceb05980d67e9cca61e49"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_replay_service.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c0d22db94f6657cb9141d58e74af5b94e3a1b6818678966ca27d89c3640e6444"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "89635fea135fb5e504ba8c8670ab28c8c1d3aa6b0785ef925767cd94e20ea1ef"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/mobile_release_certification_test.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "004244f67dcaa0488a8e10565db47f5d90f2435be8740445afa53518be9a32f1"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_conversation_gateway_test.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "47a17aa2b809b61b90626644b0bea2110c1afd039dd3c0d9484644ea12013453"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "3893289c4537cae33ca2e028f981e78d670bc3ac8b1c92af2148ba3ea2ee74fc"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "docs/contracts/hosted-workforce-runtime.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "services/workforce/src/conversation-api.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/README.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "f90d74e88bd36f8a76595e46df517ee6414ca2676ef3aad6b0060526cb0d495a"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/install.sh",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "22b045a09d36c5bb5a2ecacb98bed027e4a2543fc476b1875af28b1cce9d9129"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "a762ab35e48d246552957be4c21ecc66d87ccfc4b2526aee71fcc4df1d8f181d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.test.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "d597ca290a7112f8c6138652c0131f8f6d7c64a66fe69704256de305166afadc"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/update.sh",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "615bd8fdc8173a239e748b2318c453fd8ec9f2168d5b18c9f0a1e1a5f14d897d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "services/workforce/src/directadmin-workforce-owners.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "bf9088ee332900104769de4b0481f598d5fdda256847a1927ae826b0efd863ce"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "services/workforce/src/hosted-runtime.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "docs/contracts/hosted-workforce-runtime.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "docs/operations/workforce-clean-host-acceptance.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "b339ef935e2d0821876d990c0f323afd8593c9cb09b399abfd60898c421c7a3c"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "infra/compose.vps.yml",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/conversation-api.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/field-service-runtime.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c009aeb765d3a3b40f214ebfc0d1c103957b1658ef787550873715042562ffb4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/hosted-runtime.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "be8737e06b779ee08680e4a89b99533a7f5853a1bec98b5ce6fb54bf2c7e8ff4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "2b884bffa0c8efed15fdd2b0277823458908301ddfd8fc7f824b078a0ceeb3af"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "cde5309e0e9db2e50f976192527669ad300ffbaa0f5cfeaca7b81ab8f72943cd"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/session-credential-verifier.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "a26a501fc1e85fc2f492d7d1047e365331fc6f2417d2656c84fbd088175e2956"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-correlation.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "f56038cdfc1084f7e59300d396b29d81b7e4386a3af8329fb86ed81a5108f3d0"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "5ff1abaaba57b85ee8fdafce23e3e7b5f1478149d259bac3058f4bda4f3a14dd"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c699319c8af083bb7b3a125e4d12a4038d5d9dffbde730488390c20ac7539758"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "tests/hosted-workforce-runtime.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "5b49a2a5900983d3bd8d8f8109b991cbb1399ef59846bb4ed91a1e0e352d9dfa"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/layout.tsx",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "b5ee6527166b608bb1ddb87cc8cd12e106586801da800bde8ada8ec5c5053ffb"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/package.json",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+        }
+      ],
+      "environment": {
+        "node": "24.19.0",
+        "pnpm": "9.12.0",
+        "playwright_chromium": "Installed under /tmp/titan-playwright-browsers only",
+        "flutter_sdk": "NOT_INSTALLED",
+        "dart_sdk": "NOT_INSTALLED"
+      },
+      "client_host_findings": [
+        "PWA remains one separate installable Zero/Go/Hub app with public shell caching and read-only same-origin no-store projections. It currently has no hosted conversation transport, authenticated session bootstrap, durable encrypted private working set or governed offline conversation replay.",
+        "Native mobile recognizes Zero/Go/Hub but its session DTO has no session_id/context_revision; the adapter sends a completed Future<Map> request with an items response shape and omits host-required session_id/interaction_id/client_message_id. It only requires a nonempty response revision, accepting a revision change between request and response.",
+        "Neither client implements incremental event parsing, event-log resume or conversation cancel. Workforce SSE is serialized only after awaited dispatch completes; Last-Event-ID filters that completed event array rather than replaying a durable event log.",
+        "Workforce current main is hosted Zero-only; Go/Hub are rejected pending a server-owned authority-aware dispatcher. Client continuity owner #1182/#1188 remains separate from #302 identity and #1049 SDK owners.",
+        "Company ID remains the canonical scope boundary from the authenticated session; client-supplied company or surface values confer no authority. Logout/company/context revision rotation must clear private client cache and queued work; auth, stale, unconfigured, unavailable and canceled states need distinct UI handling."
+      ],
+      "commands": [
+        {
+          "command": "pnpm install --frozen-lockfile",
+          "status": "PASS",
+          "detail": "Pinned Corepack pnpm 9.12.0 install completed; no manifest or lockfile changes."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 evaluator regression tests pass."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification integration and deterministic source snapshot tests pass."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Deterministic 28-row snapshot matches current audit input; eligibility remains denied."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/pwa typecheck",
+          "status": "PASS",
+          "detail": "PWA typecheck passes."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/pwa build",
+          "status": "PASS",
+          "detail": "PWA build passes."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/pwa test",
+          "status": "PASS",
+          "detail": "7/7 PWA contract and headless Chromium browser tests pass; no hosted browser or physical device tested."
+        },
+        {
+          "command": "node --test apps/directadmin/server-node/runtime.test.mjs",
+          "status": "PASS",
+          "detail": "20/20 loopback DirectAdmin runtime tests pass; no host commissioning is established."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/workforce test",
+          "status": "PASS",
+          "detail": "34/34 Workforce tests pass, including session/revision binding, SQLite recovery and current completed-response streaming semantics."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.test.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test packages/titan-platform/tests/security-session-credentials.test.mjs packages/titan-platform/tests/security-session-registry.test.mjs packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
+          "status": "PASS",
+          "detail": "120/120 identity/session credential, registry and Workforce exchange tests pass."
+        },
+        {
+          "command": "pnpm build",
+          "status": "PASS",
+          "detail": "Root workspace build passes on current main after frozen install."
+        },
+        {
+          "command": "pnpm gate:fast",
+          "status": "FAIL",
+          "detail": "Lint completes; gate stops on unchanged duplicate migration prefixes 151, 152, 177-183 (TASK-128). Later gate stages are not reached."
+        },
+        {
+          "command": "pnpm gate",
+          "status": "FAIL",
+          "detail": "Same duplicate migration prefix validation failures stop the full gate before later stages."
+        },
+        {
+          "command": "pnpm test",
+          "status": "FAIL",
+          "detail": "Root run reports 1,057 tests: 983 passed and 72 failed. Failures span existing generated test-build artifact/import ordering and source assertion expectations in unrelated package suites. PWA 7/7 and Workforce 34/34 pass in the same root run."
+        },
+        {
+          "command": "flutter test test/titan_conversation_gateway_test.dart test/titan_shell_conversation_test.dart test/mobile_release_certification_test.dart",
+          "status": "NOT_RUN",
+          "detail": "Flutter and Dart SDKs are absent from this environment."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed tracked files."
+        }
+      ],
+      "live_host": "NOT_RUN",
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T09:25:54Z",
+      "workspace_head": "88abc3d15117e5cd28c86fea2802c2ef403272e2",
+      "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only status refresh: revalidated current main, #1178 PR head/checks, P0 owner lanes and client source gaps. Updated only #1172 evidence inputs; no owner source or PWA Library artifact changed. User portal observation is recorded as USER_REPORTED_UNVERIFIED; production eligibility remains denied.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+        "claim_branch_sha": "88abc3d15117e5cd28c86fea2802c2ef403272e2",
+        "pr_1178": {
+          "state": "OPEN",
+          "draft": true,
+          "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "head_sha": "88abc3d15117e5cd28c86fea2802c2ef403272e2",
+          "issue_body_sha256_matches_latest": true,
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "validate": "success",
+            "source-index": "success",
+            "verify-browser-node": "success"
+          }
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "df52782d26e0",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          }
+        ]
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/README.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "eab0927f11e04ae4a0c20f54e5058e1d9515fffb6383b36a5d5f39b048b1be39"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/lib/app.php",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "9d119d01d6327c9b2636dd3eda9c229ebe0c737343d11beb38e2aa0aa25d1a88"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: apps/pwa/public/app.mjs is not connected to apps/pwa/src/api-client.mjs or scope.mjs; current visible behavior is a mode shell plus browser connectivity. The already-tested helper is GET-only and accepts host-resolved context, but current repository source has no PWA auth/bootstrap or projection route. Independently implementable PWA slice: a UI projection consumer and explicit unavailable/auth/stale states behind a server-verified host-adapter interface; do not invent API paths or accept client-selected company authority.",
+        "Mobile: #1182/#1188 is the sole client continuity lane. Its PR remains draft and its base is df52782d26e0, behind current main 14163faa316ac6236e88167b7c8d8a5e95007c7e. Continue with current host DTO contracts after rebasing; keep source edits out of #811/#302/#1049 ownership.",
+        "Developer Portal / Dev Access: user reports it is installed and diagnostics work, and malformed/ambiguous public-key POSTs are rejected. Status is USER_REPORTED_UNVERIFIED. No live command, key-add, fingerprint, revoke, host install/update, or server response was observed in this session. Link owner #1048; shared SDK/session dependencies remain #1049/#302, with #812 hosting.",
+        "Hosted Workforce: #811/#1201 is merged on current main, but its SSE writer serializes a completed dispatch result after await; Last-Event-ID filters that completed array, not a durable event log. The hosted runtime is Zero-only pending a Go/Hub authority-aware dispatcher."
+      ],
+      "commands": [
+        {
+          "command": "git ls-remote origin refs/heads/main refs/heads/agent/issue-1172",
+          "status": "PASS",
+          "detail": "remote main=14163faa316ac6236e88167b7c8d8a5e95007c7e; claim branch=88abc3d15117e5cd28c86fea2802c2ef403272e2"
+        },
+        {
+          "command": "Unauthenticated GitHub REST read of issues #811/#812/#1171/#1182/#302/#1049/#1048/#1172, PRs #1201/#1183/#1204/#1176/#1188/#1178 and #1178 latest named check-runs",
+          "status": "PASS",
+          "detail": "Read-only metadata; latest check run for each #1178 name is success. No issue, PR or host was mutated."
+        },
+        {
+          "command": "Source inspection of apps/pwa, apps/mobile, services/workforce and apps/directadmin/dev-access",
+          "status": "PASS",
+          "detail": "Read-only targeted source review at main 14163faa; not a live-host or device test."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification contract tests pass after keeping the #1048 owner link on the DirectAdmin row and preserving the snapshot’s top-level related_evidence contract."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound 28-row matrix matches audit input; authorityGranted=false, eligibility_input=false, production eligibility remains denied."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "reported_signal": "USER_REPORTED_UNVERIFIED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false,
+      "post_refresh_correction": "An initial remote evidence-contract run rejected #1048 added to top-level related_evidence. Removed that extra top-level link; #1048 remains linked in the DirectAdmin canonical_owner_refs. Re-ran the 8/8 certification contract suite successfully."
+    },
+    {
+      "recorded_at": "2026-10-02T09:56:48Z",
+      "workspace_head": "486d8aa223b7a972856f520a49b694deadde2eaa",
+      "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only current-main refresh for the existing #1178 claim. Merged current main, then updated only #1172 evidence artifacts. Source changes arriving through main are inspected as source claims; no PWA, identity, SDK, or mobile owner implementation was added.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+        "workspace_claim_sha_before_evidence_commit": "486d8aa223b7a972856f520a49b694deadde2eaa",
+        "remote_claim_sha_before_push": "c85e8b87d7b1bb744c09a6835da454aaf15495d1",
+        "pr_1178": {
+          "state": "OPEN",
+          "draft": true,
+          "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "head_sha_before_push": "c85e8b87d7b1bb744c09a6835da454aaf15495d1",
+          "issue_body_sha256_matches_latest": true,
+          "latest_named_checks_before_push": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "validate": "success",
+            "source-index": "success"
+          },
+          "note": "These checks belong to the pre-refresh head; current-head checks must be re-read after pushing."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "8199494eeacc",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "345d027243526b06e74dc0d105fcf0a1f0188c02"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "345d027243526b06e74dc0d105fcf0a1f0188c02"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          }
+        ]
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/scripts/build.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "b30d47dab93716ddbf89d4dd0d56bc80aca4d7536aa35f501ec61c5f55437682"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/api/v1/bootstrap/route.ts",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "39e17f9feb39dc1413dfb9ffcf3974715a009f380e1cf33ecfa86b34b0e2ceb2"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/api/v1/zero/interactions/route.ts",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "9d6130af1d229917ca89a08a53d1110e40180d00b1074b2b18a60a3ccde7e81e"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/lib/auth/current-session.ts",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "12a285ac15479e569f7051602d2a5d9987a6fdca7384aa1ff7377369bfe3ba52"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/src/security-session-registry.ts",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "89d71968187ea98452f4df330bc753db2529797a986c0f925ecf7d6786ad1f45"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/directadmin-relay.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+          "source_commit": "345d027243526b06e74dc0d105fcf0a1f0188c02",
+          "sha256": "b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0"
+        }
+      ],
+      "client_host_findings": [
+        "PWA dependency: the merged #1171/#1176 client work has no general authenticated PWA bootstrap/projection contract to consume. #302 owns browser-safe canonical session/context handoff; #811 owns Workforce projection/stream host contract; #1049 and #812 own SDK/Server Node integration if that is the serving path. Existing Server Node GET /v1/bootstrap is node-token control metadata only, and DirectAdmin GET /v1/directadmin/titan_workforce/projection is a panel-specific adapter. The separate apps/web accountId bootstrap is not a PWA substitute. #1171 can wire the packaged helper/UI and explicit states after the host contract is available; no client-selected company authority.",
+        "Mobile continuity remains isolated under #1182/#1188. Its draft branch is behind current main; do not duplicate or edit that lane. Current assessment still distinguishes DTO/revision-bound resume, incremental streaming, cancel, and governed offline replay from server-owned #811/#302/#1049 contracts.",
+        "Current source uses a completed-response SSE writer after awaited dispatch and filters a completed event array by Last-Event-ID; this is not incremental transport or durable event-log replay. Current hosted dispatcher remains Zero-only; Go/Hub authority-aware dispatch is not established.",
+        "Current main adds #1211 Server Node control and DirectAdmin relay code. It is partial/fail-closed: no canonical adapter commissioning or live root install is evidenced. Keep #1048 malformed/ambiguous public-key POST signal USER_REPORTED_UNVERIFIED; command and SSH-key lifecycle remain unverified."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge origin/main",
+          "status": "PASS",
+          "detail": "Merged origin/main at 345d027243526b06e74dc0d105fcf0a1f0188c02 into the existing agent/issue-1172 branch; merge commit 486d8aa223b7a972856f520a49b694deadde2eaa."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs",
+          "status": "PASS",
+          "detail": "Regenerated deterministic 28-area matrix with source_commit 345d027; production eligibility remains denied."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 contract, CLI integration, and source snapshot tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound source audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed evidence artifacts."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T10:05:02Z",
+      "workspace_head": "0bee8b56f390c6b38a11340d1a5a2bba99ff4a94",
+      "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only correction after origin/main advanced during publication. Merged the actual current main and refreshed source evidence. Main commit 3193441 is DirectAdmin README/portfolio documentation; it does not constitute new runtime verification. Main commit ae0d2c8 merges #302/#1183 credential and durable-session source. No owner implementation files were edited by this evidence refresh.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+        "workspace_claim_sha_before_evidence_commit": "0bee8b56f390c6b38a11340d1a5a2bba99ff4a94",
+        "remote_claim_sha_before_latest_main_merge": "c1c887a8543fdb87b562a482e47e776abde17b07",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha_before_latest_main_merge": "c1c887a8543fdb87b562a482e47e776abde17b07",
+          "latest_named_checks_before_latest_main_merge": {
+            "Mission Closure Evidence Gate": "failure",
+            "evidence-contract": "success",
+            "source-index": "success",
+            "validate": "in_progress"
+          },
+          "mission_gate_failure_detail": "Trusted gate log: canonical claim branch is not based on current main ancestry: diverged. This head included main through 345d, while main had advanced to ae0d. Latest local merge now makes ae0d an ancestor; final pushed head needs a fresh gate run.",
+          "issue_body_sha256_matches_latest": true
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "OPEN_DRAFT",
+            "head_sha": "eef5cbd90551c11a3e02a8ccc46dd7dad14f7488",
+            "base_sha": "8199494eeacc3513b293311d88a469a654ee4dea",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "merged_head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "head_sha": "5e07927e19b1eec3c17d86605ab19e8c8192d03f",
+            "base_sha": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          }
+        ]
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/scripts/build.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "b30d47dab93716ddbf89d4dd0d56bc80aca4d7536aa35f501ec61c5f55437682"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/api/v1/bootstrap/route.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "39e17f9feb39dc1413dfb9ffcf3974715a009f380e1cf33ecfa86b34b0e2ceb2"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/api/v1/zero/interactions/route.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "9d6130af1d229917ca89a08a53d1110e40180d00b1074b2b18a60a3ccde7e81e"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/lib/auth/current-session.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "289f1df5dfc32720235df0fa14455a89adcf5c9deeb0f6b4d95232a368646423"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/src/security-session-registry.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "d32043f8b967d7769a2c78144d13342b7908149afc7aa486811cf68244dcf714"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/src/security-session-credentials.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "f34a046d304b432e1f3eeb57226d4f8673ee52fff15057b1e875fe5f32f33140"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/tests/security-session-credentials.test.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "1b0c72dc30db4406236cd0fe6b778f1f8d2b8777ed15c8a1e39542a4db4bd235"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "b24c8bbf1b8709fb416643c7acb511831c15f4892e5994582bb02c8d23838fd2"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/lib/auth/__tests__/current-session.test.ts",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "94a48d7345208fde5fbeb705becf7ddf256623363430a7745b4ccf7d555c2e87"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/directadmin-relay.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+          "source_commit": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "sha256": "b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: #302/#1183 is merged and supplies verified credentials, durable canonical company/device sessions and an opt-in server-side web adapter. The PWA has no route composing it, and the current web bootstrap still uses getSession/accountId. Do not create another identity store or expose browser-selected company authority. #811 projection/conversation host contract and #1049/#812 adapter composition remain separate; #1171 owns the packaged PWA consumer and explicit UI states.",
+        "Mobile: #1182/#1188 remains the separate continuity owner; its open draft is based on 8199494 and needs current-main rebase. The current source assessment still identifies DTO/session/context-revision mismatch, no incremental stream parser/resume/cancel, and no conversation offline replay consumer. #302/#1183 identity primitive is merged; #1049/#1204 SDK/host adapter remains a distinct draft lane.",
+        "Hosted Workforce: POST /v1/workforce/conversations remains a Zero-oriented host path and its SSE writer serializes after awaited dispatch; Last-Event-ID filters the completed response array rather than a durable event log. No source inspection supports calling this true incremental streaming or revision-bound durable resume.",
+        "DirectAdmin: main includes #1211 partial control API/relay; Server Node /v1/bootstrap is node-token control metadata and the DA projection endpoint is panel-specific. No live commissioning is evidenced. Preserve the #1048 malformed/ambiguous key POST signal only as USER_REPORTED_UNVERIFIED."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged latest origin/main ae0d2c8e8355cd17bbffbe7df7074039823bbe7c; local current main ancestry check passes."
+        },
+        {
+          "command": "Read-only GitHub REST of #811/#812/#1171/#1182/#302/#1049/#1048/#1172 and PRs #1201/#1176/#1188/#1183/#1204/#1178",
+          "status": "PASS",
+          "detail": "Confirmed #1183 merged at 09:56:16Z, #302 remains open, PWA/host and mobile owner states, #1178 pre-refresh head/checks, and current issue-body digest."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed against the refreshed current-main source tree."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification contract, CLI integration, and snapshot source tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed evidence artifacts."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T10:20:01Z",
+      "workspace_head": "8dc98b88ec1e58c5f8bc57a24be74d5be722a84b",
+      "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only current-main correction. Merged #1240 company-placement resolver and #1188 mobile retry transport from upstream; authored changes in this refresh remain limited to #1172 audit/evidence files. Refreshed PWA and native-client findings without reopening or duplicating closed owner lanes.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+        "workspace_claim_sha_before_evidence_commit": "8dc98b88ec1e58c5f8bc57a24be74d5be722a84b",
+        "remote_claim_sha_before_latest_main_merge": "d1e10b275eed42b27153ce9bcc8abda5c3c86552",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_latest_main_merge": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "d1e10b275eed42b27153ce9bcc8abda5c3c86552",
+          "base_sha": "ae0d2c8e8355cd17bbffbe7df7074039823bbe7c",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks are for d1e10b2, before latest main ae6db36 was merged locally. The final pushed head must run its own checks."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "CLOSED",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433",
+            "base_sha": "8199494eeacc3513b293311d88a469a654ee4dea"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "head_sha": "5d98573427db32f22d901b00ff959aad7eea51fa",
+            "base_sha": "c883304a662738fe480ec1e5d044fdeb0c4c879e",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z",
+            "head_sha": "95ee6a194417ff3b5988081789a5be052f19f3ed"
+          }
+        ],
+        "main_ci_for_mobile_commit": {
+          "commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "checks": {
+            "mobile": "success",
+            "verify": "success",
+            "validate": "in_progress"
+          },
+          "mobile_note": "The mobile job ran changed-file format/analyze plus hosted_conversation_transport_test.dart; this is not an end-to-end device certification."
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/scripts/build.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "b30d47dab93716ddbf89d4dd0d56bc80aca4d7536aa35f501ec61c5f55437682"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/api/v1/bootstrap/route.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "39e17f9feb39dc1413dfb9ffcf3974715a009f380e1cf33ecfa86b34b0e2ceb2"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/api/v1/zero/interactions/route.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "9d6130af1d229917ca89a08a53d1110e40180d00b1074b2b18a60a3ccde7e81e"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/lib/auth/current-session.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "289f1df5dfc32720235df0fa14455a89adcf5c9deeb0f6b4d95232a368646423"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/src/security-session-registry.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "d32043f8b967d7769a2c78144d13342b7908149afc7aa486811cf68244dcf714"
+        },
+        {
+          "subsystem_id": "identity",
+          "path": "packages/titan-platform/src/security-session-credentials.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "f34a046d304b432e1f3eeb57226d4f8673ee52fff15057b1e875fe5f32f33140"
+        },
+        {
+          "subsystem_id": "storage",
+          "path": "packages/storage/src/company-storage-resolver.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "2ba22082619e0d684f2df58a4aa6655ad9a650a6947c215da4e1653adff37a3f"
+        },
+        {
+          "subsystem_id": "storage",
+          "path": "packages/storage/src/company-placement-registry.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "2eccfa18a269636df36b75dbdef525c07d9f62ea5d19312e8c042c21919716c7"
+        },
+        {
+          "subsystem_id": "storage",
+          "path": "packages/storage/src/company-store-opener.ts",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "350cf39b125b49c8cbb50b88a482e0a4294fd2f19bbfd1b9c93663436335b87a"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/hosted_conversation_transport.dart",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "5570fb2cbbb789eaf0dbaa0ffefce03823f1ca01fca5e829107f8772df5229f6"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/hosted_conversation_transport_test.dart",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "70b08ad477b8241c853787483174994296c40c4b9bec298a790de853d61a622e"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "3bbd8ead02ba835a3f8a6dfde67725717e2bf80f59c7a657477cccae40dc8bad"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/splash_screen.dart",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "aec988b6131cfbcb1f0a16df5d013b40f811e80c1b67fce7291378f29f13573a"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": ".github/workflows/titan-ci.yml",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "9ebaa0b2f7a7e7c8e312f3e151e648c2867d20d940c9724db1a40e912e894578"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "af60bd99fc545292f118ebfecf57ec2a8874d1add37b92f0a169203e8ea6dc65"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/directadmin-relay.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "7cf496aa5382784c79726838cffc759d9ecdca065a05b2f6962645adfc48e284"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+          "source_commit": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "sha256": "b5c759627f31be55f1aea705ce8345459ad00f89085c15dbab3799caffd7f1c0"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: #302/#1183 now supplies the verifier/durable current-company session, and #1240 supplies a partial server-side company placement resolver. Neither is composed into a PWA route; current web bootstrap remains accountId/getSession based, and the PWA shell does not ship or invoke its existing helper modules. #811 projection/stream host work and #1049/#812 composition remain separate. The browser must receive only a host-resolved company/actor/device/context, never choose authority or storage placement.",
+        "Mobile: #1182/#1188 closed/merged at 10:15:24Z. The merged helper adds stable retry identities plus response binding, Last-Event-ID, and resume/cancel methods; its Flutter retry test and main mobile CI passed. It remains optional and unwired in SplashScreen; it collects the whole JSON body, has no SSE parser, no mid-response event retention or durable resume, no in-flight abort cancellation, and no logout/company/revision reset. These are residual client gaps to assign through an existing owner; do not duplicate closed #1182.",
+        "Workforce: source still serializes SSE only after awaited dispatch, and Last-Event-ID filters that completed response array rather than a durable log. Therefore mobile/PWA helpers cannot claim true incremental stream/resume from that host behavior. Hosted Go/Hub authority-aware dispatch remains unavailable.",
+        "DirectAdmin and placement: #1211 provides partial node control/relay, #1240 provides a partial company placement storage library, #302 provides opt-in credential/session primitives; these are separate server boundaries with no observed live host or general PWA endpoint. Keep #1048 behavior user-reported only."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main ae6db36d6c14a5984f4be0d203a070beeec245ce into the existing claim branch; main ancestry confirmed."
+        },
+        {
+          "command": "Read-only source inspection of apps/pwa, apps/mobile, services/workforce, apps/web auth, titan-platform session/credential code, storage placement resolver and DirectAdmin relay",
+          "status": "PASS",
+          "detail": "Source-inspected at current main ae6db36; identified the optional/unwired client transports and server contract boundaries described above."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification contract, CLI integration, and snapshot source tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "Read-only GitHub REST for current owner lanes and check runs",
+          "status": "PASS",
+          "detail": "Confirmed #1188/#1182 and #1240 merged, #302/#1183 merged with issue #302 still open, #1049/#1204 draft, #1171/#1176 merged, #1178 previous head checks green, and current-main mobile job success. Main validate workflow was in progress."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed evidence files."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T10:29:19Z",
+      "workspace_head": "4427eab8ea0899193c1730b91ea83c325f019fd0",
+      "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only current-main refresh after #1197 DirectAdmin plugin packaging merged. Local authored changes remain in #1172 evidence files only; no owner implementation or live host changed.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+        "workspace_claim_sha_before_evidence_commit": "4427eab8ea0899193c1730b91ea83c325f019fd0",
+        "remote_claim_sha_before_latest_main_merge": "1db4b86fc0c5a1264e8b91de6b110d3b6dc7d9ca",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_latest_main_merge": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "1db4b86fc0c5a1264e8b91de6b110d3b6dc7d9ca",
+          "base_sha": "ae6db36d6c14a5984f4be0d203a070beeec245ce",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "mobile": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks passed on d1e10b2 before main 2ef430e was merged locally; the final push must validate its own head."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "CLOSED",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "head_sha": "5d98573427db32f22d901b00ff959aad7eea51fa",
+            "base_sha": "c883304a662738fe480ec1e5d044fdeb0c4c879e",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z"
+          },
+          {
+            "pull_request": 1197,
+            "state": "MERGED",
+            "merged_at": "2026-10-02T10:23:55Z",
+            "head_sha": "43605017efe6504d0cee397592cbcb1fdfe7b18c",
+            "package_check": "success"
+          }
+        ],
+        "current_main_check_status": {
+          "DirectAdmin package": "success",
+          "mobile": "success",
+          "verify": "success",
+          "validate": "in_progress"
+        },
+        "directadmin_package_check_detail": "Main commit 2ef430e package job ran deterministic package tests, built the archive/provenance, exercised disposable archive/candidate fixtures, validated Server Node package contract and shell syntax. This is CI artifact/fixture evidence only."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": ".github/workflows/directadmin-plugin-portfolio.yml",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "79f629dd64ca7ac2593bcf59cd64f7130592a2d34826962869d0ac71010e4a59"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/scripts/update.sh",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "1345f4f558033a51392a4fdca2c826ad939b1d42cac9ae3bcbb1af4482390439"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "723361b07e67a2eaf94015ed8ffed2c8cf1a5f243ead4aeeea469f8eb9c2f48d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-portfolio.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "05bfec82e18606cf41c30208d1db51dcf6f2d02d46a3667abe8f94a7643159a7"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-portfolio.test.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "c0edf32ce4b46be0a758316d83f24bdfb20cb4e8ae0b67e20179818895c5cfa3"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/directadmin-dev-access-archive-integration.php",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "f1ab7a559c0384c0e8b7fa6462e6e8d1d2be777a9e8a60f3eb10c3863729a629"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/test-directadmin-dev-access-archive.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "3bdfec50b4b4e18ea400f84854cee5f5a9d5b68cb76d4e4fa029e173c69abad3"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/test-directadmin-dev-access-candidate.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "59ef130791a53c4522deecb84a5c74650f1896574b0abc4b9a7e0709523a1eb6"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-plugin.mjs",
+          "source_commit": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "sha256": "d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: new DirectAdmin packaging does not change the client contract. #302/#1183 and #1240 are server-side foundations but neither is composed into a PWA route; #811 still owns the authenticated projection/stream host contract and #1171 the packaged consumer. Do not treat a DirectAdmin archive or panel projection as the PWA API.",
+        "Mobile: #1182/#1188 is closed/merged. Its optional hosted transport retry test is covered by mobile CI, but production SplashScreen does not inject it; it reads whole JSON responses, not incremental SSE, and no durable host log/revision reset is present.",
+        "DirectAdmin: #1197 now adds deterministic archives/provenance and isolated archive/candidate CI checks. Those improve exact-artifact reproducibility but do not prove installation, host update/rollback, root behavior or #1048 live command/key flows. Keep malformed POST behavior USER_REPORTED_UNVERIFIED.",
+        "Workforce stream and deployment remain as previously inspected: SSE follows awaited dispatch and Last-Event-ID filters completed events; no live workforce/DirectAdmin host was contacted."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main 2ef430e96d1f9ad9547e636ed9800886ab0ea595 into existing claim branch; local main ancestry confirmed."
+        },
+        {
+          "command": "Read-only inspection of #1197 package scripts/workflow and current PWA/mobile/host source",
+          "status": "PASS",
+          "detail": "Confirmed packaging checks are deterministic and fixture-based; no current PWA API or live host evidence was added."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification contract, CLI integration, and snapshot source tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound source audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "Read-only GitHub REST for current owner lanes, merge and CI states",
+          "status": "PASS",
+          "detail": "Confirmed #1197 merged with package job success; #1188/#1182 and #1240/#302 merges; #1049/#1204 draft; #1178 previous head green. No issue/PR/host mutation."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed evidence files."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T10:53:41Z",
+      "workspace_head": "91c253aacc94ae9db1d5b92fdc331868ccc8a4a8",
+      "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only current-main refresh after #1049/#1204 SDK bridge merged. Rechecked PWA/native client boundaries, hosted Workforce and DirectAdmin evidence, current CI baseline, and the disposable saved-environment composition. Authored changes remain limited to #1172 evidence files; no owner implementation or live host changed.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "75cc7f020353063aba129e5238b35e78de62291c",
+        "workspace_claim_sha_before_evidence_commit": "91c253aacc94ae9db1d5b92fdc331868ccc8a4a8",
+        "remote_claim_sha_before_update": "20557ff2d39c04de832b0808fa99a870de92d8da",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_evidence_push": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "20557ff2d39c04de832b0808fa99a870de92d8da",
+          "base_sha": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "mobile": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks were green on the previously pushed head only. They predate the merged 75cc main and this evidence refresh; refresh after publishing the current branch."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1211,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:43:19Z",
+            "merge_commit_sha": "8199494eeacc3513b293311d88a469a654ee4dea"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:46:53Z",
+            "head_sha": "5b1275df1b0ffea533baa8866080b149cef29549",
+            "base_sha": "ccf8010a35292caa17bac393214b43b1a8209e2a",
+            "merge_commit_sha": "75cc7f020353063aba129e5238b35e78de62291c"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "pull_request": 1209,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:36:43Z",
+            "head_sha": "f7ae3aba4cc1287ee4d902b6321205d00091b18c"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z"
+          },
+          {
+            "pull_request": 1197,
+            "state": "MERGED",
+            "merged_at": "2026-10-02T10:23:55Z",
+            "head_sha": "43605017efe6504d0cee397592cbcb1fdfe7b18c",
+            "package_check": "success"
+          }
+        ],
+        "latest_hosted_checks_for_pr_1204_head": {
+          "head_sha": "5b1275df1b0ffea533baa8866080b149cef29549",
+          "DirectAdmin plugin portfolio": "success",
+          "Personal Zero Verification": "success",
+          "Distribution Gateway contract": "success",
+          "Titan Zero Source Evidence Index": "success",
+          "Titan Zero CI": "success",
+          "mobile_job": "success",
+          "validate_job": "success",
+          "note": "Checks ran on the PR head/merge candidate before merge. CI success is baseline-gated and does not imply all product suites are failure-free."
+        },
+        "current_hosted_regression_baseline": {
+          "web_typecheck": {
+            "current": 0,
+            "baseline": 16,
+            "result": "clean; baseline removable"
+          },
+          "worker_tests": {
+            "current": 0,
+            "baseline": 24,
+            "result": "clean; baseline removable"
+          },
+          "pwa_tests": {
+            "passed": 7,
+            "failed": 0
+          },
+          "workforce_tests": {
+            "passed": 34,
+            "failed": 0
+          },
+          "web_tests": {
+            "current_failures": 85,
+            "baseline_failures": 86,
+            "result": "no new failure; one failure fewer than baseline"
+          },
+          "titan_platform_tests": {
+            "total": 1151,
+            "passed": 1077,
+            "failed": 72,
+            "skipped": 2,
+            "baseline_failures": 97,
+            "result": "72/97 baseline; no regression, not a clean suite"
+          }
+        },
+        "directadmin_php_hosted_check": "On main 2ef430e, #1048/#1209 PHP package/transport workflow passed on hosted PHP 8.3: lint, security and malformed-request CLI-server tests, archive integrity, current source candidate and provenance. This is an isolated runner fixture; no actual DirectAdmin SAPI/version was observed."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": ".github/workflows/directadmin-dev-access-php.yml",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "01d25babf84a56b2f65735fbfee8e21cbace94a44cf9876fcfe2e830eea020c1"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/lib/app.php",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "3914decc86b7b9e5e9bd6747752e5e4551e2c99f8a3b01cae054dcb374c0169b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/security-test.php",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "fd12f9e0b381f43843fc1c0bcb1da7f76a257f0d6179f18563b1f8824f85e080"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/request-integration-test.php",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "9591a150d5fdbdc1f4fa99d7b87c28829e0627de6fed9bd25099fc04c82352ee"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/update-hook-test.sh",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "eebfe843b324652612c4f19202411ba0d564e6521661fb3e74264afd872797b8"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/plugin-lab.sh",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "3cc2a7efa52703ddda126b0221cf5b8cf61bb8e2f4a5da75294a8c65dc6d06e0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/tools/package.sh",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "cdf6bc01d87c32e4658bd15442d938df4a964abf2dd1a23adde511b057f0e041"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/README.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "69dfbf4149754b883bc4b3ab777a1a893da86c44bb910c3d7533ca7b329aee1f"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/DEVELOPER-PORTAL-RECOVERY-RUNBOOK.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "9dc4f337d65a0e518653beed3b69bf81837e2f1ce586014576531dc848c5101b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/developer-portal.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "8084801fe278c11cb566b8823deb5915df62edfc089a8c3c99cf30585519324f"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/developer-portal.test.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "052dd38634001d6bc68a23b08b1de712628ee10e697fd3de7e5c011a6a181e20"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-plugin.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "7b5e7217ecd13e12e820ef4d712d867c1e5dda9885bfb20b1b626c269dbe4c88"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-session-bridge.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "33f169447c360d56e806c1d27dd7c66e78772b7814b6341c2416d6015cb2b59b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-gateway.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "31a410174ab1f2cbb175677761a5db6ed3a4d1631c24996d823138695dcbb7e0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-cockpit.ts",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "a93fd51f498edb78d1c5aa65b7300750da61177a977586dedce4fb76e7099000"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "ca175aab9342ffb87316cc64f4195b19aad2a841c2666f4988f3ddac69e99dc0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "6c1f8204b1000fb48d288975b37a30a80bf381af7b43bb7eeee00a50b937572b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-browser.browser.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "32c155290f9a6748ef6d19eb70f82c1a25f7bab1564d3f5eeab33dbb0a1f8b27"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/contracts/directadmin-authenticated-session-bridge.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "833aa6fc2c5d76f025022f495e37cb8bb3619a3df9061771201e0b0f94c00420"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/README.md",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "6bd0b9d8c998adbf2d33bf8aba1eaa525b6464fd36d209b537bb51b17a5f1940"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/zero-core/cockpit.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "10784723d1ba6404943e1f7bc626df2b278c6a3bb3aa9477f84f6d6cc88fc3c0"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/operations-hub/cockpit.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "a0af6f2c3347192bf37e2a04e3a3f3475b4f6541dcc319a40d53569a4e4f6703"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/brand-studio/cockpit.mjs",
+          "source_commit": "75cc7f020353063aba129e5238b35e78de62291c",
+          "sha256": "c5d32b0d423781bb9cc4f042f2b5985b42ed602c08eff73b8865f5018b2c3796"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: one Zero/Go/Hub PWA remains separate from apps/web and native mobile. Shipped app.mjs is still a static shell; src projection helpers are not copied into the deployable build. No host-verified generic PWA bootstrap/projection route exists. The merged #1049/#1204 bridge is DirectAdmin-panel-only and is not a PWA endpoint. Company identity remains server derived; mode and client company values grant no authority.",
+        "PWA/Workforce stream: current host still returns completed-response SSE after awaited dispatch; Last-Event-ID filters the completed event array. No real incremental stream, durable revision-bound event replay, PWA cancel or governed offline conversation replay is established.",
+        "Mobile: #1188 is merged while issue #1182 is currently open. HostedConversationTransport remains full-body JSON, reconnect() is a no-op, active requests are not abortable, continuation tokens are available only after full completion, and the transport is not injected by production SplashScreen. Offline command replay is not conversation replay; logout/company/context revision purge and explicit unavailable states remain absent.",
+        "Identity/storage composition: local earlier smoke at source main 2ef used a disposable global registry and separate company SQLite stores to prove canonical session-to-placement resolution, cross-company rejection, context switch, old-lease rejection and Workforce runtime migrations. It manually composed #1240 because the production Workforce workOrders port still receives company_id/actor_id/IDs rather than CurrentSessionContext or CompanyStoreLease. That smoke preceded #1204 and does not prove host wiring or production effects.",
+        "DirectAdmin: #1048/#1209 malformed/ambiguous request behavior is now independently represented by PHP security/request tests plus CLI-server integration fixtures; #1049/#1204 adds a panel-scoped cookie/session bridge and server-side Workforce Zero exchange. Local 83/83 bridge/handoff tests and hosted workflows confirm source/fixture behavior only; unsupported Workforce intents remain typed 403. No installed panel or production host was contacted."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged 75cc7f020353063aba129e5238b35e78de62291c into the existing agent/issue-1172 claim branch; main ancestry confirmed."
+        },
+        {
+          "command": "node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "status": "PASS",
+          "detail": "83/83 local tests passed using disposable canonical identity/registry fixtures, including issuer, CSRF, revision, company switch, revocation, session invalidation, typed 403 and unavailable-state cases."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 canonical evaluator tests passed against refreshed audit input."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification CLI, contract and deterministic snapshot tests passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound audit snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "cd apps/directadmin/dev-access/dist/v1.3.2 && sha256sum --check titan_dev_access.tar.gz.sha256",
+          "status": "PASS",
+          "detail": "Archived v1.3.2 source package checksum verified locally; this does not certify the current v1.3.4 candidate or an installation."
+        },
+        {
+          "command": "Read-only GitHub review of #1178, client/host issues, #1204/#1209 PRs and workflow jobs/logs",
+          "status": "PASS",
+          "detail": "Confirmed #1204 and #1209 merged; current owner issue states, hosted focused jobs and baseline deltas recorded above. No GitHub mutation or live host call."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in the three evidence-only files."
+        }
+      ],
+      "environment_limits": {
+        "php_cli": "NOT_INSTALLED_LOCALLY; PHP 8.3 security/transport/package workflow ran only in hosted CI.",
+        "flutter_dart": "NOT_INSTALLED_LOCALLY; Flutter format/analyze/hosted transport test ran only in hosted CI.",
+        "node": "24.19.0; local TypeScript, SQLite and tsx dependencies available.",
+        "live_host": "NOT_CONTACTED by request.",
+        "physical_devices": "NOT_AVAILABLE."
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:02:59Z",
+      "workspace_head": "31a634525f3fc8e8a92924e8d48c98c61abf7f19",
+      "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh after #1050/#1143 DirectAdmin Workforce consumer/package merged. Rechecked latest main, panel versus PWA/native boundaries, actual local and hosted evidence, and baseline status. Only #1172 evidence files are authored; owner source and production hosts were not changed.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "468d42b1a93401a2357f2da253f639694cb4a937",
+        "workspace_claim_sha_before_evidence_commit": "31a634525f3fc8e8a92924e8d48c98c61abf7f19",
+        "remote_claim_sha_before_evidence_update": "20557ff2d39c04de832b0808fa99a870de92d8da",
+        "current_main_is_ancestor_after_merge": true,
+        "pr_1178_before_publish": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "20557ff2d39c04de832b0808fa99a870de92d8da",
+          "base_sha": "2ef430e96d1f9ad9547e636ed9800886ab0ea595",
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "mobile": "success",
+            "source-index": "success",
+            "validate": "success"
+          },
+          "note": "These checks apply to the old pushed head only. The current local source merges main through 468d42b; publish and rerun before treating the branch as current."
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1211,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:43:19Z",
+            "merge_commit_sha": "8199494eeacc3513b293311d88a469a654ee4dea"
+          },
+          {
+            "issue": 1050,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1143,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:54:39Z",
+            "head_sha": "f2f750e434f9f82d964920351ebc80245bd680f3"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:15:24Z",
+            "head_sha": "26b2de56fbf915887aeea95fbebcb6b6e90ec433"
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z",
+            "head_sha": "14cb413fcb082f4426e298e46590de6e0fe577cc"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:46:53Z",
+            "head_sha": "5b1275df1b0ffea533baa8866080b149cef29549",
+            "base_sha": "ccf8010a35292caa17bac393214b43b1a8209e2a",
+            "merge_commit_sha": "75cc7f020353063aba129e5238b35e78de62291c"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "pull_request": 1209,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T10:36:43Z",
+            "head_sha": "f7ae3aba4cc1287ee4d902b6321205d00091b18c"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          },
+          {
+            "pull_request": 1240,
+            "state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:07:02Z"
+          },
+          {
+            "pull_request": 1197,
+            "state": "MERGED",
+            "merged_at": "2026-10-02T10:23:55Z",
+            "head_sha": "43605017efe6504d0cee397592cbcb1fdfe7b18c",
+            "package_check": "success"
+          }
+        ],
+        "hosted_checks_for_pr_1143_head": {
+          "head_sha": "f2f750e434f9f82d964920351ebc80245bd680f3",
+          "DirectAdmin plugin portfolio": "success",
+          "Titan Zero Source Evidence Index": "success",
+          "Titan Zero CI": "success",
+          "Titan Zero CI jobs": {
+            "mobile": "success",
+            "validate": "success"
+          },
+          "note": "The hosted job list did not run apps/directadmin/workforce/tests/*.test.mjs. PR body reports 39/39 package/browser/hosted tests as owner evidence, not independently confirmed by this review or by that Actions run."
+        },
+        "current_hosted_regression_baseline": {
+          "web_typecheck": {
+            "current": 0,
+            "baseline": 16,
+            "result": "clean; baseline removable"
+          },
+          "worker_tests": {
+            "current": 0,
+            "baseline": 24,
+            "result": "clean; baseline removable"
+          },
+          "pwa_tests": {
+            "passed": 7,
+            "failed": 0
+          },
+          "workforce_tests": {
+            "passed": 34,
+            "failed": 0
+          },
+          "web_tests": {
+            "current_failures": 85,
+            "baseline_failures": 86,
+            "result": "no new failure; one failure fewer than baseline"
+          },
+          "titan_platform_tests": {
+            "total": 1151,
+            "passed": 1077,
+            "failed": 72,
+            "skipped": 2,
+            "baseline_failures": 97,
+            "result": "72/97 baseline; no regression, not a clean suite"
+          },
+          "lockfile_convergence": "still reported as debt"
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/README.md",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "90c12196d70736e5664467d81a246cdb23808315123736a88938d4bb2acd1300"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/api.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "bbc0d35c9bf04264ba1f113933f04b8a08406b1c49eb779c54b58e1a0dfb2849"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/cockpit.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "e43bf27d118826ad73d297690d4246b0d9ec4d6f511bccc4e842c7c877d7a3bd"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/controller.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "19c858b196033fadf0adfb120284dcc38958ec6e2bb03e182a0efbcb9fc264ce"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/images/presentation.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "6a5a0784dcee83ea2825c1269cb4bc5ccf5b203715949e12ebcad0405e637a80"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tools/package.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "6fb522822bbf5334dd50224f90a9ffea69df6d7b39e2cb14fe958ab0267eecaa"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/api.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "6c705653ef0683e5eacd17299ccf129bc2a9c19806df9908f1a7301e3d6d37bb"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/browser.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "f9a38f9830da0291fd664dd511e36527b21596bb3a047f5a578bcb21a4e7c25e"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/controller.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "ac78b5bd80e418f10483f9c64850f58251b0671120f490ba72303d98f582cc24"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/hosted-sdk.integration.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "024a7a9214636fa9f7798721b26cf511a1ae4cad8efaa5254fcc677e83e84997"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/relay-host.integration.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "e84c86c4fa486ffa665cfbd475a6f30e3920502d5a7fd4d3581ad54a396e4751"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/sdk-contract.integration.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "12a8162426cc1f5ff4ec510b1293b1751c82080d2758548481c6245c80f85f6d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/workforce/tests/package.test.mjs",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "b134ce24d614b44c41a253fcf4c6b9b39036743d36b996c5e88e898b8ba93314"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "9d940468ef1acdb622b21700d91994c027971517df6aceb08b33e92776a29903"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md",
+          "source_commit": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "sha256": "47ceabb7441e0e526c49fa544740f88acd3cd0620566e48069c7784e35c63657"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: one Zero/Go/Hub PWA remains distinct from apps/web and native mobile. Its shipped app.mjs is still the static shell; projection helpers are not included in the built shell. No generic authenticated PWA bootstrap/projection or hosted conversation endpoint exists. The new #1050 DirectAdmin cockpit consumes a separate panel session/relay contract and is not a PWA API.",
+        "Mobile: #1188 is merged while issue #1182 is currently open. HostedConversationTransport still collects full JSON, reconnect() is a no-op, active requests are not aborted, tokens arrive only after completed responses, and SplashScreen does not inject this transport. The DirectAdmin Workforce panel explicitly does not integrate native conversation transport.",
+        "Stream/continuity: Workforce still serializes its SSE after awaited dispatch and filters a completed event array by Last-Event-ID. No incremental stream or durable event log was established; no PWA/mobile revision-bound resume, active cancel, governed offline replay, or complete logout/company/context purge is proven.",
+        "DirectAdmin Workforce consumer: #1050/#1143 provides a packaged admin/reseller/user cockpit backed by #1049 session and #812 relay to #811. Current host publishes controls:[]; the package stays read-only and displays REQUESTED receipts only. Package/install and Apache cookie boundaries are not commissioned. The #1143 PR reports 39/39 tests but its inspected hosted jobs do not run the app-specific test glob.",
+        "Authority boundary remains company_id from host-verified canonical identity. Current company is not inferred from mode, a browser header, DirectAdmin role or client-selected identity. PWA and mobile remain their own canonical apps."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Fetched and merged latest main 468d42b1a93401a2357f2da253f639694cb4a937 into existing agent/issue-1172; main ancestry confirmed."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 evaluator regressions passed after refresh of the 28-row audit input."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification CLI, contract and deterministic snapshot tests passed after refresh."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Deterministic source snapshot matches main 468d42b; production eligibility remains denied."
+        },
+        {
+          "command": "node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+          "status": "PASS",
+          "detail": "83/83 SDK/session bridge tests passed on prior source 75cc7f0 before #1143 merged its separate Workforce UI consumer; #1143 did not change those SDK tests. This did not run the Workforce app-specific test glob."
+        },
+        {
+          "command": "sha256sum --check apps/directadmin/dev-access/dist/v1.3.2/titan_dev_access.tar.gz.sha256",
+          "status": "PASS",
+          "detail": "Historical archive checksum verified from its archive directory; no current candidate was installed."
+        },
+        {
+          "command": "Read-only review of PR #1143 owner report, source and GitHub Actions job steps",
+          "status": "PASS",
+          "detail": "Confirmed partial PR merged, issue remains open, package/CI jobs green, and current hosted tests are baseline-relative. No GitHub write or host contact."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in the evidence-only worktree."
+        }
+      ],
+      "environment_limits": {
+        "node": "24.19.0; local TypeScript, SQLite, tsx available.",
+        "php_cli": "NOT_INSTALLED_LOCALLY; #1048 PHP 8.3 workflow ran only in hosted CI.",
+        "flutter_dart": "NOT_INSTALLED_LOCALLY; Flutter format/analyze/hosted transport test ran only in hosted CI.",
+        "new_workforce_cockpit_suite": "Not run locally during this review; PR body owner-report says 39/39, hosted jobs inspected did not run the app test glob.",
+        "live_host": "NOT_CONTACTED by request.",
+        "physical_devices": "NOT_AVAILABLE."
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:28:00Z",
+      "workspace_head_after_main_merge": "373285fc769664517bee78bcdfb06bb2cec71645",
+      "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only source and live-observation refresh after #1196 mobile bootstrap/context changes merged. Re-read current main and relevant PWA, mobile, Workforce and identity code; checked exact owner/PR states and hosted mobile CI. Transcribed parent-authenticated DirectAdmin observations with provenance. No PWA/mobile/host/identity/SDK implementation edits, host contact, SSH/device run, Library upload or eligibility promotion.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "remote_refs_before_refresh": {
+          "main": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "agent/issue-1172": "0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc"
+        },
+        "pr_1178_before_refresh": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc",
+          "base_ref": "main",
+          "base_sha_reported_by_pr_metadata": "468d42b1a93401a2357f2da253f639694cb4a937",
+          "mergeable_reported": true,
+          "note": "The PR metadata base SHA lagged the independently fetched main ref 23300c7; the claim branch was merged with fetched main locally after a no-conflict merge-tree preview. Exact PR/head/base state must be rechecked before any push."
+        },
+        "current_owner_lanes": [
+          {
+            "issue": 811,
+            "issue_state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 1171,
+            "issue_state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 302,
+            "issue_state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T09:56:16Z"
+          },
+          {
+            "issue": 1049,
+            "issue_state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:46:53Z"
+          },
+          {
+            "issue": 1182,
+            "issue_state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "MERGED_PARTIAL",
+            "merged_at": "2026-10-02T10:15:24Z"
+          },
+          {
+            "issue": 1160,
+            "issue_state": "OPEN",
+            "pull_request": 1196,
+            "pull_request_state": "MERGED_PARTIAL",
+            "source_head": "d20d8897d22f2a8cc83b351e343f2b6d3658e3d8"
+          },
+          {
+            "issue": 1172,
+            "issue_state": "OPEN"
+          }
+        ],
+        "pr_1196_hosted_ci": {
+          "run_id": 36999307642,
+          "pr_merge_test_commit": "28cd35bc6b5cc046df854fa25609107fac7eca62",
+          "source_head": "d20d8897d22f2a8cc83b351e343f2b6d3658e3d8",
+          "workflow": "Titan Zero CI",
+          "mobile_job": "success",
+          "focused_transport_analysis_and_test": "success",
+          "focused_context_audience_tests_and_analysis": "success",
+          "legacy_full_mobile_result": "flutter analyze exited 1 (1263 issues reported); flutter test exited 1 (30 passed, 28 failed). The diagnostic step is continue-on-error, so the green job does not certify the full mobile suite."
+        },
+        "pr_1196_source_index": {
+          "run_id": 36999307541,
+          "result": "success"
+        }
+      },
+      "parent_authenticated_host_observation": {
+        "provenance": "Reported by the parent from an authenticated, read-only DirectAdmin session; this execution environment has no DirectAdmin or SSH access and did not independently repeat these observations.",
+        "observed_window_utc": "2026-10-02 10:33-10:34 UTC",
+        "directadmin_version": "1.711",
+        "developer_portal_installed_version": "1.3.3",
+        "diagnostics": {
+          "admin_uid": 1000,
+          "admin_home": "/home/admin",
+          "key_count": 3
+        },
+        "server_node_health": "UNREACHABLE",
+        "harmless_pwd_post_result": "MALFORMED_OR_AMBIGUOUS",
+        "candidate_source": {
+          "version": "1.3.4",
+          "commit": "f7ae3aba4cc1287ee4d902b6321205d00091b18c",
+          "separately_tested": true,
+          "installed": false
+        },
+        "library_upload": "HELD_PENDING_USER_PERMISSION",
+        "independent_ssh_runtime": "NOT_VERIFIED",
+        "physical_device_runtime": "NOT_VERIFIED",
+        "certification_effect": "No live runtime pass; DirectAdmin and production eligibility remain UNKNOWN/DENIED."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/scripts/build.mjs",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "b30d47dab93716ddbf89d4dd0d56bc80aca4d7536aa35f501ec61c5f55437682"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/mobile_session_context.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "947a6273eb7e9e705b6e8d8ba8463e8af9d3f3593ce81fcbf808c93d1f8880b3"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/mobile_context_scope.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "0a975526054c252624661fe730501a6e0c419024ae4df72c376091789d083232"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/mobile_bootstrap_config.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "067f69c11a13a4c8dc504d5ae2aa0c093d3d6238a0f2b3d57858fc3ec17f7838"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/splash_screen.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "27a578cc053c2576d5baa296e9b1a76cc34210d07ed95385c9b91f38f0a250e3"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "e087cbbd21d9977c03ee8078a2e4e0483f068e3a8cf1e210b89c94d5d3404b47"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/hosted_conversation_transport.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "5570fb2cbbb789eaf0dbaa0ffefce03823f1ca01fca5e829107f8772df5229f6"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_command_queue.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "edf3349640b38d6cbca2e704ea0d65b4a3ed9f113c5f1ad41a9a5de598b546f2"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "cb0248b8f355074f5b3ab64a6c237e44fde9c84387d928a411c03d3c4ab6dd17"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "authentication-security",
+          "path": "packages/titan-platform/src/security-session-registry.ts",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "d32043f8b967d7769a2c78144d13342b7908149afc7aa486811cf68244dcf714"
+        },
+        {
+          "subsystem_id": "authentication-security",
+          "path": "packages/titan-platform/src/security-session-credentials.ts",
+          "source_commit": "23300c79185f6dc7f8c4b6ab3ae11ac8aa114906",
+          "sha256": "f34a046d304b432e1f3eeb57226d4f8673ee52fff15057b1e875fe5f32f33140"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "Source review is against fetched origin/main 23300c79185f6dc7f8c4b6ab3ae11ac8aa114906; per-file SHA-256 values are recorded above.",
+        "GitHub issue/PR metadata confirms #811/#1201, #302/#1183, #1049/#1204, #1171/#1176 and #1182/#1188; issues remain open with their partial PRs merged. #1196 bootstrap/context slice is also merged; issue #1160 remains open.",
+        "GitHub Actions evidence for #1196 is a PR merge-commit check, not a live-device or deployed-host run. Focused hosted transport/context checks passed; the legacy full mobile analyzer/test diagnostic failed as specified. A green workflow is not a full-suite certification.",
+        "PWA helpers are source-only and excluded from the current PWA build output; shipped PWA remains a static public shell.",
+        "Workforce supports an SSE response format but calls the completed handler before writing that response; this is buffered completed-event serialization, not live incremental streaming or a durable replay log.",
+        "Parent DirectAdmin observations above are operator-reported and not independently repeated by this execution environment; no SSH, physical device, direct host probe, install or publication occurred.",
+        "Production-use search on current main found no wiring from SplashScreen, TitanShellScreen or the production gateway to MobileSessionContext, MobileContextScope, ScopedOfflineCommandQueue or HostedConversationTransport; the transport is constructed in its test only."
+      ],
+      "bounded_non_overlapping_owner_plan": [
+        {
+          "owner": "#1171 PWA; prerequisites remain with #302 identity and #811 hosted Workforce",
+          "client_scope": "Ship the PWA helper code; compose a server-verified current-company bootstrap/projection; implement explicit states, incremental stream consumer, revision-bound resume/cancel and encrypted scoped offline handling.",
+          "verification": "PWA contract/browser tests against the built distribution; auth/revision/company-switch/logout cases; chunked stream and drop/resume with duplicate suppression; active cancel; then a commissioned host and physical-browser check.",
+          "preserve": "Do not alter identity/session authority (#302), Workforce streaming/event log (#811) or DirectAdmin SDK (#1049) in this client slice."
+        },
+        {
+          "owner": "#1182 native mobile; prerequisites remain with #302 identity, #1049 SDK boundary and #811 host",
+          "client_scope": "Wire authenticated bootstrap into HostedConversationTransport; add exact session/context revision binding, in-flight cancel, lifecycle purge, explicit unavailable states, and connect offline replay only after server revalidation.",
+          "verification": "Focused Flutter unit/widget cases for malformed/out-of-order chunks, disconnect/resume, cancel, stale/revoked revision, company/logout isolation and retries; full Flutter suite/analyzer; real-host correlated identity then signed iOS/Android Zero/Go/Hub checks.",
+          "preserve": "Keep one native app, keep PWA separate, retain company_id as host-owned boundary, and do not treat mocks or completion serialization as streaming."
+        }
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git ls-remote --heads origin agent/issue-1172 main",
+          "status": "PASS",
+          "detail": "Fetched main at 23300c79185f6dc7f8c4b6ab3ae11ac8aa114906 and confirmed existing claim branch at 0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc before local evidence refresh."
+        },
+        {
+          "command": "git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Read-only merge preview returned tree ec6853f802265987bb4e8d6293df90229bfe6446 with no conflicts."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main into the existing agent/issue-1172 branch. This integrated upstream #1196 source; no owner source was edited by this audit."
+        },
+        {
+          "command": "Read-only GitHub issue/PR metadata for #811/#1201, #302/#1183, #1049/#1204, #1171/#1176, #1182/#1188, #1160/#1196 and #1172",
+          "status": "PASS",
+          "detail": "Recorded current issue/PR states and merged timestamps/heads above."
+        },
+        {
+          "command": "Read-only current-main source inspection and SHA-256 calculation",
+          "status": "PASS",
+          "detail": "Reviewed 17 PWA/mobile/Workforce/identity source files on main 23300c7; hashes recorded above."
+        },
+        {
+          "command": "Read-only GitHub Actions run/job/log inspection for #1196",
+          "status": "PASS",
+          "detail": "Verified successful focused transport/context steps and the tolerated legacy full-mobile analyzer/test failure. No local Flutter test was run."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs",
+          "status": "PASS",
+          "detail": "Regenerated deterministic 28-row snapshot from the refreshed main-bound audit input."
+        },
+        {
+          "command": "node JSON parse and snapshot --check; git diff --check",
+          "status": "PASS",
+          "detail": "Both audit/evidence JSON parsed; refreshed 28-row snapshot --check passed with production eligibility denied; git diff --check passed."
+        },
+        {
+          "command": "git grep origin/main for MobileSessionContext, MobileContextScope, ScopedOfflineCommandQueue, HostedConversationTransport and conversationEndpoint uses",
+          "status": "PASS",
+          "detail": "Search found no construction or integration of these helpers in the production splash/shell/gateway; scope/queue constructors exist inside their libraries, and application/test construction is covered by tests."
+        }
+      ],
+      "environment_limits": {
+        "node": "24.19.0",
+        "directadmin_or_ssh_tools": "NOT_AVAILABLE_IN_THIS_EXECUTION_ENVIRONMENT; parent-authenticated read-only observations transcribed separately.",
+        "flutter_dart": "Not run locally in this refresh. Hosted PR #1196 focused mobile steps are recorded above; hosted legacy full mobile diagnostic failed.",
+        "live_host": "No direct host request by this execution environment. Parent reported DA state above; Server Node health was unreachable.",
+        "physical_devices": "NOT_VERIFIED.",
+        "library_upload": "HELD_PENDING_USER_PERMISSION."
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:35:23Z",
+      "workspace_head_after_main_merge": "adcfe75d4d75467f9a1c0acfca4a2e8dfc75b658",
+      "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh after #1199 merged a partial mobile fail-closed UI slice on top of #1196. Reviewed the new shell guards and tests on current main, checked current owner/PR and hosted CI state, and retained the prior parent-reported DirectAdmin observation with its original provenance. No product implementation, identity, SDK, Workforce, PWA, host or deployment files were edited.",
+      "refreshed_rows": [
+        "native-mobile",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+        "claim_branch_sha_before_this_refresh": "0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc",
+        "claim_branch_remote_still_exists": true,
+        "pr_1178_read_only_check": {
+          "state": "OPEN",
+          "draft": true,
+          "merged": false,
+          "head_sha": "0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc",
+          "base_ref": "main",
+          "merge_state": "CLEAN",
+          "mergeable": true,
+          "note": "GitHub CLI confirms open/draft and exact head. The PR merge candidate SHA remains 26599544e1a55a454440eb4866734d5fb3ff813e from the earlier base; main has since advanced. Recheck exact refs/status before push."
+        },
+        "pr_1199": {
+          "issue": 1170,
+          "issue_state": "OPEN",
+          "state": "MERGED",
+          "head_sha": "bcb04df32aaa48befd2053b882fb18942f29c2ad",
+          "merge_commit_sha": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "merged_at": "2026-10-02T11:29:07Z"
+        },
+        "pr_1199_hosted_ci": {
+          "source_index_run": 37000508945,
+          "source_index": "success",
+          "ci_run": 37000508934,
+          "mobile_job": 110817013972,
+          "mobile_job_result": "success",
+          "focused_transport_context_audience_step": "success",
+          "validate_job": 110817014337,
+          "validate_job_result": "success",
+          "legacy_full_mobile_diagnostic": "flutter analyze exited 1; flutter test exited 1 (32 passed, 28 failed); diagnostic command is continue-on-error so workflow success is not full-suite certification."
+        },
+        "related_open_missions": {
+          "pwa_1171": {
+            "state": "OPEN",
+            "partial_pr": 1176,
+            "pr_state": "MERGED"
+          },
+          "host_811": {
+            "state": "OPEN",
+            "partial_pr": 1201,
+            "pr_state": "MERGED"
+          },
+          "identity_302": {
+            "state": "OPEN",
+            "partial_pr": 1183,
+            "pr_state": "MERGED"
+          },
+          "sdk_1049": {
+            "state": "OPEN",
+            "partial_pr": 1204,
+            "pr_state": "MERGED_PARTIAL"
+          },
+          "mobile_continuity_1182": {
+            "state": "OPEN",
+            "partial_pr": 1188,
+            "pr_state": "MERGED_PARTIAL"
+          }
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "sha256": "fdd02963449aedb60f6d34be9574c3219b02e36acbeae92e0a8f6158398d39a3"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "sha256": "14726c0f15991f3bae17e7d927f9eb355ed6d9789481e58b5a57fc4ad9bcd77f"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "docs/mobile/ISSUE-1170-WORKFLOW-MATRIX.md",
+          "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "sha256": "9858c1900c01b5af815f50ed451d200dd3b444d87d4d62a9660e7ecf16889f94"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "The #1199 main delta changes only TitanShellScreen, its conversation widget test, and a documentation workflow matrix; PWA, Workforce streaming, identity and SDK source did not change from 23300c7.",
+        "TitanShellScreen now presents inline unavailable messages for selected actions and controls, but uses message/action label heuristics; no hosted audience projection or capability authorization is added by these guards.",
+        "The source workflow matrix is a documentation index and not product execution evidence; its source claims were checked against current app code.",
+        "Hosted mobile focused tests including shell conversation cases pass. The full legacy mobile analyzer/test diagnostic still fails but is tolerated by CI; exact failure counts are recorded above.",
+        "The previous history entry records parent-authenticated DirectAdmin 1.711 observations, clearly attributed and not independently repeated here. No new host, SSH or physical-device test occurred."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Fetched main 9e6ab97e; merge preview returned 6b8ecfd340b2f7aa2187f056e2355919d218e75c with no conflicts."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main into the existing claim branch; no owner source edited by this evidence refresh."
+        },
+        {
+          "command": "Read-only current source inspection and SHA-256 for #1199 mobile UI/test/docs changes",
+          "status": "PASS",
+          "detail": "Reviewed the three changed files on main 9e6ab97e and updated the exact client assessment."
+        },
+        {
+          "command": "Read-only GitHub issue/PR and Actions metadata/logs for #1170/#1199 and #1178",
+          "status": "PASS",
+          "detail": "Confirmed #1170 remains open, #1199 merged, focused hosted mobile test step passes, legacy full check fails, and #1178 remains open at old exact head."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs; node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Refreshed the deterministic 28-row snapshot for main 9e6ab97e; --check passes and eligibility remains denied."
+        },
+        {
+          "command": "JSON parse and git diff --check",
+          "status": "PASS",
+          "detail": "Both input/evidence/generated JSON parsed; git diff --check passed."
+        }
+      ],
+      "environment_limits": {
+        "flutter_dart": "Not run locally in this refresh; hosted partial/failing results recorded above.",
+        "live_host": "No direct host contact; prior parent observation remains explicitly parent-reported.",
+        "ssh": "NOT_VERIFIED.",
+        "physical_devices": "NOT_VERIFIED.",
+        "library_upload": "HELD_PENDING_USER_PERMISSION."
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:37:56Z",
+      "workspace_head_after_main_merge": "7e231af7f6295d647f483f7071557e94a069397c",
+      "source_commit": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only source refresh after documentation-only #1195 merged the #1158 native mobile completion matrix. The diff from main 9e6ab97e was one documentation file; no PWA/mobile implementation, Workforce, identity or SDK code changed. The acceptance index was checked against existing source and recorded as non-closing evidence.",
+      "refreshed_rows": [
+        "native-mobile",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+        "issue_1158_state": "OPEN",
+        "pr_1195": {
+          "state": "MERGED",
+          "head_sha": "244a8d0b7e01c92d115654d6d27f1cc1c221e507",
+          "merge_commit_sha": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+          "merged_at": "2026-10-02T11:36:18Z"
+        },
+        "parent_reported_directadmin_observation": "Retained from prior history record; no new host contact or SSH/device observation."
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "native-mobile",
+          "path": "docs/mobile/MOBILE-COMPLETION-MATRIX.md",
+          "source_commit": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+          "sha256": "dc8e7a57defcc514724e4ce41658201c77b5a9c50b027c0529ec665895edfa27"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "Current-main diff from 9e6ab97e is documentation-only: docs/mobile/MOBILE-COMPLETION-MATRIX.md.",
+        "The matrix labels itself non-closing; it says the hosted conversation row still requires endpoint, reconnect/resume and deployed evidence.",
+        "Existing source review against 9e6ab97e remains valid for code because the only changed path is the documentation index; production eligibility remains denied.",
+        "DirectAdmin host observations remain parent-reported from the earlier authenticated session and were not repeated here."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git diff --name-status 9e6ab97e..origin/main",
+          "status": "PASS",
+          "detail": "Fetched main c46774cc; only docs/mobile/MOBILE-COMPLETION-MATRIX.md changed."
+        },
+        {
+          "command": "git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Read-only preview produced 10f50c7cab18dccb759856772ac6c10b9befdce2 with no conflicts."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main documentation update into the existing claim branch."
+        },
+        {
+          "command": "Read-only #1158/#1195 state and matrix review",
+          "status": "PASS",
+          "detail": "Issue #1158 remains open; PR #1195 merged and matrix remains an acceptance index, not execution proof."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs; --check; JSON parse; git diff --check",
+          "status": "PASS",
+          "detail": "Regenerated and checked the 28-row snapshot, parsed all three evidence JSON files, and passed git diff --check."
+        }
+      ],
+      "environment_limits": {
+        "live_host": "No direct host contact; prior parent session observation retained with explicit attribution.",
+        "ssh": "NOT_VERIFIED",
+        "physical_devices": "NOT_VERIFIED",
+        "library_upload": "HELD_PENDING_USER_PERMISSION."
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:40:56Z",
+      "workspace_head_before_contract_fix": "9b1cfc34aef3a25b6c77c52623034d2129d9470b",
+      "source_commit": "c46774cc007a324ec618ecdfdfe5a04acd44780f",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Fix the evidence-input contract mismatch detected by hosted CI after the c46774cc source refresh. Remove an unsupported extra related_evidence entry; preserve the full append-only verification history in its dedicated evidence file. No implementation or owner source changed.",
+      "ci_failure": {
+        "pull_request": 1178,
+        "head_sha": "9b1cfc34aef3a25b6c77c52623034d2129d9470b",
+        "workflow": "Certification evidence contract",
+        "run_id": 37002245020,
+        "job_id": 110822367226,
+        "failed_test": "readiness-snapshot.test.mjs",
+        "finding": "Expected related_evidence to contain only tests/e2e/certification/critical-path-matrix.generated.json; audit input also listed docs/evidence/certification-1172-verification.json."
+      },
+      "correction": {
+        "files": [
+          "tests/e2e/certification/release-readiness.audit.json",
+          "tests/e2e/certification/release-readiness-matrix.generated.json",
+          "docs/evidence/certification-1172-verification.json"
+        ],
+        "action": "Removed unsupported snapshot cross-reference while retaining verification history in docs/evidence; regenerated deterministic snapshot.",
+        "hosted_rerun": "PENDING_ON_FOLLOW_UP_HEAD"
+      },
+      "commands": [
+        {
+          "command": "Read-only GitHub Actions failure log inspection",
+          "status": "PASS",
+          "detail": "Isolated one contract expectation mismatch; evaluator and earlier integration assertions in the job passed."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs; --check; JSON parse; git diff --check",
+          "status": "PASS",
+          "detail": "Regenerated and checked the 28-row snapshot successfully; all evidence JSON parsed and git diff --check passed."
+        }
+      ],
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:51:16Z",
+      "workspace_head_after_main_merge": "1614ebb9513c75cb7425ca59010a31db520366d9",
+      "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only source and evidence refresh after current main merged PR #1243. Inspected the exact main delta and DirectAdmin bridge change, updated DirectAdmin/PWA source provenance, and merged current main into the existing #1178 claim branch after a no-conflict preview. The change is a panel-session error-classification correction; the PWA/native/Workforce implementation paths were untouched in the delta, so their prior source findings remain applicable. No product implementation files were authored by this refresh; no host contact, credential handling, device run, deployment or eligibility promotion.",
+      "refreshed_rows": [
+        "directadmin",
+        "pwa",
+        "release-readiness"
+      ],
+      "github_state": {
+        "remote_refs_before_refresh": {
+          "main": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "agent/issue-1172": "05cd3aee555d70c4ad22c8fa24056f509ad65051"
+        },
+        "pr_1178_before_refresh": {
+          "state": "OPEN",
+          "draft": true,
+          "head_sha": "05cd3aee555d70c4ad22c8fa24056f509ad65051",
+          "base_ref": "main",
+          "merge_state": "CLEAN",
+          "mergeable": true,
+          "previous_head_checks": {
+            "Mission Closure Evidence Gate": "SUCCESS",
+            "evidence-contract": "SUCCESS",
+            "mobile": "SUCCESS",
+            "source-index": "SUCCESS",
+            "validate": "SUCCESS"
+          },
+          "note": "The five checks were on the prior PR head; this refresh merge changes the branch head, so its checks must be re-evaluated after push."
+        },
+        "issue_1049": "OPEN",
+        "pr_1204": {
+          "state": "MERGED",
+          "merge_commit_sha": "75cc7f020353063aba129e5238b35e78de62291c",
+          "merged_at": "2026-10-02T10:46:53Z"
+        },
+        "pr_1243": {
+          "state": "MERGED",
+          "head_sha": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
+          "merge_commit_sha": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "merged_at": "2026-10-02T11:46:24Z",
+          "reported_checks": {
+            "mobile": "SUCCESS",
+            "source-index": "SUCCESS",
+            "validate": "SUCCESS",
+            "Mission Closure Evidence Gate": "SUCCESS on later attempts; earlier attempts were failed/cancelled"
+          }
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/src/directadmin-session-bridge.ts",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "a5d47da396526afe861a48e9c193317c1778f4918e8bbf3ad85a41d68be4ab2d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "224c074af56de884caa7f9d86bf4209956c2d708af35aac2c70e75697c246ccc"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "docs/contracts/directadmin-authenticated-session-bridge.md",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "56ed0b2945691906820b9d327851769d6b52d4b100603e1dff9ff0ac4763b645"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "scripts/package-directadmin-plugin.test.mjs",
+          "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "sha256": "fc07e19065c34ddd5db44343d69cf7b04e3f21d616e65cb08e8cad4a23144f33"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "Diff from c46774cc to d508a269 changes four paths: the DirectAdmin session bridge, its regression tests, the authenticated-session contract, and a packaging test fixture. No PWA, native-mobile, Workforce or identity source path changed.",
+        "The merged bridge change maps explicit rejection of the replacement credential after company switch to authentication failure and stale-cookie clearing; registry outage remains a redacted unavailable response without clearing the source cookie. Two regression tests are present in current main.",
+        "PR #1243 metadata reports merged at d508a269; its check rollup contains successful mobile, source-index and validate jobs plus later successful mission-gate attempts, after earlier failed/cancelled mission-gate attempts. These are hosted CI observations; no local directadmin regression suite was rerun for this refresh.",
+        "The PWA and native-mobile assessments remain source observations from their last audited implementation revisions because the c46774cc..d508a269 delta contains no paths in those owners. This source refresh does not change their no-live-stream, no-revision-bound-resume and no-production-runtime findings.",
+        "Prior DirectAdmin host observations are retained from the parent-provided authenticated read-only session and were not repeated or independently contacted here."
+      ],
+      "commands": [
+        {
+          "command": "git diff --name-status c46774cc..origin/main; inspect exact PR #1243 source diff",
+          "status": "PASS",
+          "detail": "The current-main delta was four paths and the bridge semantics were read directly from current source/tests."
+        },
+        {
+          "command": "git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Read-only merge preview completed without conflicts before integrating d508a269 into the existing claim branch."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Current main merged into the existing agent/issue-1172 branch; no implementation files were authored in this lane."
+        }
+      ],
+      "environment_limits": {
+        "live_host": "No direct host contact; prior parent-provided session observation remains separately attributed.",
+        "ssh": "NOT_VERIFIED",
+        "physical_devices": "NOT_VERIFIED",
+        "library_upload": "HELD_PENDING_USER_PERMISSION"
+      },
+      "production_eligible": false,
+      "mission_complete": false
+    }
+  ]
+}
