@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createBrandPublication, promoteBrandPublication, createBrandRollbackIntent, reconcileBrandRollbackObservation, createBrandRendererHandoff, compileMicroweberPageDraft, reconcileBrandRendererObservation, assertBrandRendererRequest, createBrandStudioProjection, assertBrandStudioProjection, summarizeBrandStudioProjection, createBrandActionBinding, computeBrandPublicationIdempotencyKey, computeBrandBuilderSnapshotHash } from "../.test-dist/brand-publication.js";
+import { createBrandPublication, promoteBrandPublication, createBrandRollbackIntent, reconcileBrandRollbackObservation, createBrandRendererHandoff, compileMicroweberPageDraft, compileMicroweberSiteDraft, reconcileBrandRendererObservation, assertBrandRendererRequest, createBrandStudioProjection, assertBrandStudioProjection, summarizeBrandStudioProjection, createBrandActionBinding, computeBrandPublicationIdempotencyKey, computeBrandBuilderSnapshotHash } from "../.test-dist/brand-publication.js";
 const base={publication_id:"pub-1",company_id:"co-1",site_id:"site-1",version:1,source_snapshot_hash:"hash-1",route_manifest:["/","/contact"],created_at:"2026-02-01T00:00:00Z"};
 test("keeps draft/preview separate from live",()=>{const d=createBrandPublication(base); assert.equal(d.environment,"preview"); const a=createBrandPublication({...base,status:"approved"}); const live=promoteBrandPublication(a,{company_id:"co-1",approved_snapshot_hash:"hash-1"}); assert.equal(live.status,"published");});
 test("rejects unapproved live, invalid publication state, snapshot mismatch, and unsafe renderer routes",()=>{assert.throws(()=>createBrandPublication({...base,environment:"live"}),/not-approved/); assert.throws(()=>createBrandPublication({...base,status:"surprise"}),/status-invalid/); assert.throws(()=>createBrandPublication({...base,environment:"production"}),/environment-invalid/); const a=createBrandPublication({...base,status:"approved"}); assert.throws(()=>promoteBrandPublication(a,{company_id:"co-1",approved_snapshot_hash:"bad"}),/snapshot-mismatch/); for(const route of ["/../private","//attacker.test/path","/page?admin=1","/%2e%2e/private","/bad%2fpath"]) assert.throws(()=>createBrandPublication({...base,route_manifest:[route]}),/route-invalid/);});
@@ -77,6 +77,27 @@ test("renders Builder image blocks only from safe same-site paths with escaped a
  const dataHash=await computeBrandBuilderSnapshotHash(dataImage);
  const dataRequest=(await createBrandRendererHandoff({company_id:"co-1",publication_id:"pub-data-image",site_id:"site-image",version:1,source_snapshot_hash:dataHash,renderer:"microweber",environment:"preview",route_manifest:["/"],snapshot:dataImage,verifyCurrentSnapshot:async()=>true})).provider_request;
  await assert.rejects(compileMicroweberPageDraft(dataRequest,{verifyCurrentSnapshot:async()=>true}),/microweber-image-source-invalid/);
+});
+
+test("compiles a version-consistent multi-page Microweber site deterministically and rejects scope collisions",async()=>{
+ const responsive={mobile:"stack",tablet:"grid",desktop:"grid"};
+ const makeSnapshot=(id,title,text,company_id="co-1")=>({id,company_id,surface:"go",title,revision:2,status:"draft",updated_at:"2026-10-03T00:00:00Z",root:{id:"root",type:"stack",children:[{id:`${id}-heading`,type:"heading",props:{text,responsive},children:[]}]}});
+ const makeRequest=async(snapshot,route,company_id="co-1")=>{
+  const source_snapshot_hash=await computeBrandBuilderSnapshotHash(snapshot);
+  return (await createBrandRendererHandoff({company_id,publication_id:"pub-site-v2",site_id:"site-multi",version:2,source_snapshot_hash,renderer:"microweber",environment:"preview",route_manifest:[route],snapshot,verifyCurrentSnapshot:async()=>true})).provider_request;
+ };
+ const home=await makeRequest(makeSnapshot("builder-home","Home","Welcome"),"/");
+ const services=await makeRequest(makeSnapshot("builder-services","Services","Repairs"),"/services");
+ const verifyCurrentSnapshot=async()=>true;
+ const site=await compileMicroweberSiteDraft([services,home],{verifyCurrentSnapshot});
+ assert.equal(site.schema,"titan.microweber-site-draft/v1");
+ assert.deepEqual(site.pages.map(page=>page.route),["/","/services"]);
+ assert.deepEqual(site.pages.map(page=>page.content_html),["<div><h2>Welcome</h2></div>","<div><h2>Repairs</h2></div>"]);
+ assert.match(site.source_snapshot_hash,/^sha256:[a-f0-9]{64}$/);
+ assert.deepEqual((await compileMicroweberSiteDraft([home,services],{verifyCurrentSnapshot})),site);
+ await assert.rejects(compileMicroweberSiteDraft([home,{...services,routes:["/"]}],{verifyCurrentSnapshot}),/microweber-site-duplicate-route/);
+ const otherCompany=await makeRequest(makeSnapshot("builder-other","Other","Private","co-2"),"/about","co-2");
+ await assert.rejects(compileMicroweberSiteDraft([home,otherCompany],{verifyCurrentSnapshot}),/microweber-site-scope-mismatch/);
 });
 
 test("refuses renderer handoff when authored URLs carry credentials or secret query parameters",async()=>{
