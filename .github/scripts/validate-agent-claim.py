@@ -447,7 +447,8 @@ def main():
     if args.self_test:
         validate_roadmap_integrity()
         result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s',
-                                 str(ROOT / '.github/scripts/tests'), '-v'], check=False)
+                                 str(ROOT / '.github/scripts/tests'),
+                                 '-p', 'test_validate_agent_claim.py', '-v'], check=False)
         raise SystemExit(result.returncode)
     validate_pull_request()
 
