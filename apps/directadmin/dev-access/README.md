@@ -1,12 +1,20 @@
-# Titan Dev Access for DirectAdmin
+# Developer Portal for DirectAdmin
 
-A lightweight DirectAdmin plugin that provides:
+The DirectAdmin **Developer Portal** is private/operator tooling for diagnosing and safely inspecting a Titan Business Node. The installed machine/plugin ID remains `titan_dev_access` for compatibility.
+
+Current implemented slice:
 
 - Evolution-aware light/dark UI.
-- Server diagnostics for Git, SSH, PHP, Composer, Node/npm/pnpm and curl.
-- Bounded command terminal (30 seconds / 512 KB output).
-- SSH public-key add, fingerprint and revoke.
+- Runtime diagnostics for Git, SSH, PHP, Composer, Node/npm/pnpm and curl.
+- SSH public-key add, fingerprint and revoke. Installed keys are rendered by fingerprint only.
+- HOME-scoped working-directory validation using canonical `realpath` boundaries.
+- Fail-closed command classification for READ, VERIFY, BUILD/TEST, WRITE and UNKNOWN operations.
+- Read/verify/build-test terminal allowlist only; shell chaining, redirection, Git mutation, package installation, destructive and privileged commands are rejected.
+- 30-second command timeout and a true 512 KiB streaming output ceiling that terminates over-limit processes.
+- Copyable diagnostics with token/password/cookie/private-key redaction.
 - No private-key storage and no automatic sudo/root elevation.
+
+This plugin does **not** grant Titan business authority. Mutating or privileged repair work belongs to canonical governed execution and deployment/runtime owners.
 
 ## DirectAdmin install artifact
 
@@ -16,7 +24,7 @@ The install archive **must** be named exactly:
 
 Do not add version, `-fresh`, `-rebuilt`, or other suffixes to the install filename.
 
-Build with:
+Build and run the security/package verification with:
 
 ```bash
 bash tools/package.sh
@@ -24,4 +32,4 @@ bash tools/package.sh
 
 The resulting archive is written to `dist/titan_dev_access.tar.gz`.
 
-See `AGENTS.md` for the server-validated DirectAdmin packaging and routing rules.
+See `AGENTS.md` for the server-validated DirectAdmin packaging, routing and live-host verification rules.

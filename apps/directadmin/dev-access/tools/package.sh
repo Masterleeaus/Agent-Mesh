@@ -8,11 +8,19 @@ trap 'rm -rf "$TMP"' EXIT
 
 mkdir -p "$DIST"
 
+php -l "$ROOT/lib/app.php" >/dev/null
+php "$ROOT/tools/security-test.php"
+
 for item in plugin.conf README.md AGENTS.md admin reseller user hooks lib scripts; do
   cp -a "$ROOT/$item" "$TMP/"
 done
 
-chmod 0755   "$TMP/admin/index.html"   "$TMP/reseller/index.html"   "$TMP/user/index.html"   "$TMP/scripts/install.sh"   "$TMP/scripts/uninstall.sh"
+chmod 0755 \
+  "$TMP/admin/index.html" \
+  "$TMP/reseller/index.html" \
+  "$TMP/user/index.html" \
+  "$TMP/scripts/install.sh" \
+  "$TMP/scripts/uninstall.sh"
 
 chmod 0644 "$TMP/plugin.conf"
 find "$TMP/hooks" "$TMP/lib" -type f -exec chmod 0644 {} +
@@ -20,6 +28,8 @@ find "$TMP/hooks" "$TMP/lib" -type f -exec chmod 0644 {} +
 ARCHIVE="$DIST/titan_dev_access.tar.gz"
 rm -f "$ARCHIVE"
 tar -C "$TMP" -czf "$ARCHIVE" .
+
+bash "$ROOT/tools/plugin-lab.sh" "$ARCHIVE"
 
 # Validate archive root and required files.
 tar -tzf "$ARCHIVE" | sed 's#^\./##' | grep -qx 'plugin.conf'
@@ -31,7 +41,7 @@ VERIFY="$(mktemp -d)"
 trap 'rm -rf "$TMP" "$VERIFY"' EXIT
 tar -xzf "$ARCHIVE" -C "$VERIFY"
 
-php_files=$(find "$VERIFY" -type f -name '*.php' -o -path '*/index.html')
+php_files=$(find "$VERIFY" \( -type f -name '*.php' -o -path '*/index.html' \))
 while IFS= read -r f; do
   [ -z "$f" ] || php -l "$f" >/dev/null
 done <<EOF
