@@ -7,15 +7,17 @@ import { pathToFileURL } from 'node:url';
 import { createHash, randomBytes, webcrypto } from 'node:crypto';
 import { createRequire } from 'node:module';
 import http from 'node:http';
-import { WorkforceApi } from '../images/api.mjs';
 
 const OWNER_HEAD = 'f6710e9d723e47d5dbda035309f9b8cd1de0cf4e';
 const OWNER_TREE_SHA256 = 'a998aa751d059de466b2dcefeb11e2282d19b67e4432e73b890f858da3fd67d1';
 const SDK_HEAD = 'aff115212281fb555d0c7bc804635e88713f2ec5';
 const SDK_BUNDLE_SHA256 = 'f8ac44484b2285293cffe74903053d607414e12d3e6b428045ac42092ec84961';
+const PACKAGE_SOURCE_HEAD = 'de61ce6362e308cf4eee9d10dabcac1bcae83610';
+const PACKAGE_TREE_SHA256 = '495cf7f58c24428e36d5832d22636d70dac052d5d4136e545a5e9d9d4ad3ea1b';
 const ownerRoot = requiredPath('TITAN_WORKFORCE_OWNER_ROOT');
-const sdkPath = requiredPath('TITAN_COCKPIT_SDK_MODULE');
+const packageRoot = requiredPath('TITAN_WORKFORCE_PACKAGE_ROOT');
 const ownerRequire = createRequire(pathToFileURL(join(ownerRoot, 'packages/titan-platform/package.json')));
+const storageRequire = createRequire(pathToFileURL(join(ownerRoot, 'packages/storage/package.json')));
 const { SignJWT } = ownerRequire('jose');
 const { tsImport } = ownerRequire('tsx/esm/api');
 assert.equal(process.env.TITAN_WORKFORCE_OWNER_COMMIT, OWNER_HEAD,
@@ -24,11 +26,17 @@ assert.equal(await sourceTreeSha256(ownerRoot), OWNER_TREE_SHA256,
   'the extracted owner source tree must match the recorded #1253 archive contents');
 assert.equal(process.env.TITAN_COCKPIT_SDK_COMMIT, SDK_HEAD,
   'this integration must use the live #1252 shared SDK head recorded in its evidence');
+assert.equal(process.env.TITAN_WORKFORCE_PACKAGE_SOURCE_COMMIT, PACKAGE_SOURCE_HEAD,
+  'this integration must use the recorded #1260 package source commit');
+assert.equal(await sourceTreeSha256(packageRoot), PACKAGE_TREE_SHA256,
+  'the extracted plugin package must match the recorded package candidate contents');
+const sdkPath = join(packageRoot, 'images/sdk.mjs');
 assert.equal(createHash('sha256').update(await readFile(sdkPath)).digest('hex'), SDK_BUNDLE_SHA256,
-  'the compiled SDK must match the byte-pinned artifact from the recorded #1252 head');
+  'the packaged SDK must match the byte-pinned artifact from the recorded #1252 head');
 const SDK = await import(pathToFileURL(sdkPath).href);
-const controllerSource = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8'))
-  .replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
+const { WorkforceApi } = await import(pathToFileURL(join(packageRoot, 'images/api.mjs')).href);
+const controllerSource = (await readFile(join(packageRoot, 'images/controller.mjs'), 'utf8'))
+  .replace("'workforce-presentation'", JSON.stringify(pathToFileURL(join(packageRoot, 'images/presentation.mjs')).href));
 const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(controllerSource).toString('base64')}`);
 
 function requiredPath(name) {
@@ -71,6 +79,40 @@ async function ownerTs(relative) {
 }
 function b64(value) { return Buffer.from(value).toString('base64url'); }
 function count(result) { return Number(result.rows[0]?.total ?? 0); }
+function deferred() {
+  let resolvePromise;
+  const promise = new Promise(resolve => { resolvePromise = resolve; });
+  return { promise, resolve: resolvePromise };
+}
+function submitWithSdkIntentSignal(controller, action, signal) {
+  const originalTimeout = AbortSignal.timeout;
+  let timeoutCalls = 0;
+  let injected = false;
+  const replacement = function (milliseconds) {
+    timeoutCalls++;
+    // WorkforceApi submit performs context and projection preflight before it
+    // sends the intent. Replace only the third SDK request's timeout signal.
+    if (timeoutCalls === 3) {
+      injected = true;
+      AbortSignal.timeout = originalTimeout;
+      return signal;
+    }
+    return originalTimeout.call(AbortSignal, milliseconds);
+  };
+  AbortSignal.timeout = replacement;
+  const promise = controller.submit(action).finally(() => {
+    if (AbortSignal.timeout === replacement) AbortSignal.timeout = originalTimeout;
+  });
+  return { promise, wasInjected: () => injected, timeoutCalls: () => timeoutCalls };
+}
+async function settlesWithin(promise, milliseconds, message) {
+  let timer;
+  try {
+    return await Promise.race([promise, new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), milliseconds);
+    })]);
+  } finally { clearTimeout(timer); }
+}
 function queryLocal(address, pathname, init) {
   return new Promise((resolvePromise, reject) => {
     const request = http.request({ hostname: '127.0.0.1', port: address.port, path: pathname,
@@ -150,12 +192,18 @@ async function makeHarness() {
   let placementStorage;
   let session;
   let unsubscribe;
+  let directGateway;
+  let nextDirectIntent = false;
+  let afterSqliteCommit = null;
+  let restoreSqliteExec;
   const intentResponses = [];
   const close = async () => {
+    afterSqliteCommit = null;
     session?.dispose();
     unsubscribe?.();
     try { server?.closeAllConnections(); } catch { /* already closed */ }
     await host?.close().catch(() => {});
+    restoreSqliteExec?.();
     await seedStorage?.close().catch(() => {});
     await placementStorage?.close().catch(() => {});
     await identityStorage?.close().catch(() => {});
@@ -166,6 +214,27 @@ async function makeHarness() {
       createSqliteCompanyPlacementRegistry, createSqliteCompanyStoreOpener } = await ownerTs('packages/storage/src/index.ts');
     const { createWorkforceServer } = await ownerTs('services/workforce/src/server.ts');
     const { SqliteWorkforceStore } = await ownerTs('services/workforce/src/sqlite-store.ts');
+    const Database = storageRequire('better-sqlite3');
+    const originalSqliteExec = Database.prototype.exec;
+    Database.prototype.exec = function (sql, ...args) {
+      const result = originalSqliteExec.call(this, sql, ...args);
+      const gate = afterSqliteCommit;
+      if (gate && /^\s*COMMIT\s*;?\s*$/i.test(String(sql))) {
+        let committed;
+        try {
+          committed = this.prepare(`SELECT event_seq FROM workforce_events WHERE company_id=? AND work_id=?
+            AND type='work.reassigned' AND json_extract(payload,'$.operation_id')=?`).get(
+            gate.companyId, gate.workId, gate.operationId);
+        } catch { /* other isolated SQLite files do not own Workforce events */ }
+        if (committed) {
+          afterSqliteCommit = null;
+          gate.entered.resolve(committed);
+          gate.abort();
+        }
+      }
+      return result;
+    };
+    restoreSqliteExec = () => { Database.prototype.exec = originalSqliteExec; };
     const { SqliteWorkerAccessStore, SqliteAuthorityStore } = await import(ownerFile('packages/runtime/authority/index.mjs'));
     const identityPath = join(scratch, 'identity.sqlite');
     const workforcePath = join(scratch, 'workforce.sqlite');
@@ -202,7 +271,10 @@ async function makeHarness() {
         async complete() { throw new Error('unexpected-owner-e2e-work-order-complete'); } },
       readiness: async () => ({ authentication: true, authority: true, provider: true, evidence: true }),
       directAdmin: { publicOrigin: 'https://panel.example.test',
-        createGateway: owners => SDK.createDirectAdminGateway(auth.bridge, owners) },
+        createGateway: owners => {
+          directGateway = SDK.createDirectAdminGateway(auth.bridge, owners);
+          return directGateway;
+        } },
     } });
     server = host.server;
     const address = await new Promise((resolvePromise, reject) => {
@@ -281,9 +353,20 @@ async function makeHarness() {
         nextIntentHook = null;
         await hook();
       }
-      const response = await queryLocal(address, `${url.pathname}${url.search}`, {
-        method: init.method ?? 'GET', headers: outgoing, body: init.body,
-      });
+      let response;
+      if (url.pathname.endsWith('/intents') && nextDirectIntent) {
+        nextDirectIntent = false;
+        assert.equal(typeof directGateway, 'function', 'the actual SDK gateway is composed from #1253 owners');
+        const gatewayHeaders = new Headers(outgoing);
+        gatewayHeaders.delete('host');
+        const request = new Request(url, { method: init.method ?? 'GET', headers: gatewayHeaders,
+          body: init.body, signal: init.signal });
+        response = await directGateway(request);
+      } else {
+        response = await queryLocal(address, `${url.pathname}${url.search}`, {
+          method: init.method ?? 'GET', headers: outgoing, body: init.body,
+        });
+      }
       if (url.pathname.endsWith('/intents')) {
         intentResponses.push({ status: response.status, body: await response.clone().text() });
       }
@@ -301,7 +384,9 @@ async function makeHarness() {
 
     return { scratch, host, server, address, auth, seedStorage, identityStorage, placementStorage,
       workforceStore, accessStore, authority, grantOperation, session, controller, requestIds, intentResponses,
-      setBeforeNextIntent(hook) { nextIntentHook = hook; }, async close() {
+      setBeforeNextIntent(hook) { nextIntentHook = hook; },
+      useDirectGatewayForNextIntent() { nextDirectIntent = true; },
+      abortAfterReassignmentCommit(gate) { afterSqliteCommit = gate; }, async close() {
         await close();
       } };
   } catch (error) {
@@ -426,6 +511,134 @@ test('actual #1050 consumer and shared SDK traverse #1049 gateway into #1253 SQL
     assert.equal((await h.seedStorage.query(
       "SELECT id FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2 AND json_extract(payload,'$.state')='VERIFIED'",
       ['company-a', 'titan.workforce.reassign:operation-stale'])).rowCount, 0, 'stale CAS is never reported as verified');
+  });
+
+  const newCancellationWork = work_id => ({ company_id: 'company-a', work_id,
+    objective: `Disposable cancellation case ${work_id}`, creator: h.auth.actor_id, assignee: 'worker-old',
+    priority: 1, state: 'READY', dependencies: [], required_capabilities: ['work.assign'], context_refs: [],
+    evidence_refs: [], created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+  await t.test('already-aborted packaged request becomes unknown to the operator and has no owner effect', async () => {
+    const operation_id = 'operation-cancel-already-aborted';
+    await h.grantOperation(operation_id);
+    await h.workforceStore.put(newCancellationWork('work-cancel-already-aborted'));
+    await h.controller.connect();
+    h.requestIds.push(operation_id, 'correlation-cancel-already-aborted');
+    h.useDirectGatewayForNextIntent();
+    const submission = submitWithSdkIntentSignal(h.controller, { action: 'reassign',
+      work_id: 'work-cancel-already-aborted', target_worker_id: 'worker-target', reason: 'Abort before owner admission' },
+    AbortSignal.abort(new Error('fixture-already-aborted')));
+    await submission.promise;
+
+    assert.equal(submission.wasInjected(), true, 'the packaged SDK intent request received the pre-aborted signal');
+    assert.equal(submission.timeoutCalls(), 3, 'only context and projection preflight precede the intent request');
+    assert.equal(h.intentResponses.at(-1)?.status, 503, 'owner cancellation is surfaced as an unknown transport outcome');
+    assert.equal(h.controller.state.phase, 'unavailable');
+    assert.match(h.controller.state.error, /outcome is unknown/i);
+    assert.equal(h.controller.state.receipt, null);
+    assert.equal(h.controller.state.context, null);
+    assert.equal((await h.workforceStore.get('company-a', 'work-cancel-already-aborted')).assignee, 'worker-old');
+    assert.equal((await h.seedStorage.query(
+      "SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'",
+      ['company-a', 'work-cancel-already-aborted'])).rowCount, 0);
+    assert.equal((await h.seedStorage.query(
+      "SELECT id FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2",
+      ['company-a', `titan.workforce.reassign:${operation_id}`])).rowCount, 0);
+  });
+
+  await t.test('in-flight post-commit cancellation persists UNCERTAIN state but owner misreports denial', async t => {
+    const operation_id = 'operation-cancel-after-commit';
+    const correlation_id = 'correlation-cancel-after-commit';
+    const work_id = 'work-cancel-after-commit';
+    await h.grantOperation(operation_id);
+    await h.workforceStore.put(newCancellationWork(work_id));
+    await h.controller.connect();
+    h.requestIds.push(operation_id, correlation_id);
+    const entered = deferred();
+    const cancellation = new AbortController();
+    const gate = { companyId: 'company-a', workId: work_id, operationId: operation_id,
+      entered, abort: () => cancellation.abort(new Error('fixture-abort-after-commit')) };
+    h.abortAfterReassignmentCommit(gate);
+    h.useDirectGatewayForNextIntent();
+    const submission = submitWithSdkIntentSignal(h.controller, { action: 'reassign', work_id,
+      target_worker_id: 'worker-target', reason: 'Abort after the SQLite compare-and-set committed' }, cancellation.signal);
+    let reachedCommit = false;
+    let submitTimeout;
+    let submitTimedOut = false;
+    let effect = null;
+    let evidence = null;
+    let eventCount = -1;
+    let response = null;
+    let controllerReport = null;
+    let replayError = null;
+    let evidenceCountBeforeReplay = -1;
+    let evidenceCountAfterReplay = -1;
+    let eventCountAfterReplay = -1;
+    try {
+      await settlesWithin(entered.promise, 3000, 'actual SQLite connection did not observe the reassignment COMMIT');
+      reachedCommit = true;
+      effect = await h.workforceStore.get('company-a', work_id);
+      eventCount = (await h.seedStorage.query(
+        "SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'",
+        ['company-a', work_id])).rowCount;
+      try {
+        await settlesWithin(submission.promise, 3000, 'consumer request did not settle after SDK signal abort');
+      } catch (error) {
+        submitTimeout = String(error?.message ?? error);
+        submitTimedOut = true;
+      }
+      response = h.intentResponses.at(-1) ?? null;
+      const rows = await h.seedStorage.query(
+        "SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2 ORDER BY rowid",
+        ['company-a', `titan.workforce.reassign:${operation_id}`]);
+      evidence = rows.rows.length ? JSON.parse(rows.rows.at(-1).payload) : null;
+      controllerReport = { phase: h.controller.state.phase, message: h.controller.state.error,
+        assignee: h.controller.state.status?.work?.find(item => item.work_id === work_id)?.assignee,
+        receipt: h.controller.state.receipt };
+      evidenceCountBeforeReplay = (await h.seedStorage.query(
+        "SELECT id FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2",
+        ['company-a', `titan.workforce.reassign:${operation_id}`])).rowCount;
+
+      await h.session.connect();
+      h.useDirectGatewayForNextIntent();
+      await assert.rejects(h.session.intent('titan_workforce', { company_id: 'company-a', actor_id: h.auth.actor_id,
+        capability_id: 'titan.workforce.reassign', operation_id, correlation_id,
+        input: { action: 'reassign', work_id, reason: 'Abort after the SQLite compare-and-set committed',
+          expected_assignee_id: 'worker-old', target_worker_id: 'worker-target' } }), /directadmin-http-503/);
+      const replay = h.intentResponses.at(-1);
+      replayError = replay?.status;
+      evidenceCountAfterReplay = (await h.seedStorage.query(
+        "SELECT id FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2",
+        ['company-a', `titan.workforce.reassign:${operation_id}`])).rowCount;
+      eventCountAfterReplay = (await h.seedStorage.query(
+        "SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'",
+        ['company-a', work_id])).rowCount;
+    } finally {
+      if (!cancellation.signal.aborted) cancellation.abort(new Error('fixture-cleanup-abort'));
+      await settlesWithin(submission.promise.catch(() => {}), 3000,
+        'packaged submission did not settle during cancellation fixture cleanup');
+    }
+
+    t.diagnostic(JSON.stringify({ submitTimedOut, submitTimeout, httpStatus: response?.status,
+      executionState: evidence?.state, finalOutcome: evidence?.final_outcome, effectAssignee: effect?.assignee,
+      eventCount, acceptedRefs: effect?.evidence_refs, controllerReport, replayHttpStatus: replayError,
+      evidenceCountBeforeReplay, evidenceCountAfterReplay, eventCountAfterReplay }));
+    assert.equal(reachedCommit, true);
+    assert.equal(submission.wasInjected(), true);
+    assert.equal(submitTimedOut, false, 'the SDK request completed with an owner response after cancellation');
+    assert.equal(effect?.assignee, 'worker-target', 'the operation committed before cancellation; abort is not rollback');
+    assert.equal(eventCount, 1);
+    assert.equal(evidence?.state, 'UNCERTAIN', 'ExecutionGateway records cancellation as uncertain');
+    assert.equal(evidence?.final_outcome, null);
+    assert.deepEqual(effect?.evidence_refs, [], 'uncertain execution is not accepted business evidence');
+    assert.equal(response?.status, 403, 'current #1253 owner incorrectly converts UNCERTAIN execution into authority denial');
+    assert.equal(controllerReport?.phase, 'ready');
+    assert.equal(controllerReport?.assignee, 'worker-target');
+    assert.equal(controllerReport?.receipt, null);
+    assert.match(controllerReport?.message ?? '', /host denied that request/i,
+      'packaged UI currently tells the operator this committed operation was denied');
+    assert.equal(replayError, 503, 'the owner requires recovery and does not execute the same operation twice');
+    assert.equal(evidenceCountAfterReplay, evidenceCountBeforeReplay, 'same-operation replay adds no event or evidence');
+    assert.equal(eventCountAfterReplay, eventCount, 'same-operation replay emits no second reassignment event');
   });
 
   await h.session.switchCompany('company-b');
