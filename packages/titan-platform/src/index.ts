@@ -1,6 +1,8 @@
 export * from "./descriptor.js";
 export * from "./runtime.js";
 export * from "./workforce.js";
+export * from "./workforce-native/index.js";
+export * from "./workforce-delegation/index.js";
 export * from "./intelligence.js";
 export * from "./business-ops.js";
 export * from "./memory-knowledge.js";
@@ -104,4 +106,4 @@ export * from "./counterfactual-branch.js";
 export * from "./maps-intelligence/runtime.js";
 
 export * from "./signal/runtime.js";
-\nexport * from "./nexus-orchestration.js";\n
+export * from "./nexus-orchestration.js";
