@@ -71,9 +71,6 @@ const rendered = `${JSON.stringify(inventory, null, 2)}\n`;
 
 if (process.argv.includes("--check")) {
   if (!fs.existsSync(outputPath) || fs.readFileSync(outputPath, "utf8") !== rendered) {
-    console.error("EXPECTED_INVENTORY_BEGIN");
-    console.error(rendered);
-    console.error("EXPECTED_INVENTORY_END");
     console.error("Environment inventory is stale. Run: node scripts/environment-inventory.mjs");
     process.exitCode = 1;
   }
