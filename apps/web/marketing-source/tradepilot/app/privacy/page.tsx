@@ -233,7 +233,7 @@ export default function PrivacyPage() {
           <div className="flex gap-6 text-sm" style={{ color: '#555' }}>
             <Link href="/privacy" style={{ color: '#E8352A' }} className="font-medium">Privacy</Link>
             <Link href="/terms" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Terms</Link>
-            <Link href="/support" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Support</Link>
+            <a href="/support" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Support</a>
             <a href="mailto:hello@fldwrk.ai" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
           </div>
         </div>

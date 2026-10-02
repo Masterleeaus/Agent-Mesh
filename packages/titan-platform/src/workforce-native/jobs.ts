@@ -104,7 +104,7 @@ export function buildTitanJobsPlan(input: TitanJobsPlanInput) {
     handoffs = runtime.buildCompletionHandoffs(readiness, { ...payload, company_id });
   } else { const exhaustive: never = input.action; throw new Error(`unsupported-jobs-action:${String(exhaustive)}`); }
 
-  return Object.freeze({ schema: "titan.zero.workforce-native.jobs-plan/v1", agentKey: "jobs", company_id, actor_id, action: input.action, operation: op, entity_id, query, body, evaluation, exception, resolution, offline, handoffs,
+  return Object.freeze({ schema: "titan.zero.workforce-native.jobs-plan/v1", agentKey: "jobs" as const, company_id, actor_id, action: input.action, operation: op, entity_id, query, body, evaluation, exception, resolution, offline, handoffs,
     authority: Object.freeze({ identity_grants_authority:false, execution_permitted:false, native_route_authoritative:true, requires_authenticated_actor:true, transition_authority_assumed:false, completion_authority_assumed:false }),
     browser_extension_required:false });
 }

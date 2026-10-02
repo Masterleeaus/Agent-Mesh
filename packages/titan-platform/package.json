@@ -47,6 +47,12 @@
     "./field-service-lifecycle": "./src/field-service-lifecycle.ts",
     "./directadmin-plugin": "./src/directadmin-plugin.ts"
   },
+  "dependencies": {
+    "@titan-zero/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "rm -rf .test-dist && tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test ./tests/*.test.mjs",
