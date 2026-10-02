@@ -201,7 +201,8 @@ test("publication idempotency identity validates its logical scope",async()=>{
 
 
 test("builds a deterministic escaped sitemap for live drafts and blocks preview crawlers",async()=>{
- const site={schema:"titan.microweber-site-draft/v1",company_id:"co-1",publication_id:"pub-1",site_id:"site-1",version:2,environment:"live",routes:["/","/about&team"],pages:[{route:"/"},{route:"/about&team"}],source_snapshot_hash:"sha256:"+"a".repeat(64),authority_granted:false};
+ const page=route=>({company_id:"co-1",publication_id:"pub-1",site_id:"site-1",version:2,route,authority_granted:false});
+ const site={schema:"titan.microweber-site-draft/v1",company_id:"co-1",publication_id:"pub-1",site_id:"site-1",version:2,environment:"live",routes:["/","/about&team"],pages:[page("/"),page("/about&team")],source_snapshot_hash:"sha256:"+"a".repeat(64),authority_granted:false};
  const live=createMicroweberSitemapDraft(site,"https://brand.example");
  assert.equal(live.schema,"titan.microweber-seo-draft/v1");
  assert.equal(live.company_id,"co-1");
