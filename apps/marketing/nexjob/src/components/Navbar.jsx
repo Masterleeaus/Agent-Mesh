@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, ChevronDown } from 'lucide-react'
-import { appRoutes } from '../config'
+import { appRoutes, APP_ACCESS_AVAILABLE } from '../config'
 
 const industryLinks = [
   ['Cleaning','cleaning'],['Landscaping & Lawn Care','landscaping'],['Pool Service','pools'],['Pressure Washing','pressure-washing'],['Pest Control','pest-control'],['Window Cleaning','window-cleaning'],['Property Maintenance','property-maintenance'],['Mobile Services','mobile-services'],
+  ['Handyman Services','handyman'],['Plumbing','plumbing'],['Electrical','electrical'],['HVAC & Air Conditioning','hvac'],['Construction','construction'],['Roofing','roofing'],['Tiling','tiling'],['Concreting','concreting'],['Painting','painting'],['Plastering','plastering'],['Renovations','renovations'],
 ]
 
 const navLinks = [
@@ -48,7 +49,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-nx-border/60">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
-        <Link to="/" aria-label="Titan Zero Field Services home" className="flex items-center gap-2 font-extrabold text-xl tracking-tight">
+        <Link to="/" aria-label="Titan Zero Field Services home" className="flex items-center gap-2 font-extrabold text-lg tracking-tight whitespace-nowrap">
           <span className="w-2 h-2 bg-nx-purple rounded-full animate-pulse-dot" />
           Titan Zero <span className="text-nx-muted font-medium">Field Services</span>
         </Link>
@@ -59,7 +60,7 @@ export default function Navbar() {
             <Link
               key={path}
               to={path}
-              className={`text-sm font-medium px-3.5 py-2 rounded-lg transition-all ${
+              className={`text-xs font-medium whitespace-nowrap px-2 py-2 rounded-lg transition-all ${
                 pathname === path || (path === '/industries' && pathname.startsWith('/industries/'))
                   ? 'text-nx-text bg-white/5'
                   : 'text-nx-muted hover:text-nx-text hover:bg-white/5'
@@ -69,7 +70,7 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="relative group">
-            <Link to="/fully-managed" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${howLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+            <Link to="/fully-managed" className={`text-xs font-medium whitespace-nowrap px-2 py-2 rounded-lg inline-flex items-center gap-1 ${howLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               How Titan Works <ChevronDown size={14}/>
             </Link>
             <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
@@ -77,7 +78,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="relative group">
-            <Link to="/features" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${capabilityLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+            <Link to="/features" className={`text-xs font-medium whitespace-nowrap px-2 py-2 rounded-lg inline-flex items-center gap-1 ${capabilityLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Capabilities <ChevronDown size={14}/>
             </Link>
             <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
@@ -86,15 +87,15 @@ export default function Navbar() {
             </div>
           </div>
           <div className="relative group">
-            <Link to="/industries" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${pathname.startsWith('/industries') ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+            <Link to="/industries" className={`text-xs font-medium whitespace-nowrap px-2 py-2 rounded-lg inline-flex items-center gap-1 ${pathname.startsWith('/industries') ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Industries <ChevronDown size={14}/>
             </Link>
-            <div className="absolute right-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+            <div className="absolute right-0 top-full mt-1 w-64 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
               {industryLinks.map(([label,slug])=><Link key={slug} to={`/industries/${slug}`} className={`block px-3 py-2.5 rounded-lg text-sm ${pathname === `/industries/${slug}` ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>{label}</Link>)}
             </div>
           </div>
           <div className="relative group">
-            <Link to="/compare" className={`text-sm font-medium px-3.5 py-2 rounded-lg inline-flex items-center gap-1 ${whyLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
+            <Link to="/compare" className={`text-xs font-medium whitespace-nowrap px-2 py-2 rounded-lg inline-flex items-center gap-1 ${whyLinks.some(([,p])=>pathname===p) ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`}>
               Why Titan Zero <ChevronDown size={14}/>
             </Link>
             <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
@@ -103,20 +104,19 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* CTA — linked to Titan Zero Command */}
+        {/* Account actions stay visibly unavailable in the review preview. */}
         <div className="hidden xl:flex items-center gap-3">
-          <a
-            href={appRoutes.login}
-            className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 transition-colors"
-          >
-            Login
-          </a>
-          <a
-            href={appRoutes.signup}
-            className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/30"
-          >
-            Sign Up
-          </a>
+          {APP_ACCESS_AVAILABLE ? (
+            <>
+              <a href={appRoutes.login} className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 transition-colors">Login</a>
+              <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/30">Sign Up</a>
+            </>
+          ) : (
+            <>
+              <button type="button" disabled aria-disabled="true" className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 opacity-60 cursor-not-allowed">Login</button>
+              <button type="button" disabled aria-disabled="true" className="text-sm font-semibold text-white bg-nx-purple px-5 py-2 rounded-lg opacity-60 cursor-not-allowed">Sign-up unavailable</button>
+            </>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -166,12 +166,17 @@ export default function Navbar() {
             {whyLinks.map(([label,path])=><Link key={path} to={path} onClick={()=>setMobileOpen(false)} className={`block px-3 py-2 text-sm rounded-lg ${pathname === path ? 'text-nx-text bg-white/5' : 'text-nx-muted'}`}>{label}</Link>)}
           </div>
           <div className="mt-3 flex flex-col gap-2">
-            <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">
-              Log In
-            </a>
-            <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">
-              Sign Up
-            </a>
+            {APP_ACCESS_AVAILABLE ? (
+              <>
+                <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">Log In</a>
+                <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">Sign Up</a>
+              </>
+            ) : (
+              <>
+                <button type="button" disabled aria-disabled="true" className="text-sm font-medium text-nx-muted py-2 text-center opacity-60 cursor-not-allowed">Log In</button>
+                <button type="button" disabled aria-disabled="true" className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center opacity-60 cursor-not-allowed">Sign Up</button>
+              </>
+            )}
           </div>
         </div>
       )}

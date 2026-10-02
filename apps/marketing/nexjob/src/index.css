@@ -9,6 +9,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   ::selection {
     background: rgba(29, 78, 216, 0.3);
     color: #fafafa;

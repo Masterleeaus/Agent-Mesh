@@ -11,6 +11,7 @@ export default function CTASection({
 }) {
   // Default: route consequential actions into the canonical Titan Zero Command app
   const resolvedHref = buttonHref || (!buttonTo ? appRoutes.signup : undefined)
+  const actionUnavailable = !resolvedHref && !buttonTo
 
   return (
     <section className="py-24 px-6">
@@ -25,8 +26,8 @@ export default function CTASection({
             {subtitle}
           </p>
           <div className="relative z-10 flex justify-center gap-4 flex-wrap">
-            <ButtonPrimary size="lg" to={buttonTo} href={resolvedHref}>
-              {buttonText} <span>&rarr;</span>
+            <ButtonPrimary size="lg" to={buttonTo} href={resolvedHref} disabled={actionUnavailable}>
+              {actionUnavailable ? buttonText + ' — temporarily unavailable' : buttonText} <span>&rarr;</span>
             </ButtonPrimary>
             {showDemo && (
               <ButtonOutline size="lg" to="/fully-managed">How Fully Managed Works</ButtonOutline>

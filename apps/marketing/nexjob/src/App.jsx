@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { APP_ACCESS_AVAILABLE } from './config'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -31,6 +32,11 @@ export default function App() {
     <div className="min-h-screen bg-nx-bg text-nx-text">
       <ScrollToTop />
       <Navbar />
+      {!APP_ACCESS_AVAILABLE && (
+        <div role="status" aria-live="polite" className="fixed top-16 left-0 right-0 z-40 border-b border-amber-300/20 bg-amber-950/95 px-4 py-2 text-center text-xs text-amber-100 sm:text-sm">
+          Review preview only. Marketing copy, capability statements and figures are unverified; no live service is represented. Login and sign-up are unavailable.
+        </div>
+      )}
       <Routes>
         <Route path="/" element={<><PageMeta /><Home /></>} />
         <Route path="/your-zero" element={<><PageMeta title="Your Zero" description="Meet Your Zero: your personal digital working intelligence that learns you, your role and authorised context while coordinating specialist capabilities under governed human authority." /><YourZero /></>} />
