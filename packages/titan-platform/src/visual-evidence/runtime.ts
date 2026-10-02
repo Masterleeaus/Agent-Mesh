@@ -73,6 +73,6 @@ export async function prepareVisitCloseoutVisualAssurance(i:{request:TitanVisual
  const guidance=createCaptureGuidance({checklist:i.checklist,company_id:i.request.company_id,subject_id:i.request.subject_id,captured:i.captured,offline:!i.online});
  const comparison=pairBeforeAfter(i.before,i.after,i.request.company_id);
  const result=await analyzeVisualEvidence({...i.request,offline:i.request.offline||!i.online},i.provider,{source_revision_now:i.source_revision_now});
- const proposal=createVisualProposal({company_id:i.request.company_id,kind:"COMPLETION_ASSURANCE",result,evidence_refs:comparison?[comparison.before_ref,comparison.after_ref]:[],source_revision:i.source_revision_now});
+ const proposal=createVisualProposal({company_id:i.request.company_id,kind:"COMPLETION_ASSURANCE",result,evidence_refs:[comparison.before_ref,comparison.after_ref],source_revision:i.request.source_revision});
  return{guidance,comparison,result,proposal,review_required:guidance.quality!=="READY"||result.review_state==="HUMAN_REVIEW"||result.uncertainty==="HIGH"||result.uncertainty==="UNAVAILABLE",completion_asserted:false as const,authority_effect:false as const,mutation_requires_governed_execution:true as const};
 }
