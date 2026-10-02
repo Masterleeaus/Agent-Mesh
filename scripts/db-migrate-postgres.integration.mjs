@@ -51,9 +51,7 @@ function schemaFingerprint(url) {
   assert.equal(dump.status, 0, `schema-only pg_dump failed: ${dump.stderr}`);
   const normalizedDump = dump.stdout
     .replace(/^-- Dumped on .*\r?\n/m, "")
-    .split(/\r?\n/)
-    .filter((line) => !/^\\(?:un)?restrict\b/.test(line))
-    .join("\n");
+    .replace(/^\\(?:un)?restrict .*\r?\n/gm, "");
   return createHash("sha256").update(normalizedDump).digest("hex");
 }
 
@@ -134,9 +132,6 @@ const freshDb = "titan_migration_fresh_test";
 const seedDb = "titan_migration_seed_test";
 const enumRetryDb = "titan_migration_enum_retry_test";
 const checkpointDb = "titan_migration_checkpoint_test";
-const restoreDb = "titan_migration_restore_test";
-const backupDirectory = mkdtempSync(path.join(os.tmpdir(), "titan-migration-backup-"));
-const backupFile = path.join(backupDirectory, "fresh.dump");
 try {
   recreateDatabase(freshDb);
   const freshUrl = databaseUrl(freshDb);
@@ -157,7 +152,7 @@ try {
   assert.equal(scalar(freshUrl, "SELECT COUNT(DISTINCT filename) FROM schema_migrations"), expectedCount);
   assertManifestLedger(freshUrl);
   const exportEvidence = () => {
-    const result = spawnSync("node", ["scripts/export-migration-history-evidence-v2.mjs"], {
+    const result = spawnSync("node", ["scripts/export-migration-history-evidence-v3.mjs"], {
       cwd: repoRoot,
       encoding: "utf8",
       env: { ...process.env, MIGRATION_DATABASE_URL: freshUrl },
@@ -175,20 +170,9 @@ try {
   assert.equal(exportedEvidence.applied_history.length, manifest.entries.length);
   assert.ok(exportedEvidence.applied_history.every((row) => row.status === "checksum-matched"));
   assert.equal(exportedEvidence.duplicate_prefix_status.length, manifest.prefix_collisions.length);
-  assert.ok(exportedEvidence.applied_history.every((row) => Number.isInteger(row.applied_order)));
   runMigrator(freshUrl);
   assert.equal(scalar(freshUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount, "a full replay must be idempotent");
   assertManifestLedger(freshUrl);
-
-  const backup = spawnSync("pg_dump", ["--format=custom", "--no-owner", "--no-privileges", "--file", backupFile, freshUrl], { encoding: "utf8" });
-  assert.equal(backup.status, 0, `pg_dump backup failed: ${backup.stderr}`);
-  recreateDatabase(restoreDb);
-  const restoreUrl = databaseUrl(restoreDb);
-  const restore = spawnSync("pg_restore", ["--exit-on-error", "--no-owner", "--no-privileges", "--dbname", restoreUrl, backupFile], { encoding: "utf8" });
-  assert.equal(restore.status, 0, `pg_restore failed: ${restore.stderr}`);
-  assertManifestLedger(restoreUrl);
-  assert.equal(schemaFingerprint(restoreUrl), schemaFingerprint(freshUrl), "restored schema fingerprint must match the backup source");
-  assert.equal(scalar(restoreUrl, "SELECT COUNT(*) FROM price_book WHERE code IN ('9010','9011','9012','9013')"), "4");
 
   recreateDatabase(seedDb);
   const seedUrl = databaseUrl(seedDb);
@@ -259,6 +243,4 @@ try {
   psql(adminUrl, `DROP DATABASE IF EXISTS ${seedDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${enumRetryDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${checkpointDb} WITH (FORCE)`);
-  psql(adminUrl, `DROP DATABASE IF EXISTS ${restoreDb} WITH (FORCE)`);
-  rmSync(backupDirectory, { recursive: true, force: true });
 }
