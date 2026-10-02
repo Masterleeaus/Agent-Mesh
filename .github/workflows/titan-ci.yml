@@ -200,3 +200,16 @@ jobs:
           test/titan/mobile_session_context_test.dart
           test/titan/scoped_offline_queue_test.dart
           test/titan_conversation_gateway_test.dart
+      - name: Run full mobile analysis and test suite
+        working-directory: apps/mobile
+        shell: bash
+        run: |
+          set +e
+          flutter analyze
+          ANALYZE_STATUS=$?
+          flutter test
+          TEST_STATUS=$?
+          if [ "$ANALYZE_STATUS" -ne 0 ] || [ "$TEST_STATUS" -ne 0 ]; then
+            echo "Flutter analysis exit: $ANALYZE_STATUS; full test exit: $TEST_STATUS"
+            exit 1
+          fi
