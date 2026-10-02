@@ -68,12 +68,24 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
     const staging = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-portfolio-"));
     try {
       for (const entry of plugin.files) copyValidated(source, staging, entry);
-      const archive = path.join(output, `${plugin.id}.tar.gz`);
-      const tar = spawnSync("tar", ["--sort=name", "--mtime=@0", "--owner=0", "--group=0", "--numeric-owner", "-czf", archive, "-C", staging, ...plugin.files], { encoding: "utf8" });
+      const archive = path.join(output, `${plugin.id}\.tar.gz`);
+      const candidate = path.join(os.tmpdir(), `titan-da-${plugin.id}-${process.pid}-${Date.now()}\.tar.gz`);
+      const tar = spawnSync("tar", ["--sort=name", "--mtime=@0", "--owner=0", "--group=0", "--numeric-owner", "-czf", candidate, "-C", staging, ...plugin.files], { encoding: "utf8" });
       if (tar.error || tar.status !== 0) throw tar.error ?? new Error(tar.stderr || `tar failed for ${plugin.id}`);
-      validateArchive(archive, plugin);
-      const bytes = fs.readFileSync(archive);
-      artifacts.push({ plugin_id: plugin.id, version: manifest.version ?? "unknown", archive, sha256: createHash("sha256").update(bytes).digest("hex"), source: plugin.source });
+      try {
+        validateArchive(candidate, plugin);
+        const bytes = fs.readFileSync(candidate);
+        const sha256 = createHash("sha256").update(bytes).digest("hex");
+        if (fs.existsSync(archive)) {
+          const existingHash = createHash("sha256").update(fs.readFileSync(archive)).digest("hex");
+          if (existingHash !== sha256) throw new Error(`${plugin.id}: refusing to overwrite existing archive with different contents: ${archive}`);
+        } else {
+          fs.copyFileSync(candidate, archive, fs.constants.COPYFILE_EXCL);
+        }
+        artifacts.push({ plugin_id: plugin.id, version: manifest.version ?? "unknown", archive, sha256, source: plugin.source });
+      } finally {
+        fs.rmSync(candidate, { force: true });
+      }
     } finally { fs.rmSync(staging, { recursive: true, force: true }); }
   }
   const provenance = { schema: "titan.directadmin.portfolio/v1", generated_at: "1970-01-01T00:00:00.000Z", artifacts: artifacts.map(({ archive, ...artifact }) => artifact) };
