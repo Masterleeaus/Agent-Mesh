@@ -25,7 +25,7 @@ void main() {
     final screen = TitanCaptureScreen(
       jobId: 'job-1',
       gateway: _CaptureGateway(),
-      onVisualEvidenceQueued: (item) async => offered = item,
+      onVisualEvidenceQueued: (item) async { offered = item; },
     );
 
     await tester.pumpWidget(MaterialApp(home: screen));
