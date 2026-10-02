@@ -61,6 +61,7 @@ export class SqliteWorkforceStore implements WorkforceStore, WorkforceWorkerStor
    if(changed.rowCount!==1)throw new Error("work-reassignment-conflict");
    const event:WorkforceEvent={company_id,type:"work.reassigned",work_id,at,actor,data:{actor_id:actor,manager_worker_id:manager,from_assignee:row.assignee,target_worker_id:target,reason,operation_id:operation}};
    await tx.query(`INSERT INTO workforce_events(company_id,work_id,type,at,actor,payload) VALUES($1,$2,$3,$4,$5,$6)`,[company_id,work_id,event.type,at,actor,JSON.stringify(event.data)]);
+   input.signal?.throwIfAborted();
    return updated;
   });
  }

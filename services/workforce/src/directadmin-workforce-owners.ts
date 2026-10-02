@@ -65,6 +65,8 @@ export type DirectAdminGatewayFactory = (owners: DirectAdminGatewayOwners) => Di
 export type DirectAdminWorkforceRuntime = Readonly<{
   storage: StorageClient;
   verifyWorkforceZeroSession(credential: string, context: WorkforceZeroBridgeContext): Promise<void>;
+  withWorkforceZeroSessionFence<T>(credential: string, context: WorkforceZeroBridgeContext,
+    options: { signal?: AbortSignal } | undefined, effect: (signal: AbortSignal) => Promise<T> | T): Promise<T>;
   workforceStore: WorkforceStore & WorkforceWorkerStore & Pick<SqliteWorkforceStore,
     "findHumanByIdentityRef" | "reassignReady" | "appendAcceptedEvidenceRef">;
   runStore: { findByWork(company_id: string, work_id: string): Promise<unknown> };
@@ -250,6 +252,7 @@ function withOperationLock<T>(locks: Map<string, Promise<void>>, key: string, ac
 export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRuntime): DirectAdminGatewayOwners {
   if (!runtime?.storage?.query || !runtime.storage.transaction ||
       typeof runtime.verifyWorkforceZeroSession !== "function" ||
+      typeof runtime.withWorkforceZeroSessionFence !== "function" ||
       typeof runtime.workforceStore?.findHumanByIdentityRef !== "function" ||
       typeof runtime.workforceStore?.reassignReady !== "function" ||
       typeof runtime.workforceStore?.appendAcceptedEvidenceRef !== "function" ||
@@ -356,7 +359,7 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
         if (!currentManager || currentManager.worker_id !== active.manager.worker_id) throw new Error("directadmin-workforce-human-binding-changed");
         const args = request.input;
         const expectedAssignee = args.expected_assignee_id === null ? null : args.expected_assignee_id;
-        await runtime.workforceStore.reassignReady({
+        await active.withSessionFence(request.signal, (signal: AbortSignal) => runtime.workforceStore.reassignReady({
           company_id: request.company_id,
           work_id: request.work_id,
           expected_assignee: expectedAssignee,
@@ -366,9 +369,9 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
           reason: args.reason,
           operation_id: args.operation_id,
           at: new Date().toISOString(),
-          signal: request.signal,
+          signal,
           async authorizeCurrent(tx: any) {
-            request.signal?.throwIfAborted();
+            signal.throwIfAborted();
             const bound = await tx.query(
               "SELECT payload FROM workforce_workers WHERE company_id=$1 AND worker_id=$2 AND kind='human' AND active=1 AND json_extract(payload,'$.human_identity_ref')=$3",
               [request.company_id, currentManager.worker_id, current.actor_id],
@@ -401,7 +404,7 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
               now,
             });
           },
-        });
+        }));
         return Object.freeze({ external_ref: `work:${request.work_id}`, result: Object.freeze({
           company_id: request.company_id, work_id: request.work_id,
           from_assignee_id: expectedAssignee, target_worker_id: args.target_worker_id,
@@ -551,7 +554,9 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
           operation_id: intent.operation_id,
           correlation_id: intent.correlation_id,
         });
-        const active = { context: current, child_context: childContext, revalidate, manager, target_worker_id: target.worker_id, intent, work: item, run };
+        const active = { context: current, child_context: childContext, revalidate, manager, target_worker_id: target.worker_id, intent, work: item, run,
+          withSessionFence: (signal: AbortSignal | undefined, effect: (signal: AbortSignal) => Promise<unknown> | unknown) =>
+            runtime.withWorkforceZeroSessionFence(credential, childContext, signal ? { signal } : undefined, effect) };
         inflight.set(executionId, active);
         try {
           const prior = await authority.authorityStore.latestDecisionForBinding({

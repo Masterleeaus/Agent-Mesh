@@ -78,7 +78,13 @@ async function hostedFixture(path = ":memory:") {
     async complete() { throw new Error("unexpected-work-order-completion-during-reassignment-test"); },
     async read() { throw new Error("unexpected-work-order-read-during-reassignment-test"); },
   } });
-  const verifiedRuntime = { ...runtime, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession };
+  const verifiedRuntime = { ...runtime, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession,
+    async withWorkforceZeroSessionFence(_credential: string, _child: WorkforceZeroBridgeContext,
+      options: { signal?: AbortSignal } | undefined, effect: (signal: AbortSignal) => Promise<unknown> | unknown) {
+      const signal = options?.signal ?? new AbortController().signal;
+      signal.throwIfAborted();
+      return effect(signal);
+    } };
   return { storage, runtime: verifiedRuntime, owners: createDirectAdminWorkforceOwners(verifiedRuntime) };
 }
 
@@ -88,6 +94,13 @@ async function verifyDisposableWorkforceZeroSession(credential: string, child: W
       child.company_ids[0] !== child.company_id || !Number.isFinite(child.expires_at) || child.expires_at <= Date.now()) {
     throw new Error("runtime-authentication-required");
   }
+}
+
+async function withDisposableWorkforceFence<T>(_credential: string, _child: WorkforceZeroBridgeContext,
+  options: { signal?: AbortSignal } | undefined, effect: (signal: AbortSignal) => Promise<T> | T): Promise<T> {
+  const signal = options?.signal ?? new AbortController().signal;
+  signal.throwIfAborted();
+  return effect(signal);
 }
 
 function withDisposableWorkforceSession(context: DirectAdminBridgeContext,
@@ -169,6 +182,7 @@ test("DirectAdmin projection reads canonical company-filtered workers, work, run
     await runs.create({ company_id: "company-b", run_id: "run-b", state: "COMPLETED", conversation_id: "conversation-b", agent_id: "worker-b", work_id: "work-b", updated_at: now });
 
     const projection = await createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession,
+      withWorkforceZeroSessionFence: withDisposableWorkforceFence,
       workforceStore: workforce, runStore: runs }).projection("titan_workforce", context);
     const data = projection.data as any;
     assert.equal(projection.company_id, "company-a");
@@ -194,7 +208,8 @@ test("DirectAdmin lifecycle proposals are denied without writes, events, receipt
     const runs = new SqliteRunStore(storage);
     await workforce.migrate(); await runs.migrate();
     await workforce.put(work("company-a", "work-a", []));
-    const owners = createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession, workforceStore: workforce, runStore: runs });
+    const owners = createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession,
+      withWorkforceZeroSessionFence: withDisposableWorkforceFence, workforceStore: workforce, runStore: runs });
     const before = await workforce.get("company-a", "work-a");
     const beforeEvents = await storage.query("SELECT event_seq FROM workforce_events");
     for (const action of ["pause", "resume", "cancel", "reassign", "escalate", "revoke"]) {
