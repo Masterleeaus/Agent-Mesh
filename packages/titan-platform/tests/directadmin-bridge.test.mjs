@@ -161,6 +161,54 @@ test('bootstrap revokes an issued session if the trusted HTML CSRF nonce differs
   assert.equal(row?.revoked, 1);
 });
 
+test('bootstrap reauthentication outage returns no credential and leaves only a short-lived orphan session', async t => {
+  const f = await fixture(t);
+  const jti = 'bootstrap-reauth-outage';
+  const login_assertion = await f.loginFor(external.provider, jti);
+  let issuedCredential;
+  let issueCalls = 0;
+  let authenticateCalls = 0;
+  const sessions = {
+    ...f.sessions,
+    issue: async (...args) => {
+      issueCalls++;
+      const issued = await f.sessions.issue(...args);
+      issuedCredential = issued.credential;
+      return issued;
+    },
+    authenticate: async () => {
+      authenticateCalls++;
+      throw new Error('identity-registry-unavailable');
+    },
+  };
+  const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, audience: expected.audience, node_id: 'node-1', sessions });
+  let failure;
+  await assert.rejects(bridge.bootstrapBrowserSession(
+    f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: { cookie: null } }),
+    { login_assertion, company_id: 'company-a', device_id: 'device-1', csrf_token: csrf }), error => {
+    failure = error;
+    return directAdminBridgeFailureKind(error) === 'unavailable';
+  });
+  assert.equal(issueCalls, 1);
+  assert.equal(authenticateCalls, 1);
+  assert.equal(failure.message, 'directadmin-service-unavailable');
+  assert.equal(failure.message.includes(login_assertion), false);
+  assert.equal(failure.message.includes(issuedCredential), false);
+
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify([external.provider, jti]))));
+  const session_id = `auth-${[...digest].map(byte => byte.toString(16).padStart(2, '0')).join('')}`;
+  const row = (await f.storage.query('SELECT * FROM titan_security_sessions WHERE session_id=$1', [session_id])).rows[0];
+  assert.ok(row);
+  assert.equal(row.revoked, 0);
+  assert.ok(Date.parse(row.expires_at) > f.now);
+  assert.ok(Date.parse(row.expires_at) <= f.now + 300_000);
+  assert.equal(JSON.stringify(row).includes(login_assertion), false);
+  assert.equal(JSON.stringify(row).includes(issuedCredential), false);
+  // #302 consumed the one-time assertion at issue; after recovery only a fresh
+  // assertion may start another browser session.
+  await assert.rejects(f.sessions.issue(login_assertion, { company_id: 'company-a', device_id: 'device-1' }), /authentication-denied/);
+});
+
 test('gateway preserves canonical intent correlation and only reports REQUESTED', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', post(intentBody(f))));
