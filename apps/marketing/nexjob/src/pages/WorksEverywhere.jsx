@@ -4,10 +4,10 @@ import { getAvailability } from '../data/verticalCatalogue'
 
 const surfaces = [
   { id: 'mobile-app', name: 'Mobile app', offer: 'nativeMobile' },
-  { id: 'pwa', name: 'Titan Zero PWA', offer: 'pwa' },
-  { id: 'chrome', name: 'Per-vertical Chrome extension', offer: 'chromeVerticalExtension' },
-  { id: 'wordpress', name: 'Per-vertical WordPress plugins', offer: 'wordpressVerticalPlugin' },
-  { id: 'chatgpt', name: 'ChatGPT', offer: 'chatGptApp' },
+  { id: 'pwa', name: 'PWA', offer: 'pwa' },
+  { id: 'chrome', name: 'Cleaning Chrome extension', offer: 'chromeVerticalExtension' },
+  { id: 'wordpress', name: 'Cleaning WordPress plugin', offer: 'wordpressVerticalPlugin' },
+  { id: 'chatgpt', name: 'ChatGPT integration', offer: 'chatGptApp' },
   { id: 'whatsapp', name: 'WhatsApp', offer: 'whatsappWorkChannel' },
   { id: 'telegram', name: 'Telegram', offer: 'telegramWorkChannel' },
   { id: 'messenger', name: 'Facebook Messenger', offer: 'facebookMessengerWorkChannel' },
@@ -19,11 +19,11 @@ function Status({ value }) {
 
 export default function WorksEverywhere() {
   return <>
-    <PageMeta title="Works Everywhere" description="See the current release state of Titan Zero mobile, PWA, browser, WordPress, ChatGPT and messaging work surfaces." />
+    <PageMeta title="Works Everywhere for Cleaning Teams" description="Check the evidence-based release state for Titan Zero Cleaning on mobile, PWA, Chrome, WordPress, ChatGPT, WhatsApp, Telegram and Facebook Messenger." />
     <main>
-      <section className="pt-32 pb-14 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Works Everywhere</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Work surfaces, with their release state shown.</h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Titan Zero is designed to connect work across web, mobile, browser extensions, plugins and communication channels. Statuses below reflect source and release evidence; no store installation, production deployment or live connection is implied.</p></div></section>
+      <section className="pt-32 pb-14 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Works Everywhere</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Use Titan Zero where cleaning work happens.</h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Owners and staff are intended to work with the Cleaning system through supported apps, browser tools and communication channels. This page shows the current state of each surface. Source code is not the same as an installable or published product.</p></div></section>
       <section className="px-6 pb-16"><div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-5">{surfaces.map(({ id, name, offer: offerId }) => { const offer = getAvailability(offerId); return <article id={id} key={id} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><div className="flex flex-wrap items-center justify-between gap-3 mb-4"><h2 className="text-xl font-bold">{name}</h2><Status value={offer.label} /></div><p className="text-sm text-nx-muted leading-relaxed">{offer.explanation}</p></article> })}</div></section>
-      <section id="channels" className="px-6 pb-20"><div className="max-w-6xl mx-auto rounded-2xl border border-nx-border bg-nx-surface p-8"><SectionLabel>Work and communication channels</SectionLabel><h2 className="text-2xl font-bold mb-3">Designed around the person doing the work.</h2><p className="text-sm text-nx-muted leading-relaxed">Channel workflows are intended to support authorised owner, staff and customer work where appropriate. Role coverage and channel release remain subject to implementation and verification; no unsupported channel is presented as live.</p></div></section>
+      <section id="channels" className="px-6 pb-20"><div className="max-w-6xl mx-auto border-t border-nx-border pt-7"><SectionLabel>Business channels</SectionLabel><h2 className="text-2xl font-bold mb-3">For owners and the people doing the cleaning work.</h2><p className="text-sm text-nx-muted leading-relaxed max-w-3xl">The intended channel workflows cover owners running the business and staff coordinating work. Customer-facing communication is a separate workflow. WhatsApp, Telegram and Facebook Messenger are currently planned integrations; they are not live ways to operate a business in this review build.</p></div></section>
     </main>
   </>
 }
