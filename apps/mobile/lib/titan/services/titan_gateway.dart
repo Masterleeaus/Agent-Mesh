@@ -4,6 +4,7 @@ import '../models/titan_command.dart';
 import '../generative/demo_engine.dart';
 import 'offline_command_queue.dart';
 import 'hosted_conversation_transport.dart';
+import '../core/mobile_audience_guard.dart';
 
 /// Authority-neutral mobile boundary mirroring the canonical TypeScript
 /// Surface SDK. Production transports obtain projections and receipts from
@@ -64,6 +65,8 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if (projection['actor_id'] != session.actorId) {
       throw StateError('surface-projection-actor-mismatch');
     }
+    const MobileAudienceGuard().validate(
+      surface: session.surface, actorId: session.actorId, projection: projection);
     if ((projection['revision']?.toString().trim().isEmpty ?? true)) {
       throw StateError('surface-projection-revision-required');
     }
@@ -113,7 +116,9 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if (hostedConversationTransport != null) return hostedConversationTransport!.send(message);
     final text = message.trim();
     if (text.isEmpty) throw ArgumentError.value(message, 'message', 'message-required');
-    if (text.length > 20_000) throw ArgumentError.value(message, 'message', 'message-too-large');
+    if (text.length.compareTo(20000) == 1) {
+      throw ArgumentError.value(message, 'message', 'message-too-large');
+    }
     final conversation = conversationTransport;
     if (conversation == null) throw StateError('production-conversation-transport-required');
 
