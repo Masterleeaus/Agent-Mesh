@@ -240,6 +240,7 @@ $common=[
  'USERNAME'=>$account['name'],
  'USER'=>$account['name'],
  'HOME'=>$homeA,
+ 'SERVER_NAME'=>'panel.example.test',
  'CONTENT_TYPE'=>'application/x-www-form-urlencoded'
 ];
 foreach(['LD_LIBRARY_PATH','PHP_INI_SCAN_DIR','TMPDIR','LD_PRELOAD','NSS_WRAPPER_PASSWD','NSS_WRAPPER_GROUP'] as $name){$value=getenv($name);if($value!==false)$common[$name]=$value;}
@@ -249,6 +250,34 @@ $adminGet=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes['admin'],'QUER
 $token=integration_token($adminHtml);
 integration_expect(strpos($adminHtml,'operator actions enabled')!==false,'admin route must expose operator mode');
 integration_expect(substr_count($adminHtml,'action="?pipe_post=yes"')===2,'rendered admin run/add-key forms must request DirectAdmin stdin POST transport');
+integration_expect(strpos($adminHtml,'Connect Codex to this server')!==false,'admin route must render the guided workstation connection section');
+integration_expect(strpos($adminHtml,'name="add_key"')!==false&&strpos($adminHtml,'Install public key')!==false,'admin route must retain explicit public-key management');
+integration_expect(strpos($adminHtml,'private key')!==false&&strpos($adminHtml,'icacls')!==false,'admin route must explain local Windows key access without requesting private-key contents');
+
+$connectionEnvironment=$common+[
+ 'REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes['admin'],'QUERY_STRING'=>'',
+ 'SERVER_NAME'=>'panel.example.test',
+ 'TITAN_DEV_ACCESS_SSH_HOST'=>'ssh.example.test',
+ 'TITAN_DEV_ACCESS_SSH_PORT'=>'2222'
+];
+[$connectionHtml]=integration_run_role($root,'admin',$connectionEnvironment);
+$expectedConnection='ssh -p 2222 '.$account['name'].'@ssh.example.test';
+integration_expect(strpos($connectionHtml,$expectedConnection)!==false,'actual admin CLI role entrypoint must render the configured SSH endpoint and effective DirectAdmin username');
+integration_expect(strpos($connectionHtml,'Host source</b><br>configured')!==false&&strpos($connectionHtml,'Port source</b><br>configured')!==false,'configured SSH endpoint sources must be identified in the role UI');
+integration_expect(strpos($connectionHtml,'value="ssh.example.test"')!==false&&strpos($connectionHtml,'value="2222"')!==false,'the client-side endpoint fields must reflect validated server settings');
+integration_expect(strpos($connectionHtml,'Permission denied (publickey)')!==false&&strpos($connectionHtml,'Load key: Permission denied')!==false,'the role UI must distinguish local key loading from server public-key rejection');
+integration_expect(strpos($connectionHtml,'name="tda-ssh-host"')===false&&strpos($connectionHtml,'name="tda-ssh-port"')===false,'client-only SSH endpoint fields must not submit or persist host overrides');
+
+$invalidConnectionEnvironment=$common+[
+ 'REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes['admin'],'QUERY_STRING'=>'',
+ 'SERVER_NAME'=>'panel.example.test',
+ 'TITAN_DEV_ACCESS_SSH_HOST'=>'ssh.example.test;touch /tmp/unsafe',
+ 'TITAN_DEV_ACCESS_SSH_PORT'=>'2222'
+];
+[$invalidConnectionHtml]=integration_run_role($root,'admin',$invalidConnectionEnvironment);
+integration_expect(strpos($invalidConnectionHtml,'touch /tmp/unsafe')===false,'invalid configured SSH host must not be reflected into the page or command');
+integration_expect(strpos($invalidConnectionHtml,'ssh -p 2222 '.$account['name'].'@ssh.example.test')===false,'invalid configured SSH host must not create a shell-like connection command');
+integration_expect(strpos($invalidConnectionHtml,'Enter a valid SSH host and port to build the command.')!==false,'invalid configured SSH host must leave the command unavailable');
 
 foreach(['reseller','user'] as $role){
  $environment=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>''];
@@ -257,6 +286,9 @@ foreach(['reseller','user'] as $role){
  integration_expect(strpos($html,'read-only')!==false,$role.' page must advertise read-only policy');
  integration_expect(strpos($html,'name="run"')===false,$role.' page must not render terminal action');
  integration_expect(strpos($html,'name="add_key"')===false,$role.' page must not render SSH mutation action');
+ integration_expect(strpos($html,'Connect Codex to this server')!==false,$role.' read-only route must render the connection guide');
+ integration_expect(strpos($html,'Admin role required to inspect fingerprints')!==false,$role.' route must not inspect or expose another role public-key fingerprints');
+ integration_expect(strpos($html,'ssh -p 22 '.$account['name'].'@')!==false,$role.' route may show only this process account and default SSH port');
 }
 
 $fields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
@@ -770,4 +802,3 @@ foreach(['admin','reseller','user'] as $role){
 integration_stop_web_server($webServer);
 
 echo "DirectAdmin role request integration tests passed (actual admin CLI environment/POST/stdin transports including bounded raw-NUL framing; strict malformed/ambiguous/UTF-8/CSRF/role/HOME and command-policy cases; reseller/user read-only behavior and clean archive checks).".PHP_EOL;
-

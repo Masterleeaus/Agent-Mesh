@@ -38,9 +38,11 @@ The CSRF key is secret material. The SSH authorization file grants access even t
 
 ## Current compatibility limits
 
-- Installed Titan Dev Access 1.1.3 has a reproduced invalid-CSRF response on a harmless `pwd` form submission and is not an operationally validated rollback.
+- The earlier installed Titan Dev Access 1.1.3 produced a reproduced invalid-CSRF response on a harmless `pwd` form submission and is not an operationally validated rollback. The latest live UI observation recorded 2026-10-02 is installed v1.3.6; harmless same-page `pwd` and `id` forms completed as Unix `admin`, UID 1000. This does not certify other forms, roles, updates or rollback.
+- On the user's Windows workstation, OpenSSH reports `Load key: Permission denied` while using the local `titan` alias. That message indicates local private-key file access failed before server authentication; it does not show a server-side public-key rejection. No private key, ACL, server `authorized_keys`, or server configuration was inspected or changed. End-to-end SSH login remains unverified.
+- Source version 1.3.8 adds guided SSH endpoint display, copyable client command, admin-only public-key guidance, and local-only single-line SSH error classification. It is a review candidate only until the exact-head hosted PHP/security/archive workflow and independent security review pass. Do not upload or install it.
 - v1.3.1 is retained as an artifact reference; downgrade behavior has not been tested.
 - v1.3.2 is a historical, checksum-verified artifact only; v1.3.3 is an unsafe prior candidate with confirmed synthetic validation gaps. Neither is a current install choice or a proven rollback.
-- v1.3.4 is the source security candidate for strict SSH-key and HOME-bound Git fixes. Its package hash and review status must be filled from exact-head hosted PHP/package and independent review evidence before use; it has not been tested on DirectAdmin.
+- v1.3.7 is a prior review-only source/package candidate with exact-head PHP/package/archive evidence recorded on issue #1048; it has not been installed. Its compatibility with live v1.3.6 is unverified.
 - No supported in-place update path or live rollback has been demonstrated. Treat recovery as unproven until the disposable-host sequence passes.
 - This document contains no secret values and does not authorize any server-side action.
