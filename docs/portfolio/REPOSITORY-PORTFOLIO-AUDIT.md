@@ -114,7 +114,7 @@ Current tree scans confirm the two cleaned Titan BOS source repositories retain 
 | `cleanhub2` | Private, default branch contains README and Git attributes/ignore files only. | **Deletion candidate** if no unique branches/settings/references need preservation. |
 | `Worksuite-Saas---Project-Management-System_Laravel` | Public, large imported third-party application; exposed env file removed from current branch, but source provenance/license and history remain to review. | **Archive/deletion review candidate; weak as original portfolio evidence.** Preserve attribution and license during review. |
 | `Delivery-Management-Platform` | Public, distinct Laravel application with upstream authorship noted in README; small compared with main platform. | Keep only as a clearly attributed source/provenance archive if useful; otherwise mark for archival review. |
-| `cleanly` | Private and substantial; different recursive tree from `modules`; still carries the duplicated Titan BOS README rather than a repository-specific description. | Not a duplicate finding. Keep private pending an accurate content-specific README and purpose decision. |
+| `cleanly` | Private and substantial; different recursive tree from `modules`; now has a repository-specific workspace README and banner. | Not a duplicate. Keep private pending provenance, security, test, and product-boundary review. |
 | `Titancore`, `Titanzero` | Substantial legacy code trees with unclear relationship to the current workforce product. | Lineage/license/build review before presenting; archive only if unique code/docs are retained elsewhere or clearly labeled. |
 
 No repositories were deleted or archived. The table marks candidates for the owner's later disposition decision.
@@ -161,3 +161,12 @@ A repository-by-repository naming map with proposed GitHub slugs, README titles,
 - Corrected `cleanhub` to describe its current state: one status README, no app source or release artifact.
 - Added explicit attribution notes to `ForgeMesh` and `TitanPro`: checked-in package/license metadata identifies third-party copyright/provenance that must be preserved and reviewed before claiming original authorship. The `workcore-extensions` repository has no root license file, now called out before public release.
 - These changes improve README accuracy only. They do not verify functional completeness, licenses beyond the checked-in notices, or runtime behavior.
+
+
+
+### README follow-up — 2026-10-02
+
+- Updated `modules` to remove a stale claim that a populated `.env.development` remains tracked. The current default-branch tree contains sanitized `.env.example` and `.env.development.template` files, with no tracked `.env.development`. Historical exposure and credential rotation/history review remain separate outstanding security work.
+- Qualified Titan BOS feature descriptions as product direction, removed unsupported public pricing and savings figures, and replaced absolute service promises with design goals. Corrected the repository structure label and removed a stale hard-coded branch instruction.
+- Added setup/validation guidance to `ForgeMesh`, `Climate-crew`, and `Commerce-Crew`, including maturity/integration caveats. No application builds, scientific workflows, or test suites were run during this documentation pass.
+- The current `cleanly` README is repository-specific; earlier README duplication with `modules` has been resolved. The repos have distinct trees, so this is not a duplicate-repository finding.
