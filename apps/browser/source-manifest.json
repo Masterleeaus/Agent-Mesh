@@ -3630,7 +3630,7 @@
     },
     {
       "path": "tests/test-deployment-workforce-full-console.js",
-      "bytes": 2164,
+      "bytes": null,
       "sha256": "02bf464f742d9504af1bd3655393cda43edabe7d59679eee29b3b933b560f584"
     },
     {
