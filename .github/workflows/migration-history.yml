@@ -11,6 +11,7 @@ on:
       - 'scripts/db-migrate-postgres.integration.mjs'
       - 'scripts/export-migration-history-evidence.mjs'
       - 'scripts/export-migration-history-evidence-v2.mjs'
+      - 'scripts/export-migration-history-evidence-v3.mjs'
       - 'db/MIGRATION-OWNERSHIP.md'
       - '.github/workflows/migration-history.yml'
   workflow_dispatch:
