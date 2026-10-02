@@ -1,8 +1,8 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
-  directAdminBridgeFailureKind, matchesDirectAdminContextRevision, type DirectAdminBootstrapInput,
-  type DirectAdminBootstrapRequestProof,
+  directAdminBridgeFailureKind, matchesDirectAdminContextRevision,
   type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
+import type { DirectAdminLoginAssertionProvider } from './security-boundary.js';
 
 export type DirectAdminPluginId = 'titan_zero' | 'titan_workforce' | 'titan_operations' | 'titan_web';
 export type DirectAdminProjection = Readonly<{
@@ -35,15 +35,10 @@ export type DirectAdminGatewayOwners = Readonly<{
     withWorkforceZeroSession: WithWorkforceZeroSession,
     control?: Readonly<{ signal?: AbortSignal }>) => Promise<{ receipt_id: string }>;
 }>;
-/** Server-only #302 adapter port. It must authenticate DirectAdmin's actual
- * session proof, validate and consume the one-time bootstrap CSRF nonce, map
- * the currently selected DirectAdmin company to canonical company_id, and
- * return a short-lived signed login assertion plus the current device and a
- * fresh CSRF token. CGI usernames, browser identity fields and DA roles are
- * never authority. The SDK has no signer, nonce store or identity mapping. */
-export type DirectAdminBootstrapAssertionProvider = Readonly<{
-  provide: (proof: DirectAdminBootstrapRequestProof) => Promise<DirectAdminBootstrapInput>;
-}>;
+/** The canonical #302 assertion provider. Production composition should pass
+ * `createDirectAdminBootstrapFlow(...).provide`; the flow authenticates the
+ * DirectAdmin session and consumes the durable, identity-bound nonce. */
+export type DirectAdminBootstrapAssertionProvider = DirectAdminLoginAssertionProvider;
 const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
   status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
 });
@@ -150,12 +145,10 @@ export function createDirectAdminGateway(
     if (path === '/v1/directadmin/bootstrap') {
       if (request.method !== 'POST') return json(405, { error: 'method-not-allowed' });
       try {
-        const bootstrap = await bridge.bootstrapBrowserSession(request, async proof => {
-          if (!bootstrapProvider) throw new Error('directadmin-service-unavailable');
-          // The bridge's allowlisted proof envelope excludes caller identity,
-          // company, role and session headers, and request bodies.
-          return bootstrapProvider.provide(proof);
-        });
+        // The bridge's allowlisted proof envelope excludes caller identity,
+        // company, role and session headers, and request bodies. The provider
+        // type is the one exported by #302, not a second local contract.
+        const bootstrap = await bridge.bootstrapBrowserSession(request, bootstrapProvider);
         return json(200, { csrf_token: bootstrap.csrf_token }, bootstrap.set_cookie);
       } catch (error) { return bootstrapFailure(error); }
     }

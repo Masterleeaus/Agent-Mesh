@@ -39,14 +39,14 @@ const directBrowserFetch = (f, gateway) => {
   };
   return { fetcher, cookie: () => cookie };
 };
-const trustedBootstrapInput = input => async proof => {
+const trustedBootstrapInput = input => ({ provide: async proof => {
   assert.equal(proof.csrf_nonce, bootstrapNonce);
   assert.equal(proof.origin, ORIGIN);
   assert.equal(proof.cookie, null);
   assert.equal(proof.authorization, null);
   assert.deepEqual(Object.keys(proof).sort(), ['authorization', 'cookie', 'csrf_nonce', 'origin']);
   return input;
-};
+} });
 
 for (const role of ['admin', 'reseller', 'user']) test(`signed ${role} maps canonical actor and selected company only`, async t => {
   const f = await fixture(t);
@@ -158,6 +158,12 @@ test('trusted bootstrap exchanges a signed DirectAdmin assertion for only a sele
   assert.equal(authenticated.context.company_id, 'company-a');
   assert.deepEqual(authenticated.context.company_ids, ['company-a']);
   assert.equal(authenticated.context.authority, 'not-carried');
+});
+
+test('bootstrap fails closed when the canonical #302 assertion provider is not composed', async t => {
+  const f = await fixture(t);
+  await assert.rejects(f.bridge.bootstrapBrowserSession(bootstrapRequest(f), undefined), error =>
+    directAdminBridgeFailureKind(error) === 'unavailable');
 });
 
 test('bootstrap rejects cross-origin and extra caller identity before consuming the assertion', async t => {
