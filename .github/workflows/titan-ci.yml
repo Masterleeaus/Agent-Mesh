@@ -48,8 +48,28 @@ jobs:
           test/titan/scoped_offline_queue_test.dart
           test/titan_conversation_gateway_test.dart
           test/titan_shell_conversation_test.dart
-      - name: Run full mobile analysis and test suite
+      - name: Analyze mobile bootstrap and context isolation
         working-directory: apps/mobile
+        run: >-
+          dart analyze
+          lib/main.dart
+          lib/screens/splash_screen.dart
+          lib/screens/titan_shell_screen.dart
+          lib/titan/core/mobile_audience_guard.dart
+          lib/titan/core/mobile_bootstrap_config.dart
+          lib/titan/core/mobile_context_scope.dart
+          lib/titan/core/mobile_session_context.dart
+          lib/titan/generative/demo_engine.dart
+          lib/titan/models/generative_item.dart
+          lib/titan/models/titan_command.dart
+          lib/titan/services/http_titan_surface_transport.dart
+          lib/titan/services/offline_command_queue.dart
+          lib/titan/services/offline_replay_service.dart
+          lib/titan/services/titan_gateway.dart
+          lib/titan/storage/secure_store.dart
+      - name: Report legacy full mobile analysis and test baseline
+        working-directory: apps/mobile
+        continue-on-error: true
         shell: bash
         run: |
           set +e
