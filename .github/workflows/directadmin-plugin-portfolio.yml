@@ -1,0 +1,53 @@
+name: DirectAdmin plugin portfolio
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/directadmin/**"
+      - "scripts/package-directadmin-portfolio.*"
+      - "scripts/directadmin-dev-access-archive-integration.php"
+      - "scripts/test-directadmin-dev-access-archive.mjs"
+      - "scripts/test-directadmin-dev-access-candidate.mjs"
+      - ".github/workflows/directadmin-plugin-portfolio.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/directadmin/**"
+      - "scripts/package-directadmin-portfolio.*"
+      - "scripts/directadmin-dev-access-archive-integration.php"
+      - "scripts/test-directadmin-dev-access-archive.mjs"
+      - "scripts/test-directadmin-dev-access-candidate.mjs"
+      - ".github/workflows/directadmin-plugin-portfolio.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Test deterministic portfolio packaging
+        run: node --test scripts/package-directadmin-portfolio.test.mjs
+      - name: Build all enabled plugin archives and provenance
+        run: node scripts/package-directadmin-portfolio.mjs "$RUNNER_TEMP/directadmin-portfolio"
+      - name: Verify extracted archive identity, modes, and disposable lifecycle fixtures
+        run: node scripts/test-directadmin-dev-access-archive.mjs "$RUNNER_TEMP/directadmin-portfolio"
+      - name: Package and exercise the current #1048 source in isolation
+        run: node scripts/test-directadmin-dev-access-candidate.mjs
+      - name: Validate Server Node package contract
+        run: node scripts/validate-directadmin-plugin.mjs apps/directadmin/server-node
+      - name: Check lifecycle script syntax
+        run: bash -n apps/directadmin/server-node/*.sh apps/directadmin/server-node/scripts/*.sh apps/directadmin/dev-access/scripts/*.sh apps/directadmin/dev-access/tools/package.sh
+      - name: Publish checksummed plugin artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: directadmin-plugin-portfolio-${{ github.sha }}
+          path: ${{ runner.temp }}/directadmin-portfolio
+          if-no-files-found: error
+          retention-days: 14

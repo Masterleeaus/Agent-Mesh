@@ -1,0 +1,34 @@
+# Disposable PostgreSQL integration run — issue #1152
+
+Source checkout: agent/issue-1084 at 7a7f79097f99ef3f7bc6e1f68a312df4e545c268
+(tree `9dcc431a703ca9d0c0ea8b2f50650366e18348cc`). Run: 2026-10-02 04:28 UTC. Runtime: Node
+v22.23.3, pnpm 9.12.0, PostgreSQL 16.15 in disposable container
+`titan-1084-postgres`. `TEST_DATABASE_URL` referenced only that local disposable
+database; no live or company database was used. The test creates and drops its
+own random schema.
+
+Command:
+
+```sh
+pnpm --filter @titan-zero/web exec vitest run --config vitest.integration.config.ts 'app/api/portal/estimates/[token]/__tests__/response.integration.test.ts'
+```
+
+Result:
+
+```text
+ RUN  v3.2.4 /workspace/Titan-Zero-Field-Service-Workforce/apps/web
+
+ ✓ app/api/portal/estimates/[token]/__tests__/response.integration.test.ts (4 tests) 109ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  04:28:27
+   Duration  418ms (transform 82ms, setup 0ms, collect 136ms, tests 109ms, environment 0ms, prepare 52ms)
+```
+
+Coverage: preserve an existing named actor through migration 189; serialize
+concurrent public responses to one successful mutation and one rejection;
+write an anonymous audit without token/signature data while preserving company
+scope; roll back the status change when audit insertion fails; and retain the
+account foreign key. This schema-owner fixture does not exercise restricted-role
+RLS token lookup or certify production identity/storage behavior.

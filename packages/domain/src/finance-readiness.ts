@@ -18,7 +18,7 @@ export interface FinanceEvidenceRecord {
 export function normalizeFinanceEvidence(record: FinanceEvidenceRecord): FinanceEvidenceRecord {
   if (!record.company_id || !record.record_id || !record.correlation_id || !record.idempotency_key) throw new Error("company, identity, correlation, and idempotency are required");
   if (!record.provider || !record.provider_ref || !record.source_evidence_ref) throw new Error("provider provenance and source evidence are required");
-  if (!/^[A-Z]{3}$/.test(record.currency) || !Number.isSafeInteger(record.amount_minor) || record.amount_minor < 0) throw new Error("amount must be a non-negative minor-unit value with ISO currency");
+  if (typeof record.currency !== "string" || record.currency.length !== 3 || !/^[A-Za-z]{3}$/.test(record.currency) || !Number.isSafeInteger(record.amount_minor) || record.amount_minor < 0) throw new Error("amount must be a non-negative minor-unit value with ISO currency");
   if (record.verified && !record.provider_reread_ref) throw new Error("provider reread is required before VERIFIED");
   return { ...record, currency: record.currency.toUpperCase() };
 }

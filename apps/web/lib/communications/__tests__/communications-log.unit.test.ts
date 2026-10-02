@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const portableQuery = vi.fn();
+const { portableQuery } = vi.hoisted(() => ({ portableQuery: vi.fn() }));
 vi.mock("@/lib/db", () => ({ getDatabaseDialect: () => "postgres" }));
 vi.mock("@/lib/db/portable", () => ({
   portableQuery,
