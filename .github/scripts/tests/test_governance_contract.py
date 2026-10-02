@@ -79,11 +79,14 @@ class GovernanceContractTests(unittest.TestCase):
             writer = root / 'services/workforce/evidence-store.ts'
             writer.parent.mkdir(parents=True)
             writer.write_text('await db.query("INSERT INTO accepted_evidence (id) VALUES (?)")')
+            fact_writer = root / 'services/workforce/outcome-store.ts'
+            fact_writer.write_text('await db.query("INSERT INTO business_facts (id) VALUES (?)")')
             builder = root / 'packages/evidence-presentation.ts'
             builder.parent.mkdir(parents=True)
             builder.write_text('export function buildEvidenceView(input) { return input }')
             found = guard.active_evidence_sources(root)
         self.assertIn('services/workforce/evidence-store.ts', found)
+        self.assertIn('services/workforce/outcome-store.ts', found)
         self.assertNotIn('packages/evidence-presentation.ts', found)
 
 

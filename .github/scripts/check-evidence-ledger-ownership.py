@@ -12,8 +12,8 @@ EXTENSIONS = {".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"}
 IGNORED_PARTS = {"archive", "ported", "imports", "node_modules", "tests", "test", "__tests__"}
 IGNORED_SUFFIXES = (".test.js", ".test.jsx", ".test.mjs", ".test.cjs", ".test.ts", ".test.tsx", ".spec.js", ".spec.ts")
 PERSISTENT_EVIDENCE_WRITES = re.compile(
-    r"(?:INSERT\s+INTO\s+[\w\"`]*evidence\b|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?\s+[\w\"`]*evidence\b|"
-    r"(?:evidenceSink|persistEvidence|appendEvidence|saveEvidence|writeEvidence)\s*[:=(])",
+    r"(?:(?:INSERT\s+INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?)\s+[\w.\"`-]*(?:evidence|ledger|facts?|receipt|verification)[\w.\"`-]*|"
+    r"(?:evidenceSink|(?:persist|append|save|write)\w*(?:Evidence|Fact|Receipt))\s*[:=(])",
     re.IGNORECASE,
 )
 
@@ -72,14 +72,14 @@ def main():
     stale = sorted(by_path.keys() - sources)
     if missing or stale:
         if missing:
-            print("Unclassified active ledger-named source files:", *missing, sep="\n  ", file=sys.stderr)
+            print("Unclassified active durable-evidence or ledger source files:", *missing, sep="\n  ", file=sys.stderr)
         if stale:
-            print("Inventory entries no longer match active ledger-named sources:", *stale, sep="\n  ", file=sys.stderr)
+            print("Inventory entries no longer match active durable-evidence or ledger sources:", *stale, sep="\n  ", file=sys.stderr)
         return 1
     accepted = [row["path"] for row in rows if row["role"] == "accepted-factual-history"]
     if accepted != [document.get("accepted_factual_owner")]:
         raise ValueError("exactly the declared accepted factual owner must hold that role")
-    print(f"Evidence ownership inventory is complete ({len(sources)} ledger-named or ownership-critical sources).")
+    print(f"Evidence ownership inventory is complete ({len(sources)} ledger-named, durable evidence-writer, or ownership-critical sources).")
     return 0
 
 

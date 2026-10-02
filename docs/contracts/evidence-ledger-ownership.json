@@ -13,7 +13,9 @@
     "packages/titan-platform/src/ported/titan-revenue-journey/canonical-reconciliation.ts",
     "packages/titan-platform/src/ported/titan-revenue-journey/revenue-journey-projection.ts",
     "apps/web/app/api/v1/captures/route.ts",
-    "packages/workforce/src/index.ts"
+    "packages/workforce/src/index.ts",
+    "apps/web/app/api/v1/captures/[id]/review/route.ts",
+    "services/worker/src/process-captures.ts"
   ],
   "inventory": [
     {
@@ -182,6 +184,22 @@
       "durability": "Company-keyed workforce_work and workforce_events storage tables.",
       "consumers": ["packages/workforce/src/index.test.ts"],
       "limitations": ["Completion accepts mutable result/evidence references without canonical accepted-evidence verification; production must continue excluding this legacy path."]
+    },
+    {
+      "path": "apps/web/app/api/v1/captures/[id]/review/route.ts",
+      "role": "observed-verification-artifact",
+      "scope": "Applies authenticated human review to a pending capture and may create a mutable action item from the reviewed proposal; this confirms a requested follow-up, not its completion or a verified business outcome.",
+      "durability": "Company/account-scoped action_items insert and capture_evidence review-state update.",
+      "consumers": ["apps/web/app/api/v1/action-items/[id]/resolve/route.ts"],
+      "limitations": ["The mutable action item must not self-promote to accepted factual evidence of completed work."]
+    },
+    {
+      "path": "services/worker/src/process-captures.ts",
+      "role": "derived-value-analytics",
+      "scope": "Transcribes raw capture input and stores proposed follow-up text/dates and processing state; extracted commitments remain proposals until human review.",
+      "durability": "Updates proposal and processing fields on the company-scoped capture_evidence row.",
+      "consumers": ["services/worker/src/index.ts"],
+      "limitations": ["Model/transcription output is not independently verified business fact and cannot complete work."]
     }
   ]
 }
