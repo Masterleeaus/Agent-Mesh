@@ -1,0 +1,183 @@
+# Authenticated session credentials — #302
+
+Owner: #302 / PR #1183. This additive server-side contract extends the existing
+`@titan-zero/titan-platform/security-boundary` owner and its durable registry.
+It does not commission a DirectAdmin issuer, migrate historical users, activate
+web cutover, or authorize a deployment. All keys used by tests are disposable.
+
+## Configuration and trust
+
+`createSessionCredentialService` receives the canonical `IdentitySessionRegistry`,
+a fixed `issuer`, `audience`, `key_id`, `algorithm`, `verification_key`, optional
+`signing_key`, and an `upstream` trust configuration with its own issuer, audience,
+key ID, algorithm and verification key. Configured algorithms are EdDSA (Ed25519),
+ES256, RS256 or HS256. HS256 needs at least 32 secret bytes; asymmetric consumers
+should receive verification-only CryptoKeys. Production keys come from configured
+existing server secret references/owners, never request fields or committed keys.
+The service neither creates keys nor stores credential material. No remote key
+URL/JWK discovery is supported. Header parameters other than alg/kid/typ fail.
+Changing keys requires explicit trusted composition; no automatic rotation exists.
+
+For DirectAdmin use `directAdminIssuer('https://host.example:2222')`. It returns
+`directadmin:https://host.example:2222`; each independent host must have a distinct
+namespace. HTTP, userinfo, paths, query and fragment identifiers fail. Generic
+`directadmin` and malformed/noncanonical `directadmin:` identifiers fail configuration.
+Never derive this configuration from Host or forwarded headers. Other issuers
+must also be stable, explicitly configured identity-provider namespaces.
+
+`now` is an optional trusted server clock for testing/composition, not a request
+parameter. `lifetime_seconds` defaults to 300 and cannot exceed 900. Issued
+sessions and tokens expire no later than their upstream assertion (itself at most
+300 seconds). There is deliberately no refresh or extension on company switch.
+An expired session needs a fresh authenticated upstream assertion. This bounded
+five-minute authentication slice is not a long-lived browser session rollout.
+
+The signing/verification pair is checked before issuance or switch mutates state.
+Post-commit delivery/signing failure still fails closed: do not roll back a session
+revision or consume the same assertion again. Reauthenticate with a new assertion.
+
+## Signed credential wire contract
+
+All NumericDates are safe integer Unix seconds. Future issuance, missing claims,
+expiry, fractional values and overlong lifetimes fail. Audience is exactly one
+configured string, not an array. Signature/key/issuer/algorithm/audience/type/time
+verification precedes any registry lookup. Caller roles and extra authority claims
+cannot create identity or business authority. Errors are `authentication-denied`
+without credential, cryptographic or database diagnostics.
+
+| Credential | Protected header | Required signed claims |
+| --- | --- | --- |
+| Upstream login assertion | `typ: titan-login+jwt`, configured `alg`, `kid` | `iss`, `sub`, `aud`, `jti`, `company_id`, `device_id`, `iat`, `exp` |
+| Canonical session | `typ: titan-session+jwt`, configured `alg`, `kid` | `iss`, `sub`, `aud`, `identity_provider`, `session_id`, `device_id`, `actor_id`, `company_id`, `session_revision`, `context_revision`, `iat`, `exp` |
+
+The upstream provider must authenticate the actual human/session, bind the device
+and selected company, and emit a fresh unguessable `jti` for one exchange. A DA
+role, username, caller principal, bare session ID or headers are not this proof.
+`sub` is the stable external subject; `identity_provider` is the configured
+upstream issuer. Both remain cryptographically bound in the canonical credential.
+The actor is resolved through existing approved external bindings and active
+memberships, never supplied by the caller as an identity grant.
+
+Issuance derives a session ID from SHA-256 of the unambiguous issuer/jti tuple.
+The existing durable session primary key atomically consumes that assertion:
+concurrent exchange, replay after company switch, revocation and process restart
+cannot issue it again. No second replay/identity store is added. Retain session
+rows/revocations and protect backups against rollback; deleting them destroys
+this guarantee. Signed session credentials remain reusable authentication until
+expiry/revocation/generation change. They are **not one-use execution grants**;
+consequential operations still require canonical authority and idempotency.
+
+## API and current-state checks
+
+```ts
+const sessions = createSessionCredentialService(config);
+const expected = { company_id, device_id }; // independent request/channel assertions
+const issued = await sessions.issue(upstreamCredential, expected);
+const current = await sessions.resolve(issued.credential, expected);
+const authenticated = await sessions.authenticate(issued.credential, expected);
+const switched = await sessions.switchCompany(issued.credential, expected, targetCompany);
+await sessions.revoke(switched.credential, {
+  company_id: targetCompany, device_id,
+});
+```
+
+`issue`/`switchCompany` return `{ credential, context }`. `resolve` returns
+`CurrentSessionContext`. `authenticate` returns `{ context, provider, subject,
+directadmin? }`; its optional expectation may be omitted when the consumer needs
+the signed selected company/device discovered by verification. Optional expected
+`actor_id`/`context_revision` can only narrow acceptance. Never decode an unsigned
+payload to create an authenticated principal.
+
+Every resolution checks current actor/company/membership/device/external binding,
+exact session/context revision, audience, expiry and revocation in the existing
+registry transaction. Switch uses its atomic compare-and-update and returns a
+credential for the new generation; old A and B tokens remain invalid after A→B→A.
+An invalid destination cannot partially switch state. Revoke requires verified
+current authentication and compare-and-update; it never treats an ID as bearer proof.
+The exact selected operation scope is `[context.company_id]`.
+`allowed_company_ids` remains only switch choices, never operation scope.
+
+This service exposes no principal/company/membership/device provisioning methods.
+Those existing registry primitives remain protected commissioning/governance
+operations, not HTTP endpoints. Ordinary authenticated sessions cannot mint new
+actors or restore memberships. A host must not expose raw registry methods to
+request handlers. Initial administrative provisioning and upstream authentication
+commissioning remain independent trusted dependencies; identity alone never grants
+permission to provision. No automatic historical mapping/backfill is authorized.
+
+## #1049 DirectAdmin adapter reconciliation
+
+Inspected PR #1204 at `51b22e92569b2d76ce97078fe3975ce7be091590`.
+Its provisional hand-written `titan-da-session+jwt` verifier must be replaced by
+this canonical service before commissioning. No implicit acceptance of that old
+type or legacy tokens is supplied. #1049 owns its bridge/plugin/gateway files;
+this slice does not edit them.
+
+Configure `directadmin: { node_id }` to require signed `node_id`, `csrf_sha256`
+(base64url SHA-256, 43 characters), and `da_role` (`admin`/`reseller`/`user`) in the
+upstream assertion. The service validates and carries these through issuance and
+switching. `authenticate` returns them under `directadmin`. They are not accepted
+at all when this channel is unconfigured. The DA role is presentation only.
+
+The bridge calls `authenticate(cookie)` and uses its verified `context` and
+`directadmin.csrf_sha256`; it retains strict origin, CSRF nonce hashing, secure
+HttpOnly cookie handling, node configuration, UI invalidation and response policy.
+It must call authenticate again for each revalidation, and service switch/revoke
+for those actions. Do not call a second Titan verifier or construct a principal
+from request JSON. A successful switch must securely deliver the returned
+credential, or clear the cookie and require fresh upstream authentication.
+The SDK must never expose the credential to browser JavaScript/logs.
+
+## #811 hosted runtime consumption
+
+Inspected PR #1201 at `99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd`.
+`HostedWorkforceDependencies.credentialVerifier.verify` can use
+`createSessionCredentialVerifier(config)` on a public-key-only host. That wrapper
+exposes only `authenticate` and `resolve`, no signing or registry mutation.
+Configure its audience as `workforce`. After `authenticate(token)`, project:
+
+```ts
+const { context: c, provider, subject } = await verifier.authenticate(token);
+return { provider, subject, session_id: c.session_id, device_id: c.device_id,
+  session_revision: c.session_revision, audience: c.audience,
+  surface: commissionedSurface };
+```
+
+`commissionedSurface` must be the host's independently validated canonical
+`zero`/`go`/`hub` selection, not inferred from a DA role. The current hosted owner
+then rereads the registry for request company/actor/context and again before
+native effects. Keep those checks. A DA-audience token cannot be relabelled or
+forwarded to workforce. Issue a separately authenticated assertion for a
+commissioned workforce service/audience; no cross-audience token exchange is
+implemented here. Actual host wiring, queued expiry semantics, commissioned
+surface selection and end-to-end native execution remain with #811/#812.
+
+## Web migration surface and limits
+
+`apps/web/lib/auth/current-session.ts` is an opt-in server adapter over this service.
+It projects current `{userId, accountId, role}` for existing web callers and a
+selected-company-only operation scope. Unsupported web roles and legacy JWTs fail
+closed. It never falls back to `users.account_id` or reconstructs missing membership.
+Real SQLite tests exercise issue/switch/revoke/restart and legacy-token denial.
+
+Existing login/middleware/`session.ts` remain on the preserved legacy path. Cutover
+requires an explicit coordinated issuer and consumer composition, reviewed stable
+actor/company mapping, verified reauthentication and short-lived secure cookies
+bounded by `context.expires_at`. Do not opt in one side only or reuse the old seven-day
+cookie duration. No persistence/access migration decision is made by this patch.
+
+## Verification and remaining gates
+
+Dedicated tests use ephemeral keys and real file-backed canonical SQLite. They
+cover wrong issuer/audience/algorithm/key, tampering, legacy migration denial,
+verification before queries, current revocation/generation/device/company checks,
+concurrent exchange/switch, failed configuration, host namespace isolation,
+restart replay, signed DA channel metadata and public-key-only composition.
+The pre-existing registry suite additionally covers committed/uncommitted process
+crash. This is disposable integration evidence, not real DA login, production key
+commissioning, OS/power-loss durability or old-backup anti-rollback certification.
+
+Rollback withdraws the opt-in consumer composition and this credential entry;
+retain all additive registry data and revocation history. Never restore a weaker
+legacy fallback automatically. Full #302 remains open, including broader secret
+lifecycle/supply-chain gates and real deployed cross-surface certification.

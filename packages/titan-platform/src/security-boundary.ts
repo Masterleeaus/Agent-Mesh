@@ -69,3 +69,5 @@ export function createSecureEnvelope(binding: SessionBinding, company_id: string
 
 export { createIdentitySessionRegistry, IdentitySessionRegistry } from './security-session-registry.js';
 export type { VerifiedSessionIdentity, ExpectedSessionContext, CurrentSessionContext, IssueSessionInput } from './security-session-registry.js';
+export { createSessionCredentialService, createSessionCredentialVerifier, directAdminIssuer } from './security-session-credentials.js';
+export type { CredentialExpectation, SessionCredentialOptions, IssuedSessionCredential, AuthenticatedSessionCredential, DirectAdminCredentialBinding } from './security-session-credentials.js';
