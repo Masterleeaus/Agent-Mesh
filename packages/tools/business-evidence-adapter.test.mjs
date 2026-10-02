@@ -18,3 +18,11 @@ test("verified execution requires independent verification and carries verificat
 test("adapter preserves company and decision/work correlation",()=>{
  const e=executionEvidenceToBusinessEvidence(base);assert.equal(e.company_id,"co-a");assert.equal(e.correlation_id,"work-1");assert.equal(e.decision_id,"dec-1");assert.equal(e.execution_id,"exec-1");
 });
+
+test("uncertain execution is durable factual execution evidence, never a verified job fact",()=>{
+ const e=executionEvidenceToBusinessEvidence({...base,state:"UNCERTAIN",verification:null,final_outcome:null});
+ assert.equal(e.event_type,"execution.uncertain");
+ assert.equal(e.subject_type,"execution");
+ assert.equal(e.verification_id,null);
+ assert.equal(e.acceptance_state,"accepted");
+});

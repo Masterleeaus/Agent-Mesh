@@ -127,6 +127,23 @@ test("real SQLite store reconstructs company-scoped job reality after reopen", a
     assert.deepEqual(foldJobReality("company-a", "job-1", after), projection);
     assert.equal((await reopened.acceptedForSubject("company-b", "job", "job-1")).length, 0);
 
+    const originalJobFact = after.find(row => row.event_type === "job.status.verified");
+    assert.ok(originalJobFact);
+    const correction = {
+      ...originalJobFact,
+      evidence_id: "job-1:corrected",
+      event_type: "job.status.corrected",
+      supersedes_evidence_id: originalJobFact.evidence_id,
+      causation_id: originalJobFact.evidence_id,
+      accepted_at: new Date(Date.parse(originalJobFact.accepted_at) + 1000).toISOString(),
+      payload: { status: "in_progress" },
+    };
+    await reopened.append(correction);
+    const correctedHistory = await reopened.acceptedForSubject("company-a", "job", "job-1");
+    const correctedProjection = foldJobReality("company-a", "job-1", correctedHistory);
+    assert.equal(correctedProjection.status, "in_progress");
+    assert.deepEqual(correctedProjection.source_evidence_ids, [originalJobFact.evidence_id, correction.evidence_id]);
+
     const count = (await storage.query("SELECT id FROM evidence")).rowCount;
     await createBusinessEvidenceExecutionSink({ store: reopened })(result.evidence);
     assert.equal((await storage.query("SELECT id FROM evidence")).rowCount, count);
@@ -134,4 +151,26 @@ test("real SQLite store reconstructs company-scoped job reality after reopen", a
     await storage.close();
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("native provider uncertainty is persisted without changing job reality",async()=>{
+ const store=memoryStore();
+ const gateway=createBusinessEvidenceExecutionGateway({
+  store,
+  providers:[{
+   id:"native-field-service",executionClass:EXECUTION_CLASSES.NATIVE,capabilities:["job.complete"],
+   execute:async()=>({external_ref:"work-order-uncertain",result:{status:"completed"}}),
+   verify:async()=>({verified:false}),
+  }],
+ });
+ const result=await gateway.execute({...request,execution_id:"exec-uncertain",idempotency_key:"job-uncertain"});
+ assert.equal(result.state,"UNCERTAIN");
+ const rows=[...store.rows.values()];
+ const uncertainty=rows.find(row=>row.event_type==="execution.uncertain");
+ assert.ok(uncertainty);
+ assert.equal(uncertainty.subject_type,"execution");
+ assert.equal(uncertainty.company_id,"company-a");
+ assert.equal(uncertainty.verification_id,null);
+ assert.equal(rows.some(row=>row.event_type==="job.status.verified"),false);
+ assert.equal(foldJobReality("company-a","job-1",await store.acceptedForSubject("company-a","job","job-1")).status,null);
 });
