@@ -8,6 +8,8 @@ The installable shell and its safe client boundaries are implemented. The PWA in
 
 The build derives a shell cache identifier from every public shell asset, so an app-only release changes the service-worker script and replaces the old shell cache. The header reports browser connectivity only; it does not probe Workforce availability or authenticate a session. Until a hosted API is commissioned, every mode reports Workforce as not configured.
 
+The manifest includes 192×192 and 512×512 PNG icons plus an 180×180 Apple touch icon; the scalable SVG remains the browser favicon. Reduced-motion preferences disable mode-button transitions. The visible keyboard focus ring and mode pressed states are covered in the browser checks.
+
 ## Invariants
 
 - A verified server session resolves `company_id`; client-supplied company identifiers never grant membership or authority.
@@ -18,7 +20,7 @@ The build derives a shell cache identifier from every public shell asset, so an 
 
 ## Commands
 
-From the repository root: `pnpm install --filter @titan-zero/pwa`, `pnpm --filter @titan-zero/pwa exec playwright install chromium`, then `pnpm --filter @titan-zero/pwa typecheck`, `pnpm --filter @titan-zero/pwa build`, and `pnpm --filter @titan-zero/pwa test`. The test suite includes Chromium checks for an app-only stale-cache upgrade, the versioned update path, offline reload, mode URL persistence, and private-route cache exclusion.
+From the repository root: `pnpm install --filter @titan-zero/pwa`, `pnpm --filter @titan-zero/pwa exec playwright install chromium`, then `pnpm --filter @titan-zero/pwa typecheck`, `pnpm --filter @titan-zero/pwa build`, and `pnpm --filter @titan-zero/pwa test`. The test suite includes Chromium checks for the platform icon sizes, reduced motion, keyboard focus and mode selection, unsupported-mode fallback, interrupted updates, offline reload, mode URL persistence, and private-route cache exclusion.
 
 ## Remaining #1171 gates
 

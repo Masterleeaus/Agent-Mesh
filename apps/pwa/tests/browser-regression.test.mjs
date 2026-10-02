@@ -15,7 +15,7 @@ const legacyWorker = readFileSync(new URL("./fixtures/legacy-shell-v1-sw.js", im
 const contentTypes = new Map([
   [".css", "text/css; charset=utf-8"], [".html", "text/html; charset=utf-8"],
   [".js", "text/javascript; charset=utf-8"], [".mjs", "text/javascript; charset=utf-8"],
-  [".svg", "image/svg+xml"], [".webmanifest", "application/manifest+json; charset=utf-8"],
+  [".png", "image/png"], [".svg", "image/svg+xml"], [".webmanifest", "application/manifest+json; charset=utf-8"],
 ]);
 
 function temporaryPublic() {
@@ -28,8 +28,13 @@ function temporaryPublic() {
 
 function createStaticServer(initialRoot) {
   let root = initialRoot;
+  let unavailablePath = null;
   const server = createServer((request, response) => {
     const url = new URL(request.url ?? "/", "http://127.0.0.1");
+    if (url.pathname === unavailablePath) {
+      response.writeHead(503, { "cache-control": "no-store" }).end();
+      return;
+    }
     if (url.pathname === "/api/v1/private-test") {
       response.writeHead(200, { "cache-control": "no-store", "content-type": "text/plain; charset=utf-8" });
       response.end("PRIVATE_CANARY");
@@ -59,6 +64,7 @@ function createStaticServer(initialRoot) {
       resolveServer({
         origin: `http://127.0.0.1:${address.port}`,
         setRoot(value) { root = value; },
+        setUnavailable(value) { unavailablePath = value; },
         close() { return new Promise((resolveClose, rejectClose) => server.close(error => error ? rejectClose(error) : resolveClose())); },
       });
     });
@@ -78,6 +84,28 @@ async function withBrowser(run) {
 async function waitForController(page) {
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
+}
+
+async function updateServiceWorker(page) {
+  return page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.getRegistration();
+    const terminalState = new Promise(resolve => {
+      const timeout = setTimeout(() => resolve("timeout"), 10000);
+      registration.addEventListener("updatefound", () => {
+        const candidate = registration.installing;
+        const onState = () => {
+          if (candidate.state === "activated" || candidate.state === "redundant") {
+            clearTimeout(timeout);
+            resolve(candidate.state);
+          }
+        };
+        candidate.addEventListener("statechange", onState);
+        onState();
+      }, { once: true });
+    });
+    try { await registration.update(); } catch {}
+    return terminalState;
+  });
 }
 
 test("legacy app-only deployment reproduces the stale shell badge", async t => {
@@ -129,7 +157,7 @@ test("legacy app-only deployment reproduces the stale shell badge", async t => {
   });
 });
 
-test("versioned built shell updates, reports offline accurately, and caches no private routes", async t => {
+test("versioned built shell supports install, accessible controls, and interrupted updates", async t => {
   const releaseA = temporaryPublic();
   const releaseB = temporaryPublic();
   t.after(() => {
@@ -153,25 +181,81 @@ test("versioned built shell updates, reports offline accurately, and caches no p
 
   await withBrowser(async browser => {
     const context = await browser.newContext({ serviceWorkers: "allow" });
-    let page = await context.newPage();
-    await page.goto(`${server.origin}/?mode=go`);
+    const page = await context.newPage();
+    await page.goto(`${server.origin}/?mode=zero`);
     await waitForController(page);
     await page.waitForFunction(() => document.documentElement.dataset.shellRelease === "release-a");
     await page.waitForFunction(() => document.querySelector("#network")?.dataset.online === "true");
     assert.equal(await page.locator("#network").textContent(), "Network available");
     assert.match(await page.locator("#connection-copy").textContent(), /no authenticated Workforce connection/i);
-    assert.equal(await page.locator("#mode-title").textContent(), "Go · Workforce not configured");
+    assert.equal(await page.locator("#mode-title").textContent(), "Zero · Workforce not configured");
     assert.match(await page.locator("#installation-status").textContent(), /public shell is ready/i);
+
+    const manifest = await page.evaluate(async () => (await fetch("/manifest.webmanifest")).json());
+    assert.equal(manifest.id, "/");
+    assert.equal(manifest.start_url, "/?mode=zero");
+    assert.ok(manifest.icons.some(icon => icon.sizes === "192x192" && icon.type === "image/png"));
+    assert.ok(manifest.icons.some(icon => icon.sizes === "512x512" && icon.type === "image/png"));
+    const touchIcon = await page.evaluate(() => document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute("href"));
+    assert.equal(touchIcon, "/icon-180.png");
+    const iconPixels = await page.evaluate(async () => Promise.all([180, 192, 512].map(async size => {
+      const image = await createImageBitmap(await (await fetch(`/icon-${size}.png`)).blob());
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = image.width;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      context.drawImage(image, 0, 0);
+      return { size: image.width, height: image.height, cornerAlpha: context.getImageData(0, 0, 1, 1).data[3] };
+    })));
+    assert.deepEqual(iconPixels, [180, 192, 512].map(size => ({ size, height: size, cornerAlpha: 255 })));
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    assert.equal(await page.locator('[data-mode="zero"]').evaluate(element => getComputedStyle(element).transitionDuration), "0s");
+    assert.equal(await page.getByRole("navigation", { name: "Choose Titan mode" }).count(), 1);
+    assert.equal(await page.getByRole("button", { name: /Go Field.*assigned work and capture/ }).count(), 1);
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute("data-mode")), "zero");
+    assert.equal(await page.locator('[data-mode="zero"]').evaluate(element => getComputedStyle(element).outlineStyle), "solid");
+    await page.keyboard.press("Tab");
+    assert.equal(await page.evaluate(() => document.activeElement?.getAttribute("data-mode")), "go");
+    await page.keyboard.press("Space");
+    await page.waitForURL(/mode=go/);
+    assert.equal(await page.locator('[data-mode="go"]').getAttribute("aria-pressed"), "true");
+    assert.equal(await page.locator("#mode-title").textContent(), "Go · Workforce not configured");
 
     await page.locator('[data-mode="hub"]').click();
     await page.waitForURL(/mode=hub/);
     assert.equal(await page.locator("#mode-title").textContent(), "Hub · Workforce not configured");
+    assert.equal(await page.locator('[data-mode="hub"]').getAttribute("aria-pressed"), "true");
+    assert.match(await page.locator("#connection-copy").textContent(), /no authenticated Workforce connection/i);
+    await page.goto(`${server.origin}/?mode=uncommissioned`);
+    await page.waitForFunction(() => document.querySelector("#mode-title")?.textContent === "Zero · Workforce not configured");
+    assert.equal(await page.locator('[data-mode="zero"]').getAttribute("aria-pressed"), "true");
+    assert.equal(await page.locator('[data-mode="go"]').getAttribute("aria-pressed"), "false");
+    await page.goto(`${server.origin}/?mode=hub`);
+    await page.waitForFunction(() => document.querySelector("#mode-title")?.textContent === "Hub · Workforce not configured");
     assert.equal(await page.evaluate(() => localStorage.length), 0);
     assert.equal(await page.evaluate(() => sessionStorage.length), 0);
     assert.equal(await page.evaluate(() => fetch("/api/v1/private-test").then(response => response.text())), "PRIVATE_CANARY");
 
     server.setRoot(outputB);
-    await page.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
+    server.setUnavailable("/icon-512.png");
+    assert.equal(await updateServiceWorker(page), "redundant", "a failed precache update must be discarded");
+    const interruptedCacheState = await page.evaluate(async ({ versionA, versionB }) => {
+      const names = await caches.keys();
+      const previousCache = await caches.open(`titan-pwa-shell-${versionA}`);
+      const paths = (await previousCache.keys()).map(request => new URL(request.url).pathname);
+      return {
+        previous: names.includes(`titan-pwa-shell-${versionA}`),
+        candidate: names.includes(`titan-pwa-shell-${versionB}`),
+        previousShellComplete: ["/index.html", "/app.mjs", "/icon-512.png"].every(path => paths.includes(path)),
+      };
+    }, { versionA, versionB });
+    assert.deepEqual(interruptedCacheState, { previous: true, candidate: false, previousShellComplete: true });
+    assert.equal(await page.locator("html").getAttribute("data-shell-release"), "release-a", "a failed update must not replace the open document");
+
+    server.setUnavailable(null);
+    assert.equal(await updateServiceWorker(page), "activated");
     await page.waitForFunction(async ({ versionA, versionB }) => {
       const names = await caches.keys();
       const registration = await navigator.serviceWorker.getRegistration();
@@ -179,28 +263,31 @@ test("versioned built shell updates, reports offline accurately, and caches no p
         && !names.includes(`titan-pwa-shell-${versionA}`)
         && registration?.active?.state === "activated";
     }, { versionA, versionB });
-    await page.close();
-    page = await context.newPage();
-    await page.goto(`${server.origin}/?mode=hub`);
-    await waitForController(page);
-    await page.waitForFunction(() => document.documentElement.dataset.shellRelease === "release-b");
+    assert.equal(await page.locator("html").getAttribute("data-shell-release"), "release-a", "service-worker activation must not force-reload an open document");
+    const updatedPage = await context.newPage();
+    await updatedPage.goto(`${server.origin}/?mode=hub`);
+    await waitForController(updatedPage);
+    await updatedPage.waitForFunction(() => document.documentElement.dataset.shellRelease === "release-b");
 
     await context.setOffline(true);
-    await page.waitForFunction(() => navigator.onLine === false);
-    assert.equal(await page.locator("#network").textContent(), "Browser offline · shell only");
-    const offlineResponse = await page.reload();
+    await updatedPage.waitForFunction(() => navigator.onLine === false);
+    assert.equal(await updatedPage.locator("#network").textContent(), "Browser offline · shell only");
+    const offlineResponse = await updatedPage.reload();
     assert.equal(offlineResponse?.fromServiceWorker(), true, "an offline reload must use the public shell service worker");
-    await page.waitForFunction(() => document.documentElement.dataset.shellRelease === "release-b");
-    assert.equal(await page.locator("#mode-title").textContent(), "Hub · Workforce not configured");
-    assert.match(await page.locator("#connection-copy").textContent(), /no authenticated Workforce connection|Only the public shell is available/i);
-    assert.equal(await page.locator("html").getAttribute("data-shell-release"), "release-b");
+    await updatedPage.waitForFunction(() => document.documentElement.dataset.shellRelease === "release-b");
+    assert.equal(await updatedPage.locator("#mode-title").textContent(), "Hub · Workforce not configured");
+    assert.match(await updatedPage.locator("#connection-copy").textContent(), /no authenticated Workforce connection|Only the public shell is available/i);
+    assert.equal(await updatedPage.locator("html").getAttribute("data-shell-release"), "release-b");
 
-    const cachedPaths = await page.evaluate(async () => {
+    const cachedPaths = await updatedPage.evaluate(async () => {
       const names = await caches.keys();
       const entries = await Promise.all(names.map(async name => (await (await caches.open(name)).keys()).map(request => new URL(request.url).pathname)));
       return entries.flat();
     });
     assert.ok(cachedPaths.includes("/app.mjs"));
+    assert.ok(cachedPaths.includes("/icon-180.png"));
+    assert.ok(cachedPaths.includes("/icon-192.png"));
+    assert.ok(cachedPaths.includes("/icon-512.png"));
     assert.ok(!cachedPaths.some(path => /^\/(?:api|auth|signin|signout|portal|company|app)(?:\/|$)/.test(path)), "private routes must never enter the shell cache");
     await context.close();
   });

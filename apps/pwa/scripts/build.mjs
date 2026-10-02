@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const scriptPath = fileURLToPath(import.meta.url);
 const root = resolve(dirname(scriptPath), "..");
 const versionToken = "__TITAN_PWA_SHELL_VERSION__";
-const shellFiles = ["index.html", "app.mjs", "styles.css", "manifest.webmanifest", "icon.svg", "sw.js"];
+const shellFiles = ["index.html", "app.mjs", "styles.css", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png", "sw.js"];
 
 export function buildPwa({ publicDir = resolve(root, "public"), outputDir = resolve(root, "dist") } = {}) {
   const workerPath = resolve(publicDir, "sw.js");
