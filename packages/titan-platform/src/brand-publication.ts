@@ -380,11 +380,14 @@ export type BrandRendererReconciliation=Readonly<
 
 /** An accepted command is only an acknowledgement. Verification requires the
  * renderer's observed state to match this exact immutable publication. */
-export function reconcileBrandRendererObservation(publication:BrandPublication,providerAck:{accepted:boolean;unavailable?:boolean}|null,observation:BrandRendererObservation|null):BrandRendererReconciliation {
- if(providerAck===null||providerAck.unavailable===true)return Object.freeze({status:"degraded",reason:"provider-unavailable"});
+export function reconcileBrandRendererObservation(publication:BrandPublication,providerAck:unknown,observation:unknown):BrandRendererReconciliation {
+ if(providerAck===null)return Object.freeze({status:"degraded",reason:"provider-unavailable"});
+ if(!record(providerAck)||Object.keys(providerAck).some(key=>key!=="accepted"&&key!=="unavailable")||typeof providerAck.accepted!=="boolean"||("unavailable" in providerAck&&typeof providerAck.unavailable!=="boolean"))return Object.freeze({status:"degraded",reason:"provider-rejected"});
+ if(providerAck.unavailable===true)return Object.freeze({status:"degraded",reason:"provider-unavailable"});
  if(providerAck.accepted!==true)return Object.freeze({status:"degraded",reason:"provider-rejected"});
  if(!observation)return Object.freeze({status:"pending",reason:"awaiting-provider-observation"});
- if(!record(observation)||!Array.isArray(observation.routes)||observation.routes.some(route=>typeof route!=="string")||typeof observation.reachable!=="boolean")return Object.freeze({status:"degraded",reason:"observed-publication-mismatch"});
+ const observationKeys=["company_id","site_id","version","snapshot_hash","environment","routes","reachable"];
+ if(!record(observation)||Object.keys(observation).some(key=>!observationKeys.includes(key))||observationKeys.some(key=>!Object.hasOwn(observation,key))||typeof observation.company_id!=="string"||typeof observation.site_id!=="string"||!Number.isInteger(observation.version)||typeof observation.snapshot_hash!=="string"||(observation.environment!=="preview"&&observation.environment!=="live")||!Array.isArray(observation.routes)||observation.routes.some(route=>typeof route!=="string")||typeof observation.reachable!=="boolean")return Object.freeze({status:"degraded",reason:"observed-publication-mismatch"});
  if(observation.company_id!==publication.company_id||observation.site_id!==publication.site_id||observation.version!==publication.version||observation.environment!==publication.environment||
     observation.snapshot_hash!==publication.source_snapshot_hash||JSON.stringify([...observation.routes].sort())!==JSON.stringify([...publication.route_manifest].sort())) {
   return Object.freeze({status:"degraded",reason:"observed-publication-mismatch"});
