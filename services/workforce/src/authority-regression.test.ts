@@ -100,3 +100,34 @@ test("communication ceilings and missing usage fail closed",async()=>{
   assert.ok(missing.reason_codes.includes("message_limit_usage_missing"));
   assert.ok(missing.reason_codes.includes("recipient_limit_usage_missing"));
 });
+
+
+test("a fresh verified authority decision can safely re-upgrade after a persisted contraction",async()=>{
+  let providerCalls=0;
+  let evaluatedParent:string|undefined;
+  const contracted={...planned("DENY"),authority_decision_id:"auth-contracted",supersedes_authority_decision_id:"auth-planned",evaluated_at:"2026-10-02T00:01:00.000Z"};
+  const gateway=new RuntimeAuthorityGateway({
+    contextResolver:{async evaluate(input:any){
+      evaluatedParent=input.supersedes_authority_decision_id;
+      return {
+        ...planned("ALLOW"),
+        authority_decision_id:input.authority_decision_id,
+        supersedes_authority_decision_id:input.supersedes_authority_decision_id,
+        evaluated_at:input.now,
+      };
+    }},
+    authorityStore:{
+      async latestDecisionForBinding(){return contracted;},
+      async appendDecision(){},
+    },
+    executionGateway:{async execute(){providerCalls++;return {state:"VERIFIED",verified:true};}},
+  });
+  const result=await gateway.execute({
+    decision:{status:"approved",decision_id:"auth-planned",canonical:planned()},
+    capability:{name:capability},input:{authority_usage:{amount:25,currency:"AUD"}},
+    idempotency_key:"action-1",company_id,work_id:"work-1",agent_id:worker_id,run_id:"run-1",
+  });
+  assert.equal(evaluatedParent,"auth-contracted");
+  assert.equal(providerCalls,1);
+  assert.equal(result.state,"VERIFIED");
+});
