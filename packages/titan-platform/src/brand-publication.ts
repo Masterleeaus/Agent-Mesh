@@ -1,5 +1,5 @@
 import { createSurfaceIntent, projectSurfaceEstate, type SurfaceDescriptor, type SurfaceIntent } from "./surface-manager.js";
-import { sanitizeBuilderProjection, type BuilderDocument } from "./titan-builder/index.js";
+import { sanitizeBuilderProjection, type BuilderDocument, type BuilderNode } from "./titan-builder/index.js";
 import { assertBuilderSecurityGate } from "./titan-builder/security-gate.js";
 import { createTitanInterfaceRuntime, type InterfaceContext, type PresentationNode } from "./interface-runtime.js";
 import { createInteractionPresentationIntent } from "./ported/titan-runtime/interaction-engine/presentation-intent.js";
@@ -285,6 +285,51 @@ export type BrandRendererRequest=Readonly<{
  approval:BrandPublicationApproval|null;
  authority_granted:false;
 }>;
+export type MicroweberPageDraft=Readonly<{
+ schema:"titan.microweber-page-draft/v1";company_id:string;publication_id:string;site_id:string;version:number;
+ route:string;title:string;content_html:string;source_snapshot_hash:string;authority_granted:false;
+}>;
+const escapeHtml=(value:string)=>value.replace(/[&<>\"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[char]!));
+function renderMicroweberNode(node:BuilderNode,depth=0,state={count:0}):string {
+ if(depth>32||++state.count>500)throw new Error("microweber-page-complexity-limit");
+ if(!node||typeof node.id!=="string"||typeof node.type!=="string"||!Array.isArray(node.children??[]))throw new Error("microweber-builder-node-invalid");
+ if(node.actions?.length)throw new Error("microweber-governed-action-binding-required");
+ const props=node.props??{};
+ const text=(key:string,fallback="")=>{const value=props[key]??fallback;if(typeof value!=="string")throw new Error("microweber-static-text-invalid");return escapeHtml(value);};
+ const children=(node.children??[]).map(child=>renderMicroweberNode(child,depth+1,state)).join("");
+ switch(node.type){
+  case "stack":return `<div>${children}</div>`;
+  case "grid":return `<div class=\"titan-grid\">${children}</div>`;
+  case "card":return `<section>${children}</section>`;
+  case "heading":return `<h2>${text("text",String(props.title??props.label??""))}${children}</h2>`;
+  case "text":return `<p>${text("text",String(props.content??props.label??""))}${children}</p>`;
+  case "article-header":return `<header><h1>${text("title",String(props.text??""))}</h1>${children}</header>`;
+  case "article-body":return `<div>${text("text",String(props.content??""))}${children}</div>`;
+  case "button":{
+   const href=props.href;
+   if(typeof href!=="string"||!href.trim())throw new Error("microweber-static-link-required");
+   if(href.length>2048||/[\u0000-\u0020\\]/.test(href)||href.startsWith("//"))throw new Error("microweber-static-link-invalid");
+   if(href.startsWith("/") )safeRoute(href);
+   else {let url:URL;try{url=new URL(href);}catch{throw new Error("microweber-static-link-invalid");}if(!["https:","mailto:"].includes(url.protocol)||url.username||url.password)throw new Error("microweber-static-link-invalid");}
+   return `<a href=\"${escapeHtml(href)}\">${text("label",String(props.text??props.title??"Continue"))}${children}</a>`;
+  }
+  default:throw new Error("microweber-builder-component-unsupported");
+ }
+}
+/** Converts the deliberately small static Builder vocabulary to CMS page content.
+ * Interactive Titan modules/actions require their separately governed module bridge. */
+export async function compileMicroweberPageDraft(value:unknown,verification:{verifyApproval?:(approval:BrandPublicationApproval,snapshot:BuilderDocument)=>Promise<boolean>;verifyCurrentSnapshot:BrandSnapshotCurrentVerifier}):Promise<MicroweberPageDraft> {
+ const request=await assertBrandRendererRequest(value,verification.verifyApproval,verification.verifyCurrentSnapshot);
+ if(request.renderer!=="microweber")throw new Error("microweber-renderer-request-required");
+ if(request.routes.length!==1)throw new Error("microweber-single-route-snapshot-required");
+ const document=request.source.document;
+ if(document.company_id!==request.company_id)throw new Error("microweber-company-mismatch");
+ const route=safeRoute(request.routes[0]);
+ const title=String(document.title??"").trim();
+ if(!title||title.length>512||/[\u0000-\u001f\u007f]/.test(title))throw new Error("microweber-page-title-invalid");
+ const content_html=renderMicroweberNode(document.root);
+ return Object.freeze({schema:"titan.microweber-page-draft/v1",company_id:request.company_id,publication_id:request.publication_id,site_id:request.site_id,version:request.version,route,title,content_html,source_snapshot_hash:request.source.snapshot_hash,authority_granted:false});
+}
 export type BrandPublicationApproval=Readonly<{company_id:string;builder_document_id:string;revision:number;snapshot_hash:string;approved_by:string;approved_at:string}>;
 export type BrandSnapshotCurrentVerifier=(company_id:string,builder_document_id:string,revision:number,snapshot_hash:string)=>Promise<boolean>;
 export async function computeBrandPublicationIdempotencyKey(input:{company_id:string;site_id:string;version:number;environment:"preview"|"live"}):Promise<string> {
