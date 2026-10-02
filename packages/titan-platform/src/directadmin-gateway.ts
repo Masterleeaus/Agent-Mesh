@@ -1,8 +1,8 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
-  type DirectAdminBridgeContext } from './directadmin-session-bridge.js';
+  directAdminBridgeFailureKind, matchesDirectAdminContextRevision, type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
-export type DirectAdminPluginId = 'titan_zero' | 'titan_operations' | 'titan_web' | 'titan_workforce';
+export type DirectAdminPluginId = 'titan_zero' | 'titan_workforce' | 'titan_operations' | 'titan_web';
 export type DirectAdminProjection = Readonly<{
   company_id: string; source: string; freshness: string | null;
   evidence_refs: readonly string[]; data: unknown;
@@ -29,11 +29,43 @@ export function assertDirectAdminProjection(value: unknown, company_id: string):
 export type DirectAdminGatewayOwners = Readonly<{
   projection: (plugin: DirectAdminPluginId, context: DirectAdminBridgeContext) => Promise<DirectAdminProjection>;
   requestIntent: (plugin: DirectAdminPluginId, intent: GovernedIntentRequest,
-    context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>) => Promise<{ receipt_id: string }>;
+    context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>,
+    withWorkforceZeroSession: WithWorkforceZeroSession) => Promise<{ receipt_id: string }>;
 }>;
 const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
   status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
 });
+/** #811 publishes this exact, non-mutating denial for unsupported Workforce
+ * lifecycle proposals. Translate only its fixed typed contract; never echo an
+ * exception's message, status, code, or attached diagnostics to the caller. */
+function isUnsupportedWorkforceActionDenial(error: unknown): boolean {
+  try {
+    if (!(error instanceof Error)) return false;
+    const prototype = Object.getPrototypeOf(error);
+    const constructor = prototype && Object.getOwnPropertyDescriptor(prototype, 'constructor')?.value;
+    const name = Object.getOwnPropertyDescriptor(error, 'name');
+    const code = Object.getOwnPropertyDescriptor(error, 'code');
+    const status = Object.getOwnPropertyDescriptor(error, 'status');
+    return Boolean(constructor?.name === 'DirectAdminWorkforceActionDenied' &&
+      Object.getPrototypeOf(prototype) === Error.prototype &&
+      name && 'value' in name && name.value === 'DirectAdminWorkforceActionDenied' &&
+      code && 'value' in code && code.value === 'directadmin-workforce-action-unsupported' &&
+      status && 'value' in status && status.value === 403);
+  } catch {
+    // Proxies or hostile accessor-backed exceptions are ordinary owner failures.
+    return false;
+  }
+}
+function bridgeFailure(error: unknown): Response {
+  const kind = directAdminBridgeFailureKind(error);
+  if (kind === 'request-rejected') {
+    return json(401, { error: 'directadmin-session-rejected', read_only: true });
+  }
+  if (kind === 'session-rejected') {
+    return json(401, { error: 'directadmin-session-rejected', read_only: true }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
+  }
+  return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+}
 async function body(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json' || request.headers.has('content-encoding')) throw new Error('invalid-body');
   const reader = request.body?.getReader();
@@ -66,7 +98,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
   const handle = async (request: Request): Promise<Response> => {
     let session;
     try { session = await bridge.authenticate(request); }
-    catch { return json(401, { error: 'directadmin-session-rejected', read_only: true }); }
+    catch (error) { return bridgeFailure(error); }
     try {
       const url = new URL(request.url);
       if (url.search || url.hash) return json(400, { error: 'invalid-route' });
@@ -82,7 +114,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         const switched = await session.switchCompany(input.company_id);
         return json(200, { status: 'context-changed' }, switched.set_cookie);
       }
-      const route = /^\/v1\/directadmin\/(titan_zero|titan_operations|titan_web|titan_workforce)\/(projection|intents)$/.exec(path);
+      const route = /^\/v1\/directadmin\/(titan_zero|titan_workforce|titan_operations|titan_web)\/(projection|intents)$/.exec(path);
       if (!route) return json(404, { error: 'unknown-plugin-route' });
       const plugin = route[1] as DirectAdminPluginId;
       if (request.method === 'GET' && route[2] === 'projection') {
@@ -95,8 +127,10 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       if (request.method === 'POST' && route[2] === 'intents') {
         const input = await body(request);
         const context = await session.revalidate();
+        const contextRevisionMatches = typeof input.context_revision === 'string' &&
+          await matchesDirectAdminContextRevision(input.context_revision, context.context_revision);
         if (input.company_id !== context.company_id || input.actor_id !== context.actor_id ||
-            input.context_revision !== context.context_revision ||
+            !contextRevisionMatches ||
             !['capability_id', 'operation_id', 'correlation_id'].every(k => typeof input[k] === 'string' && /^[A-Za-z0-9:._-]{1,200}$/.test(input[k] as string)) ||
             !input.input || typeof input.input !== 'object' || Array.isArray(input.input) ||
             Object.keys(input).some(k => !['company_id','actor_id','context_revision','capability_id','operation_id','correlation_id','input'].includes(k))) {
@@ -105,16 +139,27 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         const intent: GovernedIntentRequest = Object.freeze({ company_id: context.company_id, actor_id: context.actor_id,
           capability_id: input.capability_id as string, operation_id: input.operation_id as string,
           correlation_id: input.correlation_id as string, input: input.input as Record<string, unknown> });
-        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate);
+        // Only the trusted Zero Core and Workforce owners compose with the
+        // fixed Workforce/Zero identity. Other plugins do not receive a
+        // Workforce child-credential capability.
+        const withWorkforceZeroSession: WithWorkforceZeroSession = plugin === 'titan_zero' || plugin === 'titan_workforce'
+          ? session.withWorkforceZeroSession
+          : async () => { throw new Error('directadmin-workforce-zero-unavailable'); };
+        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, withWorkforceZeroSession);
+        if (!receipt || typeof receipt.receipt_id !== 'string' || receipt.receipt_id.length > 200 ||
+            !/^[A-Za-z0-9:._-]+$/.test(receipt.receipt_id) ||
+            /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(receipt.receipt_id)) {
+          throw new Error('directadmin-owner-receipt-invalid');
+        }
         return json(202, { status: 'REQUESTED', receipt_id: receipt.receipt_id, correlation_id: intent.correlation_id });
       }
       return json(405, { error: 'method-not-allowed' });
     } catch (error) {
       // Never return exception messages, cookies, credentials or arbitrary provider diagnostics.
-      if (error instanceof Error && error.message === 'directadmin-session-rejected') {
-        return json(401, { error: 'directadmin-session-rejected', read_only: true });
+      if (isUnsupportedWorkforceActionDenial(error)) {
+        return json(403, { error: 'directadmin-workforce-action-unsupported', read_only: true });
       }
-      return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+      return bridgeFailure(error);
     }
   };
   return async (request: Request): Promise<Response> => {

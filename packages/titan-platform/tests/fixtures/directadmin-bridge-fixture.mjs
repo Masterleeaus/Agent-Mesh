@@ -1,9 +1,14 @@
 import { tsImport } from 'tsx/esm/api';
-import { createIdentitySessionRegistry, createSessionCredentialService } from '../../.test-dist/security-boundary.js';
-import { DirectAdminSessionBridge } from '../../.test-dist/directadmin-plugin.js';
-import { projectZeroCockpit } from '../../.test-dist/zero-cockpit.js';
-import { createOperationsHealth } from '../../.test-dist/operations-health.js';
-import { createBrandPublication } from '../../.test-dist/brand-publication.js';
+const security = await tsImport('../../src/security-boundary.ts', { parentURL: import.meta.url, tsconfig: false });
+const bridgeApi = await tsImport('../../src/directadmin-session-bridge.ts', { parentURL: import.meta.url, tsconfig: false });
+const zeroCockpit = await tsImport('../../src/zero-cockpit.ts', { parentURL: import.meta.url, tsconfig: false });
+const operationsHealth = await tsImport('../../src/operations-health.ts', { parentURL: import.meta.url, tsconfig: false });
+const brandPublication = await tsImport('../../src/brand-publication.ts', { parentURL: import.meta.url, tsconfig: false });
+const { createIdentitySessionRegistry, createSessionCredentialService, createSessionCredentialVerifier } = security;
+const { DirectAdminSessionBridge } = bridgeApi;
+const { projectZeroCockpit } = zeroCockpit;
+const { createOperationsHealth } = operationsHealth;
+const { createBrandPublication } = brandPublication;
 const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 export const ORIGIN = 'https://panel.example.test';
 export const b64 = value => Buffer.from(value).toString('base64url');
@@ -15,7 +20,8 @@ export const proof = { ...external, session_id: sessionId, device_id: 'device-1'
 export const expected = { company_id: 'company-a', audience: 'titan-directadmin:node-1' };
 export const csrf = b64(crypto.getRandomValues(new Uint8Array(32)));
 
-export async function fixture(t, { origin = ORIGIN } = {}) {
+export async function fixture(t, { origin = ORIGIN, provider = external.provider, sessionOverrides = {} } = {}) {
+  const externalIdentity = { provider, subject: external.subject };
   const now = Math.floor(Date.now() / 1000) * 1000;
   let clock = now;
   const storage = createSqliteStorage(':memory:');
@@ -26,29 +32,43 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
   for (const company_id of ['company-a', 'company-b']) {
     await registry.putCompany({ company_id, status: 'active' }, null);
     await registry.putMembership({ actor_id: 'actor-1', company_id, role: 'member', status: 'active' }, null);
-    await registry.putExternalBinding({ ...external, binding_id: `mapping-${company_id}`, company_id, actor_id: 'actor-1', status: 'active' }, null);
+    await registry.putExternalBinding({ ...externalIdentity, binding_id: `mapping-${company_id}`, company_id, actor_id: 'actor-1', status: 'active' }, null);
   }
   const keys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const upstreamKeys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
+  const workforceKeys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const policy = { issuer: 'titan:node-1', audience: expected.audience, key_id: 'key-1', algorithm: 'EdDSA',
     verification_key: keys.publicKey, signing_key: keys.privateKey, registry, lifetime_seconds: 300,
-    upstream: { issuer: external.provider, audience: 'titan-login:node-1', key_id: 'upstream-1', algorithm: 'EdDSA', verification_key: upstreamKeys.publicKey },
-    directadmin: { node_id: 'node-1' }, now: () => new Date(clock) };
+    upstream: { issuer: externalIdentity.provider, audience: 'titan-login:node-1', key_id: 'upstream-1', algorithm: 'EdDSA', verification_key: upstreamKeys.publicKey },
+    directadmin: { node_id: 'node-1' },
+    workforce_zero_exchange: { issuer: 'titan:workforce', key_id: 'workforce-1', algorithm: 'EdDSA',
+      verification_key: workforceKeys.publicKey, signing_key: workforceKeys.privateKey, lifetime_seconds: 120 },
+    now: () => new Date(clock) };
   const sessions = createSessionCredentialService(policy);
-  const loginClaims = { iss: external.provider, sub: external.subject, aud: policy.upstream.audience,
+  const workforceVerifier = createSessionCredentialVerifier({
+    registry, upstream: policy.upstream, issuer: 'titan:workforce', audience: 'workforce', key_id: 'workforce-1',
+    algorithm: 'EdDSA', verification_key: workforceKeys.publicKey, lifetime_seconds: 120,
+    directadmin: { node_id: 'node-1' }, now: () => new Date(clock),
+  });
+  const loginClaims = { iss: externalIdentity.provider, sub: externalIdentity.subject, aud: policy.upstream.audience,
     jti: nonce, company_id: 'company-a', device_id: 'device-1', node_id: 'node-1',
     csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(csrf))), da_role: 'admin', iat: now / 1000, exp: now / 1000 + 120 };
   const loginPayload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode(loginClaims)}`;
   const upstreamToken = `${loginPayload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(loginPayload)))}`;
   const issued = await sessions.issue(upstreamToken, { company_id: 'company-a', device_id: 'device-1' });
   const token = issued.credential;
+  const loginFor = async (provider, jti) => {
+    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode({ ...loginClaims, iss: provider, jti })}`;
+    return `${payload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(payload)))}`;
+  };
   // Fixture-only inspection of a credential just issued through the canonical service.
   const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url'));
   const sign = async (patch = {}, header = {}, privateKey = keys.privateKey) => {
     const payload = `${encode({ alg: 'EdDSA', typ: 'titan-session+jwt', kid: 'key-1', ...header })}.${encode({ ...claims, ...patch })}`;
     return `${payload}.${b64(await crypto.subtle.sign('Ed25519', privateKey, Buffer.from(payload)))}`;
   };
-  const bridge = new DirectAdminSessionBridge({ origin, audience: expected.audience, node_id: 'node-1', sessions });
+  const bridgeSessions = { ...sessions, ...sessionOverrides };
+  const bridge = new DirectAdminSessionBridge({ origin, audience: expected.audience, node_id: 'node-1', sessions: bridgeSessions });
   const request = (path = '/v1/directadmin/context', options = {}) => {
     const headers = new Headers({ origin, 'sec-fetch-site': 'same-origin', 'x-titan-csrf': csrf,
       cookie: `__Host-titan-da-session=${token}` });
@@ -73,5 +93,6 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
       const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
     },
   };
-  return { registry, sessions, policy, upstreamToken, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
+  return { registry, sessions, bridgeSessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
+    loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }

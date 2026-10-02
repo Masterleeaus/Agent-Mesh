@@ -1,4 +1,4 @@
-import type { DirectAdminBridgeContext } from './directadmin-session-bridge.js';
+import { directAdminContextRevisionAssertion, type DirectAdminBridgeContext } from './directadmin-session-bridge.js';
 import type { DirectAdminPluginId, DirectAdminProjection } from './directadmin-gateway.js';
 import { assertDirectAdminProjection } from './directadmin-gateway.js';
 import type { DirectAdminApiFetch, GovernedIntentRequest } from './directadmin-plugin.js';
@@ -49,7 +49,11 @@ export class DirectAdminCockpitSession {
     });
     if (epoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
     if (!response.ok) {
-      if ([401, 403, 409].includes(response.status)) this.invalidate();
+      // A governed owner may return a typed 403 while the authenticated
+      // DirectAdmin context remains valid (for example, an unsupported
+      // Workforce action). Keep sibling consumers mounted; identity failures
+      // and context conflicts still purge the shared session.
+      if ([401, 409].includes(response.status)) this.invalidate();
       throw new Error(`directadmin-http-${response.status}`);
     }
     const result = await response.json();
@@ -83,7 +87,7 @@ export class DirectAdminCockpitSession {
     return this.accept(result, true);
   }
   async projection(plugin: DirectAdminPluginId): Promise<DirectAdminProjection> {
-    if (!['titan_zero', 'titan_operations', 'titan_web', 'titan_workforce'].includes(plugin)) throw new Error('unknown-plugin');
+    if (!['titan_zero', 'titan_workforce', 'titan_operations', 'titan_web'].includes(plugin)) throw new Error('unknown-plugin');
     const epoch = this.#epoch;
     const result = await this.send(`/v1/directadmin/${plugin}/projection`) as { context: DirectAdminBridgeContext; projection: DirectAdminProjection };
     if (this.#disposed || epoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
@@ -93,11 +97,15 @@ export class DirectAdminCockpitSession {
     return result.projection;
   }
   async intent(plugin: DirectAdminPluginId, intent: GovernedIntentRequest): Promise<unknown> {
-    if (!['titan_zero', 'titan_operations', 'titan_web', 'titan_workforce'].includes(plugin) || !this.#context ||
-        this.#context.expires_at <= Date.now() || intent.company_id !== this.#context.company_id || intent.actor_id !== this.#context.actor_id) {
+    const context = this.#context;
+    const epoch = this.#epoch;
+    if (!['titan_zero', 'titan_workforce', 'titan_operations', 'titan_web'].includes(plugin) || !context ||
+        context.expires_at <= Date.now() || intent.company_id !== context.company_id || intent.actor_id !== context.actor_id) {
       throw new Error('directadmin-intent-context-mismatch');
     }
-    return this.send(`/v1/directadmin/${plugin}/intents`, { ...intent, context_revision: this.#context.context_revision });
+    const context_revision = await directAdminContextRevisionAssertion(context.context_revision);
+    if (this.#disposed || epoch !== this.#epoch || this.#context !== context) throw new Error('directadmin-context-invalidated');
+    return this.send(`/v1/directadmin/${plugin}/intents`, { ...intent, context_revision });
   }
   async switchCompany(company_id: string): Promise<void> {
     this.invalidate(); // Purge every plugin before waiting for the server, even on failure.
