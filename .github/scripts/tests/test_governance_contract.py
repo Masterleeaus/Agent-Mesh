@@ -17,14 +17,17 @@ class GovernanceContractTests(unittest.TestCase):
         lower = (ROOT / '.github/pull_request_template.md').read_text()
         self.assertEqual(upper, lower)
         self.assertIn('**Linked issue:** Refs #', upper)
-        self.assertIn('agent/issue-<issue-number>', upper)
-        blocks = re.findall(r'```mission-evidence\n(.*?)\n```', upper, re.S)
-        self.assertEqual(len(blocks), 1)
-        evidence = json.loads(blocks[0])
-        self.assertEqual(evidence['mode'], 'partial')
-        self.assertTrue(evidence['human_review_required'])
-        self.assertEqual(evidence['live_host']['status'], 'unknown')
-        self.assertTrue(evidence['remaining_work'])
+        self.assertIn('any short-lived branch', upper)
+        self.assertIn('focused commands and actual results', upper)
+        self.assertIn('does not need a full parent-criteria map', upper)
+        self.assertIn('only when closing the entire linked issue', upper)
+        self.assertNotRegex(upper, r'```mission-evidence')
+
+    def test_titan_ci_defers_broad_gates_to_product_milestone(self):
+        workflow = (ROOT / '.github/workflows/titan-ci.yml').read_text()
+        self.assertIn('slice-check:', workflow)
+        self.assertIn("github.event_name == 'workflow_dispatch'", workflow)
+        self.assertIn('Run broad integration', (ROOT / 'AGENTS.md').read_text())
 
     def test_contracts_link_to_single_evidence_format(self):
         for path in ('AGENTS.md', 'docs/agent/MISSION_TEMPLATE.md'):
