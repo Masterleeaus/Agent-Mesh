@@ -46,6 +46,13 @@
     "./constitution": "./src/constitution.ts",
     "./field-service-lifecycle": "./src/field-service-lifecycle.ts"
   },
+  "dependencies": {
+    "@titan-zero/storage": "workspace:*",
+    "jose": "^6.1.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "rm -rf .test-dist && tsc -p tsconfig.test.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test ./tests/*.test.mjs",
