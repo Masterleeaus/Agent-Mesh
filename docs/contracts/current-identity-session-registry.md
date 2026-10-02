@@ -114,21 +114,20 @@ reissued. Every subsequent lookup observes current persisted revocation; no
 long-lived token role/company snapshot or cached identity grants continued access.
 
 `withCurrentSessionFence` requires a verified child proof containing its signed
-source reference and bearer expiry. At entry it creates one 500 ms monotonic
-deadline before queueing for the GLOBAL_REGISTRY SQLite transaction. The storage
-wrapper includes same-connection queue time and native `BEGIN IMMEDIATE`
-acquisition in that budget by applying only the remaining time as a temporary
-connection-local `busy_timeout`; ordinary transactions retain the configured
-5-second timeout. Acquisition expiry returns
-`storage-transaction-acquire-timeout` without invoking the transaction callback.
-After acquisition, the registry samples its trusted clock and revalidates source
-and child. The callback receives the same absolute deadline plus an AbortSignal
-for the remaining budget. Workforce passes that unchanged deadline to the
-control-store transaction, so it cannot obtain a fresh 500 ms lock wait. Keep
-other registry transactions free of network waits. Lock order is identity
-registry → Workforce control store → company/business store. Do not run readiness
-work or re-enter the registry from the callback, and do not hold these locks
-through a long adapter/network lifecycle.
+source reference and bearer expiry. It creates one 500 ms monotonic deadline
+before queueing for the GLOBAL_REGISTRY SQLite transaction. The storage wrapper
+includes same-connection queue time and native `BEGIN IMMEDIATE` acquisition in
+that budget by applying only the remaining time as a temporary connection-local
+`busy_timeout`; ordinary transactions retain the configured five-second timeout.
+Acquisition expiry is normalized to `session-fence-timeout` without invoking the
+transaction callback. After acquisition, the registry samples its trusted clock
+and revalidates source and child. The callback receives the same absolute deadline
+plus an AbortSignal for the remaining budget. Workforce passes that unchanged
+deadline to the control-store transaction, so it cannot obtain a fresh 500 ms
+lock wait. Keep the callback to short local admission work: no provider/network
+wait, readiness probe, or registry re-entry. Lock order is identity registry →
+Workforce control store. Company-native reads and provider work run outside both
+locks; do not hold them through a long adapter lifecycle.
 
 On timeout the transaction releases and the callback may still run if it ignores
 abort. A consumer must retain `UNCERTAIN`, avoid replay and await observed outcome;
