@@ -147,9 +147,12 @@ export type CompanyStorageResolutionErrorCode =
   | "company-store-lease-closed";
 
 export class CompanyStorageResolutionError extends Error {
-  constructor(readonly code: CompanyStorageResolutionErrorCode) {
+  readonly code: CompanyStorageResolutionErrorCode;
+
+  constructor(code: CompanyStorageResolutionErrorCode) {
     super(code);
     this.name = "CompanyStorageResolutionError";
+    this.code = code;
   }
 }
 
