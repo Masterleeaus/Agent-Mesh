@@ -992,6 +992,155 @@
       "physical_devices": "NOT_AVAILABLE",
       "production_eligible": false,
       "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T09:25:54Z",
+      "workspace_head": "88abc3d15117e5cd28c86fea2802c2ef403272e2",
+      "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only status refresh: revalidated current main, #1178 PR head/checks, P0 owner lanes and client source gaps. Updated only #1172 evidence inputs; no owner source or PWA Library artifact changed. User portal observation is recorded as USER_REPORTED_UNVERIFIED; production eligibility remains denied.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+        "claim_branch_sha": "88abc3d15117e5cd28c86fea2802c2ef403272e2",
+        "pr_1178": {
+          "state": "OPEN",
+          "draft": true,
+          "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "head_sha": "88abc3d15117e5cd28c86fea2802c2ef403272e2",
+          "issue_body_sha256_matches_latest": true,
+          "latest_named_checks": {
+            "Mission Closure Evidence Gate": "success",
+            "evidence-contract": "success",
+            "validate": "success",
+            "source-index": "success",
+            "verify-browser-node": "success"
+          }
+        },
+        "owner_lanes": [
+          {
+            "issue": 811,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1201,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T07:02:31Z"
+          },
+          {
+            "issue": 812,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": "NOT_OBSERVED"
+          },
+          {
+            "issue": 1171,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1176,
+            "pull_request_state": "MERGED",
+            "merged_at": "2026-10-02T05:49:57Z"
+          },
+          {
+            "issue": 1182,
+            "priority": "P0",
+            "state": "OPEN",
+            "pull_request": 1188,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "df52782d26e0",
+            "needs_rebase_against_main": true
+          },
+          {
+            "issue": 302,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1183,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e"
+          },
+          {
+            "issue": 1049,
+            "priority": "P1",
+            "state": "OPEN",
+            "pull_request": 1204,
+            "pull_request_state": "OPEN_DRAFT",
+            "base_sha": "14163faa316ac6236e88167b7c8d8a5e95007c7e"
+          },
+          {
+            "issue": 1048,
+            "priority": "P2",
+            "state": "OPEN",
+            "canonical_owner_for": "Developer Portal / Dev Access"
+          },
+          {
+            "issue": 1172,
+            "priority": "P1",
+            "state": "OPEN"
+          }
+        ]
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/app.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c15fd8f298fbd75a905d2ffeeda9175321a09b8b30e03bb8b76fb219724bcf9b"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/README.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "eab0927f11e04ae4a0c20f54e5058e1d9515fffb6383b36a5d5f39b048b1be39"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/dev-access/lib/app.php",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "9d119d01d6327c9b2636dd3eda9c229ebe0c737343d11beb38e2aa0aa25d1a88"
+        }
+      ],
+      "client_host_findings": [
+        "PWA: apps/pwa/public/app.mjs is not connected to apps/pwa/src/api-client.mjs or scope.mjs; current visible behavior is a mode shell plus browser connectivity. The already-tested helper is GET-only and accepts host-resolved context, but current repository source has no PWA auth/bootstrap or projection route. Independently implementable PWA slice: a UI projection consumer and explicit unavailable/auth/stale states behind a server-verified host-adapter interface; do not invent API paths or accept client-selected company authority.",
+        "Mobile: #1182/#1188 is the sole client continuity lane. Its PR remains draft and its base is df52782d26e0, behind current main 14163faa316ac6236e88167b7c8d8a5e95007c7e. Continue with current host DTO contracts after rebasing; keep source edits out of #811/#302/#1049 ownership.",
+        "Developer Portal / Dev Access: user reports it is installed and diagnostics work, and malformed/ambiguous public-key POSTs are rejected. Status is USER_REPORTED_UNVERIFIED. No live command, key-add, fingerprint, revoke, host install/update, or server response was observed in this session. Link owner #1048; shared SDK/session dependencies remain #1049/#302, with #812 hosting.",
+        "Hosted Workforce: #811/#1201 is merged on current main, but its SSE writer serializes a completed dispatch result after await; Last-Event-ID filters that completed array, not a durable event log. The hosted runtime is Zero-only pending a Go/Hub authority-aware dispatcher."
+      ],
+      "commands": [
+        {
+          "command": "git ls-remote origin refs/heads/main refs/heads/agent/issue-1172",
+          "status": "PASS",
+          "detail": "remote main=14163faa316ac6236e88167b7c8d8a5e95007c7e; claim branch=88abc3d15117e5cd28c86fea2802c2ef403272e2"
+        },
+        {
+          "command": "Unauthenticated GitHub REST read of issues #811/#812/#1171/#1182/#302/#1049/#1048/#1172, PRs #1201/#1183/#1204/#1176/#1188/#1178 and #1178 latest named check-runs",
+          "status": "PASS",
+          "detail": "Read-only metadata; latest check run for each #1178 name is success. No issue, PR or host was mutated."
+        },
+        {
+          "command": "Source inspection of apps/pwa, apps/mobile, services/workforce and apps/directadmin/dev-access",
+          "status": "PASS",
+          "detail": "Read-only targeted source review at main 14163faa; not a live-host or device test."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Commit-bound 28-row matrix matches audit input; authorityGranted=false, eligibility_input=false, production eligibility remains denied."
+        }
+      ],
+      "live_host": {
+        "status": "NOT_CONTACTED",
+        "reported_signal": "USER_REPORTED_UNVERIFIED",
+        "command_lifecycle": "UNVERIFIED",
+        "public_key_add_fingerprint_revoke_lifecycle": "UNVERIFIED"
+      },
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
     }
   ]
 }

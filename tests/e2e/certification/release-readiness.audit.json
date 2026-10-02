@@ -1,13 +1,14 @@
 {
   "schema": "titan.readiness-audit-input/v1",
-  "observed_at": "2026-10-02T07:21:10Z",
+  "observed_at": "2026-10-02T09:25:54Z",
   "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
   "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
   "audit_completeness": "PARTIAL",
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
   "published_state": "UNKNOWN",
   "related_evidence": [
-    "tests/e2e/certification/critical-path-matrix.generated.json"
+    "tests/e2e/certification/critical-path-matrix.generated.json",
+    "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048"
   ],
   "external_sources": [
     {
@@ -98,11 +99,13 @@
         "apps/pwa/tests/contracts.test.mjs",
         "apps/pwa/tests/browser-regression.test.mjs",
         "services/workforce/src/conversation-api.ts",
-        "services/workforce/src/server.ts"
+        "services/workforce/src/server.ts",
+        "apps/pwa/public/app.mjs"
       ],
-      "source_assessment": "Current main contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. The PWA client exposes only same-origin, no-store GET projections with a returned company_id check; its bounded working set is memory-only and partitions by company, actor, device, surface, audience, context revision and session revision. It has no authenticated session bootstrap or conversation POST/event transport. The merged Workforce host now exposes an authenticated conversation endpoint, but that path is not wired into this PWA; the host contract is currently commissioned only for Zero. The service worker caches the public shell only; no durable private database, encrypted evidence staging or governed command outbox/replay exists in the PWA.",
+      "source_assessment": "Current main contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. The PWA client exposes only same-origin, no-store GET projections with a returned company_id check; its bounded working set is memory-only and partitions by company, actor, device, surface, audience, context revision and session revision. It has no authenticated session bootstrap or conversation POST/event transport. The merged Workforce host now exposes an authenticated conversation endpoint, but that path is not wired into this PWA; the host contract is currently commissioned only for Zero. The service worker caches the public shell only; no durable private database, encrypted evidence staging or governed command outbox/replay exists in the PWA. The served shell in apps/pwa/public/app.mjs only selects mode, reports browser connectivity and registers the shell worker; it does not import or invoke the projection client/working set. The shipped UI therefore has no PWA consumer for the existing read-only projection helper.",
       "missing_requirements": [
-        "Integrate server-verified current session/company context with the hosted projection and conversation contracts; extend the PWA beyond read-only GETs to real event transport, reconnect/cancel and explicit unavailable states; implement bounded encrypted private offline storage and governed replay with server revalidation. The external Sites v39/source commit 1d27bd6c4309881244fe412bcf5b5ca63bd4f344 remains metadata-only here, and physical-browser/hosted production certification is outstanding."
+        "Wire the PWA view to a host-injected, server-verified session/context and the existing same-origin GET projection helper, with explicit configured/auth-required/stale/unavailable states. The repository currently defines neither PWA bootstrap nor a PWA projection route, so do not invent either or trust client-selected company identity.",
+        "Implement bounded encrypted private offline storage/evidence staging and governed reconnect replay only after #302 key/session lifecycle and canonical server revalidation contracts are available. Hosted conversation streaming/resume/cancel is also absent from the PWA and must use a host-owned event contract; physical-browser and production-host certification remain outstanding."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
@@ -171,7 +174,9 @@
       "label": "DirectAdmin Business Node",
       "canonical_owner_refs": [
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
-        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049"
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302"
       ],
       "implementation_paths": [
         "apps/directadmin/server-node/README.md",
@@ -181,11 +186,14 @@
         "apps/directadmin/server-node/update.sh",
         "services/workforce/src/hosted-runtime.ts",
         "services/workforce/src/directadmin-workforce-owners.ts",
-        "services/workforce/src/server.ts"
+        "services/workforce/src/server.ts",
+        "apps/directadmin/dev-access/README.md",
+        "apps/directadmin/dev-access/lib/app.php"
       ],
-      "source_assessment": "Current main contains a loopback-only, read-only DirectAdmin health bridge plus an optional Workforce gateway mount. The mount stays unavailable without operator configuration; the Workforce owner currently projects canonical worker/work/run data and rejects lifecycle mutations. The host contract requires the #1049 SDK bridge and #302 current-session exchange for DirectAdmin company switch/revocation; those integration requirements are not established by the bounded health bridge. No live DirectAdmin install, update, recovery or production endpoint is evidenced.",
+      "source_assessment": "Current main contains a loopback-only, read-only DirectAdmin health bridge plus an optional Workforce gateway mount. The mount stays unavailable without operator configuration; the Workforce owner currently projects canonical worker/work/run data and rejects lifecycle mutations. The host contract requires the #1049 SDK bridge and #302 current-session exchange for DirectAdmin company switch/revocation; those integration requirements are not established by the bounded health bridge. No live DirectAdmin install, update, recovery or production endpoint is evidenced. Current main also contains the optional Titan Dev Access plugin (#1048): its PHP source renders diagnostics, a bounded account-local command form, and SSH public-key add/fingerprint/revoke UI; the add-key handler receives PHP-parsed $_POST[public_key] after CSRF checking. No live portal interaction was performed. USER-REPORTED only: the Developer Portal is installed with diagnostics and its public-key POST rejects malformed/ambiguous form data. Live command execution and SSH key add/fingerprint/revoke lifecycle remain UNVERIFIED. This report is not independent evidence that the reported endpoint behavior occurred.",
       "missing_requirements": [
-        "Complete the #1049/#302 DirectAdmin-to-Workforce authenticated session and role-checked action integration, then execute the operator suite and disposable/live-host install, update, rollback and recovery acceptance. Loopback health observations do not prove production business outcomes."
+        "Complete #1048-owned Developer Portal/Dev Access acceptance through the shared #1049 SDK and #302 session/credential boundaries: verify form parsing/rejection, CSRF, valid public-key add/fingerprint/revoke, account-scoped command output and permissions on the actual DirectAdmin installation. Preserve the reported malformed/ambiguous POST rejection as user-reported until independently reproduced; command/key lifecycle and install/update/rollback remain unverified.",
+        "Complete the #812/#1049/#302 DirectAdmin-to-Workforce integration and run exact-artifact host commissioning, update, rollback and recovery. The loopback health bridge and source tests do not establish production business outcomes."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
