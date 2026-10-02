@@ -11,6 +11,17 @@ const { DirectAdminCockpitSession, createDirectAdminGateway } = await import(pat
 const bridgeFixturePath = process.env.TITAN_BRIDGE_FIXTURE_MODULE ??
   new URL('../../../../packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs', import.meta.url).pathname;
 const { csrf, fixture, proof } = await import(pathToFileURL(resolve(bridgeFixturePath)).href);
+const bootstrapNonce = 'N'.repeat(43);
+const bootstrapProviderFor = (auth, label, { csrf_token = csrf } = {}) => {
+  let sequence = 0;
+  return { provide: async proof => {
+    assert.equal(proof.origin, 'https://panel.example.test');
+    assert.equal(proof.csrf_nonce, bootstrapNonce);
+    assert.equal(proof.cookie, 'fixture-authenticated');
+    return { login_assertion: await auth.loginFor('directadmin:https://panel.example.test', `browser-${label}-${++sequence}`),
+      company_id: 'company-a', device_id: 'device-1', csrf_token };
+  } };
+};
 const controllerSource = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8')).replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
 const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(controllerSource).toString('base64')}`);
 
@@ -41,20 +52,23 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
       intents.push(intent);
       return { receipt_id: `fixture-receipt-${intents.length}` };
     },
-  });
+  }, bootstrapProviderFor(auth, 'workforce-consumer', { csrf_token: csrf }));
   let credential = auth.token;
+  let cookie = `da_session=fixture-authenticated; __Host-titan-da-session=${credential}`;
   const fetcher = async (path, init) => {
-    assert.equal(init?.headers?.['X-Titan-CSRF'], csrf, 'SDK must send the separately bootstrapped CSRF nonce');
+    const bootstrap = path === '/v1/directadmin/bootstrap';
+    if (!bootstrap) assert.equal(init?.headers?.['X-Titan-CSRF'], csrf, 'SDK must send the separately bootstrapped CSRF token');
     const request = auth.request(path, { method: init?.method ?? 'GET', body: init?.body,
-      headers: { cookie: `__Host-titan-da-session=${credential}`,
+      headers: { cookie,
         'content-type': init?.headers?.['Content-Type'] ?? null,
-        'x-titan-csrf': init?.headers?.['X-Titan-CSRF'] ?? null } });
+        'x-titan-csrf': bootstrap ? null : (init?.headers?.['X-Titan-CSRF'] ?? null),
+        'x-titan-da-bootstrap-csrf': bootstrap ? (init?.headers?.['X-Titan-DA-Bootstrap-CSRF'] ?? null) : null } });
     const response = await gateway(request);
     const rotated = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]+)/)?.[1];
-    if (rotated) credential = rotated;
+    if (rotated) { credential = rotated; cookie = `da_session=fixture-authenticated; __Host-titan-da-session=${credential}`; }
     return response;
   };
-  const session = new DirectAdminCockpitSession(() => csrf, fetcher, undefined);
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, fetcher, undefined);
   t.after(() => session.dispose());
   const controller = new WorkforceController(new WorkforceApi(session));
   let sessionInvalidations = 0;
