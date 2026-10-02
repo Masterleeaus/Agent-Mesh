@@ -37,6 +37,7 @@ test('package is deterministic, allowlisted, executable, SDK-bound and checksumm
   assert.equal(entries.find(entry => entry.path === 'images/sdk.mjs').bytes.toString(), fixtureSdk);
   assert.equal(entries.find(entry => entry.path === 'user/index.html').mode, 0o755);
   assert.equal(entries.find(entry => entry.path === 'scripts/install.sh').mode, 0o755);
+  assert.equal(entries.find(entry => entry.path === 'scripts/install.sh').bytes.includes(13), false);
   if (process.platform !== 'win32') {
     const stage = join(input.root, 'verify'); await mkdir(stage);
     for (const entry of entries) { const path = join(stage, entry.path); await mkdir(dirname(path), { recursive: true }); await writeFile(path, entry.bytes); await chmod(path, entry.mode); }
