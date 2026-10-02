@@ -28,7 +28,8 @@ export class WorkforceController {
       for (const value of [discovery, status]) { scoped(value, context.company_id); assertNestedCompany(value, context.company_id); }
       this.#validateProjection(discovery, status, context.company_id);
       this.#set({ phase: 'ready', context, discovery, status, metadata, receipt: null });
-    } catch (error) { if (epoch === this.#epoch) this.#fail(error); }
+      return epoch;
+    } catch (error) { if (epoch === this.#epoch) this.#fail(error); return null; }
   }
   #validateProjection(discovery, status, companyId) {
     const invalid = () => { throw new Error('workforce-projection-invalid'); };
@@ -63,28 +64,46 @@ export class WorkforceController {
     if (this.state.phase !== 'ready' || this.#pending) return;
     const epoch = this.#epoch;
     const context = this.state.context;
-    this.#pending = structuredClone(action);
+    const pending = { token: Symbol('workforce-submit'), action: structuredClone(action), stage: 'preflight' };
+    this.#pending = pending;
     this.#set({ phase: 'submitting', receipt: null, error: null });
     try {
       const current = await this.api.context();
       if (epoch !== this.#epoch) return;
       if (current.company_id !== context.company_id || current.actor_id !== context.actor_id ||
           current.session_revision !== context.session_revision || current.context_revision !== context.context_revision) throw new Error('workforce-context-changed');
-      const receipt = await this.api.control(current, this.#pending);
+      pending.stage = 'control';
+      const receipt = await this.api.control(current, pending.action);
       if (epoch !== this.#epoch) return;
       scoped(receipt, context.company_id); assertNestedCompany(receipt, context.company_id);
+      pending.stage = 'refresh';
       this.#set({ receipt });
       // Do not optimistically edit canonical status; reload it after a receipt.
       const [status, metadata] = await Promise.all([this.api.status(current), this.api.metadata(current)]);
       if (epoch !== this.#epoch) return;
       scoped(status, context.company_id); assertNestedCompany(status, context.company_id);
       this.#validateProjection(this.state.discovery, status, context.company_id);
-      this.#pending = null;
+      if (this.#pending === pending) this.#pending = null;
       this.#set({ phase: 'ready', status, metadata });
     } catch (error) {
-      if (epoch === this.#epoch) {
-        this.#pending = null;
+      if (error?.message === 'directadmin-workforce-action-denied' &&
+          epoch === this.#epoch && this.#pending === pending) {
+        // #1049 classifies this 403 at the shared governed-intent route and
+        // retains valid session context. Revalidate before restoring the view;
+        // an invalidation/switch makes this operation stale and cannot recover.
+        const recoveryEpoch = await this.connect();
+        if (recoveryEpoch !== null && recoveryEpoch === this.#epoch && this.state.phase === 'ready') {
+          this.#set({ error: 'The host denied that request. Current company data was refreshed; review it before retrying.' });
+        }
+      } else if (error?.message === 'directadmin-http-403' &&
+          pending.stage === 'refresh' && epoch === this.#epoch && this.#pending === pending) {
+        // A request was accepted, then the read-only refresh was denied. Do
+        // not mislabel it as an action denial or retain cleared company data.
         this.#fail(error, true);
+        this.#set({ error: 'A request was submitted, but current state could not be refreshed. Reconnect and inspect canonical history before retrying.' });
+      } else {
+        if (this.#pending === pending) this.#pending = null;
+        if (epoch === this.#epoch) this.#fail(error, true);
       }
     }
   }

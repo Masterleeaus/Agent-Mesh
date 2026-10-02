@@ -46,7 +46,7 @@ function render(state) {
   identity.append(node('span', 'Business Node · Workforce', { class: 'eyebrow' }), node('h1', 'Titan Workforce'));
   header.append(identity, button('Reconnect / refresh', () => controller.connect(), state.phase === 'submitting'));
   root.append(header);
-  const live = node('p', state.phase === 'ready' ? 'Current hosted projection' : state.phase === 'submitting' ? 'Submitting governed request…' : state.phase === 'loading' ? 'Loading current company context…' : state.error, { role: 'status', 'aria-live': 'polite' });
+  const live = node('p', state.phase === 'ready' ? (state.error ?? 'Current hosted projection') : state.phase === 'submitting' ? 'Submitting governed request…' : state.phase === 'loading' ? 'Loading current company context…' : state.error, { role: 'status', 'aria-live': 'polite' });
   root.append(live);
   if (!state.context) return;
   const context = panel('Current company');
@@ -120,7 +120,7 @@ function renderControls(view, state, workers, work) {
   const target = select('Work item', work.map(item => [item.work_id, item.work_id]));
   const worker = select('Target participant (reassign / escalate)', [['', 'No target'], ...workers.map(item => [item.worker_id, item.worker_id])]);
   const label = node('label', 'Reason'); const reason = node('textarea', undefined, { required: '', maxlength: '2000', rows: '3' }); label.append(reason); form.append(label);
-  const send = node('button', 'Submit governed request', { type: 'submit', class: 'primary' }); send.disabled = state.phase !== 'ready' || !work.length; form.append(send);
+  const send = node('button', 'Submit governed request', { type: 'submit', class: 'primary' }); send.disabled = state.phase !== 'ready' || !work.length || Boolean(state.error); form.append(send);
   form.addEventListener('submit', event => { event.preventDefault(); if (!reason.value.trim()) return; void controller.submit({ action: action.value, work_id: target.value, target_worker_id: worker.value || undefined, reason: reason.value.trim() }); }); view.append(form);
 }
 

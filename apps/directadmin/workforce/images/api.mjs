@@ -32,11 +32,19 @@ export class WorkforceApi {
       throw new Error('workforce-control-denied');
     }
     const operation_id = this.requestId(); const correlation_id = this.requestId();
-    const receipt = await this.session.intent('titan_workforce', {
-      company_id: context.company_id, actor_id: context.actor_id, capability_id: descriptor.capability_id,
-      operation_id, correlation_id, input: { action: action.action, work_id: action.work_id,
-        reason: action.reason.slice(0, 2000), ...(action.target_worker_id ? { target_worker_id: action.target_worker_id } : {}) },
-    });
+    let receipt;
+    try {
+      receipt = await this.session.intent('titan_workforce', {
+        company_id: context.company_id, actor_id: context.actor_id, capability_id: descriptor.capability_id,
+        operation_id, correlation_id, input: { action: action.action, work_id: action.work_id,
+          reason: action.reason.slice(0, 2000), ...(action.target_worker_id ? { target_worker_id: action.target_worker_id } : {}) },
+      });
+    } catch (error) {
+      // Scope denial to the governed intent route. A 403 from context or
+      // projection reads must never be described as a denied action.
+      if (error?.message === 'directadmin-http-403') throw new Error('directadmin-workforce-action-denied');
+      throw error;
+    }
     this.#snapshot = null;
     // The SDK gateway returns ingress acknowledgement only. Never forward an invented VERIFIED result.
     if (receipt?.status !== 'REQUESTED' || receipt.correlation_id !== correlation_id || typeof receipt.receipt_id !== 'string' || !receipt.receipt_id) throw new Error('workforce-receipt-invalid');

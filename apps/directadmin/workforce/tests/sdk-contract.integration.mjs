@@ -85,6 +85,9 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
   let contextLifetimeMs = 15 * 60_000;
   let ownerAvailable = false;
   let expireNextIntent = false;
+  let denyNextIntent = false;
+  let denyProjectionAfterAcceptedIntent = false;
+  let denyNextProjection = false;
   let loggedOut = false;
   let unauthorizedResponses = 0;
   let holdNextContext = false;
@@ -149,6 +152,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
       }
       if (url.pathname === '/v1/directadmin/titan_workforce/projection' && request.method === 'GET') {
         if (loggedOut) { unauthorizedResponses++; json(response, 401, { error: 'session-expired' }); return; }
+        if (denyNextProjection) { denyNextProjection = false; json(response, 403, { error: 'fixture-projection-forbidden' }); return; }
         if (!ownerAvailable) { json(response, 503, { error: 'owner-not-mounted' }); return; }
         const company_id = activeCompany;
         json(response, 200, { context: contextFor(company_id), projection: projectionFor(company_id) }); return;
@@ -163,7 +167,15 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
             ![contextRevision, contextRevisionAssertion].includes(body?.context_revision)) {
           json(response, 409, { error: 'fixture-intent-scope-mismatch' }); return;
         }
+        if (denyNextIntent) {
+          denyNextIntent = false;
+          json(response, 403, { error: 'directadmin-workforce-action-unsupported', read_only: true }); return;
+        }
         acceptedIntents.push(body);
+        if (denyProjectionAfterAcceptedIntent) {
+          denyProjectionAfterAcceptedIntent = false;
+          denyNextProjection = true;
+        }
         if (pendingIntent) {
           pendingIntent.entered.resolve();
           await pendingIntent.release.promise;
@@ -271,6 +283,25 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     assert.equal(await page.getByText('Verified outcome with evidence', { exact: true }).count(), 0);
     pendingIntent = null;
 
+    const contextReadsBeforeDenial = requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/context').length;
+    const projectionReadsBeforeDenial = requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/titan_workforce/projection').length;
+    denyNextIntent = true;
+    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByLabel('Reason', { exact: true }).fill('Unsupported action denial fixture');
+    await page.getByRole('button', { name: 'Submit governed request' }).click();
+    await page.getByText('The host denied that request. Current company data was refreshed; review it before retrying.', { exact: true }).waitFor();
+    assert.equal(acceptedIntents.length, 1, 'unsupported action denial creates no accepted fixture intent');
+    assert.equal(await page.getByText('company-a', { exact: true }).count(), 1, 'fresh current company context remains usable after a no-effect 403');
+    assert.ok(requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/context').length > contextReadsBeforeDenial,
+      'the controller revalidates identity after an action denial');
+    assert.ok(requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/titan_workforce/projection').length > projectionReadsBeforeDenial,
+      'the cockpit refreshes canonical projection after an action denial');
+    assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).isDisabled(), true,
+      'a denied action stays disabled until the operator deliberately refreshes');
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await page.getByText('Current hosted projection', { exact: true }).waitFor();
+    assert.equal(await page.getByText('company-a', { exact: true }).count(), 1);
+
     activeCompany = 'company-b';
     heldContext = { entered: deferred(), release: deferred() };
     holdNextContext = true;
@@ -320,6 +351,24 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByRole('button', { name: 'Evidence', exact: true }).click();
     await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
     assert.equal(await page.getByText(navigationReceipt, { exact: true }).count(), 0, 'a late acknowledgement cannot restore a receipt after real navigation');
+
+    denyProjectionAfterAcceptedIntent = true;
+    await page.getByRole('button', { name: 'Controls', exact: true }).click();
+    await page.getByLabel('Operation').selectOption('cancel');
+    await page.getByLabel('Work item').selectOption('company-b-work');
+    await page.getByLabel('Reason', { exact: true }).fill('Accepted request with denied read refresh fixture');
+    await page.getByRole('button', { name: 'Submit governed request' }).click();
+    try {
+      await page.getByText('A request was submitted, but current state could not be refreshed. Reconnect and inspect canonical history before retrying.', { exact: true }).waitFor({ timeout: 5000 });
+    } catch (error) {
+      throw new Error(`${error.message}; UI=${JSON.stringify(await page.locator('#titan-workforce').innerText())}; requests=${JSON.stringify(requests.slice(-8).map(item => ({ method: item.method, path: item.path })))}; accepted=${acceptedIntents.length}; projectionFlag=${denyNextProjection}`);
+    }
+    assert.equal(acceptedIntents.length, 5, 'the hosted intent was accepted before the projection refresh failed');
+    assert.equal(await page.getByText('company-b', { exact: true }).count(), 0, 'denied refresh clears company data');
+    assert.doesNotMatch(await page.locator('#titan-workforce').innerText(), /host denied that request/i,
+      'a projection 403 after accepted ingress is not reported as an action denial');
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await page.getByText('company-b', { exact: true }).waitFor();
 
     const expiryContext = await browser.newContext();
     await expiryContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);

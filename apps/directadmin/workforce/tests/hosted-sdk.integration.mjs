@@ -1,10 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { DirectAdminCockpitSession, createDirectAdminGateway } from '../../../../packages/titan-platform/.test-dist/directadmin-plugin.js';
-import { csrf, fixture, proof } from '../../../../packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs';
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'node:path';
 import { WorkforceApi } from '../images/api.mjs';
 import { workState, verifiedOutcome } from '../images/presentation.mjs';
 import { readFile } from 'node:fs/promises';
+const sdkPath = process.env.TITAN_COCKPIT_SDK_MODULE ??
+  new URL('../../../../packages/titan-platform/.test-dist/directadmin-plugin.js', import.meta.url).pathname;
+const { DirectAdminCockpitSession, createDirectAdminGateway } = await import(pathToFileURL(resolve(sdkPath)).href);
+const bridgeFixturePath = process.env.TITAN_BRIDGE_FIXTURE_MODULE ??
+  new URL('../../../../packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs', import.meta.url).pathname;
+const { csrf, fixture, proof } = await import(pathToFileURL(resolve(bridgeFixturePath)).href);
 const controllerSource = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8')).replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
 const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(controllerSource).toString('base64')}`);
 

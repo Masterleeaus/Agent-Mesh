@@ -47,6 +47,71 @@ test('denied and unavailable responses erase data and redact errors', async () =
     assert.equal(model.state.phase, error.includes('403') ? 'denied' : 'unavailable');
   }
 });
+test('hosted action denial revalidates the same company, while revoked context stays cleared', async () => {
+  for (const revoked of [false, true]) {
+    const api = fixture();
+    const canonicalContext = api.context;
+    let contextReads = 0;
+    api.context = async () => {
+      contextReads++;
+      if (revoked && contextReads === 3) throw Error('directadmin-http-401');
+      return canonicalContext();
+    };
+    api.control = async () => { throw Error('directadmin-workforce-action-denied'); };
+    const model = new WorkforceController(api);
+    await model.connect();
+    await model.submit({ action: 'cancel', work_id: 'company-a-work', reason: 'owner denial fixture' });
+    assert.equal(contextReads, 3, '403 recovery makes one fresh canonical-context read');
+    assert.equal(model.state.phase, revoked ? 'denied' : 'ready');
+    assert.equal(model.state.context?.company_id ?? null, revoked ? null : 'company-a');
+    assert.equal(model.state.discovery === null, revoked, 'revoked identity cannot retain the prior projection');
+    assert.equal(model.state.receipt, null, 'a denied request never fabricates or preserves a receipt');
+    if (!revoked) assert.match(model.state.error, /denied.*refreshed/);
+  }
+});
+test('late 403 after invalidation cannot reconnect or restore company data', async () => {
+  for (const error of ['directadmin-http-403', 'directadmin-workforce-action-denied']) {
+    const api = fixture();
+    const originalContext = api.context;
+    let contextReads = 0;
+    api.context = async () => { contextReads++; return originalContext(); };
+    let rejectControl;
+    let enteredControl;
+    const entered = new Promise(resolve => { enteredControl = resolve; });
+    api.control = () => new Promise((_, reject) => { rejectControl = reject; enteredControl(); });
+    const model = new WorkforceController(api);
+    await model.connect();
+    const submission = model.submit({ action: 'cancel', work_id: 'company-a-work' });
+    await entered;
+    model.invalidate();
+    rejectControl(Error(error));
+    await submission;
+    assert.equal(contextReads, 2, `${error}: stale response does not trigger a second context read`);
+    assert.equal(model.state.phase, 'denied');
+    assert.equal(model.state.context, null);
+    assert.equal(model.state.discovery, null);
+    assert.equal(model.state.receipt, null);
+  }
+});
+test('403 during post-submit refresh never claims the governed action was denied', async () => {
+  const api = fixture();
+  let model;
+  let statusReads = 0;
+  api.status = async () => {
+    statusReads++;
+    if (statusReads === 2) throw Error('directadmin-http-403');
+    return { company_id: 'company-a', work: [] };
+  };
+  model = new WorkforceController(api);
+  await model.connect();
+  await model.submit({ action: 'cancel', work_id: 'company-a-work' });
+  assert.equal(api.calls.length, 1, 'the governed ingress completed before refresh failed');
+  assert.equal(model.state.phase, 'denied');
+  assert.equal(model.state.context, null);
+  assert.equal(model.state.receipt, null, 'session invalidation clears the local receipt');
+  assert.match(model.state.error, /request was submitted.*could not be refreshed/i);
+  assert.doesNotMatch(model.state.error, /host denied/i);
+});
 test('completion/ACK/self-report cannot claim verified outcome', () => {
   for (const state of ['COMPLETED', 'SUCCEEDED', 'PROVIDER_ACKNOWLEDGED']) {
     assert.equal(verifiedOutcome({ state, verified: true, evidence_refs: ['e1'] }), false);
