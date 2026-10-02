@@ -192,6 +192,14 @@ test("DirectAdmin projection reads canonical company-filtered workers, work, run
     assert.equal(data.schema, "titan.workforce-cockpit.v1");
     assert.deepEqual(data.discovery.company_id, "company-a");
     assert.deepEqual(data.discovery.workers.map((worker: any) => worker.worker_id), ["worker-a"]);
+    assert.deepEqual(data.discovery.skills, {
+      schema: "titan.directadmin.workforce-skills.v1", status: "unavailable", company_id: "company-a",
+      context_revision: context.context_revision, reason: "canonical-skill-projection-unavailable",
+      source: null, freshness: null, source_revision: null, evidence_refs: [],
+      read_only: true, capability_presence_confers_authority: false, verification_confers_authority: false,
+      assignment_decision: false, routing_decision: false, entitlement_decision: false,
+      execution_permitted: false, grants_authority: false,
+    });
     assert.deepEqual(data.discovery.controls, []);
     assert.deepEqual(data.status.company_id, "company-a");
     assert.deepEqual(data.status.work, [{ company_id: "company-a", work_id: "work-a", state: "IN_PROGRESS",
@@ -203,6 +211,55 @@ test("DirectAdmin projection reads canonical company-filtered workers, work, run
     await workforce.put({ ...work("company-a", "work-a", ["evidence-ref-a"]), required_capabilities: [" "] });
     await assert.rejects(() => owners.projection("titan_workforce", context), /directadmin-workforce-record-invalid/);
   } finally { await storage.close(); rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("DirectAdmin skill projection reuses canonical evidence proof and filters to the current company roster", async () => {
+  const fixture = await hostedFixture();
+  try {
+    const { workforceStore } = fixture.runtime as any;
+    await workforceStore.putWorker({ company_id: "company-a", worker_id: "worker-a", kind: "digital", active: false, capabilities: [] });
+    await workforceStore.putWorker({ company_id: "company-b", worker_id: "worker-b", kind: "human", active: true, capabilities: [] });
+    const seenCompanies: string[] = [];
+    const registryFor = (company_id: string) => ({
+      schema: "titan.workforce.skill-capability-registry.v1", company_id,
+      graph_revision: 7, updated_at: Date.parse(now), grants_authority: false, execution_permitted: false,
+      worker_capabilities: [
+        { worker_id: "worker-a", capability_id: "work.site.schedule", proficiency: 4,
+          proficiency_level: "PROFICIENT", verification_state: "VERIFIED", evidence: [{ evidence_id: "proof-a", verified: true }] },
+        { worker_id: "worker-b", capability_id: "work.site.schedule", proficiency: 3,
+          proficiency_level: "WORKING", verification_state: "EVIDENCED", evidence: [{ evidence_id: "proof-b" }] },
+      ],
+    });
+    const owners = createDirectAdminWorkforceOwners({
+      ...fixture.runtime,
+      skillCapabilitySource: async company_id => { seenCompanies.push(company_id); return { registry: registryFor(company_id) }; },
+    });
+    const first = await owners.projection("titan_workforce", context);
+    const firstSkills = (first.data as any).discovery.skills;
+    assert.equal(firstSkills.status, "available");
+    assert.equal(firstSkills.company_id, "company-a");
+    assert.equal(firstSkills.context_revision, context.context_revision);
+    assert.equal(firstSkills.source, "canonical-workforce-skill-capability-registry");
+    assert.equal(firstSkills.source_revision, 7);
+    assert.deepEqual(firstSkills.evidence_refs, ["proof-a"]);
+    assert.deepEqual(firstSkills.projection.workers.map((worker: any) => worker.worker_id), ["worker-a"]);
+    assert.equal(firstSkills.projection.skill_proofs[0].proof_state, "verified");
+    assert.equal(firstSkills.projection.skill_proofs[0].grants_authority, false);
+    assert.equal(firstSkills.projection.skill_proofs[0].performance_confers_authority, false);
+
+    const secondContext = Object.freeze({ ...context, company_id: "company-b", context_revision: "session-revision-b" });
+    const second = await owners.projection("titan_workforce", secondContext);
+    const secondSkills = (second.data as any).discovery.skills;
+    assert.equal(secondSkills.company_id, "company-b");
+    assert.equal(secondSkills.context_revision, secondContext.context_revision);
+    assert.deepEqual(secondSkills.projection.workers.map((worker: any) => worker.worker_id), ["worker-b"]);
+    assert.deepEqual(secondSkills.evidence_refs, ["proof-b"]);
+    assert.deepEqual(seenCompanies, ["company-a", "company-b"]);
+    assert.equal(JSON.stringify(firstSkills).includes("worker-b"), false);
+    // `active` is roster status only; the proof projection does not infer runtime availability from it.
+    assert.equal((first.data as any).discovery.workers.find((worker: any) => worker.worker_id === "worker-a").active, false);
+    assert.equal(firstSkills.projection.skill_proofs.length, 1);
+  } finally { await fixture.storage.close(); }
 });
 
 test("DirectAdmin lifecycle proposals are denied without writes, events, receipts or stale-session acceptance", async () => {
