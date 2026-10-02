@@ -103,6 +103,7 @@ jobs:
             exit 1
           fi
           python3 .github/scripts/validate-agent-claim.py --self-test
+          python3 .github/scripts/check-evidence-ledger-ownership.py
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

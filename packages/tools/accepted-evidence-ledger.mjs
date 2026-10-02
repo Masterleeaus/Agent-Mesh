@@ -55,7 +55,7 @@ export function rebuildJobProjection(events, { company_id, job_id }) {
     .sort((a, b) => a.sequence - b.sequence);
   const superseded = new Set(scoped.map((event) => event.supersedes_evidence_id).filter(Boolean));
   const active = scoped.filter((event) => !superseded.has(event.evidence_id));
-  const terminal = active.filter((event) => event.final_outcome === 'verified').at(-1);
+  const terminal = active.filter((event) => event.final_outcome === 'verified' && event.verification?.verified === true).at(-1);
   const evidence_ids = terminal ? active.map((event) => event.evidence_id) : [];
   const state = terminal ? clone(terminal.observed_result ?? null) : null;
   const projection = {
@@ -85,6 +85,9 @@ function normalizeEvidence(input, sequence, recorded_at) {
   }
   if (input.kind === 'simulated' || input.factual === false) {
     throw new Error('simulated-evidence-cannot-enter-factual-ledger');
+  }
+  if (input.final_outcome === 'verified' && (input.state !== 'VERIFIED' || input.verification?.verified !== true)) {
+    throw new Error('verified-evidence-requires-independent-verification');
   }
   return {
     schema: ACCEPTED_EVIDENCE_SCHEMA,
