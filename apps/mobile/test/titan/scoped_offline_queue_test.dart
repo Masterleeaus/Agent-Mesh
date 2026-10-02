@@ -35,6 +35,27 @@ void main() {
     final quarantined = await queue.quarantineAll();
     expect(quarantined.single.id, 'old-intent');
     expect(await queue.all(), isEmpty);
+
+    // Quarantine survives queue reconstruction and another company's session
+    // cannot move the old command back into an active replay queue.
+    final reconstructed = ScopedOfflineCommandQueue(queue.scope!);
+    expect((await reconstructed.quarantined()).single.id, 'old-intent');
+    final companyB = ScopedOfflineCommandQueue(const MobileScopeKey(
+      companyId: 'company-b', actorId: 'actor-a', deviceId: 'device-a',
+      surface: 'zero', contextRevision: 'rev-b',
+    ));
+    await expectLater(
+      companyB.restoreQuarantinedAfterRevalidation(validatedScope: queue.scope!),
+      throwsStateError,
+    );
+    expect(await companyB.all(), isEmpty);
+
+    final restored = await reconstructed.restoreQuarantinedAfterRevalidation(
+      validatedScope: queue.scope!,
+    );
+    expect(restored.single.id, 'old-intent');
+    expect((await reconstructed.all()).single.id, 'old-intent');
+    expect(await reconstructed.quarantined(), isEmpty);
   });
 
   test('scoped queue rejects a command from another company or mode', () async {
