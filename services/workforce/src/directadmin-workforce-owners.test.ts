@@ -7,7 +7,7 @@ import { join } from "node:path";
 // @ts-expect-error Canonical authority stores are JavaScript.
 import { SqliteAuthorityStore, SqliteWorkerAccessStore } from "../../../packages/runtime/authority/index.mjs";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
-import { createDirectAdminWorkforceOwners, DirectAdminWorkforceActionDenied, DirectAdminWorkforceAuthorityDenied, type DirectAdminBridgeContext } from "./directadmin-workforce-owners.js";
+import { createDirectAdminWorkforceOwners, DirectAdminWorkforceActionDenied, DirectAdminWorkforceAuthorityDenied, DirectAdminWorkforceOutcomeUncertain, type DirectAdminBridgeContext } from "./directadmin-workforce-owners.js";
 import type { WorkforceZeroBridgeContext } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 // @ts-expect-error Canonical run storage owner is JavaScript.
 import { SqliteRunStore } from "../../../packages/runtime/agent-runtime/sqlite-run-store.mjs";
@@ -364,12 +364,57 @@ test("cancellation at the provider boundary stops the transaction and leaves a d
       if (++revalidations === 2) controller.abort();
       return context;
     }, controller.signal),
-      (error: unknown) => error instanceof DirectAdminWorkforceAuthorityDenied && error.status === 403);
+      (error: unknown) => error instanceof DirectAdminWorkforceOutcomeUncertain && error.status === 503);
     assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-old");
     assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'", ["company-a", "work-a"])).rowCount, 0);
-    assert.equal((await storage.query("SELECT id FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'", ["company-a"])).rowCount, 1);
+    const uncertain = await storage.query<{ payload: string }>(
+      "SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'",
+      ["company-a"]);
+    assert.equal(uncertain.rowCount, 1);
+    assert.equal(JSON.parse(uncertain.rows[0]!.payload).final_outcome, null);
     await assert.rejects(() => requestIntent(fixture.owners, intent, context, async () => context),
       /workforce-reassignment-recovery-required/);
+  } finally { await fixture.storage.close(); }
+});
+
+test("cancellation after reassignment commit reports uncertainty without claiming rollback or retrying the effect", async () => {
+  const fixture = await hostedFixture();
+  try {
+    const { runtime, storage } = fixture;
+    await seedManager(runtime);
+    await runtime.workforceStore.put({ ...work("company-a", "work-a", [], "READY"), assignee: "worker-old" });
+    const intent = reassignIntent("reassign-cancelled-after-commit");
+    await grantReassignment(runtime, intent.operation_id);
+    const controller = new AbortController();
+    const reassignReady = runtime.workforceStore.reassignReady.bind(runtime.workforceStore);
+    (runtime.workforceStore as any).reassignReady = async (input: any) => {
+      const result = await reassignReady(input);
+      controller.abort(new Error("disposable caller cancellation after commit"));
+      return result;
+    };
+
+    await assert.rejects(() => requestIntent(fixture.owners, intent, context, async () => context, controller.signal),
+      (error: unknown) => error instanceof DirectAdminWorkforceOutcomeUncertain && error.status === 503);
+
+    const observed = await runtime.workforceStore.get("company-a", "work-a");
+    assert.equal(observed?.assignee, "worker-target", "the committed mutation is preserved; cancellation does not imply rollback");
+    const events = await storage.query("SELECT event_seq,type,payload FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'",
+      ["company-a", "work-a"]);
+    assert.equal(events.rowCount, 1, JSON.stringify(events.rows));
+    const uncertain = await storage.query<{ id: string; payload: string }>(
+      "SELECT id,payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2 AND json_extract(payload,'$.state')='UNCERTAIN'",
+      ["company-a", `${REASSIGN_CAPABILITY}:${intent.operation_id}`]);
+    assert.equal(uncertain.rowCount, 1);
+    assert.equal(JSON.parse(uncertain.rows[0]!.payload).state, "UNCERTAIN");
+    assert.equal(JSON.parse(uncertain.rows[0]!.payload).final_outcome, null, "no verified final outcome is recorded after cancellation");
+    assert.equal(observed?.evidence_refs.includes(uncertain.rows[0]!.id), false,
+      "uncertain execution evidence is not projected as accepted work evidence");
+
+    await assert.rejects(() => requestIntent(fixture.owners, intent, context, async () => context),
+      /workforce-reassignment-recovery-required/);
+    assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'",
+      ["company-a", "work-a"])).rowCount, 1, "same-operation replay cannot duplicate the committed event");
+    assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-target");
   } finally { await fixture.storage.close(); }
 });
 

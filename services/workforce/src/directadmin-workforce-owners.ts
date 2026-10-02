@@ -84,9 +84,18 @@ export class DirectAdminWorkforceActionDenied extends Error {
 export class DirectAdminWorkforceAuthorityDenied extends Error {
   readonly code = "directadmin-workforce-authority-denied";
   readonly status = 403;
-  constructor(action: string) {
-    super(`Current Workforce authority does not permit: ${action}`);
+  constructor(action: string, message?: string) {
+    super(message ?? `Current Workforce authority does not permit: ${action}`);
     this.name = "DirectAdminWorkforceAuthorityDenied";
+  }
+}
+
+export class DirectAdminWorkforceOutcomeUncertain extends Error {
+  readonly code = "directadmin-workforce-outcome-uncertain";
+  readonly status = 503;
+  constructor() {
+    super("Workforce reassignment outcome is uncertain; recovery is required");
+    this.name = "DirectAdminWorkforceOutcomeUncertain";
   }
 }
 
@@ -225,7 +234,9 @@ function authorityInput(input: { company_id: string; actor_id: string; worker_id
 function requireCurrentContext(expected: DirectAdminBridgeContext, actual: DirectAdminBridgeContext): void {
   requireContext(actual);
   if (actual.company_id !== expected.company_id || actual.actor_id !== expected.actor_id ||
-      actual.context_revision !== expected.context_revision) throw new Error("directadmin-workforce-context-changed");
+      actual.context_revision !== expected.context_revision) {
+    throw new DirectAdminWorkforceAuthorityDenied("reassign", "directadmin-workforce-context-changed");
+  }
 }
 
 async function resolveHumanManager(workforceStore: DirectAdminWorkforceRuntime["workforceStore"], context: DirectAdminBridgeContext) {
@@ -312,6 +323,21 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
         );
       }
     });
+  };
+
+  const reassignmentWasCommitted = async (active: any): Promise<boolean> => {
+    const row = await one(runtime.storage,
+      "SELECT payload FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned' AND json_extract(payload,'$.operation_id')=$3 ORDER BY event_seq DESC LIMIT 1",
+      [active.intent.company_id, active.work.work_id, active.intent.operation_id]);
+    if (!row) return false;
+    let event: any;
+    try { event = JSON.parse(row.payload); }
+    catch { throw new Error("directadmin-workforce-reassignment-event-invalid"); }
+    if (event.actor_id !== active.context.actor_id || event.target_worker_id !== active.target_worker_id ||
+        event.from_assignee !== (active.intent.input.expected_assignee_id ?? null)) {
+      throw new Error("directadmin-workforce-reassignment-event-mismatch");
+    }
+    return true;
   };
 
   const idempotencyStore = {
@@ -583,6 +609,15 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
             signal: control?.signal,
             ...(run?.run_id ? { run_id: run.run_id } : {}),
           });
+          if (result?.state === "UNCERTAIN" || result?.evidence?.state === "UNCERTAIN") {
+            let committed = false;
+            try { committed = await reassignmentWasCommitted(active); }
+            catch { throw new DirectAdminWorkforceOutcomeUncertain(); }
+            if (!committed && result?.evidence?.failure?.code === "directadmin-workforce-authority-denied") {
+              throw new DirectAdminWorkforceAuthorityDenied(action);
+            }
+            throw new DirectAdminWorkforceOutcomeUncertain();
+          }
           if (result?.state !== "VERIFIED" || !id(result?.evidence?.evidence_id)) throw new DirectAdminWorkforceAuthorityDenied(action);
           const observed = await runtime.workforceStore.get(intent.company_id, item.work_id);
           if (!observed || observed.assignee !== target.worker_id || !observed.evidence_refs.includes(result.evidence.evidence_id)) {
