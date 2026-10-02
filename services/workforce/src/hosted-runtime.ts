@@ -7,7 +7,8 @@ import { IdentitySessionRegistry, type CurrentSessionContext, type SessionSource
 import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
 // @ts-expect-error Canonical execution boundary is JavaScript.
 import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mjs";
-import type { ConversationAuth, ConversationSurface } from "./conversation-api.js";
+import type { ConversationAuth, ConversationRequest, ConversationSurface } from "./conversation-api.js";
+import type { WorkforceZeroBridgeContext } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
 import { AUTHENTICATED_SESSION_PROOF_TYPE, type AuthenticatedWorkIdentity } from "./index.js";
 import { createCompanyScopedWorkOrders, type HostedCompanyWorkOrderOperations } from "./company-scoped-work-orders.js";
@@ -306,6 +307,33 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
   const recover = runtime.recover;
   const surfacedRuntime = Object.freeze({
     ...runtime,
+    async verifyWorkforceZeroSession(credential: string, child: WorkforceZeroBridgeContext): Promise<void> {
+      if (typeof credential !== "string" || credential.length < 1 || credential.length > 16_384 ||
+          child?.schema !== "titan.workforce-zero.session/v1" || child.audience !== "workforce" || child.surface !== "zero" ||
+          !child.company_id || !child.actor_id || !child.device_id || !child.session_id || !child.context_revision ||
+          !Number.isSafeInteger(child.session_revision) || !Number.isFinite(child.expires_at)) {
+        throw new Error("runtime-authentication-required");
+      }
+      const request = {
+        company_id: child.company_id,
+        actor_id: child.actor_id,
+        device_id: child.device_id,
+        surface: child.surface,
+        session_id: child.session_id,
+        context_revision: child.context_revision,
+      } as ConversationRequest;
+      const authenticated = await auth.resolve({ request, authorization: `Bearer ${credential}` });
+      const identity = authenticated.authenticated_identity;
+      const credentialExpiresAt = Date.parse(String(identity?.credential_expires_at ?? ""));
+      if (authenticated.company_id !== child.company_id || authenticated.actor_id !== child.actor_id ||
+          authenticated.device_id !== child.device_id || authenticated.surface !== "zero" ||
+          authenticated.session_id !== child.session_id || authenticated.context_revision !== child.context_revision ||
+          identity?.session_revision !== child.session_revision ||
+          !identity?.source_session_required ||
+          !Number.isFinite(credentialExpiresAt) || credentialExpiresAt > child.expires_at) {
+        throw new Error("runtime-authentication-required");
+      }
+    },
     async dispatch(input: Parameters<typeof dispatch>[0]) {
       const scope: { failure?: string; effectAdmitted?: boolean } = {};
       const result = await requestIdentityFailure.run(scope, () => dispatch(input));

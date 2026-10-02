@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { SqliteAuthorityStore, SqliteWorkerAccessStore } from "../../../packages/runtime/authority/index.mjs";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
 import { createDirectAdminWorkforceOwners, DirectAdminWorkforceActionDenied, DirectAdminWorkforceAuthorityDenied, type DirectAdminBridgeContext } from "./directadmin-workforce-owners.js";
+import type { WorkforceZeroBridgeContext } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 // @ts-expect-error Canonical run storage owner is JavaScript.
 import { SqliteRunStore } from "../../../packages/runtime/agent-runtime/sqlite-run-store.mjs";
 // @ts-expect-error Reuse the native production composition and its owned migrations.
@@ -77,7 +78,34 @@ async function hostedFixture(path = ":memory:") {
     async complete() { throw new Error("unexpected-work-order-completion-during-reassignment-test"); },
     async read() { throw new Error("unexpected-work-order-read-during-reassignment-test"); },
   } });
-  return { storage, runtime, owners: createDirectAdminWorkforceOwners(runtime) };
+  const verifiedRuntime = { ...runtime, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession };
+  return { storage, runtime: verifiedRuntime, owners: createDirectAdminWorkforceOwners(verifiedRuntime) };
+}
+
+async function verifyDisposableWorkforceZeroSession(credential: string, child: WorkforceZeroBridgeContext) {
+  if (credential !== "disposable-workforce-zero-credential" || child.schema !== "titan.workforce-zero.session/v1" ||
+      child.audience !== "workforce" || child.surface !== "zero" || child.company_ids.length !== 1 ||
+      child.company_ids[0] !== child.company_id || !Number.isFinite(child.expires_at) || child.expires_at <= Date.now()) {
+    throw new Error("runtime-authentication-required");
+  }
+}
+
+function withDisposableWorkforceSession(context: DirectAdminBridgeContext,
+  options: { credential?: string; child?: Partial<WorkforceZeroBridgeContext> } = {}) {
+  const child: WorkforceZeroBridgeContext = Object.freeze({ schema: "titan.workforce-zero.session/v1", audience: "workforce", surface: "zero",
+    actor_id: context.actor_id, company_id: context.company_id, company_ids: Object.freeze([context.company_id]),
+    device_id: "disposable-device", session_id: `workforce-session-${context.company_id}-${context.actor_id}`,
+    context_revision: `workforce-${context.context_revision}`, session_revision: 1, expires_at: Date.now() + 60 * 60_000,
+    ...options.child });
+  return async <T>(consume: (credential: string, context: WorkforceZeroBridgeContext) => Promise<T>) =>
+    consume(options.credential ?? "disposable-workforce-zero-credential", child);
+}
+
+function requestIntent(owners: ReturnType<typeof createDirectAdminWorkforceOwners>, intent: any,
+  context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>, signal?: AbortSignal,
+  childSession = withDisposableWorkforceSession(context)) {
+  return owners.requestIntent("titan_workforce", intent, context, revalidate,
+    childSession, signal ? { signal } : undefined);
 }
 
 async function seedManager(runtime: any, company_id = "company-a") {
@@ -140,7 +168,8 @@ test("DirectAdmin projection reads canonical company-filtered workers, work, run
     await runs.create({ company_id: "company-a", run_id: "run-a", state: "COMPLETED", conversation_id: "conversation-a", agent_id: "worker-a", work_id: "work-a", updated_at: now });
     await runs.create({ company_id: "company-b", run_id: "run-b", state: "COMPLETED", conversation_id: "conversation-b", agent_id: "worker-b", work_id: "work-b", updated_at: now });
 
-    const projection = await createDirectAdminWorkforceOwners({ storage, workforceStore: workforce, runStore: runs }).projection("titan_workforce", context);
+    const projection = await createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession,
+      workforceStore: workforce, runStore: runs }).projection("titan_workforce", context);
     const data = projection.data as any;
     assert.equal(projection.company_id, "company-a");
     assert.equal(data.company_id, "company-a");
@@ -165,7 +194,7 @@ test("DirectAdmin lifecycle proposals are denied without writes, events, receipt
     const runs = new SqliteRunStore(storage);
     await workforce.migrate(); await runs.migrate();
     await workforce.put(work("company-a", "work-a", []));
-    const owners = createDirectAdminWorkforceOwners({ storage, workforceStore: workforce, runStore: runs });
+    const owners = createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession, workforceStore: workforce, runStore: runs });
     const before = await workforce.get("company-a", "work-a");
     const beforeEvents = await storage.query("SELECT event_seq FROM workforce_events");
     for (const action of ["pause", "resume", "cancel", "reassign", "escalate", "revoke"]) {
@@ -175,19 +204,19 @@ test("DirectAdmin lifecycle proposals are denied without writes, events, receipt
         input: { action, work_id: "work-a", reason: "bounded test denial", ...(action === "reassign" ? { target_worker_id: "worker-target", expected_assignee_id: null } : {}) },
       };
       if (action === "reassign") {
-        await assert.rejects(() => owners.requestIntent("titan_workforce", intent, context, async () => context),
+        await assert.rejects(() => requestIntent(owners, intent, context, async () => context),
           (error: unknown) => error instanceof DirectAdminWorkforceAuthorityDenied && error.code === "directadmin-workforce-authority-denied" && error.status === 403);
       } else {
-        await assert.rejects(() => owners.requestIntent("titan_workforce", intent, context, async () => context),
+        await assert.rejects(() => requestIntent(owners, intent, context, async () => context),
           (error: unknown) => error instanceof DirectAdminWorkforceActionDenied && error.code === "directadmin-workforce-action-unsupported" && error.status === 403);
       }
     }
-    await assert.rejects(() => owners.requestIntent("titan_workforce", {
+    await assert.rejects(() => requestIntent(owners, {
       company_id: "company-a", actor_id: "manager-a", capability_id: "titan.workforce.delete",
       operation_id: "operation-unknown", correlation_id: "correlation-unknown",
       input: { action: "delete", work_id: "work-a", reason: "must reject" },
     }, context, async () => context), /directadmin-workforce-intent-invalid/);
-    await assert.rejects(() => owners.requestIntent("titan_workforce", {
+    await assert.rejects(() => requestIntent(owners, {
       company_id: "company-a", actor_id: "manager-a", capability_id: "titan.workforce.cancel",
       operation_id: "operation-switch", correlation_id: "correlation-switch",
       input: { action: "cancel", work_id: "work-a", reason: "session changed" },
@@ -220,7 +249,7 @@ test("reassignment requires a bound human and a current explicit grant, then rec
     assert.deepEqual((exposed.data as any).discovery.controls, [{ capability_id: REASSIGN_CAPABILITY,
       action: "reassign", requires_fresh_approval: true, grants_authority: false }]);
 
-    const receipt = await fixture.owners.requestIntent("titan_workforce", intent, context, async () => context);
+    const receipt = await requestIntent(fixture.owners, intent, context, async () => context);
     const observed = await runtime.workforceStore.get("company-a", "work-a");
     assert.equal(observed?.state, "READY");
     assert.equal(observed?.assignee, "worker-target");
@@ -245,6 +274,7 @@ test("reassignment requires a bound human and a current explicit grant, then rec
     assert.equal(persisted.verification.observed_assignee_id, "worker-target");
     assert.deepEqual(JSON.parse(evidence.rows[0]!.provenance), {
       company_id: "company-a", actor_id: "manager-a", context_revision: context.context_revision,
+      workforce_session_id: `workforce-session-company-a-manager-a`, workforce_context_revision: `workforce-${context.context_revision}`,
       manager_worker_id: "manager-worker-a", request_id: "request-work-a", operation_id: intent.operation_id,
       trace_id: "trace-work-a", conversation_id: "conversation-work-a", work_id: "work-a", run_id: null,
       correlation_id: intent.correlation_id, idempotency_key: `${REASSIGN_CAPABILITY}:${intent.operation_id}`,
@@ -256,7 +286,7 @@ test("reassignment requires a bound human and a current explicit grant, then rec
     storage = undefined;
     fixture = await hostedFixture(file);
     storage = fixture.storage;
-    const replay = await fixture.owners.requestIntent("titan_workforce", intent, context, async () => context);
+    const replay = await requestIntent(fixture.owners, intent, context, async () => context);
     assert.equal(replay.receipt_id, receipt.receipt_id);
     assert.equal((await fixture.runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-target");
     assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'", ["company-a", "work-a"])).rowCount, 1);
@@ -292,7 +322,7 @@ test("revoked access, expired authority and a company switch all fail closed bef
         let calls = 0;
         revalidate = async () => ++calls === 1 ? context : Object.freeze({ ...context, company_id: "company-b" });
       }
-      await assert.rejects(() => fixture.owners.requestIntent("titan_workforce", intent, context, revalidate),
+      await assert.rejects(() => requestIntent(fixture.owners, intent, context, revalidate),
         (error: unknown) => error instanceof DirectAdminWorkforceAuthorityDenied && error.status === 403);
       assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-old");
       assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'", ["company-a", "work-a"])).rowCount, 0);
@@ -310,15 +340,15 @@ test("cancellation at the provider boundary stops the transaction and leaves a d
     await grantReassignment(runtime, intent.operation_id);
     const controller = new AbortController();
     let revalidations = 0;
-    await assert.rejects(() => fixture.owners.requestIntent("titan_workforce", intent, context, async () => {
+    await assert.rejects(() => requestIntent(fixture.owners, intent, context, async () => {
       if (++revalidations === 2) controller.abort();
       return context;
-    }, { signal: controller.signal }),
+    }, controller.signal),
       (error: unknown) => error instanceof DirectAdminWorkforceAuthorityDenied && error.status === 403);
     assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-old");
     assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'", ["company-a", "work-a"])).rowCount, 0);
     assert.equal((await storage.query("SELECT id FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'", ["company-a"])).rowCount, 1);
-    await assert.rejects(() => fixture.owners.requestIntent("titan_workforce", intent, context, async () => context),
+    await assert.rejects(() => requestIntent(fixture.owners, intent, context, async () => context),
       /workforce-reassignment-recovery-required/);
   } finally { await fixture.storage.close(); }
 });
@@ -333,9 +363,28 @@ test("a human binding from another company cannot authorize a company-scoped rea
     await runtime.workforceStore.put({ ...work("company-a", "work-a", [], "READY"), assignee: "worker-old" });
     const switched = Object.freeze({ ...context, actor_id: "manager-b" });
     const intent = reassignIntent("reassign-cross-company", "company-a", "manager-b");
-    await assert.rejects(() => fixture.owners.requestIntent("titan_workforce", intent, switched, async () => switched),
+    await assert.rejects(() => requestIntent(fixture.owners, intent, switched, async () => switched),
       (error: unknown) => error instanceof DirectAdminWorkforceAuthorityDenied && error.status === 403);
     assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-old");
     assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND type='work.reassigned'", ["company-a"])).rowCount, 0);
   } finally { await fixture.storage.close(); }
+});
+
+test("a forged or mismatched Workforce child session is rejected before any reassignment write", async () => {
+  for (const mode of ["invalid-credential", "actor-switch"] as const) {
+    const fixture = await hostedFixture();
+    try {
+      const { runtime, storage } = fixture;
+      await runtime.workforceStore.put({ ...work("company-a", "work-a", [], "READY"), assignee: "worker-old" });
+      const intent = reassignIntent(`reassign-child-${mode}`);
+      const child = mode === "actor-switch" ? withDisposableWorkforceSession(context, { child: { actor_id: "manager-b" } })
+        : withDisposableWorkforceSession(context, { credential: "forged-child-credential" });
+      await assert.rejects(() => requestIntent(fixture.owners, intent, context, async () => context, undefined, child),
+        mode === "actor-switch"
+          ? (error: unknown) => error instanceof DirectAdminWorkforceAuthorityDenied && error.status === 403
+          : /runtime-authentication-required/);
+      assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-old");
+      assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND type='work.reassigned'", ["company-a"])).rowCount, 0);
+    } finally { await fixture.storage.close(); }
+  }
 });

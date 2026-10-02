@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import type { StorageClient } from "../../../packages/storage/src/index.js";
 import type { WorkItem, WorkforceStore, WorkforceWorker, WorkforceWorkerStore } from "./index.js";
 import type { SqliteWorkforceStore } from "./sqlite-store.js";
+import type { WorkforceZeroBridgeContext, WithWorkforceZeroSession } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 // @ts-expect-error Canonical authority owner is JavaScript.
 import { AuthorityContextResolver, RuntimeAuthorityGateway, SqliteAuthorityStore, SqliteWorkerAccessStore, WorkerAccessResolver, CapabilityRequirementResolver, assertAuthorityDecisionAllowsExecution } from "../../../packages/runtime/authority/index.mjs";
 // @ts-expect-error Execution and accepted-evidence owners are JavaScript.
@@ -53,6 +54,7 @@ export type DirectAdminGatewayOwners = Readonly<{
     intent: DirectAdminWorkforceIntent,
     context: DirectAdminBridgeContext,
     revalidate: () => Promise<DirectAdminBridgeContext>,
+    withWorkforceZeroSession: WithWorkforceZeroSession,
     control?: { signal?: AbortSignal },
   ): Promise<{ receipt_id: string }>;
 }>;
@@ -62,6 +64,7 @@ export type DirectAdminGatewayFactory = (owners: DirectAdminGatewayOwners) => Di
 
 export type DirectAdminWorkforceRuntime = Readonly<{
   storage: StorageClient;
+  verifyWorkforceZeroSession(credential: string, context: WorkforceZeroBridgeContext): Promise<void>;
   workforceStore: WorkforceStore & WorkforceWorkerStore & Pick<SqliteWorkforceStore,
     "findHumanByIdentityRef" | "reassignReady" | "appendAcceptedEvidenceRef">;
   runStore: { findByWork(company_id: string, work_id: string): Promise<unknown> };
@@ -246,6 +249,7 @@ function withOperationLock<T>(locks: Map<string, Promise<void>>, key: string, ac
  * through the canonical RuntimeAuthorityGateway and ExecutionGateway. */
 export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRuntime): DirectAdminGatewayOwners {
   if (!runtime?.storage?.query || !runtime.storage.transaction ||
+      typeof runtime.verifyWorkforceZeroSession !== "function" ||
       typeof runtime.workforceStore?.findHumanByIdentityRef !== "function" ||
       typeof runtime.workforceStore?.reassignReady !== "function" ||
       typeof runtime.workforceStore?.appendAcceptedEvidenceRef !== "function" ||
@@ -279,6 +283,8 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
         company_id: evidence.company_id,
         actor_id: active.context.actor_id,
         context_revision: active.context.context_revision,
+        workforce_session_id: active.child_context.session_id,
+        workforce_context_revision: active.child_context.context_revision,
         manager_worker_id: active.manager.worker_id,
         request_id: origin.request_id ?? active.run?.request_id ?? null,
         operation_id: active.intent.operation_id,
@@ -483,7 +489,7 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
       });
     },
 
-    async requestIntent(plugin, intent, context, revalidate, control) {
+    async requestIntent(plugin, intent, context, revalidate, withWorkforceZeroSession, control) {
       requireContext(context);
       if (plugin !== "titan_workforce" || intent.company_id !== context.company_id || intent.actor_id !== context.actor_id ||
           !id(intent.capability_id) || !id(intent.operation_id) || !id(intent.correlation_id) ||
@@ -498,17 +504,25 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
           (intent.input.target_worker_id !== undefined && !id(intent.input.target_worker_id))) {
         throw new Error("directadmin-workforce-intent-invalid");
       }
+      if (typeof withWorkforceZeroSession !== "function") throw new DirectAdminWorkforceAuthorityDenied(action);
       control?.signal?.throwIfAborted();
-      const current = await revalidate();
-      requireCurrentContext(context, current);
-      if (action !== "reassign") throw new DirectAdminWorkforceActionDenied(action);
-      if (intent.capability_id !== REASSIGN_CAPABILITY || !id(intent.input.target_worker_id) ||
-          !Object.hasOwn(intent.input, "expected_assignee_id") ||
-          (intent.input.expected_assignee_id !== null && !id(intent.input.expected_assignee_id))) {
-        throw new Error("directadmin-workforce-intent-invalid");
-      }
       const key = JSON.stringify([intent.company_id, intent.operation_id]);
-      return withOperationLock(operationLocks, key, async () => {
+      return withWorkforceZeroSession(async (credential, childContext) => {
+        control?.signal?.throwIfAborted();
+        await runtime.verifyWorkforceZeroSession(credential, childContext);
+        if (childContext.company_id !== context.company_id || childContext.actor_id !== context.actor_id ||
+            childContext.company_ids.length !== 1 || childContext.company_ids[0] !== context.company_id) {
+          throw new DirectAdminWorkforceAuthorityDenied(action);
+        }
+        const current = await revalidate();
+        requireCurrentContext(context, current);
+        if (action !== "reassign") throw new DirectAdminWorkforceActionDenied(action);
+        if (intent.capability_id !== REASSIGN_CAPABILITY || !id(intent.input.target_worker_id) ||
+            !Object.hasOwn(intent.input, "expected_assignee_id") ||
+            (intent.input.expected_assignee_id !== null && !id(intent.input.expected_assignee_id))) {
+          throw new Error("directadmin-workforce-intent-invalid");
+        }
+        return withOperationLock(operationLocks, key, async () => {
         control?.signal?.throwIfAborted();
         const manager = await resolveHumanManager(runtime.workforceStore, current);
         if (!manager) throw new DirectAdminWorkforceAuthorityDenied(action);
@@ -532,10 +546,12 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
           actor_id: current.actor_id,
           manager_worker_id: manager.worker_id,
           context_revision: current.context_revision,
+          workforce_session_id: childContext.session_id,
+          workforce_context_revision: childContext.context_revision,
           operation_id: intent.operation_id,
           correlation_id: intent.correlation_id,
         });
-        const active = { context: current, revalidate, manager, target_worker_id: target.worker_id, intent, work: item, run };
+        const active = { context: current, child_context: childContext, revalidate, manager, target_worker_id: target.worker_id, intent, work: item, run };
         inflight.set(executionId, active);
         try {
           const prior = await authority.authorityStore.latestDecisionForBinding({
@@ -568,6 +584,7 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
           }
           return Object.freeze({ receipt_id: result.evidence.evidence_id });
         } finally { inflight.delete(executionId); }
+        });
       });
     },
   });
