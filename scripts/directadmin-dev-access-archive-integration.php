@@ -9,20 +9,6 @@ function integration_expect(bool $condition, string $message): void
     }
 }
 
-function integration_rejection_kind(string $html): string
-{
-    foreach ([
-        'Request rejected: malformed or ambiguous form data.' => 'malformed-or-ambiguous',
-        'Request rejected: invalid CSRF token.' => 'invalid-csrf',
-        'Request rejected: this DirectAdmin role is read-only in Developer Portal.' => 'read-only-role',
-    ] as $message => $kind) {
-        if (strpos($html, $message) !== false) {
-            return $kind;
-        }
-    }
-    return 'no-known-rejection-message';
-}
-
 function integration_remove_tree(string $path): void
 {
     if (is_link($path) || is_file($path)) {
@@ -137,17 +123,18 @@ $body = http_build_query([
     'add_key' => '1',
 ], '', '&', PHP_QUERY_RFC1738);
 integration_expect(strpos($body, '%2B') !== false && strpos($body, '%2F') !== false, 'browser form encoding must escape plus and slash characters in the synthetic key');
+$stdinBody = $body;
 $postEnvironment = array_replace($baseEnvironment, [
     'REQUEST_METHOD' => 'POST',
     'SCRIPT_NAME' => $route,
     'QUERY_STRING' => 'pipe_post=yes',
     'POST' => 'stdin=true',
-    'CONTENT_LENGTH' => (string)strlen($body),
+    'CONTENT_LENGTH' => (string)strlen($stdinBody),
     'csrf' => $matches[1],
     'public_key' => $textareaValue,
     'add_key' => '1',
 ]);
-[$result] = integration_run_role($entrypoint, $pluginRoot, $postEnvironment, $body);
+[$result] = integration_run_role($entrypoint, $pluginRoot, $postEnvironment, $stdinBody);
 integration_expect(strpos($result, 'Request rejected: malformed or ambiguous form data.') === false, 'valid synthetic key form must not be rejected as malformed or ambiguous');
 integration_expect(strpos($result, 'Request rejected: invalid CSRF token.') === false, 'valid synthetic key form must not be rejected for CSRF');
 integration_expect(strpos($result, 'Public key installed.') !== false, 'actual extracted admin entrypoint must accept the synthetic public key');
@@ -159,23 +146,128 @@ integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey 
 integration_expect(((fileperms($sshDirectory) ?: 0) & 0777) === 0700, 'disposable .ssh directory must be mode 0700');
 integration_expect(((fileperms($authorizedKeys) ?: 0) & 0777) === 0600, 'disposable authorized_keys fixture must be mode 0600');
 
-// Also exercise DirectAdmin's raw POST environment transport with the same browser body.
-$rawPostEnvironment = array_replace($postEnvironment, ['POST' => $body]);
-unset($rawPostEnvironment['csrf'], $rawPostEnvironment['public_key'], $rawPostEnvironment['add_key']);
-[$duplicate] = integration_run_role($entrypoint, $pluginRoot, $rawPostEnvironment);
-integration_expect(strpos($duplicate, 'Key already installed.') !== false, 'duplicate synthetic key submit must be idempotently rejected');
-integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'duplicate submit must not duplicate the synthetic key');
+[$duplicate] = integration_run_role($entrypoint, $pluginRoot, $postEnvironment, $stdinBody);
+integration_expect(strpos($duplicate, 'Key already installed.') !== false, 'duplicate stdin synthetic key submit must be idempotently rejected');
+integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'duplicate stdin submit must not duplicate the synthetic key');
 
-$trailingByteBody = $body . "\n";
-$trailingByteEnvironment = array_replace($baseEnvironment, [
+// The raw POST transport receives the serialized browser form in POST and may add one terminal LF.
+$rawHome = $fixture . '/raw-operator-home';
+integration_expect(@mkdir($rawHome, 0700, true), 'second disposable HOME must be created for raw POST transport');
+$rawSecretDirectory = $rawHome . '/.titan-dev-access';
+integration_expect(@mkdir($rawSecretDirectory, 0700, true), 'raw POST HOME CSRF directory must be created');
+$rawSecretFile = $rawSecretDirectory . '/csrf.key';
+integration_expect(file_put_contents($rawSecretFile, $secret, LOCK_EX) !== false, 'raw POST CSRF fixture must be written');
+chmod($rawSecretDirectory, 0700);
+chmod($rawSecretFile, 0600);
+$rawGetEnvironment = array_replace($baseEnvironment, [
+    'HOME' => $rawHome,
+    'REQUEST_METHOD' => 'GET',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+]);
+[$rawHtml] = integration_run_role($entrypoint, $pluginRoot, $rawGetEnvironment);
+integration_expect(preg_match('/<input type="hidden" name="csrf" value="([a-f0-9]{64})">/', $rawHtml, $rawMatches) === 1, 'raw POST fixture must receive its own CSRF token');
+$rawFormBody = http_build_query([
+    'csrf' => $rawMatches[1],
+    'public_key' => $textareaValue,
+    'add_key' => '1',
+], '', '&', PHP_QUERY_RFC1738) . "\n";
+$rawPostEnvironment = array_replace($baseEnvironment, [
+    'HOME' => $rawHome,
     'REQUEST_METHOD' => 'POST',
     'SCRIPT_NAME' => $route,
-    'QUERY_STRING' => 'pipe_post=yes',
-    'POST' => 'stdin=true',
-    'CONTENT_LENGTH' => (string)strlen($trailingByteBody),
+    'QUERY_STRING' => '',
+    'POST' => $rawFormBody,
+    'CONTENT_LENGTH' => (string)strlen($rawFormBody),
 ]);
-[$rejected] = integration_run_role($entrypoint, $pluginRoot, $trailingByteEnvironment, $trailingByteBody);
-integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'a trailing byte after the serialized form must fail closed with the reported diagnostic (observed=' . integration_rejection_kind($rejected) . ')');
-integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'rejected trailing-byte form must not change authorized_keys');
+[$rawResult] = integration_run_role($entrypoint, $pluginRoot, $rawPostEnvironment);
+integration_expect(strpos($rawResult, 'Request rejected: malformed or ambiguous form data.') === false, 'raw POST with a terminal LF must not be rejected as malformed or ambiguous');
+integration_expect(strpos($rawResult, 'Public key installed.') !== false, 'raw POST terminal-LF form must install the synthetic key');
+$rawAuthorizedKeys = $rawHome . '/.ssh/authorized_keys';
+integration_expect((file_get_contents($rawAuthorizedKeys) ?: '') === $syntheticKey . "\n", 'raw POST must preserve the exact synthetic key after trimming textarea CRLF');
+[$rawDuplicate] = integration_run_role($entrypoint, $pluginRoot, $rawPostEnvironment);
+integration_expect(strpos($rawDuplicate, 'Key already installed.') !== false, 'raw POST duplicate must remain idempotent');
+integration_expect((file_get_contents($rawAuthorizedKeys) ?: '') === $syntheticKey . "\n", 'raw POST duplicate must not append a second key');
 
-echo "Synthetic public-key form submission passed against the extracted archive; no real key or account data was used.\n";
+$invalidHome = $fixture . '/embedded-newline-home';
+integration_expect(@mkdir($invalidHome, 0700, true), 'embedded-newline HOME must be created');
+$invalidSecretDirectory = $invalidHome . '/.titan-dev-access';
+integration_expect(@mkdir($invalidSecretDirectory, 0700, true), 'embedded-newline HOME CSRF directory must be created');
+$invalidSecretFile = $invalidSecretDirectory . '/csrf.key';
+integration_expect(file_put_contents($invalidSecretFile, $secret, LOCK_EX) !== false, 'embedded-newline CSRF fixture must be written');
+chmod($invalidSecretDirectory, 0700);
+chmod($invalidSecretFile, 0600);
+$invalidGetEnvironment = array_replace($baseEnvironment, [
+    'HOME' => $invalidHome,
+    'REQUEST_METHOD' => 'GET',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+]);
+[$invalidHtml] = integration_run_role($entrypoint, $pluginRoot, $invalidGetEnvironment);
+integration_expect(preg_match('/<input type="hidden" name="csrf" value="([a-f0-9]{64})">/', $invalidHtml, $invalidMatches) === 1, 'embedded-newline fixture must render its own CSRF token');
+$embeddedNewlineKey = 'ssh-ed25519' . "\n" . 'AAAAC3NzaC1lZDI1NTE5AAAAINdamAGCsQq31Uv+08lkBzoO4XLz2qYjJa8CGmj3B1Ea synthetic-fixture';
+$embeddedBody = http_build_query([
+    'csrf' => $invalidMatches[1],
+    'public_key' => $embeddedNewlineKey,
+    'add_key' => '1',
+], '', '&', PHP_QUERY_RFC1738);
+[$invalidResult] = integration_run_role($entrypoint, $pluginRoot, array_replace($baseEnvironment, [
+    'HOME' => $invalidHome,
+    'REQUEST_METHOD' => 'POST',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+    'POST' => $embeddedBody,
+    'CONTENT_LENGTH' => (string)strlen($embeddedBody),
+]));
+integration_expect(strpos($invalidResult, 'Invalid public key format.') !== false, 'embedded key CR/LF must fail at key-line validation');
+integration_expect((file_get_contents($invalidHome . '/.ssh/authorized_keys') ?: '') === '', 'rejected embedded key newline must leave authorized_keys empty');
+
+$duplicateHome = $fixture . '/duplicate-action-home';
+integration_expect(@mkdir($duplicateHome, 0700, true), 'duplicate-action HOME must be created');
+$duplicateSecretDirectory = $duplicateHome . '/.titan-dev-access';
+integration_expect(@mkdir($duplicateSecretDirectory, 0700, true), 'duplicate-action HOME CSRF directory must be created');
+$duplicateSecretFile = $duplicateSecretDirectory . '/csrf.key';
+integration_expect(file_put_contents($duplicateSecretFile, $secret, LOCK_EX) !== false, 'duplicate-action CSRF fixture must be written');
+chmod($duplicateSecretDirectory, 0700);
+chmod($duplicateSecretFile, 0600);
+$duplicateGetEnvironment = array_replace($baseEnvironment, [
+    'HOME' => $duplicateHome,
+    'REQUEST_METHOD' => 'GET',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+]);
+[$duplicateHtml] = integration_run_role($entrypoint, $pluginRoot, $duplicateGetEnvironment);
+integration_expect(preg_match('/<input type="hidden" name="csrf" value="([a-f0-9]{64})">/', $duplicateHtml, $duplicateMatches) === 1, 'duplicate-action fixture must render its own CSRF token');
+$duplicateActionBody = http_build_query([
+    'csrf' => $duplicateMatches[1],
+    'public_key' => $syntheticKey,
+    'add_key' => '1',
+], '', '&', PHP_QUERY_RFC1738) . '&add_key=1' . "\n";
+[$duplicateActionResult] = integration_run_role($entrypoint, $pluginRoot, array_replace($baseEnvironment, [
+    'HOME' => $duplicateHome,
+    'REQUEST_METHOD' => 'POST',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+    'POST' => $duplicateActionBody,
+    'CONTENT_LENGTH' => (string)strlen($duplicateActionBody),
+]));
+integration_expect(strpos($duplicateActionResult, 'Request rejected: malformed or ambiguous form data.') !== false, 'terminal LF normalization must not permit duplicate add_key fields');
+integration_expect((file_get_contents($duplicateHome . '/.ssh/authorized_keys') ?: '') === '', 'duplicate action rejection must leave authorized_keys empty');
+
+$wrongActionBody = http_build_query([
+    'csrf' => $duplicateMatches[1],
+    'public_key' => $syntheticKey,
+    'add_key' => '2',
+], '', '&', PHP_QUERY_RFC1738) . "\r\n";
+[$wrongActionResult] = integration_run_role($entrypoint, $pluginRoot, array_replace($baseEnvironment, [
+    'HOME' => $duplicateHome,
+    'REQUEST_METHOD' => 'POST',
+    'SCRIPT_NAME' => $route,
+    'QUERY_STRING' => '',
+    'POST' => 'stdin=true',
+    'CONTENT_LENGTH' => (string)strlen($wrongActionBody),
+]), $wrongActionBody);
+integration_expect(strpos($wrongActionResult, 'Request rejected: malformed or ambiguous form data.') !== false, 'terminal CRLF normalization must not relax exact add_key action validation');
+integration_expect((file_get_contents($duplicateHome . '/.ssh/authorized_keys') ?: '') === '', 'wrong action rejection must leave authorized_keys empty');
+
+echo "Synthetic key integration passed: textarea CRLF and one transport terminator normalize; embedded key newlines, duplicate fields, and non-exact actions fail closed.\n";
