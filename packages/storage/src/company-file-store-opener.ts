@@ -7,6 +7,7 @@ import {
   type RegisteredCompanyFilePlacement,
 } from "./company-placement-registry.js";
 import { CompanyStorageResolutionError } from "./company-storage-resolver.js";
+import { createCompanyPlacementOperationGate } from "./company-placement-operation-gate.js";
 
 export interface LocalCompanyFileStoreOpenerOptions {
   /** Absolute, operator-owned root. It must already exist and cannot be a symlink. */
@@ -128,6 +129,7 @@ export function createLocalCompanyFileStoreOpener(
       if (!isWithinRoot(root.path, namespacePath)) throw invalidStore();
       const namespace = await inspectDirectory(namespacePath);
       if (!isWithinRoot(root.path, namespace.path)) throw invalidStore();
+      const operationGate = createCompanyPlacementOperationGate(root.path, placement.file_placement_id);
 
       const assertCurrentNamespace = async (): Promise<DirectoryIdentity> => {
         const currentRoot = await inspectDirectory(rootPath);
@@ -144,49 +146,53 @@ export function createLocalCompanyFileStoreOpener(
         async putObject(objectKey: string, contents: Uint8Array): Promise<void> {
           assertObjectKey(objectKey);
           if (!(contents instanceof Uint8Array)) throw invalidStore();
-          await assertCurrentPlacement();
-          const directory = await assertCurrentNamespace();
-          const path = join(directory.path, objectKey);
-          if (!isWithinRoot(directory.path, path) || relative(directory.path, path).includes(sep)) throw invalidStore();
-          let handle;
-          try {
-            handle = await open(path, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
-            const opened = await handle.stat();
-            if (!opened.isFile() || opened.nlink !== 1) throw invalidStore();
-            await handle.writeFile(contents);
-            await handle.sync();
-            const current = await lstat(path);
-            if (current.isSymbolicLink() || current.dev !== opened.dev || current.ino !== opened.ino) throw invalidStore();
-            await assertCurrentNamespace();
-          } catch (error) {
-            if (error instanceof CompanyStorageResolutionError) throw error;
-            throw invalidStore();
-          } finally {
-            await handle?.close().catch(() => undefined);
-          }
+          await operationGate.run(async () => {
+            await assertCurrentPlacement();
+            const directory = await assertCurrentNamespace();
+            const path = join(directory.path, objectKey);
+            if (!isWithinRoot(directory.path, path) || relative(directory.path, path).includes(sep)) throw invalidStore();
+            let handle;
+            try {
+              handle = await open(path, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
+              const opened = await handle.stat();
+              if (!opened.isFile() || opened.nlink !== 1) throw invalidStore();
+              await handle.writeFile(contents);
+              await handle.sync();
+              const current = await lstat(path);
+              if (current.isSymbolicLink() || current.dev !== opened.dev || current.ino !== opened.ino) throw invalidStore();
+              await assertCurrentNamespace();
+            } catch (error) {
+              if (error instanceof CompanyStorageResolutionError) throw error;
+              throw invalidStore();
+            } finally {
+              await handle?.close().catch(() => undefined);
+            }
+          });
         },
         async readObject(objectKey: string): Promise<Uint8Array> {
           assertObjectKey(objectKey);
-          await assertCurrentPlacement();
-          const directory = await assertCurrentNamespace();
-          const path = join(directory.path, objectKey);
-          if (!isWithinRoot(directory.path, path) || relative(directory.path, path).includes(sep)) throw invalidStore();
-          let handle;
-          try {
-            handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
-            const opened = await handle.stat();
-            if (!opened.isFile() || opened.nlink !== 1) throw invalidStore();
-            const contents = await handle.readFile();
-            const current = await lstat(path);
-            if (current.isSymbolicLink() || current.dev !== opened.dev || current.ino !== opened.ino) throw invalidStore();
-            await assertCurrentNamespace();
-            return contents;
-          } catch (error) {
-            if (error instanceof CompanyStorageResolutionError) throw error;
-            throw invalidStore();
-          } finally {
-            await handle?.close().catch(() => undefined);
-          }
+          return operationGate.run(async () => {
+            await assertCurrentPlacement();
+            const directory = await assertCurrentNamespace();
+            const path = join(directory.path, objectKey);
+            if (!isWithinRoot(directory.path, path) || relative(directory.path, path).includes(sep)) throw invalidStore();
+            let handle;
+            try {
+              handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+              const opened = await handle.stat();
+              if (!opened.isFile() || opened.nlink !== 1) throw invalidStore();
+              const contents = await handle.readFile();
+              const current = await lstat(path);
+              if (current.isSymbolicLink() || current.dev !== opened.dev || current.ino !== opened.ino) throw invalidStore();
+              await assertCurrentNamespace();
+              return contents;
+            } catch (error) {
+              if (error instanceof CompanyStorageResolutionError) throw error;
+              throw invalidStore();
+            } finally {
+              await handle?.close().catch(() => undefined);
+            }
+          });
         },
       });
     },
