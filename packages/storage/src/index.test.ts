@@ -28,7 +28,7 @@ describe('SQLite storage', () => {
     const dir=mkdtempSync(join(tmpdir(),'titan-storage-fence-')); tempDirs.push(dir);
     const filename=join(dir,'lock.db'); const ready=join(dir,'writer-ready'); const s=createSqliteStorage(filename); stores.push(s);
     const child=spawn(process.execPath,['-e',`const Database=require('better-sqlite3');const fs=require('node:fs');const db=new Database(${JSON.stringify(filename)});db.exec('BEGIN IMMEDIATE');fs.writeFileSync(${JSON.stringify(ready)},'ready');setTimeout(()=>{db.exec('ROLLBACK');db.close()},700);`],{stdio:['ignore','ignore','inherit']});
-    await new Promise<void>((resolve,reject)=>{const timer=setInterval(()=>{if(existsSync(ready)){clearInterval(timer);resolve();}else if(child.exitCode!==null){clearInterval(timer);reject(new Error(`lock-holder-exit:${child.exitCode}`));}},10);setTimeout(()=>{clearInterval(timer);reject(new Error('lock-holder-ready-timeout'));},2000);child.once('error',reject);});
+    await new Promise<void>((resolve,reject)=>{let watchdog: ReturnType<typeof setTimeout>;const timer=setInterval(()=>{if(existsSync(ready)){clearInterval(timer);clearTimeout(watchdog);resolve();}else if(child.exitCode!==null){clearInterval(timer);clearTimeout(watchdog);reject(new Error(`lock-holder-exit:${child.exitCode}`));}},10);watchdog=setTimeout(()=>{clearInterval(timer);reject(new Error('lock-holder-ready-timeout'));},2000);child.once('error',reject);});
     try {
       let entered=false; const started=performance.now();
       await expect(s.transaction(async()=>{entered=true;},{acquireDeadlineMs:started+180})).rejects.toThrow('storage-transaction-acquire-timeout');
