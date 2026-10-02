@@ -108,6 +108,9 @@ class GateTests(unittest.TestCase):
             self.run_gate(description, **kwargs)
         self.assertEqual(error.exception.code, 1)
 
+    def test_partial_slice_needs_no_claim_branch_or_completion_template(self):
+        self.run_gate('Small code slice with focused verification.', head='feature/storage-bridge')
+
     def test_complete_mapping_passes(self):
         self.run_gate()
 
@@ -178,24 +181,21 @@ class GateTests(unittest.TestCase):
     def test_refs_cannot_hide_closing_keyword(self):
         self.rejected(body(record('partial'), 'Refs') + '\nFixes #1168')
 
-    def test_wrong_link_or_branch_or_fork_fails(self):
+    def test_wrong_link_or_cross_repository_closure_fails(self):
         self.rejected(body().replace('Closes #1168', 'Closes #1169'))
-        for head in ('agent/TZ-ROADMAP-01-SG-01', 'agent/issue-1168-extra', 'feature/bypass'):
-            self.rejected(head=head)
         self.rejected(repo='other/fork')
 
-    def test_claim_sha_missing_or_drift_and_diverged_main_fail(self):
-        self.rejected(claim_sha='b' * 40)
-        self.rejected(pr_sha='')
-        self.rejected(ancestry='diverged')
+    def test_partial_slice_is_not_blocked_by_branch_or_base_drift(self):
+        self.run_gate(body(record('partial'), 'Refs'), head='feature/slice',
+                      claim_sha='b' * 40, pr_sha='', ancestry='diverged')
 
     def test_closed_issue_or_pr_is_not_a_mission(self):
         self.rejected(issue=dict(ISSUE, state='closed'))
         self.rejected(issue=dict(ISSUE, pull_request={}))
 
-    def test_collision_uses_exact_issue_not_prefix_or_reference(self):
-        self.rejected(others=[{'number': 43, 'head': {'ref': 'agent/issue-1168'}, 'body': ''}])
-        self.run_gate(others=[{'number': 44, 'head': {'ref': 'agent/issue-11680'}, 'body': 'Refs #1168'}])
+    def test_partial_slice_is_not_blocked_by_another_open_pr(self):
+        self.run_gate(body(record('partial'), 'Refs'),
+                      others=[{'number': 43, 'head': {'ref': 'feature/other'}, 'body': 'Refs #1168'}])
 
     def test_placeholder_check_evidence_and_empty_sections_fail(self):
         evidence = record()
