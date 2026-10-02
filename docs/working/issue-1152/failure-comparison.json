@@ -1,8 +1,8 @@
 {
   "schema": "titan-zero-web-test-comparison/v1",
-  "code_head": "6bd5e2b4180bcfd29d169084e58127c37d712a09",
-  "base_main": "df52782d26e0387608351b254c785911f99a20e9",
-  "dependency": "PR #1179 merged into main at base_main; reviewed foundation incorporated with ancestry retained",
+  "code_head": "0baf761cdd486c568a3b3321152fff3299de46ce",
+  "base_main": "c063a96dd9e2f6b73a2f199882ab6a710ff6c7d9",
+  "dependency": "PR #1179 reviewed foundation and PR #1176 PWA work are merged into main; current main ancestry retained",
   "runtime": "Node v22.23.3 / pnpm 9.12.0",
   "command": "pnpm --filter @titan-zero/web test",
   "baseline": {
@@ -99,7 +99,7 @@
     ]
   },
   "result": {
-    "log_sha256": "bdf8998d2ec930f8b878518766c9d8fb4523f47e4a918dbe761b58e3e3cb9257",
+    "log_sha256": "54aa1a18c29f0558cf64f9a2323299b728bc9d9c5a7b102bfeff4d14374e0150",
     "failed_tests": 85,
     "passed_tests": 2009,
     "total_tests": 2094,
