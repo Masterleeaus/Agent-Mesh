@@ -43,8 +43,9 @@ class GovernanceContractTests(unittest.TestCase):
     def test_stale_recovery_contract_preserves_review_and_completion_gates(self):
         contract = (ROOT / 'AGENTS.md').read_text()
         claim_rules = contract.split('## 5. GitHub claim and branch discipline', 1)[1].split('## 6.', 1)[0]
-        for required in ('within five minutes', 'last hour', 'quiet open PR',
-                         'preserve the existing PR', 'never discard or rewrite them',
+        for required in ('within five minutes', 'last hour',
+                         'any open PR using the exact ref', 'any branch commit ahead of current `main`',
+                         'Do not discard existing commits or PRs',
                          'unique empty reservation commit', 'normal non-forced Git semantics',
                          'rejected', 'durable takeover comment',
                          '.github/scripts/claim_recovery.py',
@@ -71,7 +72,7 @@ class GovernanceContractTests(unittest.TestCase):
             'pull_requests': [],
             'pull_requests_complete': True,
             'branch': {'observed_at': stamp(observed), 'complete': True, 'head_sha': 'a' * 40,
-                       'observed_head_sha': 'a' * 40},
+                       'observed_head_sha': 'a' * 40, 'ahead_of_main_count': 0},
             'main': {'observed_at': stamp(observed), 'complete': True, 'head_sha': 'c' * 40},
             'repository_push_events': {'observed_at': stamp(observed), 'complete': True,
                                        'covered_since': stamp(now - timedelta(hours=2)),
@@ -124,7 +125,7 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('activity-within-one-hour:repository_push_events.events', stale_claim_blockers(
             now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
 
-    def test_quiet_open_pr_can_continue_only_on_matching_claim_head(self):
+    def test_open_pr_or_unique_commits_block_takeover(self):
         now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
         snapshot = self.make_snapshot(now)
         observed = snapshot['observed_at']
@@ -134,10 +135,11 @@ class GovernanceContractTests(unittest.TestCase):
             'updated_at': ['2026-10-02T22:00:00Z'], 'comment_updated_at': [],
             'review_updated_at': [], 'review_comment_updated_at': [],
         }]
-        self.assertEqual(stale_claim_blockers(now=now, branch_name='agent/issue-1255',
-                                              activity_snapshot=snapshot), [])
-        snapshot['pull_requests'][0]['head_sha'] = 'b' * 40
-        self.assertIn('open-pr-does-not-match-claim-head', stale_claim_blockers(
+        self.assertIn('open-pr-uses-claim-branch', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+        snapshot = self.make_snapshot(now)
+        snapshot['branch']['ahead_of_main_count'] = 1
+        self.assertIn('claim-branch-has-unique-commits', stale_claim_blockers(
             now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
 
     def test_active_workflow_and_recent_pr_review_block_continuation(self):
