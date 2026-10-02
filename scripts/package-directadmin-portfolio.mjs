@@ -89,8 +89,14 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
     } finally { fs.rmSync(staging, { recursive: true, force: true }); }
   }
   const provenance = { schema: "titan.directadmin.portfolio/v1", generated_at: "1970-01-01T00:00:00.000Z", artifacts: artifacts.map(({ archive, ...artifact }) => artifact) };
-  fs.writeFileSync(path.join(output, "provenance.json"), JSON.stringify(provenance, null, 2) + "\n", { mode: 0o644 });
-  return { artifacts, provenance: path.join(output, "provenance.json") };
+  const provenancePath = path.join(output, "provenance.json");
+  const provenanceBytes = JSON.stringify(provenance, null, 2) + "\n";
+  if (fs.existsSync(provenancePath)) {
+    if (fs.readFileSync(provenancePath, "utf8") !== provenanceBytes) throw new Error(`refusing to overwrite existing provenance with different contents: ${provenancePath}`);
+  } else {
+    fs.writeFileSync(provenancePath, provenanceBytes, { mode: 0o644, flag: "wx" });
+  }
+  return { artifacts, provenance: provenancePath };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
