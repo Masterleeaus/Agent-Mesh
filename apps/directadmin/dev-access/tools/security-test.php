@@ -224,7 +224,7 @@ expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
 
 expect_true(directadmin_git_parse_divergence("1\t2")===['ahead'=>1,'behind'=>2],'Git divergence parser must read bounded ahead/behind counts');
-foreach(['','1 2','01\t2','1\t02','1\t2 extra','99999999999\t1','-1\t0'] as $invalidDivergence){
+foreach(['','1 2',"01\t2","1\t02",'1\t2 extra','99999999999\t1','-1\t0'] as $invalidDivergence){
  expect_true(directadmin_git_parse_divergence($invalidDivergence)===null,'malformed or oversized Git divergence must fail closed');
 }
 foreach(['git rev-list --left-right --count HEAD...@{u}','git rev-parse --symbolic-full-name @{u}'] as $internalOnlyGitCommand){
@@ -305,6 +305,7 @@ foreach(['diff','show'] as $gitSubcommand){
  expect_true(in_array('--no-pager',$hardenedArguments,true),$gitSubcommand.' must explicitly disable configured pagers');
 }
 expect_true(($pagerEnvironment['GIT_PAGER']??null)==='cat'&&($pagerEnvironment['PAGER']??null)==='cat','Git process environment must override configured pagers');
+expect_true(($pagerEnvironment['GIT_NO_LAZY_FETCH']??null)==='1','Git process environment must disable promisor lazy fetches');
 $safeDiffArguments=directadmin_git_command_args($gitContext,['diff']);
 [$safeDiffExit,$safeDiffOutput,$safeDiffError]=run_security_git_capture(array_slice($safeDiffArguments,1),$home);
 expect_true($safeDiffExit===0&&$safeDiffError===''&&$safeDiffOutput!=='','bounded Git diff must continue to return read-only output');
