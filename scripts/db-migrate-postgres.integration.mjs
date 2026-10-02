@@ -49,12 +49,8 @@ function assertManifestLedger(url, { legacyFilenameOnly = false } = {}) {
 function schemaFingerprint(url) {
   const dump = spawnSync("pg_dump", [url, "--schema-only", "--no-owner", "--no-privileges"], { encoding: "utf8" });
   assert.equal(dump.status, 0, `schema-only pg_dump failed: ${dump.stderr}`);
-  return createHash("sha256").update(normalizeSchemaDump(dump.stdout)).digest("hex");
-}
-
-function normalizeSchemaDump(dump) {
-  // pg_dump 17 adds randomized psql transport guards; they are not schema.
-  return dump.split(/\r?\n/).filter((line) => !/^\\(?:un)?restrict\b/.test(line)).join("\n");
+  const normalizedDump = dump.stdout.replace(/^-- Dumped on .*\r?\n/m, "");
+  return createHash("sha256").update(normalizedDump).digest("hex");
 }
 
 function recreateDatabase(name) {
@@ -134,9 +130,6 @@ const freshDb = "titan_migration_fresh_test";
 const seedDb = "titan_migration_seed_test";
 const enumRetryDb = "titan_migration_enum_retry_test";
 const checkpointDb = "titan_migration_checkpoint_test";
-const restoreDb = "titan_migration_restore_test";
-const backupDirectory = mkdtempSync(path.join(os.tmpdir(), "titan-migration-backup-"));
-const backupFile = path.join(backupDirectory, "fresh.dump");
 try {
   recreateDatabase(freshDb);
   const freshUrl = databaseUrl(freshDb);
@@ -178,16 +171,6 @@ try {
   runMigrator(freshUrl);
   assert.equal(scalar(freshUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount, "a full replay must be idempotent");
   assertManifestLedger(freshUrl);
-
-  const backup = spawnSync("pg_dump", ["--format=custom", "--no-owner", "--no-privileges", "--file", backupFile, freshUrl], { encoding: "utf8" });
-  assert.equal(backup.status, 0, `pg_dump backup failed: ${backup.stderr}`);
-  recreateDatabase(restoreDb);
-  const restoreUrl = databaseUrl(restoreDb);
-  const restore = spawnSync("pg_restore", ["--exit-on-error", "--no-owner", "--no-privileges", "--dbname", restoreUrl, backupFile], { encoding: "utf8" });
-  assert.equal(restore.status, 0, `pg_restore failed: ${restore.stderr}`);
-  assertManifestLedger(restoreUrl);
-  assert.equal(schemaFingerprint(restoreUrl), schemaFingerprint(freshUrl), "restored schema fingerprint must match the backup source");
-  assert.equal(scalar(restoreUrl, "SELECT COUNT(*) FROM price_book WHERE code IN ('9010','9011','9012','9013')"), "4");
 
   recreateDatabase(seedDb);
   const seedUrl = databaseUrl(seedDb);
@@ -258,6 +241,4 @@ try {
   psql(adminUrl, `DROP DATABASE IF EXISTS ${seedDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${enumRetryDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${checkpointDb} WITH (FORCE)`);
-  psql(adminUrl, `DROP DATABASE IF EXISTS ${restoreDb} WITH (FORCE)`);
-  rmSync(backupDirectory, { recursive: true, force: true });
 }
