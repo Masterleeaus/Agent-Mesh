@@ -1,4 +1,4 @@
-import type { StorageClient } from '@titan-zero/storage';
+import type { StorageClient, StorageTransactionOptions } from '@titan-zero/storage';
 import { createHash } from 'node:crypto';
 import {
   createSessionBinding, requireSecurityId, requireSecurityRevision, securityTimestamp,
@@ -54,6 +54,91 @@ type CurrentIdentity = {
 };
 
 const workforceZeroFenceTimeoutMs = 500;
+const registryAvailabilityMarker = Symbol.for('titan.identity-session-registry.availability.v1');
+const registryAvailabilityKindMarker = Symbol.for('titan.identity-session-registry.availability-kind.v1');
+
+type RegistryAvailabilityKind = 'unavailable' | 'acquisition-timeout';
+
+function messageOf(error: unknown): string | undefined {
+  if (!(error instanceof Error)) return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(error, 'message');
+  return descriptor && 'value' in descriptor && typeof descriptor.value === 'string' ? descriptor.value : undefined;
+}
+
+function registryUnavailable(error: unknown): Error {
+  const unavailable = new Error('identity-registry-unavailable');
+  const kind: RegistryAvailabilityKind = messageOf(error) === 'storage-transaction-acquire-timeout'
+    ? 'acquisition-timeout' : 'unavailable';
+  Object.defineProperty(unavailable, registryAvailabilityMarker, { value: true });
+  Object.defineProperty(unavailable, registryAvailabilityKindMarker, { value: kind });
+  return unavailable;
+}
+
+function metadataValue(error: unknown, key: PropertyKey): unknown {
+  if (error === null || (typeof error !== 'object' && typeof error !== 'function')) return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(error, key);
+  return descriptor && 'value' in descriptor ? descriptor.value : undefined;
+}
+
+function registryQueryFailure(error: unknown): Error {
+  const code = metadataValue(error, 'code');
+  if (typeof code === 'string' && code.startsWith('SQLITE_CONSTRAINT')) {
+    return new Error('identity-registry-conflict');
+  }
+  return registryUnavailable(error);
+}
+
+/** Stable, non-sensitive classification for infrastructure failures at the
+ * canonical registry boundary. It never conveys identity or authentication. */
+export function isIdentityRegistryUnavailableError(error: unknown): boolean {
+  try {
+    return metadataValue(error, registryAvailabilityMarker) === true;
+  } catch { return false; }
+}
+
+export function isIdentityRegistryAcquisitionTimeout(error: unknown): boolean {
+  try {
+    return isIdentityRegistryUnavailableError(error)
+      && metadataValue(error, registryAvailabilityKindMarker) === 'acquisition-timeout';
+  } catch { return false; }
+}
+
+async function registryQuery<T>(storage: StorageClient, sql: string, params: readonly unknown[] = []) {
+  try { return await storage.query<T>(sql, params); }
+  catch (error) { throw registryQueryFailure(error); }
+}
+
+async function registryTransaction<T>(
+  storage: StorageClient,
+  operation: (tx: StorageClient) => Promise<T>,
+  options?: StorageTransactionOptions,
+): Promise<T> {
+  let callbackFailed = false;
+  let callbackError: unknown;
+  try {
+    return await storage.transaction(async raw => {
+      const tx: StorageClient = {
+        dialect: raw.dialect,
+        query: async <R>(sql: string, params: readonly unknown[] = []) => {
+          try { return await raw.query<R>(sql, params); }
+          catch (error) { throw registryQueryFailure(error); }
+        },
+        transaction: async () => { throw new Error('identity-registry-nested-transaction-unsupported'); },
+        close: async () => { throw new Error('identity-registry-connection-owned'); },
+      };
+      try { return await operation(tx); }
+      catch (error) { callbackFailed = true; callbackError = error; throw error; }
+    }, options);
+  } catch (error) {
+    if (isIdentityRegistryUnavailableError(error)) throw error;
+    if (callbackFailed && Object.is(error, callbackError)) throw error;
+    if (typeof metadataValue(error, 'code') === 'string'
+      && (metadataValue(error, 'code') as string).startsWith('SQLITE_CONSTRAINT')) {
+      throw new Error('identity-registry-conflict');
+    }
+    throw registryUnavailable(error);
+  }
+}
 
 function validateSourceReference(source: SessionSourceReference): void {
   const keys = ['schema','provider','subject','issuer','audience','session_id','session_revision','context_revision',
@@ -126,7 +211,7 @@ const schemaV1 = [
 /** Explicit, additive identity/control-plane migration. Never examines or backfills
  * company business tables. Unsupported schema versions fail closed for rollback. */
 async function migrate(storage: StorageClient): Promise<void> {
-  await storage.transaction(async tx => {
+  await registryTransaction(storage, async tx => {
     await tx.query('CREATE TABLE IF NOT EXISTS titan_security_migrations (version INTEGER PRIMARY KEY)');
     const versions = (await tx.query<{ version: number }>('SELECT version FROM titan_security_migrations')).rows;
     if (versions.length !== 0 && (versions.length !== 1 || versions[0].version !== 1)) throw new Error('identity-schema-version-unsupported');
@@ -176,11 +261,15 @@ function selectedCompanyOnly(current: CurrentSessionContext): CurrentSessionCont
 export class IdentitySessionRegistry {
   constructor(private readonly storage: StorageClient, private readonly clock: () => Date = () => new Date()) {}
 
+  private transaction<T>(operation: (tx: StorageClient) => Promise<T>, options?: StorageTransactionOptions): Promise<T> {
+    return registryTransaction(this.storage, operation, options);
+  }
+
   private async put(table: string, values: Record<string, string>, keys: readonly string[], immutable: readonly string[], expected: number | null): Promise<number> {
     for (const [key, value] of Object.entries(values)) requireSecurityId(value, key);
     if (!['active', 'suspended', 'revoked', 'deleted'].includes(values.status)) throw new Error('identity-status-invalid');
     if (expected !== null) requireSecurityRevision(expected);
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       // Table and column names are internal constants, never request-supplied SQL.
       const where = keys.map((key, index) => `${key}=$${index + 1}`).join(' AND ');
       const parameters = keys.map(key => values[key]);
@@ -249,7 +338,7 @@ export class IdentitySessionRegistry {
 
   async issueSession(input: IssueSessionInput, now: string): Promise<CurrentSessionContext> {
     requireSecurityId(input.audience, 'audience');
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       const identity = await this.identity(tx, input, input.company_id, input.device_id);
       const binding = createSessionBinding({ session_id: input.session_id, actor_id: identity.binding.actor_id,
         company_id: input.company_id, device_id: input.device_id, issued_at: input.issued_at, expires_at: input.expires_at, revoked: false });
@@ -283,7 +372,7 @@ export class IdentitySessionRegistry {
       || sourceExpected.company_id !== source.company_id || sourceExpected.actor_id !== source.actor_id
       || sourceExpected.context_revision !== source.context_revision) throw new Error('session-source-mismatch');
 
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       const sourceResolved = await this.resolve(tx, sourceProof, sourceExpected, now);
       if (!sameSourceContext(source, sourceResolved.current)) throw new Error('session-source-stale');
       const at = securityTimestamp(now);
@@ -377,12 +466,12 @@ export class IdentitySessionRegistry {
 
   /** Rereads current identity on every call; no cached JWT role/company authority. */
   async resolveCurrentSession(proof: VerifiedSessionIdentity, expected: ExpectedSessionContext, now: string): Promise<CurrentSessionContext> {
-    return this.storage.transaction(async tx => (await this.resolve(tx, proof, expected, now)).current);
+    return this.transaction(async tx => (await this.resolve(tx, proof, expected, now)).current);
   }
 
   async switchCompany(proof: VerifiedSessionIdentity, expected: ExpectedSessionContext, companyId: string, now: string): Promise<CurrentSessionContext> {
     if (proof.source_session !== undefined) throw new Error('derived-session-company-switch-denied');
-    return this.storage.transaction(async tx => {
+    return this.transaction(async tx => {
       const { row } = await this.resolve(tx, proof, expected, now);
       const identity = await this.identity(tx, proof, companyId, row.device_id);
       if (identity.binding.actor_id !== row.actor_id) throw new Error('session-actor-mismatch');
@@ -397,8 +486,10 @@ export class IdentitySessionRegistry {
 
   /** Revalidates a Workforce/Zero derivation under the GLOBAL_REGISTRY SQLite
    * writer lock immediately before the effect boundary. The bounded callback
-   * receives an abort signal. On timeout it may still be running; consumers must
-   * mark the execution UNCERTAIN and must not claim cancellation or retry it. */
+   * receives the absolute acquisition deadline and an abort signal. Keep it to
+   * short local admission work: no provider/network wait and no registry
+   * re-entry. On timeout it may still be running; consumers must mark the
+   * execution UNCERTAIN and must not claim cancellation or retry it. */
   async withCurrentSessionFence<T>(
     proof: VerifiedSessionIdentity,
     expected: ExpectedSessionContext,
@@ -411,7 +502,7 @@ export class IdentitySessionRegistry {
     let timer: ReturnType<typeof setTimeout> | undefined;
     let removeAbortListener = () => {};
     try {
-      return await this.storage.transaction(async tx => {
+      return await this.transaction(async tx => {
         // Sample the registry-owned clock after BEGIN IMMEDIATE succeeds, so
         // queue or cross-process writer contention cannot use a stale timestamp.
         const { current } = await this.resolve(tx, proof, expected, this.clock().toISOString());
@@ -448,9 +539,8 @@ export class IdentitySessionRegistry {
         return await Promise.race([running, aborted, timedOut]);
       }, { acquireDeadlineMs });
     } catch (error) {
-      if (error instanceof Error && error.message === 'storage-transaction-acquire-timeout') {
-        throw new Error('session-fence-timeout', { cause: error });
-      }
+      if (isIdentityRegistryAcquisitionTimeout(error)) throw new Error('session-fence-timeout');
+      if (isIdentityRegistryUnavailableError(error)) throw new Error('identity-registry-unavailable');
       throw error;
     } finally {
       if (timer !== undefined) clearTimeout(timer);
@@ -461,7 +551,9 @@ export class IdentitySessionRegistry {
   async revokeSession(sessionId: string, expectedRevision: number): Promise<void> {
     requireSecurityId(sessionId, 'session_id');
     const revision = nextRevision(expectedRevision);
-    const result = await this.storage.query('UPDATE titan_security_sessions SET revoked=1,revision=$1 WHERE session_id=$2 AND revision=$3 AND revoked=0', [revision,sessionId,expectedRevision]);
+    const result = await registryQuery(this.storage,
+      'UPDATE titan_security_sessions SET revoked=1,revision=$1 WHERE session_id=$2 AND revision=$3 AND revoked=0',
+      [revision,sessionId,expectedRevision]);
     if (result.rowCount !== 1) throw new Error('session-revision-conflict');
   }
 }

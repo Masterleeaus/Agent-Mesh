@@ -8,7 +8,7 @@ import { tsImport } from 'tsx/esm/api';
 import { createIdentitySessionRegistry, createSessionCredentialService, directAdminIssuer } from '../.test-dist/security-boundary.js';
 const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 const epoch = Date.parse('2026-10-02T00:00:00Z');
-const issuer = directAdminIssuer('https://da-one.example.test:2222');
+const issuer = 'https://idp-one.example.test';
 const expectation = { company_id: 'company-a', device_id: 'device-1' };
 
 async function fixture(t, config = {}) {
@@ -48,6 +48,12 @@ async function fixture(t, config = {}) {
 }
 
 const denied = promise => assert.rejects(promise, { message: 'authentication-denied' });
+const registryUnavailable = promise => assert.rejects(promise, error => {
+  assert.equal(error.message, 'identity-registry-unavailable');
+  assert.equal(error.cause, undefined);
+  assert.equal(error.message.includes('private database path'), false);
+  return true;
+});
 
 test('real signed issuance binds current state and public consumers need no production credentials', async t => {
   const f = await fixture(t);
@@ -70,6 +76,50 @@ test('real signed issuance binds current state and public consumers need no prod
   assert.equal('role' in claims, false);
   const rows = await f.storage.query('SELECT * FROM titan_security_sessions');
   assert.equal(JSON.stringify(rows).includes(issued.credential), false);
+});
+
+test('registry availability is distinct from invalid credentials and service recovers without bypass', async t => {
+  const f = await fixture(t);
+  const issued = await f.service.issue(await f.login(), expectation);
+  const transaction = f.storage.transaction.bind(f.storage);
+  let unavailable = true;
+  let failureMode = 'transaction';
+  let transactions = 0;
+  f.storage.transaction = (callback, options) => {
+    transactions++;
+    if (unavailable && failureMode === 'transaction') return Promise.reject(new Error('private database path unavailable'));
+    if (unavailable) return transaction(tx => callback({ ...tx,
+      query: async () => { throw new Error('private database path unavailable'); },
+    }), options);
+    return transaction(callback, options);
+  };
+
+  const invalid = await f.access(issued.credential, {}, {}, f.wrongKeys.privateKey);
+  const beforeInvalid = transactions;
+  await denied(f.service.authenticate(invalid, expectation));
+  assert.equal(transactions, beforeInvalid, 'invalid signature is rejected before registry access');
+  await registryUnavailable(f.service.authenticate(issued.credential, expectation));
+  failureMode = 'query';
+  await registryUnavailable(f.service.authenticate(issued.credential, expectation));
+
+  unavailable = false;
+  assert.equal((await f.service.authenticate(issued.credential, expectation)).context.session_id, issued.context.session_id);
+  await f.service.revoke(issued.credential, expectation);
+  await denied(f.service.authenticate(issued.credential, expectation));
+});
+
+test('registry revoke-query outage is reported as unavailable and retry revokes after recovery', async t => {
+  const f = await fixture(t);
+  const issued = await f.service.issue(await f.login(), expectation);
+  const query = f.storage.query.bind(f.storage);
+  f.storage.query = async () => { throw new Error('private database path unavailable'); };
+
+  await registryUnavailable(f.service.revoke(issued.credential, expectation));
+  f.storage.query = query;
+  assert.equal((await f.service.authenticate(issued.credential, expectation)).context.session_id, issued.context.session_id,
+    'failed revoke does not claim revocation or mutate session state');
+  await f.service.revoke(issued.credential, expectation);
+  await denied(f.service.authenticate(issued.credential, expectation));
 });
 
 for (const [label, change, header, keyKind] of [
@@ -191,7 +241,7 @@ test('host namespaces and duplicate usernames remain isolated', async t => {
   assert.notEqual(directAdminIssuer('https://da-one.example.test'),directAdminIssuer('https://da-two.example.test'));
   for (const value of ['http://da.example.test','https://u:p@da.example.test','https://da.example.test/path','https://da.example.test?x=1']) assert.throws(()=>directAdminIssuer(value));
   const f = await fixture(t);
-  const otherIssuer = directAdminIssuer('https://da-two.example.test');
+  const otherIssuer = 'https://idp-two.example.test';
   const other = createSessionCredentialService({...f.policy,registry:f.registry,upstream:{...f.policy.upstream,issuer:otherIssuer}});
   await denied(other.issue(await f.login({iss:otherIssuer}),expectation));
   const old = await f.service.issue(await f.login(),expectation);
@@ -200,7 +250,7 @@ test('host namespaces and duplicate usernames remain isolated', async t => {
 });
 
 test('DA adapter receives authenticated CSRF/node metadata preserved through switch, never authority', async t => {
-  const f = await fixture(t,{directadmin:{node_id:'node-one'}});
+  const f = await fixture(t,{audience:'directadmin-browser',directadmin:{node_id:'node-one'}});
   const channel = { node_id:'node-one', csrf_sha256:Buffer.from(await crypto.subtle.digest('SHA-256',crypto.getRandomValues(new Uint8Array(32)))).toString('base64url'), da_role:'admin' };
   await denied(f.service.issue(await f.login(),expectation));
   await denied(f.service.issue(await f.login({...channel,node_id:'node-two'}),expectation));
