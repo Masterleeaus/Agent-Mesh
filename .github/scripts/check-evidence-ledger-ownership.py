@@ -42,6 +42,7 @@ def active_evidence_sources(root=ROOT):
 
 PRIMARY_ROLES = {
     "accepted-factual-business-evidence-ledger",
+    "accepted-factual-business-evidence-storage-adapter",
     "execution-provider-receipt",
     "observed-verification-artifact",
     "restart-recovery-evidence",

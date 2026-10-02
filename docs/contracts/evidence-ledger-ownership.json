@@ -34,6 +34,20 @@
       "role_detail": "job-completion history"
     },
     {
+      "path": "packages/runtime/evidence/sqlite-business-evidence-store.mjs",
+      "role": "accepted-factual-business-evidence-storage-adapter",
+      "scope": "Company-scoped append/read adapter for accepted factual records in the canonical SQLite evidence table; storage adapter only, while the accepted evidence contract and deterministic fold remain owned by AcceptedEvidenceLedger.",
+      "durability": "Persists accepted factual rows in SQLite evidence with company-filtered reads; append-only schema constraints are supplied by the ledger migration.",
+      "consumers": [
+        "packages/tools/business-evidence-execution-sink.mjs"
+      ],
+      "limitations": [
+        "This adapter is not a second accepted-factual owner.",
+        "Production company placement and full retention/deletion policy remain part of #1233/#1308 integration acceptance."
+      ],
+      "role_detail": "durable accepted-factual storage adapter"
+    },
+    {
       "path": "packages/tools/execution-gateway.mjs",
       "role": "execution-provider-receipt",
       "scope": "Governed provider execution transitions and independent outcome verification; acknowledgement is an intermediate state and cannot produce a VERIFIED result by itself.",
@@ -45,6 +59,18 @@
         "This gateway is not the accepted factual history owner."
       ],
       "role_detail": "governed execution, payment, or workflow outbox"
+    },
+    {
+      "path": "packages/tools/business-evidence-execution-sink.mjs",
+      "role": "execution-provider-receipt",
+      "scope": "Adapts ExecutionGateway lifecycle receipts into stable-ID appends through the accepted-evidence contract and SQLite adapter; only independently verified job outcomes produce a separate job-reality fact.",
+      "durability": "Writes through SqliteBusinessEvidenceStore when composed with an injected store.",
+      "consumers": [],
+      "limitations": [
+        "No non-test production composition currently calls this sink on main; producer integration and recovery acceptance remain open in #1308.",
+        "Provider acknowledgement and uncertain execution do not change job reality."
+      ],
+      "role_detail": "execution receipt to accepted-evidence producer adapter"
     },
     {
       "path": "services/workforce/src/field-service-runtime.mjs",
