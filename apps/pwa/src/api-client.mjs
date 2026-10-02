@@ -7,13 +7,14 @@ export function createPwaProjectionClient({ apiBaseUrl, context, fetchImpl = glo
   if (!apiBaseUrl || !origin) throw new Error("pwa-api:unconfigured");
   const base = new URL(apiBaseUrl, origin);
   if (base.origin !== origin || base.protocol !== "https:" && base.hostname !== "localhost") throw new Error("pwa-api:origin-not-approved");
+  const basePath = base.pathname.endsWith("/") ? base.pathname : `${base.pathname}/`;
 
   return Object.freeze({
     context: scope,
     async get(path, { signal } = {}) {
       if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//") || path.includes("\\")) throw new Error("pwa-api:path-invalid");
-      const url = new URL(path, base);
-      if (url.origin !== base.origin) throw new Error("pwa-api:cross-origin-path");
+      const url = new URL(path.slice(1), `${base.origin}${basePath}`);
+      if (url.origin !== base.origin || !url.pathname.startsWith(basePath)) throw new Error("pwa-api:path-invalid");
       const response = await fetchImpl(url, {
         method: "GET",
         credentials: "same-origin",

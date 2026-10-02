@@ -49,11 +49,13 @@ test("projection client is same-origin, GET-only, no-store and validates respons
     return { ok: true, json: async () => ({ company_id: "c-a", result: [] }) };
   } });
   assert.deepEqual(await api.get("/work/today"), { company_id: "c-a", result: [] });
+  assert.equal(seen.url, "https://titan.example/api/v1/work/today");
   assert.equal(seen.options.method, "GET");
   assert.equal(seen.options.cache, "no-store");
   assert.equal(seen.options.credentials, "same-origin");
   assert.throws(() => createPwaProjectionClient({ apiBaseUrl: "https://evil.example/", context: context(), origin: "https://titan.example", fetchImpl: fetch }), /origin-not-approved/);
   await assert.rejects(api.get("//evil.example/data"), /path-invalid/);
+  await assert.rejects(api.get("/../private"), /path-invalid/);
   const wrongCompany = createPwaProjectionClient({ apiBaseUrl: "/api/", context: context(), origin: "https://titan.example", fetchImpl: async () => ({ ok: true, json: async () => ({ company_id: "c-b" }) }) });
   await assert.rejects(wrongCompany.get("/projection"), /company-mismatch/);
 });
