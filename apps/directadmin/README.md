@@ -4,7 +4,12 @@ DirectAdmin is Titan Zero's first server-resident **Business Node control plane 
 
 It manages the business's digital system estate while canonical Titan services remain responsible for factual history, authority, Workforce identity and reusable business/runtime logic.
 
-The #1049 continuation adds a signed-session bridge over #302 and shared SDK consumers in `zero-core/`, `operations-hub/`, and `brand-studio/`. These source modules have disposable integration coverage but are not installed DirectAdmin packages; the issuer, launched gateway and live Evolution migration remain uncommissioned. See the [bridge contract](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/agent/issue-1049/docs/contracts/directadmin-authenticated-session-bridge.md) and open [PR #1204](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1204).
+The #1049 continuation adds a signed-session bridge over #302 and three shared
+SDK consumers in `zero-core/`, `operations-hub/`, and `brand-studio/`.
+These source modules have disposable integration coverage but are not installed
+DirectAdmin packages. The issuer, launched gateway and live Evolution migration
+remain uncommissioned. See the [bridge contract](../../docs/contracts/directadmin-authenticated-session-bridge.md)
+for the exact security bindings, ownership seams and evidence.
 
 ## Canonical docs
 
