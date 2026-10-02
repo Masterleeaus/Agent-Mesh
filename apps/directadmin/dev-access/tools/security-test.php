@@ -224,7 +224,7 @@ expect_true(directadmin_git_metadata_tree_safe($linkedCommonDir,$home),'linked w
 $linkedContext=directadmin_git_repository_context($linkedWorktree);
 expect_true(is_array($linkedContext)&&$linkedContext['root']===$linkedWorktree,'HOME-contained linked worktree must not be falsely rejected');
 expect_true(path_within($linkedContext['git_dir'],$home)&&path_within($linkedContext['common_dir'],$home),'linked worktree and common metadata must both remain inside HOME');
-[$linkedLog,$linkedLogExit,$linkedLogClass]=run_cmd('git log --oneline -1',$linkedWorktree);
+[$linkedLog,$linkedLogExit,$linkedLogClass]=run_cmd('git log --oneline -5',$linkedWorktree);
 expect_true($linkedLogExit===0&&$linkedLogClass==='READ'&&$linkedLog!=='','read-only Git inspection must work in a validated contained linked worktree');
 expect_true(run_security_git_fixture(['-C',$gitRepo,'worktree','remove','--force','--quiet',$linkedWorktree],$home),'contained linked-worktree fixture must clean up through Git');
 
