@@ -20,6 +20,13 @@ The platform combines field-service operations, multi-agent orchestration, decis
 
 ---
 
+## Product architecture and engineering highlights
+
+A field-service operating platform in which a TypeScript business application coordinates scheduling, dispatch, field work, customer operations, and a governed AI workforce.
+
+- **Architecture:** The architecture keeps the full web application distinct from a single three-mode PWA and a separate native mobile app; company_id is the tenant boundary. The TypeScript core owns native field-service workflows, while Frappe/ERPNext remains an optional provider for capabilities deliberately delegated to it.
+- **Distinctive engineering:** Standout systems include the Interaction and Decision Engines, Nexus workforce orchestration, Evidence Ledger, offline execution, DirectAdmin Business Node, and reversible authority-gated actions. Titan Zero, Titan Go, and Titan Hub are coordinated operating modes across owner, field, and customer workflows.
+
 ## The operating model
 
 ```text
