@@ -1127,6 +1127,11 @@
           "detail": "Read-only targeted source review at main 14163faa; not a live-host or device test."
         },
         {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification contract tests pass after keeping the #1048 owner link on the DirectAdmin row and preserving the snapshot’s top-level related_evidence contract."
+        },
+        {
           "command": "node scripts/generate-readiness-snapshot.mjs --check",
           "status": "PASS",
           "detail": "Commit-bound 28-row matrix matches audit input; authorityGranted=false, eligibility_input=false, production eligibility remains denied."
@@ -1140,7 +1145,8 @@
       },
       "physical_devices": "NOT_AVAILABLE",
       "production_eligible": false,
-      "mission_complete": false
+      "mission_complete": false,
+      "post_refresh_correction": "An initial remote evidence-contract run rejected #1048 added to top-level related_evidence. Removed that extra top-level link; #1048 remains linked in the DirectAdmin canonical_owner_refs. Re-ran the 8/8 certification contract suite successfully."
     }
   ]
 }

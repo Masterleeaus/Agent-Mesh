@@ -7,8 +7,7 @@
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
   "published_state": "UNKNOWN",
   "related_evidence": [
-    "tests/e2e/certification/critical-path-matrix.generated.json",
-    "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048"
+    "tests/e2e/certification/critical-path-matrix.generated.json"
   ],
   "external_sources": [
     {
