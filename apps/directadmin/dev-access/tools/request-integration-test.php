@@ -150,7 +150,7 @@ function integration_init_git_repo(string $path,string $home):void{
   'GIT_CONFIG_NOSYSTEM'=>'1',
   'GIT_CONFIG_GLOBAL'=>'/dev/null'
  ];
- $process=@proc_open(['git','init','--quiet',$path],$descriptors,$pipes,$home,$environment,['bypass_shell'=>true]);
+ $process=@proc_open(['git','-c','init.defaultBranch=main','init','--quiet',$path],$descriptors,$pipes,$home,$environment,['bypass_shell'=>true]);
  integration_expect(is_resource($process),'synthetic Git repository must initialize');
  fclose($pipes[0]);
  $stdout=(string)stream_get_contents($pipes[1]);
@@ -397,6 +397,10 @@ $invalidKeyCases=[
  ],
  'newline-after-key-algorithm'=>[
   'key'=>'ssh-ed25519'."\n".$edParts[1].' synthetic+fixture',
+  'transport'=>'urlencoded'
+ ],
+ 'multiline-options-second-authorized-record'=>[
+  'key'=>$syntheticEd25519."\n".'command="synthetic-option-fixture" '.$syntheticEd25519,
   'transport'=>'urlencoded'
  ],
  'declared-type-does-not-match-blob'=>[
