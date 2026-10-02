@@ -96,12 +96,11 @@ function ConfiguredFooter({ context }) {
   const brand = context.kind === 'industry' ? `Titan Zero ${context.site.name}` : 'Titan Zero'
   const columns = context.kind === 'industry'
       ? {
-          Industry: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features & workforce', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', '/pricing']],
-          OtherIndustries: getIndustryDirectoryLinks().filter(({ host }) => host !== context.site.host).map(({ label, href }) => [label, href]),
-          Platform: [['Titan Zero platform', 'https://titanzero.io/']],
+          Cleaning: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', '/pricing']],
+          TitanZero: [['Product platform', 'https://titanzero.io/'], ['Managed service', 'https://titanzero.io/fully-managed']],
         }
       : {
-          Product: [['How it works', '/#how-it-works'], ['Features', '/features'], ['AI workforce', '/ai-workforce'], ['Works Everywhere', '/works-everywhere'], ['Industries', '/industries'], ['Pricing', '/pricing']],
+          Product: [['How it works', '/#how-it-works'], ['Cleaning SaaS', '/industries/cleaning'], ['Features', '/features'], ['AI workforce', '/ai-workforce'], ['Works Everywhere', '/works-everywhere'], ['Pricing', '/pricing'], ['Managed service', '/fully-managed']],
           Resources: [['Privacy & architecture', '/privacy-architecture'], ['Cost sovereignty', '/cost-sovereignty'], ['Security & recovery', '/security-recovery'], ['Resources', '/resources']],
           Company: [['About', '/about'], ['System evolution', '/changelog']],
         }
