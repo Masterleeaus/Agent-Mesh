@@ -139,39 +139,44 @@ while IFS=$'\t' read -r filename expected_checksum; do
   fi
 
   echo "applying migration: $filename"
-  # PostgreSQL does not allow an enum value added inside a transaction to be
-  # used until that transaction commits. Migration 089 adds `flooring` and
-  # immediately inserts rows using it, so commit that idempotent enum extension
-  # first, then keep the remaining data/schema changes and history row atomic.
-  # If the second transaction is interrupted, rerunning this IF NOT EXISTS
-  # statement is safe and the migration can resume.
-  if [[ "${filename}" == "089_flooring_catalog.sql" ]]; then
-    enum_statement="ALTER TYPE price_book_category ADD VALUE IF NOT EXISTS 'flooring';"
-    if [[ "$(grep -Fxc "${enum_statement}" "${file}")" != "1" ]]; then
-      echo "expected exactly one flooring enum extension in ${filename}; refusing to migrate" >&2
-      exit 1
-    fi
-    psql_cmd -v ON_ERROR_STOP=1 -c "${enum_statement}"
-  fi
-
   # Execute the migration and ledger write in one PostgreSQL transaction so a
   # connection failure cannot leave applied SQL without its history record.
   # Migration 088 contains its own top-level BEGIN/COMMIT; strip only those
   # exact standalone lines so its statements participate in this outer tx.
+  # Migration 089 adds an enum value and then uses it. PostgreSQL requires a
+  # commit between those operations, so split at the exact known statement;
+  # its INSERTs all use ON CONFLICT and are safe to replay if final recording
+  # fails after those earlier transaction stages commit.
   MIGRATION_TRANSACTION_FILE="$(mktemp "${TMPDIR:-/tmp}/titan-migration.XXXXXX.sql")"
-  {
-    printf -- '-- migration: %s sha256: %s\n' "$filename" "$expected_checksum"
-    printf 'BEGIN;\n'
-    if [[ "${filename}" == "088_condition_tier.sql" ]]; then
-      sed -e '/^BEGIN;$/d' -e '/^COMMIT;$/d' "$file"
-    elif [[ "${filename}" == "089_flooring_catalog.sql" ]]; then
-      sed "/^ALTER TYPE price_book_category ADD VALUE IF NOT EXISTS 'flooring';$/d" "$file"
-    else
-      cat -- "$file"
+  if [[ "${filename}" == "089_flooring_catalog.sql" ]]; then
+    enum_statement="ALTER TYPE price_book_category ADD VALUE IF NOT EXISTS 'flooring';"
+    enum_statement_count="$(grep -Fxc "${enum_statement}" "${file}" || true)"
+    if [[ "${enum_statement_count}" != "1" ]]; then
+      echo "migration 089 enum boundary changed; refusing unsafe execution" >&2
+      exit 1
     fi
-    printf "\nINSERT INTO schema_migrations (filename, checksum) VALUES ('%s', '%s');\nCOMMIT;\n" \
-      "$filename" "$expected_checksum"
-  } > "${MIGRATION_TRANSACTION_FILE}"
+    {
+      printf -- '-- migration: %s sha256: %s\n' "$filename" "$expected_checksum"
+      printf 'BEGIN;\n'
+      awk -v marker="${enum_statement}" '$0 == marker { exit } { print }' "${file}"
+      printf 'COMMIT;\nBEGIN;\n%s\nCOMMIT;\nBEGIN;\n' "${enum_statement}"
+      awk -v marker="${enum_statement}" '$0 == marker { found = 1; next } found { print }' "${file}"
+      printf "\nINSERT INTO schema_migrations (filename, checksum) VALUES ('%s', '%s');\nCOMMIT;\n" \
+        "$filename" "$expected_checksum"
+    } > "${MIGRATION_TRANSACTION_FILE}"
+  else
+    {
+      printf -- '-- migration: %s sha256: %s\n' "$filename" "$expected_checksum"
+      printf 'BEGIN;\n'
+      if [[ "${filename}" == "088_condition_tier.sql" ]]; then
+      sed -e '/^BEGIN;$/d' -e '/^COMMIT;$/d' "$file"
+      else
+        cat -- "$file"
+      fi
+      printf "\nINSERT INTO schema_migrations (filename, checksum) VALUES ('%s', '%s');\nCOMMIT;\n" \
+        "$filename" "$expected_checksum"
+    } > "${MIGRATION_TRANSACTION_FILE}"
+  fi
   psql_cmd -v ON_ERROR_STOP=1 -f "${MIGRATION_TRANSACTION_FILE}"
   rm -f -- "${MIGRATION_TRANSACTION_FILE}"
   MIGRATION_TRANSACTION_FILE=""
