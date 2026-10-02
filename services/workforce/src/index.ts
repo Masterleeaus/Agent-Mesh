@@ -8,7 +8,7 @@ import type { SessionSourceReference } from "../../../packages/titan-platform/sr
 export interface AuthenticatedWorkIdentity {
  provider: string; subject: string; session_id: string; device_id: string; session_revision: number;
  audience: string; company_id: string; actor_id: string; context_revision: string; surface: string;
- credential_expires_at?: string; source_session?: SessionSourceReference;
+ credential_expires_at?: string; source_session?: SessionSourceReference; source_session_required?: boolean;
 }
 export interface WorkCorrelation { authenticated_identity?: AuthenticatedWorkIdentity; request_id?: string; operation_id?: string; trace_id?: string; idempotency_key?: string; session_id?: string; context_revision?: string | number; }
 export interface WorkOrigin extends WorkCorrelation { actor_id: string; conversation_id: string; surface?: "zero" | "go" | "hub" | "system"; correlation_id?: string; dispatch_fingerprint?: string; }
