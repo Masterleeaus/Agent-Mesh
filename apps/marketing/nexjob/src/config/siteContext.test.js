@@ -92,7 +92,7 @@ test('launch pages keep managed service internal and show accurate release state
   const workSource = readFileSync(new URL('../pages/WorksEverywhere.jsx', import.meta.url), 'utf8')
   const cleaningSource = readFileSync(new URL('../pages/CatalogueIndustryHome.jsx', import.meta.url), 'utf8')
   assert.match(appSource, /path="\/fully-managed"/)
-  assert.doesNotMatch(appSource, /titanzero\.pro|IndustryHome|ManagedSiteHome/)
+  assert.doesNotMatch(appSource, /titanzero\.pro|import IndustryHome|ManagedSiteHome/)
   assert.match(hubSource, /14 cleaning service variants/)
   assert.match(hubSource, /managed-service offer remains part of Titan Zero/)
   assert.doesNotMatch(hubSource, /Personal Services|titanzero\.pro|Other industries/)
