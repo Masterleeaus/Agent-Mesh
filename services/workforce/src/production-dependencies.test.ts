@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { generateKeyPairSync, sign } from "node:crypto";
+import { request as httpRequest } from "node:http";
 import { chmodSync, linkSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -14,6 +15,22 @@ import { createIdentitySessionRegistry } from "../../../packages/titan-platform/
 import { createHostedRuntime } from "./hosted-runtime.js";
 import { createWorkforceDependencies } from "./production-dependencies.js";
 import { createWorkforceServer } from "./server.js";
+
+function requestHttp(url: string, options: {
+  method?: string; headers?: Record<string, string>; body?: string;
+} = {}): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const request = httpRequest(url, { method: options.method ?? "GET", headers: options.headers }, response => {
+      response.setEncoding("utf8");
+      let body = "";
+      response.on("data", chunk => { body += chunk; });
+      response.on("end", () => resolve({ status: response.statusCode ?? 0, body }));
+    });
+    request.on("error", reject);
+    if (options.body !== undefined) request.write(options.body);
+    request.end();
+  });
+}
 
 function productionEnvironment(input: {
   root: string; identityPath: string; runtimePath: string; webPath: string; companyRoot: string;
@@ -231,7 +248,7 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
     const nonce = "N".repeat(43);
     const directAdminCookie = "session=disposable-browser-session";
 
-    const bootstrap = await fetch(`${baseUrl}/v1/directadmin/bootstrap`, {
+    const bootstrap = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap`, {
       method: "POST",
       headers: {
         host: "panel.test.invalid",
@@ -243,14 +260,14 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
       },
       body: "",
     });
-    assert.equal(bootstrap.status, 503, "the mount cannot fabricate a successful bootstrap without the owner provider");
-    assert.deepEqual(await bootstrap.json(), { error: "directadmin-service-unavailable" });
+    assert.equal(bootstrap.status, 503, `the mount cannot fabricate a successful bootstrap without the owner provider: ${bootstrap.body}`);
+    assert.deepEqual(JSON.parse(bootstrap.body), { error: "directadmin-service-unavailable" });
     assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
       method: "POST", path: "/v1/directadmin/bootstrap", origin: "https://panel.test.invalid",
       nonce, authorization: null, cookie: directAdminCookie,
     }, "the production host mounts the operator gateway, pins its URL, preserves the DirectAdmin proof cookie and strips Authorization");
 
-    const context = await fetch(`${baseUrl}/v1/directadmin/context`, {
+    const context = await requestHttp(`${baseUrl}/v1/directadmin/context`, {
       headers: {
         host: "panel.test.invalid",
         origin: "https://panel.test.invalid",
@@ -262,7 +279,7 @@ test("production dependency factory mounts the operator DirectAdmin gateway and 
     assert.equal(JSON.parse(readFileSync(observationPath, "utf8")).nonce, null,
       "the one-time bootstrap nonce is forwarded only for the exact bootstrap POST target");
 
-    const bootstrapWithQuery = await fetch(`${baseUrl}/v1/directadmin/bootstrap?unexpected=1`, {
+    const bootstrapWithQuery = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap?unexpected=1`, {
       method: "POST",
       headers: {
         host: "panel.test.invalid",
