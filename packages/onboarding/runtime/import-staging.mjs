@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { normalizeCompanyContext } from '../../packages/titan-platform/src/ported/titan-local/kernel/company-context.js';
+import { normalizeCompanyContext } from '@titan-zero/storage/company-context';
 
 const LEGACY = new Set(['tenant_id','tenant_company_id','workspace_tenant_id','business_id']);
 const DATASETS = new Set(['customers','jobs','history']);

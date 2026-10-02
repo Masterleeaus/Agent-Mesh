@@ -21,7 +21,7 @@
       "dependency_lockfiles": [
         {
           "path": "pnpm-lock.yaml",
-          "sha256": "36801ebf82e4e6f390c7fd0fb0d412b81e93afe9dd91fef5b50a4ccf5228761b"
+          "sha256": "0a10da0aaaf6c8d3df420326b9b1238debc1436e025670448623ab1093c76ad8"
         }
       ],
       "notice_files": [],
@@ -44,7 +44,7 @@
       "dependency_lockfiles": [
         {
           "path": "pnpm-lock.yaml",
-          "sha256": "36801ebf82e4e6f390c7fd0fb0d412b81e93afe9dd91fef5b50a4ccf5228761b"
+          "sha256": "0a10da0aaaf6c8d3df420326b9b1238debc1436e025670448623ab1093c76ad8"
         }
       ],
       "component_ids": [

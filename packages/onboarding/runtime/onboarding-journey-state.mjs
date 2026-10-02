@@ -1,4 +1,4 @@
-import { assertCanonicalCompanyId, rejectLegacyTenantAuthority } from '../../packages/titan-platform/src/ported/titan-runtime/boundary.js';
+import { normalizeCompanyContext } from '@titan-zero/storage/company-context';
 
 export const ONBOARDING_JOURNEY_ID = 'owner-business-setup';
 export const ONBOARDING_STEPS = Object.freeze([
@@ -25,8 +25,7 @@ function assertStorage(storage) {
 
 function canonicalContext(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new TypeError('onboarding context must be an object');
-  rejectLegacyTenantAuthority(input, 'onboarding');
-  return Object.freeze({ company_id: assertCanonicalCompanyId(input.company_id) });
+  return Object.freeze({ company_id: normalizeCompanyContext(input).company_id });
 }
 
 function storageKey(companyId) {
@@ -59,8 +58,7 @@ function defaultState(companyId) {
 function normalizeStoredState(raw, companyId) {
   if (!raw) return defaultState(companyId);
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new TypeError('stored onboarding state must be an object');
-  rejectLegacyTenantAuthority(raw, 'stored_onboarding_state');
-  if (assertCanonicalCompanyId(raw.company_id) !== companyId) throw new TypeError('stored onboarding state company_id mismatch');
+  if (normalizeCompanyContext(raw).company_id !== companyId) throw new TypeError('stored onboarding state company_id mismatch');
   if (raw.journey_id !== ONBOARDING_JOURNEY_ID) throw new TypeError('stored onboarding journey_id mismatch');
   if (!ONBOARDING_STATUSES.includes(raw.status)) throw new TypeError('stored onboarding status is invalid');
   const completed = [...new Set((raw.completed_steps || []).map(assertStep))];
