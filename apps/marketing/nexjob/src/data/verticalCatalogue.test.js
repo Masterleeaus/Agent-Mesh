@@ -102,6 +102,13 @@ test('all legacy industry paths resolve to one canonical profile, including the 
   }
   const combined = getVerticalById('handyman-property-maintenance')
   assert.deepEqual(combined.preservedContentFrom, ['handyman', 'property-maintenance'])
+  assert.deepEqual(Object.keys(combined.legacyContent), ['handyman', 'propertyMaintenance'])
+  assert.equal(combined.legacyContent.handyman.headline, 'Small repairs, kept moving.')
+  assert.equal(combined.legacyContent.handyman.examples.length, 3)
+  assert.equal(combined.legacyContent.handyman.capabilities.length, 5)
+  assert.equal(combined.legacyContent.propertyMaintenance.headline, 'One managed operating layer across multi-service property work.')
+  assert.equal(combined.legacyContent.propertyMaintenance.pains.length, 4)
+  assert.equal(combined.legacyContent.propertyMaintenance.capabilities.length, 6)
   assert.equal(getVerticalByHostname('handyman-property-maintenance.titanzero.io')?.id, combined.id)
 })
 
