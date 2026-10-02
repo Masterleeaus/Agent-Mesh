@@ -142,16 +142,20 @@ its selected company in `allowed_company_ids`; it cannot switch company itself.
 
 `IdentitySessionRegistry.withCurrentSessionFence(proof, expected, { signal },
 callback)` is the reusable owner API for consumers. The proof includes the signed
-source reference and verified child bearer expiry. The registry samples its
-trusted clock after acquiring the existing SQLite `BEGIN IMMEDIATE` transaction,
-then re-resolves child and source before invoking the effect boundary with a
-fixed 500 ms deadline and AbortSignal. SQLite is WAL with a 5-second busy timeout;
-cross-process writer contention therefore fails at that storage timeout. The
-callback deadline starts after acquisition and identity revalidation. Keep all
-registry transactions free of network waits so local connection serialization
-stays short. Lock order is GLOBAL_REGISTRY → Workforce control store →
-company/business store; the callback must not re-enter the registry. Readiness
-probes stay outside the fence.
+source reference and verified child bearer expiry. At entry, the registry creates
+one 500 ms monotonic deadline before queueing for its SQLite
+`BEGIN IMMEDIATE` transaction. Storage includes same-connection queue time and
+native writer-lock acquisition by setting a temporary connection-local
+`busy_timeout` to the remaining budget; ordinary transactions keep the
+configured five-second timeout. If lock acquisition expires,
+`storage-transaction-acquire-timeout` is returned and the transaction callback
+does not run. After acquisition, the registry samples its trusted clock and
+re-resolves child and source. It passes the same absolute deadline and an
+AbortSignal for the remaining budget to the effect boundary. Workforce passes
+that unchanged deadline to its control-store transaction. Keep registry
+transactions free of network waits. Lock order is GLOBAL_REGISTRY → Workforce
+control store → company/business store; the callback must not re-enter the
+registry. Readiness probes stay outside the fence.
 
 The fence covers admission/immediate bounded effect work only, never a 120-second
 adapter lifecycle. On timeout it releases the registry lock and rejects as
