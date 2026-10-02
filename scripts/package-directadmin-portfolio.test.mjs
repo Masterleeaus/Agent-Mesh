@@ -199,8 +199,8 @@ test("Titan Web role entrypoints load the authenticated read-only cockpit and re
   const sdkModule = "export const DirectAdminCockpitSession = class {}; export const mountDirectAdminProjection = () => {};";
   for (const role of ["admin", "reseller", "user"]) {
     const html = renderBrandStudioEntry(role, { sdkModule });
-    assert.match(html, new RegExp(`data-role=\\"${role}\\"`));
-    assert.match(html, /<script type=\\"importmap\\">/);
+    assert.match(html, new RegExp(`data-role="${role}"`));
+    assert.match(html, /<script type="importmap">/);
     assert.match(html, /titan-sdk/);
     assert.match(html, /mountDirectAdminProjection/);
     assert.equal(/<script[^>]+src=/i.test(html), false);
