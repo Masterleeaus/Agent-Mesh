@@ -82,40 +82,56 @@ $common=[
 ];
 foreach(['LD_LIBRARY_PATH','PHP_INI_SCAN_DIR','TMPDIR','LD_PRELOAD','NSS_WRAPPER_PASSWD','NSS_WRAPPER_GROUP'] as $name){$value=getenv($name);if($value!==false)$common[$name]=$value;}
 
-$tokens=[];
-foreach($routes as $role=>$route){
- $environment=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$route,'QUERY_STRING'=>''];
+$adminGet=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes['admin'],'QUERY_STRING'=>''];
+[$adminHtml]=integration_run_role($root,'admin',$adminGet);
+$token=integration_token($adminHtml);
+integration_expect(strpos($adminHtml,'operator actions enabled')!==false,'admin route must expose operator mode');
+
+foreach(['reseller','user'] as $role){
+ $environment=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>''];
  [$html]=integration_run_role($root,$role,$environment);
- $tokens[$role]=integration_token($html);
+ integration_expect(strpos($html,'name="csrf"')===false,$role.' read-only page must not render mutation CSRF field');
+ integration_expect(strpos($html,'read-only')!==false,$role.' page must advertise read-only policy');
+ integration_expect(strpos($html,'name="run"')===false,$role.' page must not render terminal action');
+ integration_expect(strpos($html,'name="add_key"')===false,$role.' page must not render SSH mutation action');
 }
 
-foreach($routes as $role=>$route){
- $fields=['csrf'=>$tokens[$role],'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
+$fields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
+$environment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$routes['admin'],'QUERY_STRING'=>'',
+ 'CONTENT_LENGTH'=>(string)strlen(http_build_query($fields))
+];
+foreach($fields as $name=>$value)$environment[$name]=$value;
+[$html]=integration_run_role($root,'admin',$environment);
+integration_expect_successful_pwd($html,$homeA);
+
+foreach(['reseller','user'] as $role){
+ $fields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
  $environment=$common+[
-  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>'',
   'CONTENT_LENGTH'=>(string)strlen(http_build_query($fields))
  ];
  foreach($fields as $name=>$value)$environment[$name]=$value;
  [$html]=integration_run_role($root,$role,$environment);
- integration_expect_successful_pwd($html,$homeA);
+ integration_expect(strpos($html,'this DirectAdmin role is read-only')!==false,$role.' POST must fail closed by role policy');
+ integration_expect(strpos($html,'Exit code:')===false,$role.' POST must not execute a command');
 }
 
-$token=$tokens['user'];
-$route=$routes['user'];
+$route=$routes['admin'];
 $valid=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
 $body=http_build_query($valid);
 $stdinEnvironment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
  'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
 ];
-[$html]=integration_run_role($root,'user',$stdinEnvironment,$body);
+[$html]=integration_run_role($root,'admin',$stdinEnvironment,$body);
 integration_expect_successful_pwd($html,$homeA);
 
 $rawPostEnvironment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
  'POST'=>$body,'CONTENT_LENGTH'=>(string)strlen($body)
 ];
-[$html]=integration_run_role($root,'user',$rawPostEnvironment);
+[$html]=integration_run_role($root,'admin',$rawPostEnvironment);
 integration_expect_successful_pwd($html,$homeA);
 
 $missingCsrfBody=http_build_query(['cwd'=>$homeA,'command'=>'pwd','run'=>'1']);
@@ -123,7 +139,7 @@ $missingCsrfEnvironment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
  'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($missingCsrfBody)
 ];
-[$result]=integration_run_role($root,'user',$missingCsrfEnvironment,$missingCsrfBody);
+[$result]=integration_run_role($root,'admin',$missingCsrfEnvironment,$missingCsrfBody);
 integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false,'missing CSRF token must fail validation');
 integration_expect(strpos($result,'Exit code:')===false,'missing CSRF token must not execute a command');
 
@@ -138,7 +154,7 @@ foreach($negativeBodies as $name=>$badBody){
   'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
   'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($badBody)
  ];
- [$result]=integration_run_role($root,'user',$environment,$badBody);
+ [$result]=integration_run_role($root,'admin',$environment,$badBody);
  integration_expect_transport_rejected($result,$name);
 }
 
@@ -147,28 +163,28 @@ $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
  'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($oversizedBody)
 ];
-[$result]=integration_run_role($root,'user',$environment,$oversizedBody);
+[$result]=integration_run_role($root,'admin',$environment,$oversizedBody);
 integration_expect_transport_rejected($result,'oversized stdin body');
 
 $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
  'CONTENT_LENGTH'=>'16385','csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
-[$result]=integration_run_role($root,'user',$environment);
+[$result]=integration_run_role($root,'admin',$environment);
 integration_expect_transport_rejected($result,'oversized environment payload');
 
 $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
  'CONTENT_LENGTH'=>'0','csrf'=>$token,'CSRF'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
-[$result]=integration_run_role($root,'user',$environment);
+[$result]=integration_run_role($root,'admin',$environment);
 integration_expect_transport_rejected($result,'case-variant duplicate field');
 
 $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
  'CONTENT_LENGTH'=>'0','csrf[]'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
-[$result]=integration_run_role($root,'user',$environment);
+[$result]=integration_run_role($root,'admin',$environment);
 integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false,'array-shaped environment fields must not be accepted as CSRF');
 integration_expect(strpos($result,'Exit code:')===false,'array-shaped environment fields must not execute a command');
 
@@ -176,20 +192,20 @@ $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'csrf='.rawurlencode($token),
  'CONTENT_LENGTH'=>'0','cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
-[$result]=integration_run_role($root,'user',$environment);
+[$result]=integration_run_role($root,'admin',$environment);
 integration_expect_transport_rejected($result,'query-string CSRF field');
 
 $homeBEnvironment=array_replace($common,[
  'REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','HOME'=>$homeB
 ]);
-[$htmlB]=integration_run_role($root,'user',$homeBEnvironment);
+[$htmlB]=integration_run_role($root,'admin',$homeBEnvironment);
 $tokenB=integration_token($htmlB);
 integration_expect(!hash_equals($token,$tokenB),'separate HOME contexts must have separate CSRF tokens');
 $crossHome=array_replace($common,[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','HOME'=>$homeB,
  'CONTENT_LENGTH'=>'0','csrf'=>$token,'cwd'=>$homeB,'command'=>'pwd','run'=>'1'
 ]);
-[$result]=integration_run_role($root,'user',$crossHome);
+[$result]=integration_run_role($root,'admin',$crossHome);
 integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false,'CSRF token from another account HOME must be rejected');
 integration_expect(strpos($result,'Exit code:')===false,'cross-HOME token must not authorize a command');
 
@@ -200,7 +216,7 @@ if($other&&isset($other['uid'])&&(int)$other['uid']!==posix_geteuid()){
   'USERNAME'=>$other['name'],'USER'=>$other['name'],'HOME'=>$other['dir'],
   'CONTENT_LENGTH'=>'0','csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
  ]);
- [$result]=integration_run_role($root,'user',$crossAccount);
+ [$result]=integration_run_role($root,'admin',$crossAccount);
  integration_expect(strpos($result,'Request rejected: DirectAdmin execution identity is ambiguous.')!==false,'cross-account process identity must be rejected before page diagnostics');
  integration_expect(strpos($result,'Exit code:')===false,'cross-account identity must not authorize a command');
 }
@@ -209,8 +225,8 @@ $disallowed=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
  'CONTENT_LENGTH'=>'0','csrf'=>$token,'cwd'=>$homeA,'command'=>'cat /etc/passwd','run'=>'1'
 ];
-[$result]=integration_run_role($root,'user',$disallowed);
+[$result]=integration_run_role($root,'admin',$disallowed);
 integration_expect(strpos($result,'Blocked by Developer Portal policy')!==false,'disallowed command must remain blocked');
 integration_expect(strpos($result,'root:x:')===false,'disallowed command must not read system account data');
 
-echo "DirectAdmin role request integration tests passed (all roles; environment, raw POST and stdin transport; malformed, ambiguous, cross-HOME and command-policy cases).".PHP_EOL;
+echo "DirectAdmin role request integration tests passed (admin mutation transport; reseller/user read-only enforcement; malformed, ambiguous, cross-HOME and command-policy cases).".PHP_EOL;
