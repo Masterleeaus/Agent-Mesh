@@ -79,7 +79,93 @@ jobs:
             cd "$root/dist/v1.3.2"
             sha256sum --check titan_dev_access.tar.gz.sha256
           )
-          bash "$root/tools/plugin-lab.sh" "$root/dist/v1.3.2/titan_dev_access.tar.gz" archive-only
+          python3 - "$root/dist/v1.3.2" <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import re
+          import sys
+          import tarfile
+
+          release = pathlib.Path(sys.argv[1])
+          archive = release / "titan_dev_access.tar.gz"
+          provenance = json.loads((release / "provenance.json").read_text())
+          expected_archive = provenance["archive"]["sha256"]
+          digest = hashlib.sha256()
+          with archive.open("rb") as stream:
+              for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                  digest.update(chunk)
+          if digest.hexdigest() != expected_archive:
+              raise SystemExit("historical archive checksum differs from its own provenance")
+
+          source_prefix = "apps/directadmin/dev-access/"
+          expected_files = {}
+          for source_path, file_hash in provenance["source"]["packaged_file_sha256"].items():
+              if not source_path.startswith(source_prefix):
+                  raise SystemExit(f"unexpected provenance path: {source_path}")
+              relative = source_path[len(source_prefix):]
+              if not relative or relative.startswith("/") or ".." in pathlib.PurePosixPath(relative).parts:
+                  raise SystemExit(f"unsafe provenance path: {source_path}")
+              expected_files[relative] = file_hash
+
+          expected_dirs = {"."}
+          for name in expected_files:
+              parent = pathlib.PurePosixPath(name).parent
+              while str(parent) != ".":
+                  expected_dirs.add(str(parent))
+                  parent = parent.parent
+
+          members = {}
+          with tarfile.open(archive, "r:gz") as bundle:
+              for member in bundle.getmembers():
+                  raw = member.name
+                  while raw.startswith("./"):
+                      raw = raw[2:]
+                  name = "." if raw in ("", ".") else raw.rstrip("/")
+                  parts = pathlib.PurePosixPath(name).parts
+                  if name.startswith("/") or "\\" in name or any(part in ("", ".", "..") for part in parts):
+                      raise SystemExit(f"unsafe archive member: {member.name}")
+                  if name in members:
+                      raise SystemExit(f"duplicate archive member: {name}")
+                  if not (member.isfile() or member.isdir()) or member.issym() or member.islnk():
+                      raise SystemExit(f"unsupported archive member type: {name}")
+                  if member.mode & 0o7000:
+                      raise SystemExit(f"special permission bits are forbidden: {name}")
+                  members[name] = member
+
+              actual_files = {name for name, member in members.items() if member.isfile()}
+              actual_dirs = {name for name, member in members.items() if member.isdir()}
+              if actual_files != set(expected_files):
+                  raise SystemExit("historical archive file set differs from its own provenance")
+              if actual_dirs != expected_dirs:
+                  raise SystemExit("historical archive directory layout differs from its own provenance")
+
+              for name, expected_hash in expected_files.items():
+                  with bundle.extractfile(members[name]) as stream:
+                      actual_hash = hashlib.sha256(stream.read()).hexdigest()
+                  if actual_hash != expected_hash:
+                      raise SystemExit(f"historical packaged file differs from its own provenance: {name}")
+
+              required = {
+                  "plugin.conf", "README.md", "AGENTS.md", "admin/index.html",
+                  "reseller/index.html", "user/index.html", "hooks", "lib", "scripts"
+              }
+              if not required.issubset(set(members)):
+                  raise SystemExit("historical archive is missing a required DirectAdmin root entry")
+              executable = {
+                  "admin/index.html", "reseller/index.html", "user/index.html",
+                  "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"
+              }
+              if any(members[name].mode & 0o111 == 0 for name in executable):
+                  raise SystemExit("historical archive is missing an executable DirectAdmin entrypoint")
+              config = bundle.extractfile(members["plugin.conf"]).read().decode("utf-8")
+              if not re.search(r"^name=Developer Portal$", config, re.MULTILINE):
+                  raise SystemExit("historical plugin name mismatch")
+              if not re.search(r"^version=1\.3\.2$", config, re.MULTILINE):
+                  raise SystemExit("historical plugin version mismatch")
+
+          print("Historical v1.3.2 archive matches its own checksum, file provenance, root layout, and modes")
+          PY
 
       - name: Exercise exact current-source candidate
         shell: bash

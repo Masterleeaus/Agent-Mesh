@@ -57,7 +57,7 @@ function post_string($name,$default=''){
  $v=$_POST[$name]??$default;
  return is_string($v)?$v:$default;
 }
-function directadmin_role_can_mutate($role){return $role==='admin';}
+function directadmin_role_can_mutate($role){return $role==='admin'&&PHP_SAPI==='cli'&&directadmin_identity_context()!==null;}
 function directadmin_post_field_names(){return ['csrf','cwd','command','run','public_key','add_key','remove_key'];}
 function directadmin_validate_post_fields($fields){
  if(!is_array($fields)||count($fields)>count(directadmin_post_field_names())) throw new RuntimeException('Invalid form fields.');
@@ -292,7 +292,7 @@ function probe_output($command){
  $out=shell_exec($command.' 2>/dev/null');
  return trim((string)$out);
 }
-function codex_readiness($cwd,$keys,$diag){
+function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $cwd=safe_cwd($cwd);
  $gitRepo=probe_output('git -C '.escapeshellarg($cwd).' rev-parse --is-inside-work-tree')==='true';
  $branch=$gitRepo?probe_output('git -C '.escapeshellarg($cwd).' rev-parse --abbrev-ref HEAD'):'';
@@ -308,8 +308,8 @@ function codex_readiness($cwd,$keys,$diag){
   'git_head'=>$head?:null,
   'git_dirty'=>$gitRepo?($dirty!==''):null,
   'ssh_public_keys'=>count($keys),
-  'ssh_dir_mode'=>is_dir($sshDir)?substr(sprintf('%o',fileperms($sshDir)),-4):null,
-  'authorized_keys_mode'=>is_file($auth)?substr(sprintf('%o',fileperms($auth)),-4):null,
+  'ssh_dir_mode'=>$includeSshState&&is_dir($sshDir)?substr(sprintf('%o',fileperms($sshDir)),-4):null,
+  'authorized_keys_mode'=>$includeSshState&&is_file($auth)?substr(sprintf('%o',fileperms($auth)),-4):null,
   'disk_free_bytes'=>@disk_free_space($cwd)?:null,
   'git_available'=>!empty($diag['git']),
   'php_available'=>!empty($diag['php']),
@@ -397,12 +397,15 @@ function render(){
  $canMutate=directadmin_role_can_mutate($role);
  $msg='';$output='';$rc=null;$commandClass=null;$cwd=safe_cwd(post_string('cwd',''));
  if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
-  if(!check_csrf()){$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
+  if(!$canMutate){$msg='Request rejected: this DirectAdmin role is read-only in Developer Portal.';}
+  elseif(!check_csrf()){$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
   elseif(isset($_POST['add_key'])){$msg=add_key(post_string('public_key',''));}
   elseif(isset($_POST['remove_key'])){$idx=filter_var($_POST['remove_key'],FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);$msg=remove_key($idx===false?-1:$idx);}
   elseif(isset($_POST['run'])){[$output,$rc,$commandClass]=run_cmd(post_string('command',''),$cwd);}
  }
- $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();$keys=fingerprints();$readiness=codex_readiness($cwd,$keys,$diag);$serverNode=server_node_health();$token=csrf();$fullDiag=diagnostics_report($diag,$keys,$readiness);
+ $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();
+ $keys=$canMutate?fingerprints():[];
+ $readiness=codex_readiness($cwd,$keys,$diag,$canMutate);$serverNode=server_node_health();$token=$canMutate?csrf():'';$fullDiag=diagnostics_report($diag,$keys,$readiness);
  echo '<style>
 :root{color-scheme:light dark;--tda-panel:var(--card-background,#fff);--tda-text:var(--text-color,#1f2937);--tda-muted:var(--neutral,#6b7280);--tda-border:var(--border-color,#d9dde5);--tda-primary:var(--primary,#2563eb);--tda-safe:var(--safe,#16803c);--tda-danger:var(--danger,#c62828);--tda-input:var(--input-background,var(--tda-panel));}
 @media (prefers-color-scheme:dark){:root{--tda-panel:#18212f;--tda-text:#eef2f7;--tda-muted:#9ca3af;--tda-border:#334155;--tda-input:#0f172a}}

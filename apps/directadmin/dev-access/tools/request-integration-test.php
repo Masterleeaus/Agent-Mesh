@@ -13,6 +13,99 @@ function integration_remove_tree(string $path):void{
  }
  @rmdir($path);
 }
+function integration_tree_snapshot(string $root):array{
+ $realRoot=realpath($root);
+ integration_expect($realRoot!==false,'snapshot root must resolve');
+ $snapshot=[];$visit=null;
+ $visit=static function(string $path,string $relative)use(&$visit,&$snapshot):void{
+  $stat=@lstat($path);
+  integration_expect(is_array($stat),'snapshot path must remain readable');
+  $mode=$stat['mode']&07777;
+  if(is_link($path)){$snapshot[$relative]=['link',$mode,readlink($path)];return;}
+  if(is_dir($path)){
+   $snapshot[$relative]=['dir',$mode];
+   foreach(scandir($path)?:[] as $entry){
+    if($entry==='.'||$entry==='..') continue;
+    $child=$relative==='.'?$entry:$relative.'/'.$entry;
+    $visit($path.'/'.$entry,$child);
+   }
+   return;
+  }
+  if(is_file($path)){$snapshot[$relative]=['file',$mode,hash_file('sha256',$path)];return;}
+  $snapshot[$relative]=['special',$mode];
+ };
+ $visit($realRoot,'.');
+ ksort($snapshot);
+ return $snapshot;
+}
+function integration_seed_csrf(string $home):string{
+ $directory=$home.'/.titan-dev-access';
+ integration_expect(mkdir($directory,0700,true),'read-only test CSRF fixture must be created');
+ chmod($directory,0700);
+ $secret=bin2hex(random_bytes(32));
+ integration_expect(file_put_contents($directory.'/csrf.key',$secret,LOCK_EX)!==false,'read-only test CSRF fixture must be written');
+ chmod($directory.'/csrf.key',0600);
+ return hash_hmac('sha256','titan_dev_access_form_v2',$secret);
+}
+function integration_start_web_server(string $pluginRoot,string $fixture,string $username,string $emptyHome,string $existingHome,array $baseEnvironment):array{
+ $router=$fixture.'/directadmin-web-router.php';
+ $routerSource=<<<'PHP'
+<?php
+$role=$_SERVER['HTTP_X_TDA_TEST_ROLE']??'';
+$homeId=$_SERVER['HTTP_X_TDA_TEST_HOME']??'';
+$homes=['empty'=>getenv('TDA_TEST_HOME_EMPTY'),'existing'=>getenv('TDA_TEST_HOME_EXISTING')];
+if(!in_array($role,['admin','reseller','user'],true)||!isset($homes[$homeId])||!is_string($homes[$homeId])){http_response_code(400);echo 'Invalid test route';return;}
+putenv('HOME='.$homes[$homeId]);
+$root=getenv('TDA_TEST_PLUGIN_ROOT');
+$entry=$root.'/'.$role.'/index.html';
+if(!is_file($entry)){http_response_code(404);echo 'Missing test entrypoint';return;}
+echo '<!-- test-sapi='.PHP_SAPI.' -->';
+ob_start();
+require $entry;
+echo ob_get_clean();
+PHP;
+ integration_expect(file_put_contents($router,$routerSource)!==false,'web test router must be written inside its fixture');
+ $socket=@stream_socket_server('tcp://127.0.0.1:0',$errno,$error);
+ integration_expect(is_resource($socket),'loopback socket must allocate a test port');
+ $address=stream_socket_get_name($socket,false);
+ fclose($socket);
+ integration_expect(is_string($address)&&preg_match('/:(\d+)$/',$address,$matches)===1,'loopback test port must resolve');
+ $port=(int)$matches[1];
+ $environment=array_replace($baseEnvironment,[
+  'HOME'=>$emptyHome,'USERNAME'=>$username,'USER'=>$username,
+  'TDA_TEST_PLUGIN_ROOT'=>$pluginRoot,'TDA_TEST_HOME_EMPTY'=>$emptyHome,'TDA_TEST_HOME_EXISTING'=>$existingHome
+ ]);
+ $descriptors=[0=>['pipe','r'],1=>['file','/dev/null','a'],2=>['file','/dev/null','a']];
+ $process=@proc_open([PHP_BINARY,'-S','127.0.0.1:'.$port,$router],$descriptors,$pipes,$fixture,$environment,['bypass_shell'=>true]);
+ integration_expect(is_resource($process),'PHP CLI server must start for non-CLI role coverage');
+ fclose($pipes[0]);
+ for($attempt=0;$attempt<50;$attempt++){
+  $probe=@fsockopen('127.0.0.1',$port,$connectErrno,$connectError,0.1);
+  if(is_resource($probe)){fclose($probe);return ['process'=>$process,'port'=>$port];}
+  usleep(100000);
+ }
+ @proc_terminate($process);
+ @proc_close($process);
+ integration_expect(false,'PHP CLI server must accept loopback requests within five seconds');
+ return [];
+}
+function integration_stop_web_server(?array &$server):void{
+ if(is_array($server)&&isset($server['process'])&&is_resource($server['process'])){
+  @proc_terminate($server['process']);
+  @proc_close($server['process']);
+ }
+ $server=null;
+}
+function integration_web_request(string $baseUrl,string $role,string $homeId,string $method,string $body=''):string{
+ $headers=['X-TDA-Test-Role: '.$role,'X-TDA-Test-Home: '.$homeId];
+ if($method==='POST'){$headers[]='Content-Type: application/x-www-form-urlencoded';}
+ $context=stream_context_create(['http'=>[
+  'method'=>$method,'header'=>implode("\r\n",$headers),'content'=>$body,'ignore_errors'=>true,'timeout'=>3
+ ]]);
+ $response=@file_get_contents($baseUrl,false,$context);
+ integration_expect(is_string($response),'non-CLI role endpoint must return a response');
+ return $response;
+}
 function integration_run_role(string $root,string $role,array $environment,?string $stdinBody=null):array{
  $entry=$root.'/'.$role.'/index.html';
  integration_expect(is_file($entry)&&is_executable($entry),'packaged role entrypoint must exist and be executable');
@@ -66,7 +159,11 @@ $homeA=$fixture.'/account-a';
 $homeB=$fixture.'/account-b';
 integration_expect(mkdir($homeA,0700,true),'isolated account-A HOME must be created');
 integration_expect(mkdir($homeB,0700,true),'isolated account-B HOME must be created');
-register_shutdown_function(static function()use($fixture):void{integration_remove_tree($fixture);});
+$webServer=null;
+register_shutdown_function(static function()use($fixture,&$webServer):void{
+ integration_stop_web_server($webServer);
+ integration_remove_tree($fixture);
+});
 
 $routes=[
  'admin'=>'/CMD_PLUGINS_ADMIN/titan_dev_access',
@@ -106,15 +203,21 @@ foreach($fields as $name=>$value)$environment[$name]=$value;
 integration_expect_successful_pwd($html,$homeA);
 
 foreach(['reseller','user'] as $role){
- $fields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
- $environment=$common+[
-  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>'',
-  'CONTENT_LENGTH'=>(string)strlen(http_build_query($fields))
+ $actions=[
+  'run'=>['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'],
+  'add_key'=>['csrf'=>$token,'public_key'=>'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFixTUREKeyForRolePolicyRegression00000000000000000000000000000000 test','add_key'=>'1'],
+  'remove_key'=>['csrf'=>$token,'remove_key'=>'0']
  ];
- foreach($fields as $name=>$value)$environment[$name]=$value;
- [$html]=integration_run_role($root,$role,$environment);
- integration_expect(strpos($html,'this DirectAdmin role is read-only')!==false,$role.' POST must fail closed by role policy');
- integration_expect(strpos($html,'Exit code:')===false,$role.' POST must not execute a command');
+ foreach($actions as $action=>$fields){
+  $environment=$common+[
+   'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>'',
+   'CONTENT_LENGTH'=>(string)strlen(http_build_query($fields))
+  ];
+  foreach($fields as $name=>$value)$environment[$name]=$value;
+  [$html]=integration_run_role($root,$role,$environment);
+  integration_expect(strpos($html,'this DirectAdmin role is read-only')!==false,$role.' CLI '.$action.' POST must fail closed by role policy');
+  integration_expect(strpos($html,'Exit code:')===false,$role.' CLI '.$action.' POST must not execute a command');
+ }
 }
 
 $route=$routes['admin'];
@@ -229,4 +332,44 @@ $disallowed=$common+[
 integration_expect(strpos($result,'Blocked by Developer Portal policy')!==false,'disallowed command must remain blocked');
 integration_expect(strpos($result,'root:x:')===false,'disallowed command must not read system account data');
 
-echo "DirectAdmin role request integration tests passed (admin mutation transport; reseller/user read-only enforcement; malformed, ambiguous, cross-HOME and command-policy cases).".PHP_EOL;
+$homeReadOnly=$fixture.'/read-only-empty-home';
+integration_expect(mkdir($homeReadOnly,0700,true),'read-only empty HOME fixture must be created');
+$tokenReadOnly=integration_seed_csrf($homeReadOnly);
+integration_expect(chmod($homeReadOnly.'/.titan-dev-access',0750),'read-only CSRF directory fixture mode must be set');
+integration_expect(chmod($homeReadOnly.'/.titan-dev-access/csrf.key',0640),'read-only CSRF file fixture mode must be set');
+$sshFixture=$homeB.'/.ssh/authorized_keys';
+integration_expect(file_put_contents($sshFixture,"# read-only regression fixture\n",LOCK_EX)!==false,'existing HOME SSH fixture must be written');
+integration_expect(chmod($sshFixture,0640),'existing HOME SSH file fixture mode must be relaxed for mutation detection');
+integration_expect(chmod($homeB.'/.ssh',0751),'existing HOME SSH directory fixture mode must be relaxed for mutation detection');
+$beforeEmpty=integration_tree_snapshot($homeReadOnly);
+$beforeExisting=integration_tree_snapshot($homeB);
+$testUsername='tda-test-'.$account['name'].'-'.bin2hex(random_bytes(6));
+integration_expect(posix_getpwnam($testUsername)===false,'non-CLI test identity must not resolve to a real account');
+$webServer=integration_start_web_server($root,$fixture,$testUsername,$homeReadOnly,$homeB,$common);
+$baseUrl='http://127.0.0.1:'.$webServer['port'].'/';
+foreach(['admin','reseller','user'] as $role){
+ foreach(['empty'=>[$homeReadOnly,$tokenReadOnly,$beforeEmpty],'existing'=>[$homeB,$tokenB,$beforeExisting]] as $homeId=>[$selectedHome,$validToken,$baseline]){
+  $get=integration_web_request($baseUrl,$role,$homeId,'GET');
+  integration_expect(strpos($get,'<!-- test-sapi=cli-server -->')!==false,'role page must execute under the real non-CLI cli-server SAPI');
+  integration_expect(strpos($get,'name="csrf"')===false,$role.' non-CLI GET must not render a mutation CSRF field');
+  integration_expect(strpos($get,'read-only')!==false,$role.' non-CLI GET must advertise read-only policy');
+  integration_expect(strpos($get,'name="run"')===false&&strpos($get,'name="add_key"')===false,$role.' non-CLI GET must omit mutation controls');
+  integration_expect(strpos($get,'ssh_fingerprint=')===false&&strpos($get,'readiness_ssh_dir_mode=unknown')!==false,$role.' non-CLI GET must not disclose key fingerprints or SSH permission metadata');
+  integration_expect(integration_tree_snapshot($selectedHome)===$baseline,$role.' non-CLI GET must leave HOME contents and modes unchanged');
+  $actions=[
+   'run'=>['csrf'=>$validToken,'cwd'=>$selectedHome,'command'=>'pwd','run'=>'1'],
+   'add_key'=>['csrf'=>$validToken,'public_key'=>'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFixTUREKeyForRolePolicyRegression00000000000000000000000000000000 test','add_key'=>'1'],
+   'remove_key'=>['csrf'=>$validToken,'remove_key'=>'0']
+  ];
+  foreach($actions as $action=>$fields){
+   $post=integration_web_request($baseUrl,$role,$homeId,'POST',http_build_query($fields));
+   integration_expect(strpos($post,'<!-- test-sapi=cli-server -->')!==false,'POST must execute under non-CLI SAPI');
+   integration_expect(strpos($post,'this DirectAdmin role is read-only')!==false,$role.' non-CLI '.$action.' POST must fail at action dispatch even with valid CSRF');
+   integration_expect(strpos($post,'Exit code:')===false,$role.' non-CLI '.$action.' POST must not execute terminal commands');
+   integration_expect(integration_tree_snapshot($selectedHome)===$baseline,$role.' non-CLI '.$action.' POST must leave HOME contents and modes unchanged');
+  }
+ }
+}
+integration_stop_web_server($webServer);
+
+echo "DirectAdmin role request integration tests passed (actual admin CLI environment/POST/stdin transports; reseller/user CLI and all-role cli-server GET plus valid-CSRF run/key mutation denial; read-only HOME snapshots; malformed, ambiguous, cross-HOME and command-policy cases).".PHP_EOL;

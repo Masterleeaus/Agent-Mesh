@@ -14,6 +14,7 @@ Current implemented slice:
 - Copyable diagnostics with token/password/cookie/private-key redaction.
 - DirectAdmin CLI request handling for bounded environment POST fields and optional `pipe_post=yes` stdin bodies, with strict duplicate/array/malformed-input rejection and the installed `csrf` field name.
 - Effective-user-bound HOME validation for DirectAdmin CLI requests, including account-scoped CSRF tokens.
+- PHP 7.4.0 minimum from the production argv-form `proc_open` call; the no-setup hosted PHP workflow currently verifies PHP 8.3.6, and the DirectAdmin-selected CLI version still needs host confirmation.
 - Read-only canonical Server Node health projection from the fixed loopback `/v1/status` endpoint; malformed, oversized or unavailable responses fail closed.
 - No private-key storage and no automatic sudo/root elevation.
 
