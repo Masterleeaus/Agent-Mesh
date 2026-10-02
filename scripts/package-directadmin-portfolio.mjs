@@ -10,7 +10,8 @@ import { packageFiles as BRAND_STUDIO_PACKAGE_FILES } from "../apps/directadmin/
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORKFORCE_SDK_SOURCE = "packages/titan-platform/src/directadmin-plugin.ts";
-const WORKFORCE_SDK_COMPILER_VERSION = "0.27.3";
+const ROOT_PACKAGE = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+const WORKFORCE_SDK_COMPILER_VERSION = ROOT_PACKAGE.devDependencies?.esbuild;
 const DEVELOPER_PORTAL_EXECUTABLE_FILES = [
   "admin/index.html", "reseller/index.html", "user/index.html",
   "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
@@ -192,7 +193,6 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
             const generated = path.join(staging, entry);
             fs.mkdirSync(path.dirname(generated), { recursive: true });
             fs.copyFileSync(workforceSdk.sdkModulePath, generated, fs.constants.COPYFILE_EXCL);
-            fs.chmodSync(generated, 0o644);
           } else copyValidated(source, staging, entry, new Set(plugin.executableFiles));
         }
         candidate = path.join(temporaryDir, `${plugin.id}.tar.gz`);
@@ -234,4 +234,3 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   process.stdout.write(JSON.stringify({ packaged: true, ...packagePortfolio({ outputDir: process.argv[2] ?? path.join(ROOT, "dist", "directadmin") }) }) + "\n");
 }
-
