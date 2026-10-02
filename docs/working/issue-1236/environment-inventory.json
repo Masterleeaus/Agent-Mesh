@@ -304,9 +304,6 @@
     "WORKFORCE_DEPENDENCIES_MODULE": [
       "services/workforce/src/server.ts"
     ],
-    "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE": [
-      "services/workforce/src/production-dependencies.ts"
-    ],
     "WORKFORCE_DIRECTADMIN_NODE_ID": [
       "services/workforce/src/production-dependencies.ts"
     ],
