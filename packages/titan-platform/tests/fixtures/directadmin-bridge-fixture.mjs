@@ -75,4 +75,3 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
   };
   return { registry, sessions, policy, upstreamToken, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }
-
