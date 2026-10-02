@@ -478,6 +478,12 @@ function directadmin_git_repository_context($requested){
  return null;
 }
 function directadmin_git_command_args($context,$arguments){
+ $subcommand=$arguments[0]??null;
+ if(in_array($subcommand,['diff','show'],true)){
+  foreach(['--no-textconv','--no-ext-diff'] as $flag){
+   if(!in_array($flag,$arguments,true)) $arguments[]=$flag;
+  }
+ }
  return array_merge([
   'git',
   '--git-dir',$context['git_dir'],
