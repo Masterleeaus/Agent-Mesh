@@ -11,6 +11,17 @@ const { DirectAdminCockpitSession, createDirectAdminGateway } = await import(pat
 const bridgeFixturePath = process.env.TITAN_BRIDGE_FIXTURE_MODULE ??
   new URL('../../../../packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs', import.meta.url).pathname;
 const { csrf, fixture, proof } = await import(pathToFileURL(resolve(bridgeFixturePath)).href);
+const bootstrapNonce = 'N'.repeat(43);
+const bootstrapProviderFor = (auth, label, { csrf_token = csrf } = {}) => {
+  let sequence = 0;
+  return { provide: async proof => {
+    assert.equal(proof.origin, 'https://panel.example.test');
+    assert.equal(proof.csrf_nonce, bootstrapNonce);
+    assert.equal(proof.cookie, 'da_session=fixture-authenticated');
+    return { login_assertion: await auth.loginFor('directadmin:https://panel.example.test', `browser-${label}-${++sequence}`),
+      company_id: 'company-a', device_id: 'device-1', csrf_token };
+  } };
+};
 const controllerSource = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8')).replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
 const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(controllerSource).toString('base64')}`);
 
@@ -30,7 +41,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
       const company_id = context.company_id;
       return { company_id, source: 'fixture-hosted-workforce-owner', freshness: new Date().toISOString(), evidence_refs: [],
         data: { schema: 'titan.workforce-cockpit.v1', company_id,
-          discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', capabilities: ['work.pause', 'work.cancel'] }],
+          discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', active: true, capabilities: ['work.pause', 'work.cancel'] }],
             controls: [{ action: 'pause', capability_id: 'fixture.pause' }, { action: 'cancel', capability_id: 'fixture.cancel' }] },
           status: { company_id, work: [{ company_id, work_id: `${company_id}-work`, state: 'COMPLETED', evidence_refs: ['fixture-run-ack'] }] } } };
     },
@@ -41,27 +52,32 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
       intents.push(intent);
       return { receipt_id: `fixture-receipt-${intents.length}` };
     },
-  });
+  }, bootstrapProviderFor(auth, 'workforce-consumer', { csrf_token: csrf }));
   let credential = auth.token;
+  let cookie = `da_session=fixture-authenticated; __Host-titan-da-session=${credential}`;
+  const responses = [];
   const fetcher = async (path, init) => {
-    assert.equal(init?.headers?.['X-Titan-CSRF'], csrf, 'SDK must send the separately bootstrapped CSRF nonce');
+    const bootstrap = path === '/v1/directadmin/bootstrap';
+    if (!bootstrap) assert.equal(init?.headers?.['X-Titan-CSRF'], csrf, 'SDK must send the separately bootstrapped CSRF token');
     const request = auth.request(path, { method: init?.method ?? 'GET', body: init?.body,
-      headers: { cookie: `__Host-titan-da-session=${credential}`,
+      headers: { cookie,
         'content-type': init?.headers?.['Content-Type'] ?? null,
-        'x-titan-csrf': init?.headers?.['X-Titan-CSRF'] ?? null } });
+        'x-titan-csrf': bootstrap ? null : (init?.headers?.['X-Titan-CSRF'] ?? null),
+        'x-titan-da-bootstrap-csrf': bootstrap ? (init?.headers?.['X-Titan-DA-Bootstrap-CSRF'] ?? null) : null } });
     const response = await gateway(request);
+    responses.push({ path, status: response.status });
     const rotated = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]+)/)?.[1];
-    if (rotated) credential = rotated;
+    if (rotated) { credential = rotated; cookie = `da_session=fixture-authenticated; __Host-titan-da-session=${credential}`; }
     return response;
   };
-  const session = new DirectAdminCockpitSession(() => csrf, fetcher, undefined);
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, fetcher, undefined);
   t.after(() => session.dispose());
   const controller = new WorkforceController(new WorkforceApi(session));
   let sessionInvalidations = 0;
   const unsubscribe = session.subscribe(() => { sessionInvalidations++; controller.invalidate(); });
   t.after(unsubscribe);
   await controller.connect();
-  assert.equal(controller.state.phase, 'ready', controller.state.error);
+  assert.equal(controller.state.phase, 'ready', `${controller.state.error}; responses=${JSON.stringify(responses)}`);
   assert.equal(controller.state.context.company_id, 'company-a');
   assert.equal(controller.state.status.work[0].state, 'COMPLETED');
   assert.equal(verifiedOutcome(controller.state.status.work[0]), false);
@@ -107,7 +123,8 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
   assert.equal(controller.state.context.company_id, 'company-b');
   assert.equal(sessionInvalidations, 0, 'the current company session recovers after the owner returns');
 
-  await auth.registry.revokeSession(proof.session_id, 2);
+  const currentSession = await auth.bridgeSessions.authenticate(credential);
+  await auth.registry.revokeSession(currentSession.context.session_id, currentSession.context.session_revision);
   await controller.submit({ action: 'pause', work_id: 'company-b-work', reason: 'Revoked fixture request' });
   assert.equal(intents.length, 2);
   assert.ok(sessionInvalidations > 0, 'a canonical revoked-session 401 invalidates the shared SDK session');

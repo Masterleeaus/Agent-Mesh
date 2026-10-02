@@ -6,12 +6,16 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createServer } from 'node:http';
 import { buildPackage, packageFiles } from '../tools/package.mjs';
-import { workforceContribution } from '../images/presentation.mjs';
+import { workforceContribution, verifiedOutcome } from '../images/presentation.mjs';
+import { WorkforceApi } from '../images/api.mjs';
 
 // Explicit published canonical SDK build, not an emulated identity or transport.
 assert.ok(process.env.TITAN_COCKPIT_SDK_MODULE, 'TITAN_COCKPIT_SDK_MODULE must reference the compiled canonical SDK');
 const sdkPath = resolve(process.env.TITAN_COCKPIT_SDK_MODULE);
 const SDK = await import(pathToFileURL(sdkPath));
+const controllerSource = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8'))
+  .replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
+const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(controllerSource).toString('base64')}`);
 test('real package satisfies the canonical shared SDK archive contract', async () => {
   const outputDir = await mkdtemp(join(tmpdir(), 'workforce-sdk-integration-'));
   try {
@@ -39,6 +43,187 @@ test('canonical SDK accepts authority-neutral Workforce contribution for all rol
     assert.deepEqual(registry.snapshot().contributions[0].widgets[0].permitted_actions, []);
   }
 });
+
+test('canonical SDK/gateway reassign integration consumes child context, CAS, evidence, typed denial and scope denial', async t => {
+  // This exercises the published shared SDK/gateway. The bridge context,
+  // projection and owner below are controlled contract
+  // fixtures, never production identity, authority or business data.
+  const csrf = 'A'.repeat(43);
+  const bootstrapNonce = 'N'.repeat(43);
+  const companyId = 'company-a';
+  const bridgeContext = { schema: 'titan.directadmin.session/v1', actor_id: 'fixture-actor', company_id: companyId,
+    company_ids: [companyId], context_revision: 'fixture-context-revision', session_revision: 1,
+    expires_at: Date.now() + 60_000, da_role: 'user', authority: 'not-carried' };
+  const workforceChildContext = { schema: 'titan.workforce-zero.session/v1', audience: 'workforce', surface: 'zero',
+    actor_id: bridgeContext.actor_id, company_id: companyId, company_ids: [companyId], device_id: 'fixture-device',
+    session_id: 'fixture-workforce-session', context_revision: 'fixture-workforce-context', session_revision: 1,
+    expires_at: bridgeContext.expires_at };
+  const descriptor = { action: 'reassign', capability_id: 'titan.workforce.reassign',
+    requires_fresh_approval: true, grants_authority: false };
+  let work = { company_id: companyId, work_id: 'fixture-ready-work', state: 'READY',
+    assignee: 'fixture-worker-old', context_refs: [], evidence_refs: [] };
+  let raceNextIntent = false;
+  let mismatchNextChildCompany = false;
+  let tamperNextIntentScope = false;
+  const ownerIntents = [];
+  const childContextsConsumed = [];
+  const fixtureAcceptedEvidence = [];
+  const projection = async (_plugin, context) => {
+    assert.equal(context.company_id, companyId);
+    return { company_id: companyId, source: 'fixture-reassign-owner', freshness: new Date().toISOString(),
+      evidence_refs: [], data: { schema: 'titan.workforce-cockpit.v1', company_id: companyId,
+        discovery: { company_id: companyId, controls: [descriptor], workers: [
+          { company_id: companyId, worker_id: 'fixture-worker-old', kind: 'digital', active: true, capabilities: [] },
+          { company_id: companyId, worker_id: 'fixture-worker-target', kind: 'human', active: true, capabilities: [] },
+        ] }, status: { company_id: companyId, work: [structuredClone(work)] } } };
+  };
+  class DirectAdminWorkforceAuthorityDenied extends Error {
+    constructor() { super('sensitive owner detail must never reach the plugin'); this.name = 'DirectAdminWorkforceAuthorityDenied'; this.code = 'directadmin-workforce-authority-denied'; this.status = 403; }
+  }
+  const owners = {
+    projection,
+    requestIntent: async (plugin, intent, context, revalidate, withWorkforceZeroSession) => {
+      assert.equal(plugin, 'titan_workforce');
+      assert.equal((await revalidate()).company_id, context.company_id);
+      assert.equal(typeof withWorkforceZeroSession, 'function');
+      return withWorkforceZeroSession(async (credential, childContext) => {
+        childContextsConsumed.push(structuredClone(childContext));
+        if (credential !== 'fixture-derived-workforce-credential' || childContext.company_id !== context.company_id ||
+            childContext.actor_id !== context.actor_id || childContext.company_ids.length !== 1 ||
+            childContext.company_ids[0] !== context.company_id || !childContext.session_id || !childContext.context_revision) {
+          throw new DirectAdminWorkforceAuthorityDenied();
+        }
+        ownerIntents.push(structuredClone(intent));
+        if (raceNextIntent) {
+          raceNextIntent = false;
+          // Model a concurrent canonical update after the consumer's projection.
+          work = { ...work, assignee: 'fixture-concurrent-worker' };
+        }
+        if (intent.input.expected_assignee_id !== work.assignee) throw new DirectAdminWorkforceAuthorityDenied();
+        const acceptedEvidence = { evidence_ref: 'fixture-accepted-reassignment-evidence', company_id: context.company_id,
+          workforce_session_id: childContext.session_id, workforce_context_revision: childContext.context_revision };
+        fixtureAcceptedEvidence.push(acceptedEvidence);
+        work = { ...work, assignee: intent.input.target_worker_id,
+          evidence_refs: [...work.evidence_refs, acceptedEvidence.evidence_ref] };
+        return { receipt_id: 'fixture-owner-request-receipt' };
+      });
+    },
+  };
+  const bridge = {
+    bootstrapBrowserSession: async (request, resolveInput) => {
+      assert.equal(request.method, 'POST');
+      assert.equal(new URL(request.url).origin, 'https://panel.example.test');
+      assert.equal(request.headers.get('origin'), 'https://panel.example.test');
+      assert.equal(request.headers.get('sec-fetch-site'), 'same-origin');
+      assert.equal(request.headers.get('x-titan-da-bootstrap-csrf'), bootstrapNonce);
+      assert.equal(request.headers.has('authorization'), false);
+      assert.equal(await request.text(), '');
+      const input = await resolveInput({ origin: 'https://panel.example.test', cookie: null,
+        authorization: null, csrf_nonce: bootstrapNonce });
+      return { csrf_token: input.csrf_token, set_cookie: '__Host-titan-da-session=fixture-session; Path=/; Secure; HttpOnly; SameSite=Strict' };
+    },
+    authenticate: async request => {
+      assert.equal(request.headers.get('origin'), 'https://panel.example.test');
+      assert.equal(request.headers.get('sec-fetch-site'), 'same-origin');
+      assert.equal(request.headers.get('x-titan-csrf'), csrf);
+      assert.equal(request.headers.get('cookie'), '__Host-titan-da-session=fixture-session');
+      const childContext = mismatchNextChildCompany
+        ? { ...workforceChildContext, company_id: 'company-b', company_ids: ['company-b'] }
+        : workforceChildContext;
+      return { context: bridgeContext, revalidate: async () => bridgeContext,
+        withWorkforceZeroSession: async consume => consume('fixture-derived-workforce-credential', childContext),
+        switchCompany: async () => { throw new Error('company switching is outside this contract fixture'); },
+        logout: async () => {} };
+    },
+  };
+  const gateway = SDK.createDirectAdminGateway(bridge, owners, {
+    provide: async proof => {
+      assert.deepEqual(proof, { origin: 'https://panel.example.test', cookie: null,
+        authorization: null, csrf_nonce: bootstrapNonce });
+      return { csrf_token: csrf };
+    },
+  });
+  const fetcher = async (path, init = {}) => {
+    let body = init.body;
+    if (tamperNextIntentScope && path.endsWith('/intents')) {
+      tamperNextIntentScope = false;
+      body = JSON.stringify({ ...JSON.parse(body), company_id: 'company-b' });
+    }
+    return gateway(new Request(new URL(path, 'https://panel.example.test'), { method: init.method ?? 'GET', body,
+      headers: { origin: 'https://panel.example.test', 'sec-fetch-site': 'same-origin',
+        cookie: '__Host-titan-da-session=fixture-session',
+        'content-type': init.headers?.['Content-Type'] ?? '',
+        'x-titan-csrf': init.headers?.['X-Titan-CSRF'] ?? '',
+        'x-titan-da-bootstrap-csrf': init.headers?.['X-Titan-DA-Bootstrap-CSRF'] ?? '' } }));
+  };
+  const session = new SDK.DirectAdminCockpitSession(() => bootstrapNonce, fetcher, undefined);
+  t.after(() => session.dispose());
+  const controller = new WorkforceController(new WorkforceApi(session));
+  const unsubscribe = session.subscribe(() => controller.invalidate());
+  t.after(unsubscribe);
+
+  await controller.connect();
+  assert.equal(controller.state.phase, 'ready', controller.state.error);
+  await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
+    target_worker_id: 'fixture-worker-target', reason: 'Fixture approved assignment proposal' });
+  assert.equal(controller.state.phase, 'ready', controller.state.error);
+  assert.deepEqual(ownerIntents[0].input, { action: 'reassign', work_id: 'fixture-ready-work',
+    reason: 'Fixture approved assignment proposal', expected_assignee_id: 'fixture-worker-old',
+    target_worker_id: 'fixture-worker-target' });
+  assert.equal(controller.state.receipt.state, 'REQUESTED');
+  assert.deepEqual(controller.state.receipt.evidence_refs, [], 'gateway acknowledgement is not accepted evidence');
+  assert.deepEqual(controller.state.status.work[0].evidence_refs, ['fixture-accepted-reassignment-evidence'],
+    'only the refreshed canonical owner projection supplies accepted evidence');
+  assert.equal(verifiedOutcome(controller.state.status.work[0]), false);
+  assert.deepEqual(fixtureAcceptedEvidence[0], { evidence_ref: 'fixture-accepted-reassignment-evidence',
+    company_id: 'company-a', workforce_session_id: 'fixture-workforce-session',
+    workforce_context_revision: 'fixture-workforce-context' }, 'the owner fixture binds accepted evidence to the bridged child lineage');
+
+  // A child token for a different company is rejected before effect. The
+  // current SDK maps the exact typed authority denial to sanitized HTTP 403;
+  // the consumer keeps only freshly revalidated data for the same company.
+  mismatchNextChildCompany = true;
+  await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
+    target_worker_id: 'fixture-worker-old', reason: 'Fixture child company mismatch' });
+  assert.equal(controller.state.phase, 'ready');
+  assert.equal(controller.state.context.company_id, companyId);
+  assert.equal(controller.state.receipt, null);
+  assert.match(controller.state.error, /host denied that request/i);
+  assert.equal(ownerIntents.length, 1, 'mismatched child context is denied before entering the owner effect');
+  assert.equal(work.assignee, 'fixture-worker-target');
+  assert.deepEqual(work.evidence_refs, ['fixture-accepted-reassignment-evidence']);
+  mismatchNextChildCompany = false;
+  await controller.connect();
+  assert.equal(controller.state.phase, 'ready', controller.state.error);
+
+  // A concurrent assignee change makes the expected-assignee CAS stale. The
+  // owner denies before effect; its typed denial remains distinct from an
+  // unavailable/unknown outcome through the current shared SDK.
+  raceNextIntent = true;
+  await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
+    target_worker_id: 'fixture-worker-old', reason: 'Fixture stale compare-and-set' });
+  assert.equal(controller.state.phase, 'ready');
+  assert.equal(controller.state.context.company_id, companyId);
+  assert.equal(controller.state.receipt, null);
+  assert.match(controller.state.error, /host denied that request/i);
+  assert.equal(work.assignee, 'fixture-concurrent-worker', 'stale owner rejection causes no reassignment effect');
+  assert.deepEqual(work.evidence_refs, ['fixture-accepted-reassignment-evidence']);
+
+  // A caller scope mismatch is a 409 from the real gateway; the shared SDK
+  // invalidates the session and the plugin drops all prior-company content.
+  await controller.connect();
+  assert.equal(controller.state.phase, 'ready', controller.state.error);
+  tamperNextIntentScope = true;
+  await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
+    target_worker_id: 'fixture-worker-old', reason: 'Fixture scope mismatch' });
+  assert.equal(controller.state.phase, 'denied');
+  assert.equal(controller.state.context, null);
+  assert.equal(controller.state.status, null);
+  assert.equal(controller.state.receipt, null);
+  assert.equal(ownerIntents.length, 2, 'child mismatch is denied inside the owner before effect and scope mismatch is rejected before the owner');
+  assert.equal(childContextsConsumed.length, 3, 'the shared gateway callback is consumed for success, child mismatch, and stale CAS');
+});
+
 test('executable role ignores hostile CGI input and fails closed without the Server Node relay', async () => {
   const { execFileSync } = await import('node:child_process');
   const { chromium } = await import('@playwright/test');
@@ -134,6 +319,14 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
         response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' });
         response.end(fixtureRelayClient); return;
       }
+      if (url.pathname === '/v1/directadmin/bootstrap' && request.method === 'POST') {
+        if (request.headers['x-titan-da-bootstrap-csrf'] !== csrf ||
+            request.headers['sec-fetch-site'] !== 'same-origin' ||
+            request.headers.origin !== `http://127.0.0.1:${server.address().port}`) {
+          json(response, 403, { error: 'fixture-bootstrap-rejected' }); return;
+        }
+        json(response, 200, { csrf_token: csrf }); return;
+      }
       requests.push({ method: request.method, path: url.pathname, headers: request.headers, body });
       const protectedRequest = ['/v1/directadmin/context', '/v1/directadmin/titan_workforce/projection',
         '/v1/directadmin/titan_workforce/intents', '/v1/directadmin/logout'].includes(url.pathname);
@@ -228,6 +421,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const network = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => network.push(`${request.method()} ${request.url()}`));
+    page.on('response', response => network.push(`RESPONSE ${response.status()} ${response.url()}`));
     page.on('requestfailed', request => network.push(`FAILED ${request.url()} ${request.failure()?.errorText ?? ''}`));
     const submitCancel = async (targetPage, companyId, reason) => {
       await targetPage.getByRole('button', { name: 'Controls', exact: true }).click();

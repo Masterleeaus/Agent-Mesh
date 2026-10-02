@@ -1,6 +1,43 @@
 <?php
 function h($v){return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
 function env_user(){return getenv('USERNAME') ?: (getenv('USER') ?: get_current_user());}
+function directadmin_ssh_host_valid($host){
+ if(!is_string($host)||$host===''||strlen($host)>253||trim($host)!==$host||strpos($host,"\0")!==false) return false;
+ if(filter_var($host,FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)!==false) return true;
+ if(preg_match('/\A(?=.{1,253}\z)[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\z/D',$host)!==1) return false;
+ return true;
+}
+function directadmin_ssh_port_valid($port){
+ if(!is_string($port)||preg_match('/^[0-9]{1,5}$/D',$port)!==1) return false;
+ $value=(int)$port;
+ return $value>=1&&$value<=65535;
+}
+function directadmin_ssh_connection_info(){
+ $identity=directadmin_identity_context();
+ $username=is_array($identity)?($identity['username']??''):'';
+ if(!is_string($username)||preg_match('/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$/D',$username)!==1) $username='';
+ $configuredHost=getenv('TITAN_DEV_ACCESS_SSH_HOST');
+ $hostSource='configured';
+ if($configuredHost===false||$configuredHost===''){
+  $configuredHost=getenv('SERVER_NAME');
+  if($configuredHost===false||$configuredHost==='') $configuredHost=$_SERVER['SERVER_NAME']??'';
+  $hostSource='directadmin-panel-host';
+ }
+ $host=directadmin_ssh_host_valid($configuredHost)?$configuredHost:'';
+ $configuredPort=getenv('TITAN_DEV_ACCESS_SSH_PORT');
+ $portSource='configured';
+ if($configuredPort===false||$configuredPort===''){
+  $configuredPort='22';
+  $portSource='default';
+ }
+ $port=directadmin_ssh_port_valid($configuredPort)?(string)(int)$configuredPort:'';
+ return ['username'=>$username,'host'=>$host,'port'=>$port,'host_source'=>$hostSource,'port_source'=>$portSource];
+}
+function directadmin_ssh_connection_command($info){
+ if(!is_array($info)||!directadmin_ssh_host_valid($info['host']??null)||!directadmin_ssh_port_valid($info['port']??null)||
+    !is_string($info['username']??null)||preg_match('/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$/D',$info['username'])!==1) return '';
+ return 'ssh -p '.(string)(int)$info['port'].' '.$info['username'].'@'.$info['host'];
+}
 function directadmin_identity_uid_allowed($uid){return is_int($uid)&&$uid>0;}
 function directadmin_identity_context(){
  if(!function_exists('posix_geteuid')||!function_exists('posix_getpwuid')||!function_exists('posix_getpwnam')) return null;
@@ -158,16 +195,19 @@ function directadmin_request_diagnostic($exception){
  if(!in_array($transport,['stdin','environment','query','marker','unavailable','unknown'],true)) $transport='unknown';
  $observed=$_SERVER['TDA_REQUEST_BODY_BYTES_READ']??null;
  if(!is_int($observed)||$observed<0||$observed>16387) $observed=null;
+ $terminalClass=$_SERVER['TDA_REQUEST_TERMINAL_CLASS']??'unknown';
+ if(!in_array($terminalClass,['empty','nul','lf','crlf','cr','control','high-bit','printable','unknown'],true)) $terminalClass='unknown';
  return [
   'code'=>directadmin_request_error_code($exception),
   'transport'=>$transport,
   'declared_bytes'=>directadmin_request_declared_length_hint(),
-  'body_bytes_read'=>$observed
+  'body_bytes_read'=>$observed,
+  'terminal_class'=>$terminalClass
  ];
 }
 function directadmin_request_diagnostic_summary(){
  $diagnostic=$_SERVER['TDA_REQUEST_DIAGNOSTIC']??null;
- if(!is_array($diagnostic)) return 'code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown';
+ if(!is_array($diagnostic)) return 'code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown terminal_class=unknown';
  $codes=['content_length_invalid','body_oversized','content_type_invalid','query_oversized','query_malformed','query_form_fields','stdin_unavailable','body_length_mismatch','malformed_terminator','too_many_fields','form_malformed','duplicate_field','array_field','field_count_invalid','field_invalid','field_value_invalid','action_ambiguous','action_invalid','post_marker_invalid','raw_post_missing','request_rejected'];
  $code=$diagnostic['code']??'request_rejected';
  if(!in_array($code,$codes,true)) $code='request_rejected';
@@ -177,7 +217,9 @@ function directadmin_request_diagnostic_summary(){
  if(!is_int($declared)||$declared<0||$declared>16384) $declared='unknown';
  $observed=$diagnostic['body_bytes_read']??null;
  if(!is_int($observed)||$observed<0||$observed>16387) $observed='unknown';
- return 'code='.$code.' transport='.$transport.' declared_bytes='.$declared.' body_bytes_read='.$observed;
+ $terminalClass=$diagnostic['terminal_class']??'unknown';
+ if(!in_array($terminalClass,['empty','nul','lf','crlf','cr','control','high-bit','printable','unknown'],true)) $terminalClass='unknown';
+ return 'code='.$code.' transport='.$transport.' declared_bytes='.$declared.' body_bytes_read='.$observed.' terminal_class='.$terminalClass;
 }
 function directadmin_request_body_length_matches($body,$expectedLength){
  if(!is_string($body)||($expectedLength!==null&&(!is_int($expectedLength)||$expectedLength<0))) return false;
@@ -185,6 +227,27 @@ function directadmin_request_body_length_matches($body,$expectedLength){
  if(strlen($body)===$expectedLength+1&&substr($body,-1)==="\n") return true;
  if(strlen($body)===$expectedLength+2&&substr($body,-2)==="\r\n") return true;
  return false;
+}
+function directadmin_normalize_stdin_transport_terminator($body,$expectedLength){
+ if(!is_string($body)||$body===''||substr($body,-1)!=="\0") return $body;
+ if($expectedLength!==null&&(!is_int($expectedLength)||$expectedLength<0)) return $body;
+ $length=strlen($body);
+ $prefix=substr($body,0,-1);
+ if($prefix===''||strpos($prefix,"\0")!==false) return $body;
+ if($expectedLength!==null&&$length!==$expectedLength+1) return $body;
+ return $prefix;
+}
+function directadmin_request_terminal_byte_class($body){
+ if(!is_string($body)||$body==='') return 'empty';
+ $length=strlen($body);
+ if($length>=2&&substr($body,-2)==="\r\n") return 'crlf';
+ $last=ord($body[$length-1]);
+ if($last===0) return 'nul';
+ if($last===10) return 'lf';
+ if($last===13) return 'cr';
+ if($last<32||$last===127) return 'control';
+ if($last>=128) return 'high-bit';
+ return 'printable';
 }
 function directadmin_fields_from_stdin($expectedLength){
  directadmin_validate_form_content_type();
@@ -194,7 +257,11 @@ function directadmin_fields_from_stdin($expectedLength){
  fclose($stream);
  if(!is_string($body)) throw new RuntimeException('Unable to read request body.');
  $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=strlen($body);
+ $_SERVER['TDA_REQUEST_TERMINAL_CLASS']=directadmin_request_terminal_byte_class($body);
  if(strlen($body)>16386) throw new RuntimeException('Form data exceeds the limit.');
+ // Normalize one raw NUL only at the pipe_post stdin boundary and only when it is outside the declared form bytes.
+ // The strict form parser still rejects interior, repeated, encoded, and invalid UTF-8 values.
+ $body=directadmin_normalize_stdin_transport_terminator($body,$expectedLength);
  if(!directadmin_request_body_length_matches($body,$expectedLength)) throw new RuntimeException('Request body length mismatch.');
  return directadmin_parse_form_body($body);
 }
@@ -231,6 +298,7 @@ function directadmin_fields_from_request(){
   }
   $_SERVER['TDA_REQUEST_TRANSPORT']='environment';
   $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=strlen($marker);
+  $_SERVER['TDA_REQUEST_TERMINAL_CLASS']=directadmin_request_terminal_byte_class($marker);
   if(strlen($marker)>16386) throw new RuntimeException('Form data exceeds the limit.');
   if(!directadmin_request_body_length_matches($marker,$length)) throw new RuntimeException('Request body length mismatch.');
   return directadmin_parse_form_body($marker);
@@ -244,7 +312,7 @@ function bootstrap_directadmin_request($role='admin'){
  if(PHP_SAPI!=='cli') return;
  $method=strtoupper(trim((string)(getenv('REQUEST_METHOD')?:'GET')));
  $_POST=[]; $_SERVER['REQUEST_METHOD']=$method;
- unset($_SERVER['TDA_REQUEST_REJECTED'],$_SERVER['TDA_REQUEST_DIAGNOSTIC'],$_SERVER['TDA_REQUEST_TRANSPORT'],$_SERVER['TDA_REQUEST_BODY_BYTES_READ']);
+ unset($_SERVER['TDA_REQUEST_REJECTED'],$_SERVER['TDA_REQUEST_DIAGNOSTIC'],$_SERVER['TDA_REQUEST_TRANSPORT'],$_SERVER['TDA_REQUEST_BODY_BYTES_READ'],$_SERVER['TDA_REQUEST_TERMINAL_CLASS']);
  if(!in_array($method,['GET','POST'],true)){
   $_SERVER['REQUEST_METHOD']='POST'; $_SERVER['TDA_REQUEST_REJECTED']='input'; return;
  }
@@ -504,6 +572,7 @@ function directadmin_git_environment(){
   'GIT_CONFIG_NOSYSTEM'=>'1',
   'GIT_CONFIG_GLOBAL'=>'/dev/null',
   'GIT_OPTIONAL_LOCKS'=>'0',
+  'GIT_NO_LAZY_FETCH'=>'1',
   'GIT_TERMINAL_PROMPT'=>'0',
   'GIT_PAGER'=>'cat',
   'PAGER'=>'cat'
@@ -513,14 +582,78 @@ function directadmin_git_probe($context,$arguments){
  $argv=array_merge(['/usr/bin/env','timeout','5s'],directadmin_git_command_args($context,$arguments));
  $spec=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
  $proc=@proc_open($argv,$spec,$pipes,$context['root'],directadmin_git_environment());
- if(!is_resource($proc)) return '';
+ if(!is_resource($proc)) return ['status'=>'unknown','output'=>null,'reason'=>'spawn_failed'];
  fclose($pipes[0]);
- $out=(string)stream_get_contents($pipes[1],8193);
- $err=(string)stream_get_contents($pipes[2],8193);
+ $out=stream_get_contents($pipes[1],8193);
+ $err=stream_get_contents($pipes[2],8193);
  fclose($pipes[1]); fclose($pipes[2]);
  $rc=proc_close($proc);
- if($rc!==0||strlen($out)>8192||strlen($err)>8192) return '';
- return trim($out);
+ if(!is_string($out)||!is_string($err)) return ['status'=>'unknown','output'=>null,'reason'=>'output_read_failed'];
+ if(strlen($out)>8192||strlen($err)>8192) return ['status'=>'unknown','output'=>null,'reason'=>'output_oversized'];
+ if(in_array($rc,[124,137,143],true)) return ['status'=>'unknown','output'=>null,'reason'=>'timeout'];
+ if($rc!==0) return ['status'=>'unknown','output'=>null,'reason'=>'command_failed'];
+ return ['status'=>'success','output'=>trim($out),'reason'=>null];
+}
+function directadmin_git_probe_output($probe){
+ if(!is_array($probe)||($probe['status']??null)!=='success'||!array_key_exists('output',$probe)||!is_string($probe['output'])) return null;
+ return $probe['output'];
+}
+function directadmin_git_parse_divergence($raw){
+ if(!is_string($raw)||strlen($raw)>32||!preg_match('/^(0|[1-9][0-9]{0,9})\t(0|[1-9][0-9]{0,9})$/D',$raw,$matches)) return null;
+ return ['ahead'=>(int)$matches[1],'behind'=>(int)$matches[2]];
+}
+function directadmin_git_readiness_projection($contextAvailable,$repositoryProbe,$branchProbe,$headProbe,$statusProbe,$upstreamProbe){
+ $repositoryOutput=directadmin_git_probe_output($repositoryProbe);
+ if(!$contextAvailable){
+  $repositoryState='unavailable';
+  $repository=false;
+ }elseif($repositoryOutput==='true'){
+  $repositoryState='available';
+  $repository=true;
+ }elseif($repositoryOutput==='false'){
+  $repositoryState='not_repository';
+  $repository=false;
+ }else{
+  $repositoryState='unknown';
+  $repository=null;
+ }
+ $branchOutput=$repository===true?directadmin_git_probe_output($branchProbe):null;
+ $headOutput=$repository===true?directadmin_git_probe_output($headProbe):null;
+ $statusOutput=$repository===true?directadmin_git_probe_output($statusProbe):null;
+ $upstreamOutput=$repository===true?directadmin_git_probe_output($upstreamProbe):null;
+ $branchState=$branchOutput===null
+  ?($repositoryState==='available'?'unknown':$repositoryState)
+  :($branchOutput===''?'detached':'named');
+ $branch=$branchState==='named'?redact_text($branchOutput):null;
+ $headState=$headOutput===null||$headOutput===''?($repositoryState==='available'?'unknown':$repositoryState):'available';
+ $head=$headState==='available'?redact_text($headOutput):null;
+ $worktreeState=$statusOutput===null
+  ?($repositoryState==='available'?'unknown':$repositoryState)
+  :($statusOutput===''?'clean':'dirty');
+ $dirty=$worktreeState==='clean'?false:($worktreeState==='dirty'?true:null);
+ $divergence=$upstreamOutput===null?null:directadmin_git_parse_divergence($upstreamOutput);
+ $upstreamState=$divergence===null
+  ?($repositoryState==='available'?'unknown':$repositoryState)
+  :'available';
+ $claimIssue=null;
+ if($branchState==='named'&&preg_match('/^agent\\/issue-([1-9][0-9]{0,17})$/D',$branch,$claimMatch)) $claimIssue=$claimMatch[1];
+ $claimValid=$branchState==='detached'?false:($branchState==='named'?($claimIssue!==null):null);
+ return [
+  'git_repository'=>$repository,
+  'git_repository_state'=>$repositoryState,
+  'git_branch'=>$branch,
+  'git_branch_state'=>$branchState,
+  'git_head'=>$head,
+  'git_head_state'=>$headState,
+  'git_dirty'=>$dirty,
+  'git_worktree_state'=>$worktreeState,
+  'git_claim_branch_format_valid'=>$claimValid,
+  'git_claim_issue_number'=>$claimIssue,
+  'git_upstream_configured'=>$divergence===null?null:true,
+  'git_upstream_state'=>$upstreamState,
+  'git_ahead'=>$divergence['ahead']??null,
+  'git_behind'=>$divergence['behind']??null
+ ];
 }
 function command_policy($cmd){
  $cmd=trim((string)$cmd);
@@ -634,19 +767,34 @@ function diagnostics(){
 function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $cwd=safe_cwd($cwd);
  $gitContext=directadmin_git_repository_context($cwd);
- $gitRepo=$gitContext!==null&&directadmin_git_probe($gitContext,['rev-parse','--is-inside-work-tree'])==='true';
- $branch=$gitRepo?redact_text(directadmin_git_probe($gitContext,['branch','--show-current'])):'';
- $head=$gitRepo?redact_text(directadmin_git_probe($gitContext,['rev-parse','--short','HEAD'])):'';
- $dirty=$gitRepo?directadmin_git_probe($gitContext,['status','--porcelain']):'';
+ $repositoryProbe=$gitContext!==null?directadmin_git_probe($gitContext,['rev-parse','--is-inside-work-tree']):null;
+ $repositoryOutput=directadmin_git_probe_output($repositoryProbe);
+ $gitRepo=$gitContext===null?false:($repositoryOutput==='true'?true:($repositoryOutput==='false'?false:null));
+ $branchProbe=$gitRepo===true?directadmin_git_probe($gitContext,['branch','--show-current']):null;
+ $headProbe=$gitRepo===true?directadmin_git_probe($gitContext,['rev-parse','--short','HEAD']):null;
+ $statusProbe=$gitRepo===true?directadmin_git_probe($gitContext,['status','--porcelain']):null;
+ // Compare only existing local refs; this never fetches or contacts the remote.
+ $upstreamProbe=$gitRepo===true?directadmin_git_probe($gitContext,['rev-list','--left-right','--count','HEAD...@{u}']):null;
+ $gitReadiness=directadmin_git_readiness_projection($gitContext!==null,$repositoryProbe,$branchProbe,$headProbe,$statusProbe,$upstreamProbe);
  $sshDir=key_dir(); $auth=key_file();
  return [
   'cwd'=>$cwd,
   'cwd_readable'=>is_readable($cwd),
   'cwd_writable'=>is_writable($cwd),
-  'git_repository'=>$gitRepo,
-  'git_branch'=>$branch?:null,
-  'git_head'=>$head?:null,
-  'git_dirty'=>$gitRepo?($dirty!==''):null,
+  'git_repository'=>$gitReadiness['git_repository'],
+  'git_repository_state'=>$gitReadiness['git_repository_state'],
+  'git_branch'=>$gitReadiness['git_branch'],
+  'git_branch_state'=>$gitReadiness['git_branch_state'],
+  'git_head'=>$gitReadiness['git_head'],
+  'git_head_state'=>$gitReadiness['git_head_state'],
+  'git_dirty'=>$gitReadiness['git_dirty'],
+  'git_worktree_state'=>$gitReadiness['git_worktree_state'],
+  'git_claim_branch_format_valid'=>$gitReadiness['git_claim_branch_format_valid'],
+  'git_claim_issue_number'=>$gitReadiness['git_claim_issue_number'],
+  'git_upstream_configured'=>$gitReadiness['git_upstream_configured'],
+  'git_upstream_state'=>$gitReadiness['git_upstream_state'],
+  'git_ahead'=>$gitReadiness['git_ahead'],
+  'git_behind'=>$gitReadiness['git_behind'],
   'ssh_public_keys'=>count($keys),
   'ssh_dir_mode'=>$includeSshState&&is_dir($sshDir)?substr(sprintf('%o',fileperms($sshDir)),-4):null,
   'authorized_keys_mode'=>$includeSshState&&is_file($auth)?substr(sprintf('%o',fileperms($auth)),-4):null,
@@ -686,6 +834,90 @@ function server_node_health(){
  $raw=@file_get_contents($url,false,$context,0,65537);
  if(!is_string($raw)) return ['state'=>'UNAVAILABLE','ready'=>false,'checked_at'=>null,'checks'=>[],'reason'=>'server-node-unreachable'];
  return normalize_server_node_status($raw);
+}
+function directadmin_ssh_access_script(){
+ return <<<'JS'
+(function(){
+ var host=document.getElementById("tda-ssh-host"),port=document.getElementById("tda-ssh-port"),
+  user=document.getElementById("tda-ssh-username"),command=document.getElementById("tda-ssh-command"),
+  copy=document.getElementById("tda-ssh-copy"),copyStatus=document.getElementById("tda-ssh-copy-status");
+ if(!host||!port||!user||!command||!copy)return;
+ function validHost(value){
+  if(value.length===0||value.length>253)return false;
+  return value.split(".").every(function(label){
+   return label.length>0&&label.length<=63&&/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label);
+  });
+ }
+ function update(){
+  var h=host.value.trim(),p=port.value.trim(),u=user.textContent.trim(),
+   ok=validHost(h)&&/^[0-9]{1,5}$/.test(p)&&Number(p)>=1&&Number(p)<=65535&&/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$/.test(u);
+  command.textContent=ok?"ssh -p "+String(Number(p))+" "+u+"@"+h:"Enter a valid SSH host and port to build the command.";
+  copy.disabled=!ok;
+  return ok;
+ }
+ host.addEventListener("input",update);
+ port.addEventListener("input",update);
+ copy.addEventListener("click",function(){
+  if(!update())return;
+  var value=command.textContent;
+  if(navigator.clipboard&&window.isSecureContext){
+   navigator.clipboard.writeText(value).then(function(){copyStatus.textContent="Copied";})
+    .catch(function(){copyStatus.textContent="Select and copy the command.";});
+  }else copyStatus.textContent="Select and copy the command.";
+ });
+ var error=document.getElementById("tda-ssh-error"),
+  diagnose=document.getElementById("tda-ssh-diagnose"),guidance=document.getElementById("tda-ssh-guidance");
+ if(error&&diagnose&&guidance)diagnose.addEventListener("click",function(){
+  var raw=error.value||"";
+  if(raw.length>1000||/[\r\n]/.test(raw.trim())){
+   guidance.textContent="Enter one OpenSSH error line of at most 1000 characters. The text stays in this browser and is not submitted or saved.";
+   return;
+  }
+  var text=raw.toLowerCase();
+  if(/load key[^\r\n]*permission denied|bad permissions/.test(text)){
+   guidance.textContent="Local key-file access failed before server authentication. Check Windows permissions for the private-key file named by your SSH config; this does not show that the server rejected the public key.";
+  }else if(/permission denied\s*\(publickey\)/.test(text)){
+   guidance.textContent="The SSH server was reached, but it did not accept an offered key for this account. Check the installed public-key fingerprint and the DirectAdmin username, host and port.";
+  }else if(/could not resolve hostname|name or service not known|temporary failure in name resolution/.test(text)){
+   guidance.textContent="The hostname did not resolve. Check the SSH host value and workstation DNS or VPN.";
+  }else if(/connection timed out|operation timed out/.test(text)){
+   guidance.textContent="No SSH response arrived before timeout. Check the host, port, network route, VPN and host firewall with your administrator.";
+  }else if(/connection refused/.test(text)){
+   guidance.textContent="The host was reachable but refused this port. Confirm the SSH port and that the SSH service is listening.";
+  }else if(/remote host identification has changed|host key verification failed/.test(text)){
+   guidance.textContent="The server host key did not match your saved trust record. Stop and verify the server fingerprint with your administrator before changing known_hosts.";
+  }else if(/too many authentication failures/.test(text)){
+   guidance.textContent="The client offered too many identities. Review your Windows SSH alias or agent configuration; do not remove host trust records to fix this.";
+  }else if(/incorrect passphrase|bad passphrase/.test(text)){
+   guidance.textContent="The local private-key passphrase was not accepted. This is a workstation key-unlock issue, not server public-key rejection.";
+  }else if(text.trim()===""){
+   guidance.textContent="Paste one OpenSSH error line. It stays in this browser and is not submitted or saved.";
+  }else{
+   guidance.textContent="No specific cause matched. Check the displayed username, host and port, then ask your server administrator with the single sanitized error line.";
+  }
+ });
+ update();
+})();
+JS;
+}
+function render_directadmin_ssh_access($info,$command,$canInspectKeys,$keys,$token){
+ echo '<div class="card" id="tda-server-access"><h3>Connect Codex to this server</h3><p>Use this guide to connect a development client from your workstation. The username comes from the validated DirectAdmin Unix account. The host uses the operator setting when present, otherwise the DirectAdmin panel server name; the port defaults to SSH port 22. Confirm the endpoint with your server administrator if SSH uses another address or port.</p>';
+ echo '<div class="diag"><div><b>SSH username</b><br><code id="tda-ssh-username">'.h($info['username']?:'unavailable').'</code></div><div><b>Host source</b><br>'.h($info['host_source']).'</div><div><b>Port source</b><br>'.h($info['port_source']).'</div><div><b>Installed public keys</b><br>'.($canInspectKeys?h((string)count($keys)):'Admin role required to inspect fingerprints').'</div></div>';
+ echo '<label for="tda-ssh-host">SSH host</label><input id="tda-ssh-host" value="'.h($info['host']).'" autocomplete="off" spellcheck="false" placeholder="server.example.com"><label for="tda-ssh-port">SSH port</label><input id="tda-ssh-port" type="number" min="1" max="65535" value="'.h($info['port']).'" inputmode="numeric">';
+ echo '<p class="muted">These fields only build a command in this browser. They are not submitted or saved. The username is fixed to the current DirectAdmin Unix account.</p><p><b>Windows PowerShell command</b></p><code id="tda-ssh-command" style="display:block;padding:10px;border:1px solid var(--tda-border);border-radius:7px;overflow-wrap:anywhere">'.h($command?:'Enter a valid SSH host and port to build the command.').'</code><div class="copyrow"><button type="button" id="tda-ssh-copy"'.($command===''?' disabled':'').'>Copy connection command</button><span id="tda-ssh-copy-status" class="copy-status" aria-live="polite"></span></div>';
+ echo '<div class="notice"><b>Setup steps</b><ol><li>Use the matching <b>public key</b> from your workstation. Compare its fingerprint with the installed fingerprint below.</li><li>Install only that public key with the admin-only form below.</li><li>From Windows PowerShell, run the copied command. If you use a saved SSH alias, you can keep using it; this portal cannot inspect your Windows SSH config.</li><li>Confirm an interactive SSH login from the workstation before treating server access as verified.</li></ol></div>';
+ echo '<p class="muted">The portal cannot test a workstation private key or verify an end-to-end SSH login. It never asks for or reads a private key. If a saved Windows alias fails, run <code>ssh -v &lt;your-alias&gt;</code> locally and diagnose only the one-line error below; do not share private key contents or full verbose logs.</p>';
+ echo '<label for="tda-ssh-error">Diagnose one OpenSSH error line</label><textarea id="tda-ssh-error" rows="3" maxlength="1000" placeholder="Paste one error line only. It is handled in this browser, not submitted or saved."></textarea><button type="button" id="tda-ssh-diagnose">Show guidance</button><p id="tda-ssh-guidance" class="notice" aria-live="polite">Guidance will appear here. No diagnostic text leaves this browser.</p>';
+ echo '<p class="footer-note">For a local Windows <b>Load key: Permission denied</b> message, OpenSSH cannot read that private-key file before server authentication. Check local file permissions with <code>icacls "$env:USERPROFILE\\.ssh\\YOUR_KEY_FILE"</code>; if your Windows account lacks read access, use your endpoint administrator\'s approved repair process. For <b>Permission denied (publickey)</b>, compare the public-key fingerprint, DirectAdmin username, host and port. These errors have different causes.</p></div>';
+ if($canInspectKeys){
+  echo '<div class="card"><h3>Install a workstation public key</h3><p>Paste the single-line <code>.pub</code> public key that matches the private key on the workstation. This admin-only, CSRF-protected action writes only that public key to this DirectAdmin account\'s <code>authorized_keys</code>. Never paste a private key.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... workstation-key"></textarea><button name="add_key" value="1">Install public key</button></form>';
+  if(!$keys) echo '<p>No public keys are installed for this account.</p>';
+  foreach($keys as [$i,$fingerprint]){
+   echo '<div class="keyrow"><b>'.h($fingerprint).'</b><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>';
+  }
+  echo '</div>';
+ }else echo '<div class="card"><h3>Public-key management</h3><p class="muted">This DirectAdmin role is read-only. Ask an authorized admin to install the matching public key and compare fingerprints; no key material is displayed here.</p></div>';
+ echo '<script>'.directadmin_ssh_access_script().'</script>';
 }
 function redact_text($value){
  $s=(string)$value;
@@ -747,6 +979,7 @@ function render(){
  $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();
  $keys=$canMutate?fingerprints():[];
  $readiness=codex_readiness($cwd,$keys,$diag,$canMutate);$serverNode=server_node_health();$token=$canMutate?csrf():'';$fullDiag=diagnostics_report($diag,$keys,$readiness);
+ $sshAccess=directadmin_ssh_connection_info();$sshCommand=directadmin_ssh_connection_command($sshAccess);
  echo '<style>
 :root{color-scheme:light dark;--tda-panel:var(--card-background,#fff);--tda-text:var(--text-color,#1f2937);--tda-muted:var(--neutral,#6b7280);--tda-border:var(--border-color,#d9dde5);--tda-primary:var(--primary,#2563eb);--tda-safe:var(--safe,#16803c);--tda-danger:var(--danger,#c62828);--tda-input:var(--input-background,var(--tda-panel));}
 @media (prefers-color-scheme:dark){:root{--tda-panel:#18212f;--tda-text:#eef2f7;--tda-muted:#9ca3af;--tda-border:#334155;--tda-input:#0f172a}}
@@ -780,14 +1013,12 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
  if($canMutate) {
  echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
  if($rc!==null) echo '<p>Class: '.h($commandClass).' · Exit code: '.h($rc).'</p><div class="term">'.h($output).'</div>'; echo '</div>';
- echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
- if(!$keys) echo '<p>No public keys installed.</p>'; foreach($keys as [$i,$fp]){echo '<div class="keyrow"><b>'.h($fp).'</b><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>'; } echo '</div>';
  } else {
   echo '<div class="card"><h3>Operator actions</h3><p class="muted">Terminal and SSH key mutation are available only on the DirectAdmin admin route. This role is intentionally read-only.</p></div>';
  }
+ render_directadmin_ssh_access($sshAccess,$sshCommand,$canMutate,$keys,$token);
  echo '<div class="card"><h3>Plugin Diagnostics</h3><p class="muted">Read-only support report. Tokens, secrets, passwords, cookies and private-key blocks are redacted.</p><div class="copyrow"><button type="button" onclick="tdaCopyDiagnostics()">Copy Full Diagnostics</button><span id="tda-copy-status" class="copy-status"></span></div><textarea id="tda-full-diagnostics" class="diagbox" readonly>'.h($fullDiag).'</textarea></div>';
  echo '<script>function tdaCopyDiagnostics(){var el=document.getElementById("tda-full-diagnostics"),status=document.getElementById("tda-copy-status"),text=el.value;if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(function(){status.textContent="Copied";}).catch(function(){el.focus();el.select();document.execCommand("copy");status.textContent="Copied";});}else{el.focus();el.select();try{document.execCommand("copy");status.textContent="Copied";}catch(e){status.textContent="Select all and copy manually";}}}</script>';
  echo '<div class="card"><h3>Safety boundary</h3><p class="footer-note">Developer Portal does not grant Titan business authority, root or sudo. Working directories are restricted to HOME and real descendants. Unknown or mutating commands fail closed and must use canonical governed execution elsewhere.</p></div></div>';
 }
 ?>
-

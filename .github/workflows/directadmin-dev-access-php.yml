@@ -79,6 +79,14 @@ jobs:
             php -l "$file"
           done
 
+      - name: Verify browser-only SSH setup and diagnostic behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="apps/directadmin/dev-access"
+          node --version
+          node "$root/tools/ssh-access.test.mjs"
+
       - name: Verify retained v1.3.2 historical artifact integrity
         shell: bash
         run: |
@@ -187,15 +195,15 @@ jobs:
           extracted="$RUNNER_TEMP/developer-portal-current"
           mkdir -p "$extracted"
           tar -xzf "$candidate" -C "$extracted"
-          grep -qx 'version=1.3.5' "$extracted/plugin.conf"
+          grep -qx 'version=1.3.8' "$extracted/plugin.conf"
           php "$root/tools/request-integration-test.php" "$extracted"
 
-      - name: Prepare exact v1.3.5 review artifact and provenance
+      - name: Prepare exact v1.3.8 review artifact and provenance
         shell: bash
         run: |
           set -euo pipefail
           candidate="$RUNNER_TEMP/developer-portal-package/titan_dev_access.tar.gz"
-          release="$RUNNER_TEMP/developer-portal-v1.3.5"
+          release="$RUNNER_TEMP/developer-portal-v1.3.8"
           mkdir -p "$release"
           cp "$candidate" "$release/titan_dev_access.tar.gz"
           (
@@ -234,13 +242,13 @@ jobs:
                   packaged_files[name] = hashlib.sha256(payload).hexdigest()
                   if name == "plugin.conf":
                       manifest = payload.decode("utf-8")
-          if manifest is None or "name=Developer Portal\n" not in manifest or "version=1.3.5\n" not in manifest:
-              raise SystemExit("candidate archive manifest does not identify Developer Portal v1.3.5")
+          if manifest is None or "name=Developer Portal\n" not in manifest or "version=1.3.8\n" not in manifest:
+              raise SystemExit("candidate archive manifest does not identify Developer Portal v1.3.8")
           provenance = {
               "schema": "titan.directadmin-plugin.provenance.v1",
               "plugin_id": "titan_dev_access",
               "display_name": "Developer Portal",
-              "version": "1.3.5",
+              "version": "1.3.8",
               "source_commit": sys.argv[3],
               "workflow_commit": sys.argv[2],
               "workflow_run_id": int(sys.argv[4]),
@@ -259,6 +267,9 @@ jobs:
               "compatibility": {
                   "stable_plugin_id": "titan_dev_access",
                   "persistent_migration": False,
+                  "observed_live_version": "1.3.6",
+                  "live_smoke": "admin_pwd_and_id_passed_ssh_login_unverified",
+                  "live_1_3_6_update_and_rollback_verified": False,
                   "installed_1_1_3_rollback_verified": False,
                   "v1_3_2_is_historical": True,
                   "v1_3_3_is_not_safe_to_install": True,
@@ -267,14 +278,13 @@ jobs:
           (release / "provenance.json").write_text(
               json.dumps(provenance, indent=2, sort_keys=True) + "\n", encoding="utf-8"
           )
-          print(f"Prepared v1.3.5 candidate SHA-256 {digest} from source {sys.argv[3]} in workflow commit {sys.argv[2]}")
+          print(f"Prepared v1.3.8 candidate SHA-256 {digest} from source {sys.argv[3]} in workflow commit {sys.argv[2]}")
           PY
 
-      - name: Upload review-only v1.3.5 candidate artifact
+      - name: Upload review-only v1.3.8 candidate artifact
         uses: actions/upload-artifact@v4
         with:
-          name: developer-portal-v1.3.5-${{ github.event.pull_request.head.sha || github.sha }}
-          path: ${{ runner.temp }}/developer-portal-v1.3.5
+          name: developer-portal-v1.3.8-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/developer-portal-v1.3.8
           if-no-files-found: error
           retention-days: 14
-

@@ -1,6 +1,7 @@
 import { createPublicKey, webcrypto, type KeyObject } from "node:crypto";
 import { lstat, readFile, realpath, stat } from "node:fs/promises";
 import { isAbsolute, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import {
   createSqliteCompanyPlacementRegistry,
   createSqliteCompanyStoreOpener,
@@ -8,6 +9,8 @@ import {
   openExistingSqliteStorage,
   type StorageClient,
 } from "../../../packages/storage/src/index.js";
+import { verifyCompanyNativeSchemaAttestation } from "../../../packages/storage/src/company-native-schema-attestation.js";
+import { companyNativeWorkOrdersManifest } from "../../../packages/storage/src/company-native-schema-manifest.js";
 import { IdentitySessionRegistry } from "../../../packages/titan-platform/src/security-boundary.js";
 import { createWorkforceSessionCredentialVerifier } from "./session-credential-verifier.js";
 import type { HostedWorkforceDependencies } from "./hosted-runtime.js";
@@ -15,6 +18,7 @@ import type { HostedWorkforceDependencies } from "./hosted-runtime.js";
 import { createNativeWorkOrders } from "./native-work-orders.mjs";
 
 type WorkforceEnvironment = Readonly<Record<string, string | undefined>>;
+type DirectAdminDependencies = NonNullable<HostedWorkforceDependencies["directAdmin"]>;
 type PublicAlgorithm = "EdDSA" | "ES256" | "RS256";
 
 function required(environment: WorkforceEnvironment, name: string): string {
@@ -29,6 +33,45 @@ function absolutePath(environment: WorkforceEnvironment, name: string): string {
   const value = required(environment, name);
   if (!isAbsolute(value) || resolve(value) !== value) throw new Error("workforce-production-path-invalid:" + name);
   return value;
+}
+
+/**
+ * Load only the operator-owned #1049/#302 bridge composition. This runtime
+ * owns mounting its existing gateway factory, not issuing assertions, mapping
+ * DirectAdmin identities, or provisioning credentials. No module means the
+ * DirectAdmin route remains disabled; a configured but invalid module fails
+ * startup rather than silently dropping the mount. #302's published producer
+ * requires a host-supplied atomic pre-auth nonce consumer; never replace it with
+ * process-local replay state in this runtime.
+ */
+async function loadDirectAdminDependencies(environment: WorkforceEnvironment): Promise<DirectAdminDependencies | undefined> {
+  const name = "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE";
+  const modulePath = environment[name];
+  if (modulePath === undefined || modulePath === "") return undefined;
+  if (!isAbsolute(modulePath) || resolve(modulePath) !== modulePath) {
+    throw new Error("workforce-production-path-invalid:" + name);
+  }
+
+  let module: Record<string, unknown>;
+  try { module = await import(pathToFileURL(modulePath).href); }
+  catch { throw new Error("workforce-directadmin-dependencies-unavailable"); }
+  const create = module.createWorkforceDirectAdminDependencies;
+  if (typeof create !== "function") throw new Error("workforce-directadmin-dependencies-factory-required");
+
+  let value: unknown;
+  try { value = await create(); }
+  catch { throw new Error("workforce-directadmin-dependencies-unavailable"); }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("workforce-directadmin-dependencies-invalid");
+  }
+  const candidate = value as Record<string, unknown>;
+  if (typeof candidate.publicOrigin !== "string" || typeof candidate.createGateway !== "function") {
+    throw new Error("workforce-directadmin-dependencies-invalid");
+  }
+  return Object.freeze({
+    publicOrigin: candidate.publicOrigin,
+    createGateway: candidate.createGateway as DirectAdminDependencies["createGateway"],
+  });
 }
 
 function algorithm(environment: WorkforceEnvironment, name: string): PublicAlgorithm {
@@ -129,6 +172,7 @@ export async function createWorkforceDependencies(
   const upstreamAlgorithm = algorithm(environment, "WORKFORCE_UPSTREAM_SESSION_ALGORITHM");
   const workforceVerificationKey = await loadPublicKey(environment, "WORKFORCE_SESSION_PUBLIC_KEY_PATH", "WORKFORCE_SESSION_ALGORITHM");
   const upstreamVerificationKey = await loadPublicKey(environment, "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_PATH", "WORKFORCE_UPSTREAM_SESSION_ALGORITHM");
+  const directAdmin = await loadDirectAdminDependencies(environment);
 
   // These files and registry records are commissioned outside this module. The
   // placement owner reads an already migrated registry; it does not initialize it.
@@ -173,10 +217,9 @@ export async function createWorkforceDependencies(
     const webFile = Object.freeze({ device: webInfo.dev, inode: webInfo.ino });
     if (sameFile(registryFile, runtimeFile) || sameFile(registryFile, webFile)
       || sameFile(runtimeFile, webFile)) throw new Error("workforce-separate-control-storage-required");
-    // #809/#1232 still own the accepted COMPANY_NATIVE_FSM migration manifest
-    // and physical schema attestation. Table-shape probes below are defense in
-    // depth only; they must not be promoted into a production schema claim.
-    const companyNativeSchemaAttestationAvailable = false;
+    // The #809 native consumer verifies the pinned company-local witness. This
+    // observes physical schema only; placement provisioning and READY remain
+    // with the placement owner.
     let validatedPlacementVersion: number | undefined;
     let validatedCompanyStores = new Map<string, Readonly<{
       placement_id: string; placement_revision: number; file: Readonly<{ device: number; inode: number }>;
@@ -221,6 +264,9 @@ export async function createWorkforceDependencies(
             "SELECT id,status,completed_at,company_id,assigned_user_id,completion_criteria FROM work_orders LIMIT 0",
           );
           await opened.client.query("SELECT work_order_id,account_id,status FROM visits LIMIT 0");
+          await verifyCompanyNativeSchemaAttestation({
+            storage: opened.client, placement, manifest: companyNativeWorkOrdersManifest,
+          });
           await opened.assertPlacementBound();
           next.set(row.company_id, Object.freeze({
             placement_id: placement.placement_id, placement_revision: placement.placement_revision, file,
@@ -255,9 +301,6 @@ export async function createWorkforceDependencies(
     const companyStoreOpener = Object.freeze({
       async open(placement: Parameters<typeof physicalCompanyStoreOpener.open>[0], options?: Parameters<typeof physicalCompanyStoreOpener.open>[1]) {
         await ensureCompanyStoreIsolation(options?.signal);
-        if (!companyNativeSchemaAttestationAvailable) {
-          throw new Error("workforce-company-native-fsm-attestation-required");
-        }
         const validated = validatedCompanyStores.get(placement.company_id);
         if (!validated || validated.placement_id !== placement.placement_id
           || validated.placement_revision !== placement.placement_revision) {
@@ -270,6 +313,9 @@ export async function createWorkforceDependencies(
             || !sameFile(companyFile, validated.file)) {
             throw new Error("workforce-company-store-physical-isolation-required");
           }
+          await verifyCompanyNativeSchemaAttestation({
+            storage: opened.client, placement, manifest: companyNativeWorkOrdersManifest,
+          });
           return opened;
         } catch (error) {
           await opened.client.close().catch(() => undefined);
@@ -281,6 +327,7 @@ export async function createWorkforceDependencies(
 
     const dependencies: HostedWorkforceDependencies = {
       identityStoragePath,
+      ...(directAdmin ? { directAdmin } : {}),
       credentialVerifier,
       companyPlacementRegistry,
       companyStoreOpener,

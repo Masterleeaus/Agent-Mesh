@@ -74,6 +74,9 @@ export type CompanyDatabasePlacementDescriptor = Readonly<Pick<
 
 export interface CompanyStorageResolverOptions {
   readonly signal?: AbortSignal;
+  /** Supplied internally by the resolver to revalidate scope and placement
+   * after a storage operation has acquired its per-placement gate. */
+  readonly assertCurrent?: () => Promise<void>;
 }
 
 export interface CompanyPlacementRegistry {
@@ -372,7 +375,10 @@ export function createCompanyStorageResolver<Client extends { close(): Promise<v
       if (!scope) throw new CompanyStorageResolutionError("placement-reference-unrecognized");
       await assertPlacementCurrent(placement, scope, openOptions?.signal);
       throwIfAborted(openOptions?.signal);
-      const opened = await options.opener.open(descriptorOf(placement), openOptions);
+      const opened = await options.opener.open(descriptorOf(placement), {
+        ...openOptions,
+        assertCurrent: () => assertPlacementCurrent(placement, scope, openOptions?.signal),
+      });
       if (openOptions?.signal?.aborted) {
         if (opened?.client && typeof opened.client.close === "function") {
           try { await opened.client.close(); } catch { /* preserve cancellation */ }

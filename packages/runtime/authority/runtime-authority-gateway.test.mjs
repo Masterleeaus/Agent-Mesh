@@ -4,6 +4,7 @@ import { RuntimeAuthorityGateway } from "./runtime-authority-gateway.mjs";
 
 const canonical=(decision="ALLOW",company_id="co-1",overrides={})=>({
   company_id,authority_decision_id:"auth-1",worker_id:"worker-1",capability:"booking.create",
+  actor_id:"actor-1",worker_type:"human",surface:"directadmin",
   operation_id:"run-1",action_id:"run-1",decision,evaluated_at:"2026-10-02T00:00:00.000Z",
   evaluated_risk:{level:"medium",source:"risk-engine",ref:"risk-1"},
   ...overrides,
@@ -43,6 +44,9 @@ test("execution revalidates current authority and carries the superseding decisi
  const decision={status:"approved",decision_id:"auth-1",canonical:canonical()};
  await gateway.execute({decision,capability:{name:"booking.create"},input:{amount:25},idempotency_key:"tool-1",company_id:"co-1",work_id:"work-1",agent_id:"worker-1",run_id:"run-1"});
  assert.equal(evaluationInput.company_id,"co-1");
+ assert.equal(evaluationInput.actor_id,"actor-1");
+ assert.equal(evaluationInput.worker_type,"human");
+ assert.equal(evaluationInput.surface,"directadmin");
  assert.equal(evaluationInput.agent_id,"worker-1");
  assert.equal(evaluationInput.supersedes_authority_decision_id,"auth-1");
  assert.equal(evaluationInput.execution_input.amount,25);
@@ -53,6 +57,51 @@ test("execution revalidates current authority and carries the superseding decisi
  assert.equal(request.risk.level,"medium");
  assert.equal(request.risk.source,"risk-engine");
  await assert.rejects(()=>gateway.execute({decision,capability:{name:"booking.create"},input:{},idempotency_key:"tool-2",company_id:"co-2",work_id:"work-1",agent_id:"worker-1",run_id:"run-1"}),/company-mismatch/);
+});
+
+test("runless human operations remain bound to their canonical operation and idempotency identifiers",async()=>{
+ let request;
+ const gateway=new RuntimeAuthorityGateway({
+  contextResolver:{async evaluate(value){return canonical("ALLOW","co-1",{
+    authority_decision_id:value.authority_decision_id??"auth-human",
+    capability:"titan.workforce.reassign",
+    worker_id:value.agent_id,
+    operation_id:value.operation_id,
+    action_id:value.action_id,
+    worker_type:value.worker_type,
+    surface:value.surface,
+    supersedes_authority_decision_id:value.supersedes_authority_decision_id??null,
+    evaluated_at:value.now??"2026-10-02T00:00:01.000Z",
+  });}},
+  executionGateway:{async execute(value){request=value;return {state:"VERIFIED"};}},
+ });
+ const decision=await gateway.authorize({
+  company_id:"co-1",agent_id:"human-worker-1",worker_type:"human",surface:"directadmin",
+  capability:"titan.workforce.reassign",operation_id:"operation-human-1",action_id:"operation-human-1",
+  idempotency_key:"operation-human-1",
+ });
+ assert.equal(decision.canonical.operation_id,"operation-human-1");
+ await gateway.execute({decision,capability:{name:"titan.workforce.reassign"},input:{work_id:"work-1"},
+  idempotency_key:"titan.workforce.reassign:operation-human-1",company_id:"co-1",work_id:"work-1",agent_id:"human-worker-1"});
+ assert.equal(request.execution_id,"execution:co-1:operation-human-1:titan.workforce.reassign:operation-human-1");
+ assert.equal(request.run_id,undefined);
+});
+
+test("caller cancellation reaches the canonical execution gateway",async()=>{
+ const controller=new AbortController();
+ let request;
+ const gateway=new RuntimeAuthorityGateway({
+  contextResolver:{async evaluate(value){return canonical("ALLOW","co-1",{
+    authority_decision_id:value.authority_decision_id??"auth-cancel",
+    supersedes_authority_decision_id:value.supersedes_authority_decision_id??null,
+    evaluated_at:value.now??"2026-10-02T00:00:01.000Z",
+  });}},
+  executionGateway:{async execute(value){request=value;return {state:"VERIFIED"};}},
+ });
+ const decision={status:"approved",decision_id:"auth-1",canonical:canonical()};
+ await gateway.execute({decision,capability:{name:"booking.create"},input:{},idempotency_key:"cancel-1",
+  company_id:"co-1",agent_id:"worker-1",run_id:"run-1",signal:controller.signal});
+ assert.equal(request.signal,controller.signal);
 });
 
 test("revocation or downgrade after authorization blocks execution before provider call",async()=>{

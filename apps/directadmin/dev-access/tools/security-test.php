@@ -92,6 +92,35 @@ expect_true(directadmin_identity_context()!==null,'same-account HOME descendant 
 expect_true(directadmin_identity_uid_allowed(posix_geteuid()),'non-root effective UID must pass the DirectAdmin identity policy');
 expect_true(!directadmin_identity_uid_allowed(0),'root execution must fail closed before SSH key management or command diagnostics');
 expect_true(!directadmin_identity_uid_allowed(-1),'invalid effective UID must fail closed');
+expect_true(directadmin_ssh_host_valid('ssh.example.test'),'ordinary DNS SSH host must be accepted');
+expect_true(directadmin_ssh_host_valid('192.0.2.10'),'IPv4 SSH host must be accepted');
+expect_true(!directadmin_ssh_host_valid('ssh.example.test;id'),'shell metacharacters in an SSH host must be rejected');
+expect_true(!directadmin_ssh_host_valid('-oProxyCommand=id'),'SSH option-shaped host must be rejected');
+expect_true(!directadmin_ssh_host_valid('https://ssh.example.test'),'URL syntax must not be accepted as a host');
+expect_true(!directadmin_ssh_host_valid('ssh_example.test'),'underscore DNS label must be rejected');
+expect_true(!directadmin_ssh_host_valid('ssh.example.test '),'whitespace-padded host must be rejected');
+expect_true(!directadmin_ssh_host_valid(str_repeat('a',254)),'overlong SSH host must be rejected');
+expect_true(directadmin_ssh_port_valid('22')&&directadmin_ssh_port_valid('65535'),'valid SSH port range endpoints must be accepted');
+expect_true(!directadmin_ssh_port_valid('0')&&!directadmin_ssh_port_valid('65536'),'out-of-range SSH ports must be rejected');
+expect_true(!directadmin_ssh_port_valid('22;id')&&!directadmin_ssh_port_valid('+22')&&!directadmin_ssh_port_valid('1e3'),'non-decimal or shell-like SSH ports must be rejected');
+$oldSshHost=getenv('TITAN_DEV_ACCESS_SSH_HOST');$oldSshPort=getenv('TITAN_DEV_ACCESS_SSH_PORT');$oldServerName=getenv('SERVER_NAME');
+putenv('TITAN_DEV_ACCESS_SSH_HOST=ssh.example.test');
+putenv('TITAN_DEV_ACCESS_SSH_PORT=2222');
+putenv('SERVER_NAME=panel.example.test');
+$sshAccess=directadmin_ssh_connection_info();
+expect_true(($sshAccess['username']??null)===$account['name']&&($sshAccess['host']??null)==='ssh.example.test'&&($sshAccess['port']??null)==='2222','SSH connection metadata must bind the configured endpoint to the validated DirectAdmin account');
+expect_true(directadmin_ssh_connection_command($sshAccess)==='ssh -p 2222 '.$account['name'].'@ssh.example.test','SSH command builder must return only a validated account/host/port tuple');
+putenv('TITAN_DEV_ACCESS_SSH_HOST=ssh.example.test;id');
+$invalidSshAccess=directadmin_ssh_connection_info();
+expect_true(($invalidSshAccess['host']??null)===''&&directadmin_ssh_connection_command($invalidSshAccess)==='','invalid SSH host configuration must fail closed without panel-host fallback');
+putenv('TITAN_DEV_ACCESS_SSH_HOST');
+putenv('TITAN_DEV_ACCESS_SSH_PORT');
+$fallbackSshAccess=directadmin_ssh_connection_info();
+expect_true(($fallbackSshAccess['host']??null)==='panel.example.test'&&($fallbackSshAccess['port']??null)==='22','SSH endpoint fallback must use the DirectAdmin server name and default port');
+if($oldSshHost===false)putenv('TITAN_DEV_ACCESS_SSH_HOST');else putenv('TITAN_DEV_ACCESS_SSH_HOST='.$oldSshHost);
+if($oldSshPort===false)putenv('TITAN_DEV_ACCESS_SSH_PORT');else putenv('TITAN_DEV_ACCESS_SSH_PORT='.$oldSshPort);
+if($oldServerName===false)putenv('SERVER_NAME');else putenv('SERVER_NAME='.$oldServerName);
+expect_true(directadmin_ssh_connection_command(['username'=>'-oProxyCommand','host'=>'ssh.example.test','port'=>'22'])==='','SSH command builder must reject option-shaped usernames');
 putenv('USERNAME='.$account['name']);
 putenv('USER=root');
 putenv('HOME='.$home);
@@ -123,6 +152,18 @@ expect_true(directadmin_request_body_length_matches($terminalFields."\n",$termin
 expect_true(directadmin_request_body_length_matches($terminalFields."\r\n",$terminalLength),'one terminal CRLF may be present beyond CONTENT_LENGTH');
 expect_true(!directadmin_request_body_length_matches($terminalFields."\n\n",$terminalLength),'two terminal LF bytes beyond CONTENT_LENGTH must fail');
 expect_true(!directadmin_request_body_length_matches($terminalFields.'x',$terminalLength),'arbitrary CONTENT_LENGTH mismatch must fail');
+
+$nulTerminatedFields=$terminalFields."\0";
+expect_true(directadmin_request_terminal_byte_class($terminalFields)==='printable'&&directadmin_request_terminal_byte_class($terminalFields."\n")==='lf'&&directadmin_request_terminal_byte_class($terminalFields."\r\n")==='crlf','terminal-byte diagnostic must return only a bounded fixed class');
+expect_true(directadmin_request_terminal_byte_class($nulTerminatedFields)==='nul','raw NUL terminal must be classified without exposing its byte value');
+expect_true(directadmin_normalize_stdin_transport_terminator("\0",null)==="\0",'a NUL-only stdin body must not normalize into an empty request');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,null)===$terminalFields,'one terminal raw NUL may be normalized when CONTENT_LENGTH is unavailable');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,$terminalLength)===$terminalFields,'one terminal raw NUL may be normalized when CONTENT_LENGTH matches the form prefix');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,strlen($nulTerminatedFields))===$nulTerminatedFields,'a NUL included in declared CONTENT_LENGTH must not be normalized');
+expect_true(directadmin_normalize_stdin_transport_terminator($terminalFields."\0\0",null)===$terminalFields."\0\0",'repeated terminal raw NUL bytes must not be normalized');
+expect_true(directadmin_normalize_stdin_transport_terminator("csrf=valid\0&run=1",null)==="csrf=valid\0&run=1",'interior raw NUL bytes must not be normalized');
+expect_true(!directadmin_request_body_length_matches($nulTerminatedFields,$terminalLength),'raw NUL is not a generic form length terminator');
+
 $diagnosticReasons=[
  'Invalid content length.'=>'content_length_invalid',
  'Unsupported form content type.'=>'content_type_invalid',
@@ -135,10 +176,10 @@ $diagnosticReasons=[
 ];
 foreach($diagnosticReasons as $message=>$code) expect_true(directadmin_request_error_code(new RuntimeException($message))===$code,'request error text must map only to static code '.$code);
 expect_true(directadmin_request_error_code(new RuntimeException('synthetic-secret-value=must-not-render'))==='request_rejected','unknown request errors must map to a static fallback code');
-$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125];
-expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125','request diagnostics must expose only bounded reason, transport and numeric lengths');
-$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret'];
-expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown','diagnostic output must reject unallowlisted codes, transports and nonnumeric lengths');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125,'terminal_class'=>'nul'];
+expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125 terminal_class=nul','request diagnostics must expose only bounded reason, transport, numeric lengths and fixed terminal-byte class');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret','terminal_class'=>'csrf=must-not-render'];
+expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown terminal_class=unknown','diagnostic output must reject unallowlisted codes, transports, lengths and terminal classes');
 unset($_SERVER['TDA_REQUEST_DIAGNOSTIC']);
 expect_true((directadmin_parse_form_body($terminalFields."\n")['add_key']??null)==='1','one DirectAdmin transport LF must be normalized after the complete form');
 expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??null)==='1','one DirectAdmin transport CRLF must be normalized after the complete form');
@@ -146,6 +187,12 @@ expect_rejected(static function()use($terminalFields){directadmin_parse_form_bod
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&csrf=second');},'duplicate form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf%5B%5D=valid');},'array form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=%ZZ');},'malformed percent encoding must fail closed');
+
+expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\0");},'raw terminal NUL must remain rejected by the strict parser outside the stdin transport boundary');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&command=pwd%00&run=1');},'percent-encoded NUL in a form value must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&cwd=/home'."\0".'/admin');},'interior raw NUL in a form value must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&command=%FF');},'invalid UTF-8 in a decoded form value must fail closed');
+
 expect_rejected(static function(){directadmin_parse_form_body('csrf='.str_repeat('a',16385));},'oversized form bodies must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&run=1&add_key=1');},'multiple actions in one request must fail closed');
 $other=posix_getpwnam(posix_geteuid()===0?'nobody':'root');
@@ -223,6 +270,108 @@ expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME
 [$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
 
+expect_true(directadmin_git_parse_divergence("1\t2")===['ahead'=>1,'behind'=>2],'Git divergence parser must read bounded ahead/behind counts');
+foreach(['','1 2',"01\t2","1\t02","1\t2 extra","99999999999\t1","-1\t0"] as $invalidDivergence){
+ expect_true(directadmin_git_parse_divergence($invalidDivergence)===null,'malformed or oversized Git divergence must fail closed');
+}
+foreach(['git rev-list --left-right --count HEAD...@{u}','git rev-parse --symbolic-full-name @{u}'] as $internalOnlyGitCommand){
+ [$internalClass,, $internalAllowed]=command_policy($internalOnlyGitCommand);
+ expect_true($internalAllowed===false&&$internalClass==='UNKNOWN',$internalOnlyGitCommand.' must not widen the user-facing Git command policy');
+}
+
+$workflowRepo=$home.'/workflow-readiness';
+expect_true(mkdir($workflowRepo,0700,true),'workflow readiness repository fixture must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'init','--quiet'],$home),'workflow readiness repository must initialize');
+expect_true(file_put_contents($workflowRepo.'/base.txt','base')!==false,'workflow base file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','base.txt'],$home),'workflow base file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','workflow base'],$home),'workflow base commit must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'branch','--move','agent/issue-1048'],$home),'canonical claim fixture branch must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','upstream-side'],$home),'upstream fixture branch must be created');
+expect_true(file_put_contents($workflowRepo.'/upstream.txt','upstream')!==false,'upstream side file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','upstream.txt'],$home),'upstream side file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','upstream fixture'],$home),'upstream-side commit must be created');
+[$upstreamHeadExit,$upstreamHead,$upstreamHeadError]=run_security_git_capture(['-C',$workflowRepo,'rev-parse','HEAD'],$home);
+expect_true($upstreamHeadExit===0&&$upstreamHeadError===''&&preg_match('/^[0-9a-f]{40}$/D',trim($upstreamHead))===1,'upstream fixture commit must resolve');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','agent/issue-1048'],$home),'canonical claim fixture branch must be checked out');
+expect_true(file_put_contents($workflowRepo.'/local.txt','local')!==false,'local side file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','local.txt'],$home),'local side file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','local fixture'],$home),'local-side commit must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'update-ref','refs/remotes/origin/agent/issue-1048',trim($upstreamHead)],$home),'local cached upstream ref must be installed');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/issue-1048.remote','origin'],$home),'fixture upstream remote name must be configured');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/issue-1048.merge','refs/heads/agent/issue-1048'],$home),'fixture upstream branch must be configured');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'remote','add','origin','https://synthetic-user:synthetic-token@example.invalid/repository.git'],$home),'credential-shaped fixture remote must be configured without connecting');
+$workflowContext=directadmin_git_repository_context($workflowRepo);
+expect_true(is_array($workflowContext),'workflow readiness fixture must pass the HOME-bounded repository resolver');
+$workflowHeadProbe=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+$workflowHeadBefore=directadmin_git_probe_output($workflowHeadProbe);
+expect_true(($workflowHeadProbe['status']??null)==='success'&&is_string($workflowHeadBefore)&&preg_match('/^[0-9a-f]{40}$/D',$workflowHeadBefore)===1,'successful Git probes must retain their output and success state');
+$workflowConfigBefore=hash_file('sha256',$workflowRepo.'/.git/config');
+$workflowReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($workflowReadiness['git_claim_branch_format_valid']===true&&$workflowReadiness['git_claim_issue_number']==='1048','canonical issue branch must be identified without asserting remote ownership');
+expect_true($workflowReadiness['git_repository_state']==='available'&&$workflowReadiness['git_branch_state']==='named'&&$workflowReadiness['git_head_state']==='available','successful repository, branch and HEAD probes must have explicit available states');
+expect_true($workflowReadiness['git_upstream_configured']===true&&$workflowReadiness['git_ahead']===1&&$workflowReadiness['git_behind']===1,'local-only comparison must report one ahead and one behind commit');
+expect_true($workflowReadiness['git_dirty']===false&&$workflowReadiness['git_worktree_state']==='clean','successful empty status output must mean clean, not unknown');
+$workflowJson=json_encode($workflowReadiness);
+expect_true(is_string($workflowJson)&&strpos($workflowJson,'synthetic-user')===false&&strpos($workflowJson,'synthetic-token')===false&&strpos($workflowJson,'example.invalid')===false,'workflow readiness must never expose remote URLs or credentials');
+$workflowHeadAfter=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+expect_true(($workflowHeadAfter['status']??null)==='success'&&directadmin_git_probe_output($workflowHeadAfter)===$workflowHeadBefore,'workflow readiness must not move HEAD or create commits');
+expect_true(hash_file('sha256',$workflowRepo.'/.git/config')===$workflowConfigBefore,'workflow readiness must not modify Git configuration');
+$workflowStatusAfter=directadmin_git_probe($workflowContext,['status','--porcelain']);
+expect_true(($workflowStatusAfter['status']??null)==='success'&&directadmin_git_probe_output($workflowStatusAfter)==='','workflow readiness must not modify the worktree');
+
+$dirtyMarker=$workflowRepo.'/readiness-dirty.txt';
+expect_true(file_put_contents($dirtyMarker,'dirty')!==false,'dirty-worktree fixture marker must be written');
+$dirtyReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($dirtyReadiness['git_repository_state']==='available'&&$dirtyReadiness['git_dirty']===true&&$dirtyReadiness['git_worktree_state']==='dirty','successful nonempty status output must be reported as dirty');
+expect_true(unlink($dirtyMarker),'dirty-worktree fixture marker must be removed');
+$cleanAgain=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($cleanAgain['git_dirty']===false&&$cleanAgain['git_worktree_state']==='clean','worktree must return to clean after fixture cleanup');
+
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--detach','HEAD'],$home),'detached HEAD fixture must be created');
+$detachedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($detachedReadiness['git_repository']===true&&$detachedReadiness['git_branch']===null&&$detachedReadiness['git_branch_state']==='detached','successful empty branch output must be distinguished as detached');
+expect_true($detachedReadiness['git_claim_branch_format_valid']===false&&$detachedReadiness['git_worktree_state']==='clean','detached HEAD is known noncanonical and must not imply a dirty or failed probe');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','agent/issue-1048'],$home),'canonical claim branch fixture must be restored');
+
+$oversizedNames=[];
+for($i=0;$i<44;$i++){
+ $name='oversized-status-'.str_pad((string)$i,3,'0',STR_PAD_LEFT).'-'.str_repeat('x',190);
+ expect_true(file_put_contents($workflowRepo.'/'.$name,'x')!==false,'oversized status fixture file must be written');
+ $oversizedNames[]=$workflowRepo.'/'.$name;
+}
+$oversizedProbe=directadmin_git_probe($workflowContext,['status','--porcelain']);
+expect_true(($oversizedProbe['status']??null)==='unknown'&&($oversizedProbe['reason']??null)==='output_oversized','Git probe output beyond its existing 8192-byte bound must be unknown');
+$oversizedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($oversizedReadiness['git_repository']===true&&$oversizedReadiness['git_dirty']===null&&$oversizedReadiness['git_worktree_state']==='unknown','oversized status output must not be misreported as clean');
+foreach($oversizedNames as $oversizedName) expect_true(unlink($oversizedName),'oversized status fixture file must be removed');
+$cleanAfterOversized=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($cleanAfterOversized['git_dirty']===false&&$cleanAfterOversized['git_worktree_state']==='clean','worktree state must recover after oversized fixture cleanup');
+
+$successRepositoryProbe=['status'=>'success','output'=>'true','reason'=>null];
+$successBranchProbe=['status'=>'success','output'=>'agent/issue-1048','reason'=>null];
+$successHeadProbe=['status'=>'success','output'=>'abcdef012345','reason'=>null];
+$timeoutProbe=['status'=>'unknown','output'=>null,'reason'=>'timeout'];
+$failedStatusProjection=directadmin_git_readiness_projection(true,$successRepositoryProbe,$successBranchProbe,$successHeadProbe,$timeoutProbe,$timeoutProbe);
+expect_true($failedStatusProjection['git_repository']===true&&$failedStatusProjection['git_dirty']===null&&$failedStatusProjection['git_worktree_state']==='unknown','timed-out status probe must remain unknown, not appear clean');
+expect_true($failedStatusProjection['git_claim_branch_format_valid']===true&&$failedStatusProjection['git_upstream_configured']===null&&$failedStatusProjection['git_upstream_state']==='unknown','failed upstream probe must not mark a canonical branch invalid or claim that upstream is absent');
+$failedBranchProjection=directadmin_git_readiness_projection(true,$successRepositoryProbe,$timeoutProbe,$successHeadProbe,['status'=>'success','output'=>'','reason'=>null],$timeoutProbe);
+expect_true($failedBranchProjection['git_repository']===true&&$failedBranchProjection['git_branch']===null&&$failedBranchProjection['git_branch_state']==='unknown'&&$failedBranchProjection['git_claim_branch_format_valid']===null,'failed branch probe must be unknown, not detached or noncanonical');
+$failedRepositoryProjection=directadmin_git_readiness_projection(true,$timeoutProbe,null,null,null,null);
+expect_true($failedRepositoryProjection['git_repository']===null&&$failedRepositoryProjection['git_repository_state']==='unknown'&&$failedRepositoryProjection['git_claim_branch_format_valid']===null,'failed repository probe must not be reported as a non-repository or invalid claim');
+
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','agent/issue-01048'],$home),'noncanonical padded issue branch fixture must be created');
+$paddedContext=directadmin_git_repository_context($workflowRepo);
+expect_true(is_array($paddedContext),'padded branch repository context must remain HOME-bounded');
+$missingUpstreamProbe=directadmin_git_probe($paddedContext,['rev-list','--left-right','--count','HEAD...@{u}']);
+expect_true(($missingUpstreamProbe['status']??null)==='unknown'&&($missingUpstreamProbe['reason']??null)==='command_failed','a real nonzero Git probe without upstream must be recorded as unknown');
+$paddedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($paddedReadiness['git_claim_branch_format_valid']===false&&$paddedReadiness['git_claim_issue_number']===null,'padded issue numbers must not be shown as canonical claim branches');
+expect_true($paddedReadiness['git_upstream_configured']===null&&$paddedReadiness['git_upstream_state']==='unknown'&&$paddedReadiness['git_ahead']===null&&$paddedReadiness['git_behind']===null,'failed/missing upstream probe must produce unknown state and unknown divergence counts');
+$notRepo=$home.'/not-a-repository';
+expect_true(mkdir($notRepo,0700,true),'non-repository fixture must be created');
+$notRepoReadiness=codex_readiness($notRepo,[],['git'=>'/usr/bin/git']);
+expect_true($notRepoReadiness['git_repository']===false&&$notRepoReadiness['git_repository_state']==='unavailable'&&$notRepoReadiness['git_claim_branch_format_valid']===null&&$notRepoReadiness['git_upstream_configured']===null,'unavailable repository context must not mark claim/upstream data as invalid');
+
 $textconvHelper=$home.'/synthetic-textconv-helper';
 $textconvMarker=$home.'/synthetic-textconv-marker';
 $textconvScript="#!/bin/sh\nprintf invoked >> ".escapeshellarg($textconvMarker)."\ncat \"$1\"\n";
@@ -252,6 +401,7 @@ foreach(['diff','show'] as $gitSubcommand){
  expect_true(in_array('--no-pager',$hardenedArguments,true),$gitSubcommand.' must explicitly disable configured pagers');
 }
 expect_true(($pagerEnvironment['GIT_PAGER']??null)==='cat'&&($pagerEnvironment['PAGER']??null)==='cat','Git process environment must override configured pagers');
+expect_true(($pagerEnvironment['GIT_NO_LAZY_FETCH']??null)==='1','Git process environment must disable promisor lazy fetches');
 $safeDiffArguments=directadmin_git_command_args($gitContext,['diff']);
 [$safeDiffExit,$safeDiffOutput,$safeDiffError]=run_security_git_capture(array_slice($safeDiffArguments,1),$home);
 expect_true($safeDiffExit===0&&$safeDiffError===''&&$safeDiffOutput!=='','bounded Git diff must continue to return read-only output');

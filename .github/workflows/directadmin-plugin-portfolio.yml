@@ -9,6 +9,9 @@ on:
       - "scripts/directadmin-dev-access-archive-integration.php"
       - "scripts/test-directadmin-dev-access-archive.mjs"
       - "scripts/test-directadmin-dev-access-candidate.mjs"
+      - "packages/titan-platform/src/directadmin-plugin.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/directadmin-plugin-portfolio.yml"
   push:
     branches: [main]
@@ -18,6 +21,9 @@ on:
       - "scripts/directadmin-dev-access-archive-integration.php"
       - "scripts/test-directadmin-dev-access-archive.mjs"
       - "scripts/test-directadmin-dev-access-candidate.mjs"
+      - "packages/titan-platform/src/directadmin-plugin.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/directadmin-plugin-portfolio.yml"
   workflow_dispatch:
 
@@ -29,11 +35,17 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Test deterministic portfolio packaging
-        run: node --test scripts/package-directadmin-portfolio.test.mjs
+          cache: pnpm
+      - name: Install locked root build dependencies
+        run: pnpm install --frozen-lockfile --filter . --ignore-scripts
+      - name: Test portfolio and Workforce package lifecycle
+        run: node --test scripts/package-directadmin-portfolio.test.mjs apps/directadmin/workforce/tests/package.test.mjs
       - name: Build all enabled plugin archives and provenance
         run: node scripts/package-directadmin-portfolio.mjs "$RUNNER_TEMP/directadmin-portfolio"
       - name: Verify extracted archive identity, modes, and disposable lifecycle fixtures
@@ -43,7 +55,7 @@ jobs:
       - name: Validate Server Node package contract
         run: node scripts/validate-directadmin-plugin.mjs apps/directadmin/server-node
       - name: Check lifecycle script syntax
-        run: bash -n apps/directadmin/server-node/*.sh apps/directadmin/server-node/scripts/*.sh apps/directadmin/dev-access/scripts/*.sh apps/directadmin/dev-access/tools/package.sh
+        run: bash -n apps/directadmin/server-node/*.sh apps/directadmin/server-node/scripts/*.sh apps/directadmin/dev-access/scripts/*.sh apps/directadmin/dev-access/tools/package.sh apps/directadmin/workforce/scripts/*.sh
       - name: Publish checksummed plugin artifacts
         uses: actions/upload-artifact@v4
         with:

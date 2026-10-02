@@ -12,6 +12,7 @@ export const BODY_TIMEOUT_MS = 5000;
 export const UPSTREAM_TIMEOUT_MS = 10000;
 
 export const ROUTES = Object.freeze({
+  bootstrap: Object.freeze({ method: "POST", path: "/v1/directadmin/bootstrap", body: "bootstrap" }),
   context: Object.freeze({ method: "GET", path: "/v1/directadmin/context", body: "none" }),
   logout: Object.freeze({ method: "POST", path: "/v1/directadmin/logout", body: "empty" }),
   company: Object.freeze({ method: "POST", path: "/v1/directadmin/company", body: "company" }),
@@ -35,6 +36,10 @@ const responseHeaders = Object.freeze({
 });
 const IDENTIFIER = /^[A-Za-z0-9:._-]{1,200}$/;
 const TOKEN = /^[A-Za-z0-9._~-]{1,16384}$/;
+const BOOTSTRAP_IDENTITY_HEADERS = new Set([
+  "directadmin-uid", "directadmin-user", "directadmin-role",
+  "x-directadmin-uid", "x-directadmin-user", "x-directadmin-role",
+]);
 
 function relayError(status, code) {
   const error = new Error(code);
@@ -132,8 +137,8 @@ function parseQuery(raw, requestMethod) {
     values.set(key, value);
   }
   const routeId = values.get("route");
+  if (!Object.hasOwn(ROUTES, routeId)) throw invalidRequest("unknown_route");
   const route = ROUTES[routeId];
-  if (!route) throw invalidRequest("unknown_route");
   if (values.get("headers_to_env") !== "yes") throw invalidRequest("headers_to_env_required");
   const requiredCount = route.method === "POST" ? 3 : 2;
   if (values.size !== requiredCount || (route.method === "POST" && values.get("pipe_post") !== "yes") ||
@@ -142,7 +147,7 @@ function parseQuery(raw, requestMethod) {
   return { routeId, route };
 }
 
-export function parseDirectAdminHeaders(encoded) {
+export function parseDirectAdminHeaders(encoded, routeId) {
   if (typeof encoded !== "string" || encoded.length < 1 || Buffer.byteLength(encoded, "utf8") > MAX_HEADER_BYTES) {
     throw invalidRequest("headers_missing_or_too_large");
   }
@@ -166,11 +171,13 @@ export function parseDirectAdminHeaders(encoded) {
     if (headers.has(name)) throw invalidRequest("duplicate_header");
     headers.set(name, match[2]);
   }
+  const allowedTitanHeader = routeId === "bootstrap" ? "x-titan-da-bootstrap-csrf" : "x-titan-csrf";
   for (const name of headers.keys()) {
-    if (name.startsWith("x-titan-") && name !== "x-titan-csrf") throw invalidRequest("identity_header_forbidden");
+    if (name.startsWith("x-titan-") && name !== allowedTitanHeader) throw invalidRequest("identity_header_forbidden");
     if (name === "authorization" || name === "proxy-authorization" || name.startsWith("x-forwarded-")) {
       throw invalidRequest("forwarding_header_forbidden");
     }
+    if (routeId === "bootstrap" && BOOTSTRAP_IDENTITY_HEADERS.has(name)) throw invalidRequest("identity_header_forbidden");
   }
   return headers;
 }
@@ -197,9 +204,24 @@ function cookieForTitan(value) {
   return DIRECTADMIN_SESSION_COOKIE + "=" + session;
 }
 
+function rejectTitanCookieDuringBootstrap(value) {
+  if (value === undefined) return;
+  if (typeof value !== "string" || value.length > 24 * 1024) throw invalidRequest("cookie_invalid");
+  const names = new Set();
+  for (const entry of value.split(";")) {
+    const part = entry.trim();
+    const equals = part.indexOf("=");
+    if (equals <= 0) throw invalidRequest("cookie_invalid");
+    const name = part.slice(0, equals).trim();
+    if (!/^[!#$%&'*+.^_|~0-9A-Za-z-]+$/.test(name) || names.has(name)) throw invalidRequest("duplicate_cookie");
+    names.add(name);
+    if (name === DIRECTADMIN_SESSION_COOKIE) throw relayError(401, "directadmin-session-rejected");
+  }
+}
+
 function parseDeclaredLength(value, code) {
   if (value === undefined) return undefined;
-  if (!/^(0|[1-9][0-9]{0,5})$/.test(value)) throw invalidRequest(code);
+  if (typeof value !== "string" || !/^(0|[1-9][0-9]{0,5})$/.test(value)) throw invalidRequest(code);
   const length = Number(value);
   if (!Number.isSafeInteger(length) || length > MAX_REQUEST_BODY_BYTES) throw relayError(413, "request_body_too_large");
   return length;
@@ -225,13 +247,19 @@ function validateBody(route, payload) {
 function parseRequestEnvelope(env) {
   const { routeId, route } = parseQuery(env.QUERY_STRING, env.REQUEST_METHOD);
   if (env.POST !== undefined && env.POST !== "" && env.POST !== "stdin=true") throw invalidRequest("form_data_forbidden");
-  const headers = parseDirectAdminHeaders(env.HEADERS);
+  const bootstrap = routeId === "bootstrap";
+  const headers = parseDirectAdminHeaders(env.HEADERS, routeId);
   const headerLength = parseDeclaredLength(headers.get("content-length"), "content_length_invalid");
   const envLength = parseDeclaredLength(env.CONTENT_LENGTH, "content_length_invalid");
   if (headerLength !== undefined && envLength !== undefined && headerLength !== envLength) throw invalidRequest("content_length_mismatch");
-  if (env.CONTENT_TYPE !== undefined && headers.has("content-type") &&
-      env.CONTENT_TYPE.trim().split(";", 1)[0].toLowerCase() !== headers.get("content-type").trim().split(";", 1)[0].toLowerCase()) {
+  if (env.CONTENT_TYPE !== undefined && typeof env.CONTENT_TYPE !== "string") throw invalidRequest("content_type_invalid");
+  const envContentType = typeof env.CONTENT_TYPE === "string" ? env.CONTENT_TYPE.trim() : "";
+  if (envContentType && headers.has("content-type") &&
+      envContentType.split(";", 1)[0].toLowerCase() !== headers.get("content-type").trim().split(";", 1)[0].toLowerCase()) {
     throw invalidRequest("content_type_mismatch");
+  }
+  if (bootstrap && envContentType && envContentType.split(";", 1)[0].toLowerCase() !== "application/json") {
+    throw invalidRequest("content_type_invalid");
   }
   const declaredLength = headerLength ?? envLength;
   if (headers.has("transfer-encoding") || headers.has("content-encoding")) throw invalidRequest("content_encoding_forbidden");
@@ -239,24 +267,31 @@ function parseRequestEnvelope(env) {
   const origin = headers.get("origin");
   const referer = headers.get("referer");
   const fetchSite = headers.get("sec-fetch-site");
-  const csrf = headers.get("x-titan-csrf");
-  const cookie = cookieForTitan(headers.get("cookie"));
+  const csrf = bootstrap ? undefined : headers.get("x-titan-csrf");
+  const csrfNonce = bootstrap ? headers.get("x-titan-da-bootstrap-csrf") : undefined;
+  if (bootstrap) rejectTitanCookieDuringBootstrap(headers.get("cookie"));
+  const cookie = bootstrap ? undefined : cookieForTitan(headers.get("cookie"));
   const accept = headers.get("accept") ?? "application/json";
   if (accept.length > 1024 || !/application\/json/i.test(accept) || fetchSite !== "same-origin" ||
-      typeof csrf !== "string" || !/^[A-Za-z0-9_-]{43,128}$/.test(csrf) ||
+      (!bootstrap && (typeof csrf !== "string" || !/^[A-Za-z0-9_-]{43,128}$/.test(csrf))) ||
+      (bootstrap && (typeof csrfNonce !== "string" || !/^[A-Za-z0-9_-]{43,128}$/.test(csrfNonce))) ||
       typeof host !== "string" || host.length > 255 ||
       (origin !== undefined && origin.length > 512) || (referer !== undefined && referer.length > 2048)) {
     throw invalidRequest("browser_context_invalid");
   }
   if (route.method === "POST") {
-    if (env.POST !== "stdin=true" || declaredLength === 0 || headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase() !== "application/json") {
+    const contentType = headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase();
+    if (env.POST !== "stdin=true" ||
+        (bootstrap
+          ? (declaredLength !== undefined && declaredLength !== 0) || (contentType !== undefined && contentType !== "application/json")
+          : declaredLength === 0 || contentType !== "application/json")) {
       throw invalidRequest("post_transport_invalid");
     }
     if (origin === undefined) throw invalidRequest("origin_required");
   } else if (env.POST === "stdin=true" || (declaredLength !== undefined && declaredLength !== 0)) {
     throw invalidRequest("get_body_forbidden");
   }
-  return { routeId, route, headers, declaredLength, cookie, origin, referer, csrf, accept, host };
+  return { routeId, route, headers, declaredLength, cookie, origin, referer, csrf, csrfNonce, accept, host };
 }
 
 function exactOrigin(value, expectedOrigin, code) {
@@ -267,16 +302,15 @@ function exactOrigin(value, expectedOrigin, code) {
   } catch { throw invalidRequest(code); }
 }
 
-function isPrivateAddress(address) {
+function isRemotePrivateAddress(address) {
   if (net.isIPv4(address)) {
     const octets = address.split(".").map(Number);
-    return octets[0] === 10 || octets[0] === 127 ||
+    return octets[0] === 10 ||
       (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
       (octets[0] === 192 && octets[1] === 168);
   }
   if (!net.isIPv6(address)) return false;
   const normalized = address.toLowerCase().split("%", 1)[0];
-  if (normalized === "::1") return true;
   const first = Number.parseInt(normalized.split(":", 1)[0] || "0", 16);
   return (first & 0xfe00) === 0xfc00;
 }
@@ -347,7 +381,7 @@ async function pinnedLookup(url, resolveAddresses = dns.lookup) {
     }
   }
   catch { throw relayError(502, "workforce_unreachable"); }
-  if (!addresses.length || addresses.some((entry) => !isPrivateAddress(entry.address))) {
+  if (!addresses.length || addresses.some((entry) => !isRemotePrivateAddress(entry.address))) {
     throw relayError(502, "workforce_target_not_private");
   }
   return (hostname, options, callback) => {
@@ -377,7 +411,8 @@ function validateSessionSetCookie(value) {
     attrs.set(name, index < 0 ? "" : part.slice(index + 1));
   }
   if (attrs.has("domain") || attrs.get("path") !== "/" || !attrs.has("secure") || !attrs.has("httponly") ||
-      attrs.get("samesite")?.toLowerCase() !== "strict" || !/^(0|[1-9][0-9]{0,5})$/.test(attrs.get("max-age") ?? "")) {
+      attrs.get("samesite")?.toLowerCase() !== "strict" || !/^(0|[1-9][0-9]{0,5})$/.test(attrs.get("max-age") ?? "") ||
+      Number(attrs.get("max-age")) > 300) {
     throw relayError(502, "workforce_response_invalid");
   }
   if (!cookieValue && attrs.get("max-age") !== "0") throw relayError(502, "workforce_response_invalid");
@@ -410,6 +445,34 @@ function collectUpstreamHeaders(response) {
   return result;
 }
 
+function validateBootstrapResponse(result) {
+  const invalid = () => { throw relayError(502, "workforce_response_invalid"); };
+  if (result.body.length > 8192) invalid();
+  let payload;
+  try {
+    payload = parseStrictJson(new TextDecoder("utf-8", { fatal: true }).decode(result.body));
+  } catch { invalid(); }
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) invalid();
+  const keys = Object.keys(payload).sort();
+  if (result.status === 200) {
+    if (keys.length !== 1 || keys[0] !== "csrf_token" || typeof payload.csrf_token !== "string" ||
+        !/^[A-Za-z0-9_-]{43,128}$/.test(payload.csrf_token)) invalid();
+    const cookie = result.headers["set-cookie"];
+    if (typeof cookie !== "string" || cookie.length > 4096) invalid();
+    const pair = cookie.split(";", 1)[0];
+    const equals = pair.indexOf("=");
+    if (equals <= 0 || pair.slice(0, equals) !== DIRECTADMIN_SESSION_COOKIE || !TOKEN.test(pair.slice(equals + 1))) invalid();
+    const maxAge = /(?:^|;)\s*max-age=([0-9]+)\s*(?:;|$)/i.exec(cookie);
+    if (!maxAge || Number(maxAge[1]) < 1 || Number(maxAge[1]) > 300) invalid();
+    return result;
+  }
+  const error = result.status === 401 ? "directadmin-session-rejected" :
+    result.status === 503 ? "directadmin-bootstrap-unavailable" : undefined;
+  if (!error || keys.length !== 2 || keys[0] !== "error" || keys[1] !== "read_only" ||
+      payload.error !== error || payload.read_only !== true || result.headers["set-cookie"] !== undefined) invalid();
+  return result;
+}
+
 function requestHeadersForUpstream(envelope, config, body) {
   if (envelope.origin !== undefined) {
     if (envelope.origin !== config.publicOrigin) throw invalidRequest("origin_mismatch");
@@ -420,6 +483,20 @@ function requestHeadersForUpstream(envelope, config, body) {
     exactOrigin(envelope.referer, config.publicOrigin, "referer_mismatch");
   }
   if (envelope.referer !== undefined) exactOrigin(envelope.referer, config.publicOrigin, "referer_mismatch");
+  if (envelope.routeId === "bootstrap") {
+    if (envelope.cookie !== undefined || envelope.csrf !== undefined ||
+        typeof envelope.csrfNonce !== "string" || !/^[A-Za-z0-9_-]{43,128}$/.test(envelope.csrfNonce) || body.length !== 0) {
+      throw invalidRequest("bootstrap_envelope_invalid");
+    }
+    return {
+      host: config.publicHost,
+      origin: envelope.origin,
+      "sec-fetch-site": "same-origin",
+      "x-titan-da-bootstrap-csrf": envelope.csrfNonce,
+      accept: envelope.accept,
+      "content-length": "0",
+    };
+  }
   const headers = {
     host: config.publicHost,
     cookie: envelope.cookie,
@@ -497,11 +574,13 @@ export async function forwardRequest(config, envelope, body, {
           });
           response.once("aborted", () => finish(relayError(502, "workforce_response_incomplete")));
           response.once("error", () => finish(relayError(502, "workforce_response_incomplete")));
-          response.once("end", () => finish(null, {
-            status,
-            headers: approvedHeaders,
-            body: Buffer.concat(chunks, size),
-          }));
+          response.once("end", () => {
+            const result = { status, headers: approvedHeaders, body: Buffer.concat(chunks, size) };
+            try {
+              if (envelope.routeId === "bootstrap") validateBootstrapResponse(result);
+              finish(null, result);
+            } catch (error) { finish(error); }
+          });
         });
         request.once("error", () => finish(relayError(502, "workforce_unreachable")));
         if (body.length) request.write(body);
@@ -551,7 +630,8 @@ export async function runRawGateway({
     if (envelope.host.toLowerCase() !== config.publicHost.toLowerCase()) throw invalidRequest("host_mismatch");
     const body = envelope.route.method === "POST" ? pipedBody : Buffer.alloc(0);
     if (envelope.route.body === "none" && body.length !== 0) throw invalidRequest("get_body_forbidden");
-    if (envelope.route.body !== "none") {
+    if (envelope.route.body === "bootstrap" && body.length !== 0) throw invalidRequest("request_body_invalid");
+    if (envelope.route.body !== "none" && envelope.route.body !== "bootstrap") {
       let parsed;
       try { parsed = parseStrictJson(new TextDecoder("utf-8", { fatal: true }).decode(body)); }
       catch (error) { if (error?.status) throw error; throw invalidRequest("request_body_invalid"); }
@@ -561,7 +641,8 @@ export async function runRawGateway({
     stdout.write(rawResponse(result.status, result.body, result.headers));
   } catch (error) {
     const status = Number.isInteger(error?.status) ? error.status : 502;
-    const code = typeof error?.code === "string" && /^[a-z0-9_]{1,80}$/.test(error.code) ? error.code :
+    const code = error?.code === "directadmin-session-rejected" ? error.code :
+      typeof error?.code === "string" && /^[a-z0-9_]{1,80}$/.test(error.code) ? error.code :
       status === 503 ? "relay_not_configured" : status === 408 ? "request_body_timeout" : "gateway_unavailable";
     stdout.write(jsonFailure(status, code));
   }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildEvidenceBackedSkillProof,summarizeEvidenceBackedSkillProof} from '../titan-workforce/capability/evidence-backed-skill-proof.mjs';
+import {buildEvidenceBackedSkillProof,summarizeEvidenceBackedSkillProof} from '../packages/titan-platform/src/ported/titan-workforce/capability/evidence-backed-skill-proof.mjs';
 const registry={schema:'titan.workforce.skill-capability-registry.v1',company_id:'acme',worker_capabilities:[{worker_id:'w1',capability_id:'quote',proficiency:4,proficiency_level:'PROFICIENT',verification_state:'VERIFIED',evidence:[{evidence_id:'ev1',verified:true}],grants_authority:false},{worker_id:'w1',capability_id:'sales',proficiency:3,proficiency_level:'WORKING',verification_state:'UNVERIFIED',evidence:[],grants_authority:false}],requirements:[],execution_permitted:false,grants_authority:false};
 const perf={schema:'titan.workforce.performance-outcome-evidence.v1',company_id:'acme',worker_performance:[{worker_id:'w1',outcome_count:4,evidence_backed_count:3,performance_score:.8,confidence:.6}],execution_permitted:false,grants_authority:false};
 const matrix={schema:'titan.workforce.capability-matrix.v1',company_id:'acme',workers:[{worker_id:'w1',capabilities:[{capability_id:'quote',meets_registry_requirement:true,required_min_proficiency:3,require_verified:true},{capability_id:'sales',meets_registry_requirement:false,required_min_proficiency:4,require_verified:false}]}],execution_permitted:false,grants_authority:false};

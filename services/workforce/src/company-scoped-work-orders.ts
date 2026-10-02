@@ -1,4 +1,6 @@
 import type { StorageClient } from "../../../packages/storage/src/index.js";
+import { verifyCompanyNativeSchemaAttestation } from "../../../packages/storage/src/company-native-schema-attestation.js";
+import { companyNativeWorkOrdersManifest } from "../../../packages/storage/src/company-native-schema-manifest.js";
 import type {
   AuthenticatedCompanyContext,
   CompanyPlacementRegistry,
@@ -39,6 +41,11 @@ function companyAttestedOpener(opener: CompanyStoreOpener<StorageClient>): Compa
       const opened = await opener.open(placement, options);
       const assertCompanyBinding = async () => {
         await opened.assertPlacementBound();
+        await verifyCompanyNativeSchemaAttestation({
+          storage: opened.client,
+          placement,
+          manifest: companyNativeWorkOrdersManifest,
+        });
         const rows = await opened.client.query<{ id: string }>("SELECT id FROM companies WHERE id=$1", [placement.company_id]);
         if (rows.rowCount !== 1 || rows.rows[0]?.id !== placement.company_id) {
           throw new Error("workforce-company-store-identity-mismatch");

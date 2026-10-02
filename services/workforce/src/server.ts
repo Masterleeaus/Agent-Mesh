@@ -53,6 +53,7 @@ function json(response: ServerResponse, status: number, body: unknown) {
 }
 
 const directAdminForwardHeaders = ["cookie", "sec-fetch-site", "origin", "referer", "x-titan-csrf", "content-type", "content-encoding", "accept"] as const;
+const directAdminBootstrapForwardHeaders = ["x-titan-da-bootstrap-csrf"] as const;
 function assertDirectAdminOrigin(value: string): void {
   try {
     const origin = new URL(value);
@@ -72,13 +73,14 @@ function directAdminRequest(request: import("node:http").IncomingMessage, public
   if (!target.startsWith("/") || target.startsWith("//")) throw new Error("directadmin-request-target-invalid");
   const url = new URL(target, origin);
   if (url.origin !== publicOrigin) throw new Error("directadmin-origin-mismatch");
+  const method = request.method ?? "GET";
+  const bootstrapRequest = method === "POST" && target === "/v1/directadmin/bootstrap";
   const headers = new Headers();
-  for (const name of directAdminForwardHeaders) {
+  for (const name of [...directAdminForwardHeaders, ...(bootstrapRequest ? directAdminBootstrapForwardHeaders : [])]) {
     const value = request.headers[name];
     if (typeof value === "string") headers.set(name, value);
     else if (Array.isArray(value)) headers.set(name, name === "cookie" ? value.join("; ") : value.join(", "));
   }
-  const method = request.method ?? "GET";
   const init: RequestInit & { duplex?: "half" } = { method, headers, redirect: "error", signal };
   if (method !== "GET" && method !== "HEAD") {
     init.body = Readable.toWeb(request) as ReadableStream<Uint8Array>;

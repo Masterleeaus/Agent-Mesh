@@ -21,20 +21,19 @@ import {
 const sourceRoot = path.dirname(fileURLToPath(import.meta.url));
 const controlOrigin = "https://panel.example.test:2222";
 const csrf = "c".repeat(43);
+const bootstrapNonce = "N".repeat(43);
 
-function setCookie(value) {
-  return DIRECTADMIN_SESSION_COOKIE + "=" + value + "; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=" + (value ? "120" : "0");
+function setCookie(value, maxAge = value ? "120" : "0") {
+  return DIRECTADMIN_SESSION_COOKIE + "=" + value + "; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=" + maxAge;
 }
 
-function headerBlock(extra = []) {
-  return encodeURIComponent([
-    "Host: panel.example.test:2222",
-    "Cookie: DAID=unrelated-cookie; " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
-    "Sec-Fetch-Site: same-origin",
-    "X-Titan-CSRF: " + csrf,
-    "Accept: application/json",
-    ...extra,
-  ].join("\r\n"));
+function headerBlock(extra = [], { browserCookie, includeTitanCsrf = true } = {}) {
+  const lines = ["Host: panel.example.test:2222"];
+  if (browserCookie !== null) lines.push("Cookie: " + (browserCookie ?? ("DAID=unrelated-cookie; " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret")));
+  lines.push("Sec-Fetch-Site: same-origin");
+  if (includeTitanCsrf) lines.push("X-Titan-CSRF: " + csrf);
+  lines.push("Accept: application/json", ...extra);
+  return encodeURIComponent(lines.join("\r\n"));
 }
 
 function parseRaw(bytes) {
@@ -157,6 +156,61 @@ async function fixture(t, responseMode = "normal") {
         response.end(Buffer.alloc(1024 * 1024 + 1, "x"));
         return;
       }
+      if (responseMode === "bootstrap-success") {
+        response.setHeader("set-cookie", setCookie("bootstrap-session-fixture"));
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-long-cookie") {
+        response.setHeader("set-cookie", setCookie("bootstrap-session-fixture", "301"));
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-huge-cookie") {
+        response.setHeader("set-cookie", setCookie("bootstrap-session-fixture", "999999"));
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-missing-cookie") {
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-duplicate-cookie") {
+        response.setHeader("set-cookie", [setCookie("bootstrap-session-fixture"), setCookie("duplicate-session-fixture")]);
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-weak-cookie") {
+        response.setHeader("set-cookie", DIRECTADMIN_SESSION_COOKIE + "=bootstrap-session-fixture; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0");
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-denied") {
+        response.statusCode = 401;
+        response.end(JSON.stringify({ error: "directadmin-session-rejected", read_only: true }));
+        return;
+      }
+      if (responseMode === "bootstrap-unavailable") {
+        response.statusCode = 503;
+        response.end(JSON.stringify({ error: "directadmin-bootstrap-unavailable", read_only: true }));
+        return;
+      }
+      if (responseMode === "bootstrap-invalid-cookie") {
+        response.setHeader("set-cookie", setCookie("bootstrap-session-fixture"));
+        response.end(JSON.stringify({ csrf_token: "short" }));
+        return;
+      }
+      if (responseMode === "bootstrap-denial-cookie") {
+        response.statusCode = 401;
+        response.setHeader("set-cookie", setCookie("unexpected-session"));
+        response.end(JSON.stringify({ error: "directadmin-session-rejected", read_only: true }));
+        return;
+      }
+      if (responseMode === "bootstrap-rate-limited") {
+        response.statusCode = 429;
+        response.end(JSON.stringify({ error: "rate-limited", read_only: true }));
+        return;
+      }
       response.end(JSON.stringify({ ok: true }));
     });
   });
@@ -196,6 +250,7 @@ async function fixture(t, responseMode = "normal") {
   });
   return {
     dir,
+    extracted,
     rawPath: path.join(extracted, "user/directadmin-gateway.raw"),
     relayModulePath,
     configPath,
@@ -210,25 +265,30 @@ async function fixture(t, responseMode = "normal") {
 
 function cgi(f, {
   route = "context", method = "GET", headerLines = [], body = "", extraEnv = {}, queryExtras = "",
-  headerEncoding = "percent-crlf",
+  headerEncoding = "percent-crlf", browserCookie, includeTitanCsrf, contentType, includeOrigin = true,
 } = {}) {
   const flags = "route=" + route + "&headers_to_env=yes" + (method === "POST" ? "&pipe_post=yes" : "") + queryExtras;
   const browserHeaders = [...headerLines];
+  if (route === "bootstrap" && method === "POST" && includeOrigin && !browserHeaders.some((line) => /^origin:/i.test(line))) {
+    browserHeaders.unshift("Origin: " + controlOrigin);
+  }
   if (method === "GET" && !browserHeaders.some((line) => /^(?:origin|referer):/i.test(line))) {
     browserHeaders.push("Referer: " + controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html");
   }
-  let headers = headerBlock(browserHeaders);
+  const includeBootstrapSafeDefaults = route === "bootstrap";
+  const defaultIncludeTitanCsrf = includeTitanCsrf ?? !includeBootstrapSafeDefaults;
+  let headers = headerBlock(browserHeaders, {
+    browserCookie: browserCookie === undefined && includeBootstrapSafeDefaults ? "DAID=unrelated-cookie; da_session=panel-fixture-secret" : browserCookie,
+    includeTitanCsrf: defaultIncludeTitanCsrf,
+  });
   if (headerEncoding === "form-crlf") {
     headers = headers.replace(/%20/g, "+");
   } else if (headerEncoding === "percent-lf") {
-    headers = encodeURIComponent([
-      "Host: panel.example.test:2222",
-      "Cookie: DAID=unrelated-cookie; " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
-      "Sec-Fetch-Site: same-origin",
-      "X-Titan-CSRF: " + csrf,
-      "Accept: application/json",
-      ...browserHeaders,
-    ].join("\n"));
+    const lfBlock = decodeURIComponent(headerBlock(browserHeaders, {
+      browserCookie: browserCookie === undefined && includeBootstrapSafeDefaults ? "DAID=unrelated-cookie; da_session=panel-fixture-secret" : browserCookie,
+      includeTitanCsrf: defaultIncludeTitanCsrf,
+    })).replace(/\r\n/g, "\n");
+    headers = encodeURIComponent(lfBlock);
   }
   const input = Buffer.from(body, "utf8");
   return {
@@ -237,11 +297,26 @@ function cgi(f, {
       REQUEST_METHOD: method,
       QUERY_STRING: flags,
       HEADERS: headers,
-      ...(method === "POST" ? { POST: "stdin=true", CONTENT_LENGTH: String(input.length), CONTENT_TYPE: "application/json" } : {}),
+      ...(method === "POST" ? {
+        POST: "stdin=true", CONTENT_LENGTH: String(input.length),
+        ...((contentType === undefined ? !includeBootstrapSafeDefaults : contentType !== null)
+          ? { CONTENT_TYPE: contentType ?? "application/json" } : {}),
+      } : {}),
       ...extraEnv,
     },
     input,
   };
+}
+
+function bootstrapCgi(f, options = {}) {
+  const { nonce = bootstrapNonce, headerLines = [], ...rest } = options;
+  const nonceHeaders = nonce === null ? [] : ["X-Titan-DA-Bootstrap-CSRF: " + nonce];
+  return cgi(f, {
+    route: "bootstrap",
+    method: "POST",
+    headerLines: [...nonceHeaders, ...headerLines],
+    ...rest,
+  });
 }
 
 test("extracted RAW module core maps Workforce projection and strips unrelated DirectAdmin cookies", async (t) => {
@@ -370,7 +445,182 @@ test("shared browser fetch helper maps fixed SDK routes and refuses arbitrary UR
   assert.equal((await fetcher("https://attacker.invalid/v1/directadmin/context", { method: "GET" })).status, 400);
   assert.equal((await fetcher("/v1/directadmin/context", { method: "POST", body: "{}" })).status, 405);
   assert.equal((await fetcher("/v1/directadmin/context", { method: "GET", headers: { "X-Titan-Actor-ID": "forged" } })).status, 400);
+  assert.equal((await fetcher("/v1/directadmin/bootstrap", {
+    method: "POST", headers: { "X-Titan-DA-Bootstrap-CSRF": bootstrapNonce }, body: "{}",
+  })).status, 400);
+  assert.equal((await fetcher("/v1/directadmin/bootstrap", { method: "POST", headers: { "X-Titan-CSRF": csrf } })).status, 400);
+  assert.equal((await fetcher("/v1/directadmin/bootstrap", { method: "POST" })).status, 400);
+  assert.equal((await fetcher("/v1/directadmin/bootstrap", {
+    method: "GET", headers: { "X-Titan-DA-Bootstrap-CSRF": bootstrapNonce },
+  })).status, 405);
   assert.equal(calls.length, 1);
+});
+
+test("extracted RAW browser helper completes the empty first-session bootstrap through the disposable upstream", async (t) => {
+  const f = await fixture(t, "bootstrap-success");
+  const clientPath = path.join(f.extracted, "images/directadmin-relay-client.mjs");
+  const client = await import(pathToFileURL(clientPath).href + "?fixture=" + encodeURIComponent(f.dir));
+  const calls = [];
+  let rawOutput;
+  const fetcher = client.createDirectAdminRelayFetch(async (input, init) => {
+    calls.push({ input, init });
+    assert.equal(init.headers.get("x-titan-da-bootstrap-csrf"), bootstrapNonce);
+    const { env, input: rawInput } = bootstrapCgi(f, {
+      headerLines: ["Content-Length: 0"],
+      browserCookie: "DAID=COOKIE_SECRET_SENTINEL; da_session=PANEL_SECRET_SENTINEL",
+      contentType: null,
+    });
+    const result = await runFixtureCore(f, env, rawInput);
+    rawOutput = result.raw;
+    const headers = new Headers();
+    for (const [name, values] of result.headers) for (const value of values) headers.append(name, value);
+    return new Response(result.body, { status: result.status, headers });
+  });
+
+  const response = await fetcher("/v1/directadmin/bootstrap", {
+    method: "POST", headers: { "X-Titan-DA-Bootstrap-CSRF": bootstrapNonce },
+  });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { csrf_token: "b".repeat(43) });
+  assert.equal(response.headers.get("set-cookie"), setCookie("bootstrap-session-fixture"));
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].input, "/CMD_PLUGINS/titan-server-node/directadmin-gateway.raw?route=bootstrap&headers_to_env=yes&pipe_post=yes");
+  assert.equal(calls[0].init.method, "POST");
+  assert.equal(calls[0].init.body, undefined);
+  assert.equal(calls[0].init.credentials, "same-origin");
+  assert.equal(calls[0].init.headers.get("accept"), "application/json");
+  assert.equal(calls[0].init.headers.get("x-titan-da-bootstrap-csrf"), bootstrapNonce);
+  assert.deepEqual(f.requests.map(({ method, path: requestPath, body }) => ({ method, path: requestPath, body: body.toString() })), [
+    { method: "POST", path: "/v1/directadmin/bootstrap", body: "" },
+  ]);
+  const upstream = f.requests[0];
+  assert.equal(upstream.headers.host, "panel.example.test:2222");
+  assert.equal(upstream.headers.origin, controlOrigin);
+  assert.equal(upstream.headers["sec-fetch-site"], "same-origin");
+  assert.equal(upstream.headers.accept, "application/json");
+  assert.equal(upstream.headers["x-titan-da-bootstrap-csrf"], bootstrapNonce);
+  assert.equal(upstream.headers["content-length"], "0");
+  assert.equal(upstream.headers.cookie, undefined, "all DirectAdmin cookies are stripped before the private gateway");
+  assert.equal(upstream.headers.authorization, undefined);
+  assert.equal(upstream.headers["x-titan-csrf"], undefined);
+  assert.equal(upstream.headers.referer, undefined);
+  assert.equal(upstream.headers["content-type"], undefined);
+  assert.equal(rawOutput.toString().includes("unrelated-cookie"), false);
+  assert.equal(rawOutput.toString().includes("panel-fixture-secret"), false);
+  assert.equal(rawOutput.toString().includes("COOKIE_SECRET_SENTINEL"), false);
+  assert.equal(rawOutput.toString().includes("PANEL_SECRET_SENTINEL"), false);
+  assert.equal(rawOutput.toString().includes("session-fixture-secret"), false);
+});
+
+test("bootstrap accepts omitted or zero content length while keeping its body empty", async (t) => {
+  const f = await fixture(t, "bootstrap-success");
+  const requests = [
+    bootstrapCgi(f),
+    bootstrapCgi(f, { headerLines: ["Content-Length: 0"] }),
+  ];
+  delete requests[0].env.CONTENT_LENGTH;
+  delete requests[1].env.CONTENT_LENGTH;
+  requests.push(bootstrapCgi(f)); // CONTENT_LENGTH=0 with no duplicate HEADERS field.
+  for (const request of requests) {
+    const response = await runFixtureCore(f, request.env, request.input);
+    assert.equal(response.status, 200);
+    assert.equal(response.body.toString(), JSON.stringify({ csrf_token: "b".repeat(43) }));
+    assert.equal(f.requests.at(-1).body.length, 0);
+  }
+  assert.equal(f.requests.length, 3);
+});
+
+test("bootstrap rejects an existing Titan cookie with the exact #1049 denial and no upstream call", async (t) => {
+  const f = await fixture(t, "bootstrap-success");
+  const request = bootstrapCgi(f, {
+    browserCookie: "DAID=unrelated-cookie; " + DIRECTADMIN_SESSION_COOKIE + "=existing-session-fixture",
+  });
+  const response = await runFixtureCore(f, request.env, request.input);
+  assert.equal(response.status, 401);
+  assert.equal(response.body.toString(), '{"error":"directadmin-session-rejected","read_only":true}');
+  assert.equal(response.headers.has("set-cookie"), false);
+  assert.equal(f.requests.length, 0);
+});
+
+test("bootstrap rejects ambient Titan cookies, identity fields, malformed transport and caller body before upstream", async (t) => {
+  const f = await fixture(t);
+  const valid = bootstrapCgi(f);
+  const bad = [
+    bootstrapCgi(f, { browserCookie: "DAID=unrelated; " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret" }),
+    bootstrapCgi(f, { headerLines: ["X-Titan-CSRF: " + csrf] }),
+    bootstrapCgi(f, { headerLines: ["X-DirectAdmin-Role: admin"] }),
+    bootstrapCgi(f, { headerLines: ["DirectAdmin-UID: 1"] }),
+    bootstrapCgi(f, { headerLines: ["Authorization: Bearer AUTH_SECRET_SENTINEL"] }),
+    bootstrapCgi(f, { headerLines: ["X-Titan-DA-Bootstrap-CSRF: " + bootstrapNonce] }),
+    bootstrapCgi(f, { nonce: "invalid" }),
+    bootstrapCgi(f, { headerLines: ["X-Titan-Company-ID: forged-company"] }),
+    bootstrapCgi(f, { headerLines: ["X-Titan-Device-ID: forged-device"] }),
+    bootstrapCgi(f, { headerLines: ["X-DirectAdmin-User: forged-user"] }),
+    bootstrapCgi(f, { queryExtras: "&target=http://127.0.0.1:3010" }),
+    bootstrapCgi(f, { headerLines: ["Origin: https://attacker.example"] }),
+    bootstrapCgi(f, { body: "x", headerLines: ["Content-Length: 1", "Content-Type: application/json"], contentType: "application/json" }),
+    bootstrapCgi(f, { headerLines: ["Content-Encoding: gzip"] }),
+    bootstrapCgi(f, { headerLines: ["Transfer-Encoding: chunked"] }),
+    bootstrapCgi(f, { nonce: null }),
+    bootstrapCgi(f, { includeOrigin: false }),
+  ];
+  const malformedHeaders = bootstrapCgi(f);
+  malformedHeaders.env.HEADERS = [malformedHeaders.env.HEADERS];
+  bad.push(malformedHeaders);
+  const malformedLength = bootstrapCgi(f);
+  malformedLength.env.CONTENT_LENGTH = ["0"];
+  bad.push(malformedLength);
+  const malformedType = bootstrapCgi(f);
+  malformedType.env.CONTENT_TYPE = ["application/json"];
+  bad.push(malformedType);
+  valid.env.QUERY_STRING += "&extra=1";
+  bad.push(valid);
+  const methodMismatch = bootstrapCgi(f);
+  methodMismatch.env.REQUEST_METHOD = "GET";
+  bad.push(methodMismatch);
+  for (const request of bad) {
+    const result = await runFixtureCore(f, request.env, request.input);
+    assert.equal(result.status >= 400, true);
+    assert.equal(result.headers.has("set-cookie"), false);
+    assert.equal(result.raw.toString().includes("AUTH_SECRET_SENTINEL"), false);
+  }
+  assert.equal(f.requests.length, 0);
+});
+
+test("bootstrap accepts only exact 200, 401 and 503 gateway response bodies and cookie combinations", async (t) => {
+  for (const [mode, status, body] of [
+    ["bootstrap-denied", 401, '{"error":"directadmin-session-rejected","read_only":true}'],
+    ["bootstrap-unavailable", 503, '{"error":"directadmin-bootstrap-unavailable","read_only":true}'],
+  ]) {
+    const f = await fixture(t, mode);
+    const request = bootstrapCgi(f);
+    const response = await runFixtureCore(f, request.env, request.input);
+    assert.equal(response.status, status);
+    assert.equal(response.body.toString(), body);
+    assert.equal(response.headers.has("set-cookie"), false);
+    assert.equal(f.requests.length, 1);
+  }
+  for (const mode of [
+    "bootstrap-invalid-cookie",
+    "bootstrap-success-missing-cookie",
+    "bootstrap-success-duplicate-cookie",
+    "bootstrap-success-weak-cookie",
+    "bootstrap-success-long-cookie",
+    "bootstrap-success-huge-cookie",
+    "bootstrap-denial-cookie",
+    "bootstrap-rate-limited",
+    "normal",
+  ]) {
+    const f = await fixture(t, mode);
+    const request = bootstrapCgi(f);
+    const response = await runFixtureCore(f, request.env, request.input);
+    assert.equal(response.status, 502, mode);
+    assert.equal(response.body.toString(), '{"error":"workforce_response_invalid","read_only":true}');
+    assert.equal(response.headers.has("set-cookie"), false);
+    assert.equal(response.raw.toString().includes("bootstrap-session-fixture"), false);
+    assert.equal(response.raw.toString().includes("unexpected-session"), false);
+    assert.equal(f.requests.length, 1);
+  }
 });
 
 test("duplicate headers, cookie names, query keys and JSON keys fail before Workforce", async (t) => {
@@ -455,6 +705,17 @@ test("extracted RAW entrypoint stays disabled for test env, caller fields, and l
   assert.equal(noAmbientSelection.status, 503);
   assert.equal(noAmbientSelection.body.toString(), '{"error":"cookie_boundary_unverified","read_only":true}');
   assert.equal(f.requests.length, 0);
+
+  const bootstrap = bootstrapCgi(f);
+  const disabledBootstrap = await runExtractedModule(f, {
+    ...bootstrap.env,
+    NODE_ENV: "production",
+    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: f.configPath,
+  }, bootstrap.input);
+  const bootstrapResponse = disabledBootstrap;
+  assert.equal(bootstrapResponse.status, 503);
+  assert.equal(bootstrapResponse.body.toString(), '{"error":"cookie_boundary_unverified","read_only":true}');
+  assert.equal(f.requests.length, 0, "production bootstrap must fail before reaching the fake upstream");
 });
 
 test("busy gateway backpressure and redirects are handled without following them", async (t) => {
@@ -607,6 +868,45 @@ test("mixed private and public DNS answers are rejected before connecting", asyn
   assert.deepEqual(lookupOptions, { all: true, verbatim: true });
 });
 
+test("remote hostname DNS rejects loopback and link-local answers before connecting", async () => {
+  const config = {
+    publicHost: "panel.example.test:2222",
+    publicOrigin: controlOrigin,
+    upstreamUrl: new URL("https://workforce.internal:3010"),
+  };
+  const envelope = {
+    route: { method: "GET", path: "/v1/directadmin/context" },
+    cookie: DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+    csrf,
+    accept: "application/json",
+    referer: controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html",
+  };
+  for (const address of [
+    { address: "127.0.0.1", family: 4 },
+    { address: "::1", family: 6 },
+    { address: "169.254.1.2", family: 4 },
+    { address: "fe80::1", family: 6 },
+  ]) {
+    await assert.rejects(
+      forwardRequest(config, envelope, Buffer.alloc(0), {
+        resolveAddresses: async () => [address],
+      }),
+      (error) => error.status === 502 && error.code === "workforce_target_not_private",
+      address.address,
+    );
+  }
+  await assert.rejects(
+    forwardRequest(config, envelope, Buffer.alloc(0), {
+      resolveAddresses: async () => [
+        { address: "10.20.30.40", family: 4 },
+        { address: "127.0.0.1", family: 4 },
+      ],
+    }),
+    (error) => error.status === 502 && error.code === "workforce_target_not_private",
+    "a mixed RFC1918/loopback answer set is rejected",
+  );
+});
+
 test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW errors", async (t) => {
   const f = await fixture(t, "hang");
   const body = '{"company_id":"company-a"}';
@@ -618,6 +918,12 @@ test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW 
   });
   const stalled = await runFixtureCore(f, post.env, undefined, { keepInputOpen: true, bodyTimeoutMs: 35 });
   assert.equal(stalled.status, 408);
+  assert.equal(f.requests.length, 0);
+
+  const bootstrap = bootstrapCgi(f);
+  const stalledBootstrap = await runFixtureCore(f, bootstrap.env, undefined, { keepInputOpen: true, bodyTimeoutMs: 35 });
+  assert.equal(stalledBootstrap.status, 408);
+  assert.equal(stalledBootstrap.body.toString(), '{"error":"request_body_timeout","read_only":true}');
   assert.equal(f.requests.length, 0);
 
   const tooLargeBody = "x".repeat(64 * 1024 + 1);

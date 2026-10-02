@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { generateKeyPairSync, sign } from "node:crypto";
-import { chmodSync, linkSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { request as httpRequest } from "node:http";
+import { chmodSync, linkSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 // @ts-expect-error Native SQLite driver is used only by this disposable fixture.
@@ -13,6 +14,23 @@ import {
 import { createIdentitySessionRegistry } from "../../../packages/titan-platform/src/security-boundary.js";
 import { createHostedRuntime } from "./hosted-runtime.js";
 import { createWorkforceDependencies } from "./production-dependencies.js";
+import { createWorkforceServer } from "./server.js";
+
+function requestHttp(url: string, options: {
+  method?: string; headers?: Record<string, string>; body?: string;
+} = {}): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const request = httpRequest(url, { method: options.method ?? "GET", headers: options.headers }, response => {
+      response.setEncoding("utf8");
+      let body = "";
+      response.on("data", chunk => { body += chunk; });
+      response.on("end", () => resolve({ status: response.statusCode ?? 0, body }));
+    });
+    request.on("error", reject);
+    if (options.body !== undefined) request.write(options.body);
+    request.end();
+  });
+}
 
 function productionEnvironment(input: {
   root: string; identityPath: string; runtimePath: string; webPath: string; companyRoot: string;
@@ -122,6 +140,7 @@ test("production dependency factory composes only existing identity, placement a
     });
     assert.equal(typeof dependencies.credentialVerifier.verify, "function");
     assert.equal(typeof dependencies.workOrders.complete, "function");
+    assert.equal(dependencies.directAdmin, undefined, "no provider module leaves DirectAdmin ingress unmounted");
     const nowSeconds = Math.floor(Date.now() / 1000);
     const header = Buffer.from(JSON.stringify({ alg: "EdDSA", kid: "workforce-test-key", typ: "titan-session+jwt" })).toString("base64url");
     const claims = Buffer.from(JSON.stringify({
@@ -140,7 +159,7 @@ test("production dependency factory composes only existing identity, placement a
     }, "readiness reports absent authority/evidence and owner schema attestation as degraded");
     const placement = await dependencies.companyPlacementRegistry.findByCompanyId("a");
     assert.ok(placement);
-    await assert.rejects(dependencies.companyStoreOpener.open(placement), /workforce-company-native-fsm-attestation-required/);
+    await assert.rejects(dependencies.companyStoreOpener.open(placement), /company-native-schema-marker-missing/);
 
     runtime = createSqliteStorage(runtimePath);
     hostedIdentity = createSqliteStorage(identityPath);
@@ -158,6 +177,133 @@ test("production dependency factory composes only existing identity, placement a
     await hostedIdentity?.close();
     await runtime?.close();
     if (identity) await identity.close().catch(() => undefined);
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("production dependency factory mounts the operator DirectAdmin gateway and keeps bootstrap forwarding narrow", async () => {
+  const root = mkdtempSync(join(tmpdir(), "titan-workforce-directadmin-mount-"));
+  const identityPath = join(root, "identity.sqlite");
+  const runtimePath = join(root, "workforce.sqlite");
+  const webPath = join(root, "titan-zero.db");
+  const companyRoot = join(root, "company-stores");
+  const observationPath = join(root, "gateway-request.json");
+  const modulePath = join(root, "directadmin-dependencies.mjs");
+  const { environment } = productionEnvironment({ root, identityPath, runtimePath, webPath, companyRoot });
+  const identity = createSqliteStorage(identityPath);
+  let dependencies: Awaited<ReturnType<typeof createWorkforceDependencies>> | undefined;
+  let host: Awaited<ReturnType<typeof createWorkforceServer>> | undefined;
+  try {
+    await createIdentitySessionRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+    await initializeSqliteCompanyPlacementRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+    await identity.close();
+
+    await assert.rejects(createWorkforceDependencies({
+      ...environment,
+      WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE: "relative/directadmin-dependencies.mjs",
+    }), /workforce-production-path-invalid:WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE/,
+      "an invalid configured provider path fails startup rather than silently disabling the mount");
+
+    writeFileSync(modulePath, `
+      import { writeFileSync } from "node:fs";
+      export async function createWorkforceDirectAdminDependencies() {
+        return {
+          publicOrigin: "https://panel.test.invalid",
+          createGateway(owners) {
+            if (typeof owners?.projection !== "function" || typeof owners?.requestIntent !== "function") {
+              throw new Error("canonical-workforce-owners-required");
+            }
+            return async request => {
+              writeFileSync(${JSON.stringify(observationPath)}, JSON.stringify({
+                method: request.method,
+                url: request.url,
+                path: new URL(request.url).pathname,
+                origin: request.headers.get("origin"),
+                nonce: request.headers.get("x-titan-da-bootstrap-csrf"),
+                authorization: request.headers.get("authorization"),
+                cookie: request.headers.get("cookie"),
+              }));
+              return new Response(JSON.stringify({ error: "directadmin-service-unavailable" }), {
+                status: 503, headers: { "content-type": "application/json" },
+              });
+            };
+          },
+        };
+      }
+    `, { mode: 0o600 });
+
+    dependencies = await createWorkforceDependencies({
+      ...environment,
+      WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE: modulePath,
+    });
+    assert.equal(dependencies.directAdmin?.publicOrigin, "https://panel.test.invalid");
+    assert.equal(typeof dependencies.directAdmin?.createGateway, "function");
+    host = await createWorkforceServer({ storagePath: runtimePath, dependencies });
+    await new Promise<void>((resolve, reject) => {
+      host!.server.once("error", reject);
+      host!.server.listen(0, "127.0.0.1", resolve);
+    });
+    const address = host.server.address();
+    assert.ok(address && typeof address !== "string");
+    const baseUrl = `http://127.0.0.1:${address.port}`;
+    const nonce = "N".repeat(43);
+    const directAdminCookie = "session=disposable-browser-session";
+
+    const bootstrap = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap`, {
+      method: "POST",
+      headers: {
+        host: "panel.test.invalid",
+        origin: "https://panel.test.invalid",
+        "sec-fetch-site": "same-origin",
+        "x-titan-da-bootstrap-csrf": nonce,
+        cookie: directAdminCookie,
+        authorization: "Bearer caller-controlled-token",
+      },
+      body: "",
+    });
+    assert.equal(bootstrap.status, 503, `the mount cannot fabricate a successful bootstrap without the owner provider: ${bootstrap.body}`);
+    assert.deepEqual(JSON.parse(bootstrap.body), { error: "directadmin-service-unavailable" });
+    assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
+      method: "POST", url: "https://panel.test.invalid/v1/directadmin/bootstrap",
+      path: "/v1/directadmin/bootstrap", origin: "https://panel.test.invalid",
+      nonce, authorization: null, cookie: directAdminCookie,
+    }, "the production host mounts the operator gateway, pins its URL, preserves the DirectAdmin proof cookie and strips Authorization");
+
+    const context = await requestHttp(`${baseUrl}/v1/directadmin/context`, {
+      headers: {
+        host: "panel.test.invalid",
+        origin: "https://panel.test.invalid",
+        "sec-fetch-site": "same-origin",
+        "x-titan-da-bootstrap-csrf": nonce,
+      },
+    });
+    assert.equal(context.status, 503);
+    assert.deepEqual(JSON.parse(context.body), { error: "directadmin-service-unavailable" });
+    const contextObservation = JSON.parse(readFileSync(observationPath, "utf8"));
+    assert.equal(contextObservation.url, "https://panel.test.invalid/v1/directadmin/context");
+    assert.equal(contextObservation.nonce, null,
+      "the one-time bootstrap nonce is forwarded only for the exact bootstrap POST target");
+
+    const bootstrapWithQuery = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap?unexpected=1`, {
+      method: "POST",
+      headers: {
+        host: "panel.test.invalid",
+        origin: "https://panel.test.invalid",
+        "sec-fetch-site": "same-origin",
+        "x-titan-da-bootstrap-csrf": nonce,
+      },
+      body: "",
+    });
+    assert.equal(bootstrapWithQuery.status, 503);
+    assert.deepEqual(JSON.parse(bootstrapWithQuery.body), { error: "directadmin-service-unavailable" });
+    const queryObservation = JSON.parse(readFileSync(observationPath, "utf8"));
+    assert.equal(queryObservation.url, "https://panel.test.invalid/v1/directadmin/bootstrap?unexpected=1");
+    assert.equal(queryObservation.nonce, null,
+      "query-bearing bootstrap near misses do not receive the one-time bootstrap nonce");
+  } finally {
+    if (host) await host.close();
+    else await dependencies?.close?.({ signal: new AbortController().signal });
+    await identity.close().catch(() => undefined);
     rmSync(root, { recursive: true, force: true });
   }
 });

@@ -576,6 +576,80 @@ test("canonical DA-derived Zero identity is persisted, fenced and replayed throu
   } finally { await f.close(); }
 });
 
+test("signed Workforce child revocation and company changes fail before a fenced effect", { timeout: 5000 }, async () => {
+  for (const change of ["source-revoke", "child-revoke", "company-switch"] as const) {
+    const f = await fixture();
+    try {
+      const identity = await f.workforceZero();
+      const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+      const hosted = await createHostedRuntime(f.control, f.identity, f.dependencies);
+      const credential = identity.authorization.slice("Bearer ".length);
+      const child = {
+        schema: "titan.workforce-zero.session/v1" as const, audience: "workforce" as const, surface: "zero" as const,
+        actor_id: identity.workforce.context.actor_id, company_id: identity.workforce.context.company_id,
+        company_ids: [identity.workforce.context.company_id], device_id: identity.workforce.context.device_id,
+        session_id: identity.workforce.context.session_id, context_revision: identity.workforce.context.context_revision,
+        session_revision: identity.workforce.context.session_revision,
+        expires_at: Date.parse(identity.workforce.context.expires_at),
+      };
+      if (change === "source-revoke") {
+        await f.registry.revokeSession(identity.da.context.session_id, identity.da.context.session_revision);
+      } else if (change === "child-revoke") {
+        await f.registry.revokeSession(identity.workforce.context.session_id, identity.workforce.context.session_revision);
+      } else {
+        await identity.sourceService.switchCompany(identity.da.credential, { company_id: "a", device_id: "device" }, "b");
+      }
+      let effects = 0;
+      await assert.rejects(() => hosted.runtime.withWorkforceZeroSessionFence(credential, child, undefined, () => { effects += 1; }),
+        /conversation-authentication-failed|runtime-authentication-required/);
+      assert.equal(effects, 0, `${change} must reject before the effect callback`);
+    } finally { await f.close(); }
+  }
+});
+
+test("signed Workforce child fence serializes the native admission callback before source revocation", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  try {
+    const identity = await f.workforceZero();
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const hosted = await createHostedRuntime(f.control, f.identity, f.dependencies);
+    const credential = identity.authorization.slice("Bearer ".length);
+    const child = {
+      schema: "titan.workforce-zero.session/v1" as const, audience: "workforce" as const, surface: "zero" as const,
+      actor_id: identity.workforce.context.actor_id, company_id: identity.workforce.context.company_id,
+      company_ids: [identity.workforce.context.company_id], device_id: identity.workforce.context.device_id,
+      session_id: identity.workforce.context.session_id, context_revision: identity.workforce.context.context_revision,
+      session_revision: identity.workforce.context.session_revision,
+      expires_at: Date.parse(identity.workforce.context.expires_at),
+    };
+    let entered!: () => void;
+    let release!: () => void;
+    const effectEntered = new Promise<void>(resolve => { entered = resolve; });
+    const releaseEffect = new Promise<void>(resolve => { release = resolve; });
+    let effects = 0;
+    const fenced = hosted.runtime.withWorkforceZeroSessionFence(credential, child, undefined, async signal => {
+      entered();
+      await releaseEffect;
+      signal.throwIfAborted();
+      effects += 1;
+      return "admitted";
+    });
+    await effectEntered;
+    let revoked = false;
+    const revocation = f.registry.revokeSession(identity.da.context.session_id, identity.da.context.session_revision)
+      .then(() => { revoked = true; });
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(revoked, false, "the registry revoke waits behind the bounded child-session fence");
+    release();
+    assert.equal(await fenced, "admitted");
+    await revocation;
+    assert.equal(effects, 1);
+    await assert.rejects(() => hosted.runtime.withWorkforceZeroSessionFence(credential, child, undefined, () => { effects += 1; }),
+      /conversation-authentication-failed|runtime-authentication-required/);
+    assert.equal(effects, 1, "after serialized revocation the same signed child cannot enter a second effect");
+  } finally { await f.close(); }
+});
+
 async function startTimedOutSourceDerivedRun(f: Awaited<ReturnType<typeof fixture>>) {
   let enter!: () => void;
   let release!: () => void;
@@ -808,13 +882,14 @@ test("host mounts only an injected Fetch gateway and keeps absent DirectAdmin br
   } finally { await unavailable.close(); }
 
   let suppliedOwners: unknown;
-  let forwarded: { url: string; cookie: string | null; authorization: string | null; body: string } | undefined;
+  let forwarded: { url: string; cookie: string | null; authorization: string | null; bootstrapCsrf: string | null; body: string } | undefined;
   const configured = await fixture({ directAdmin: {
     publicOrigin: "https://127.0.0.1",
     createGateway(owners) {
       suppliedOwners = owners;
       return async request => {
-        forwarded = { url: request.url, cookie: request.headers.get("cookie"), authorization: request.headers.get("authorization"), body: await request.text() };
+        forwarded = { url: request.url, cookie: request.headers.get("cookie"), authorization: request.headers.get("authorization"),
+          bootstrapCsrf: request.headers.get("x-titan-da-bootstrap-csrf"), body: await request.text() };
         return new Response("test-only SDK adapter", { status: 418, headers: { "x-test-sdk-handler": "mounted" } });
       };
     },
@@ -828,7 +903,19 @@ test("host mounts only an injected Fetch gateway and keeps absent DirectAdmin br
     assert.equal(typeof (suppliedOwners as any)?.projection, "function");
     assert.equal(typeof (suppliedOwners as any)?.requestIntent, "function");
     assert.deepEqual(forwarded, { url: "https://127.0.0.1/v1/directadmin/titan_workforce/intents",
-      cookie: "__Host-titan-da-session=test-only", authorization: null, body: "{\"test\":true}" });
+      cookie: "__Host-titan-da-session=test-only", authorization: null, bootstrapCsrf: null, body: "{\"test\":true}" });
+    const bootstrap = await configured.directAdmin("/v1/directadmin/bootstrap", { method: "POST", headers: {
+      authorization: "Basic directadmin-proof", "x-titan-da-bootstrap-csrf": "b".repeat(43),
+    } });
+    assert.equal(bootstrap.status, 418);
+    assert.deepEqual(forwarded, { url: "https://127.0.0.1/v1/directadmin/bootstrap",
+      cookie: "__Host-titan-da-session=test-only", authorization: null,
+      bootstrapCsrf: "b".repeat(43), body: "" });
+    const bootstrapWithQuery = await configured.directAdmin("/v1/directadmin/bootstrap?unexpected=1", { method: "POST", headers: {
+      "x-titan-da-bootstrap-csrf": "c".repeat(43),
+    } });
+    assert.equal(bootstrapWithQuery.status, 418);
+    assert.equal(forwarded?.bootstrapCsrf, null, "the nonce is not forwarded for query-bearing near-miss paths");
   } finally { await configured.close(); }
 });
 

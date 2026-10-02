@@ -34,3 +34,7 @@ Required Dart defines:
 Access tokens are loaded from platform secure storage by company, actor, device and canonical surface. Do not pass `TITAN_AUTH_TOKEN` as a Dart define or URL parameter. The current bootstrap configures a single initial surface; interactive mode and company switching still require the authenticated session bridge and are not yet certified.
 
 Missing production configuration fails closed. `LocalMvpTitanGateway` is development/offline compatibility only and is not wired into the production shell. Core projections remain authority-neutral and consequential commands require server acceptance/receipts.
+
+## DirectAdmin-hosted Workforce boundary
+
+See [the current integration contract and source inventory](../../docs/integration/MOBILE-DIRECTADMIN-WORKFORCE-BOUNDARY.md). The production bootstrap and hosted routes remain separate implementation work; the local/demo gateway is not a release fallback.

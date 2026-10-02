@@ -1,7 +1,7 @@
 import * as SDK from 'titan-sdk';
 import { WorkforceController } from 'workforce-controller';
 import { WorkforceApi } from 'workforce-api';
-import { boundedText, position, workState, receiptState, verifiedOutcome } from 'workforce-presentation';
+import { boundedText, identityType, position, teamMemberships, workState, receiptState, verifiedOutcome } from 'workforce-presentation';
 
 const root = document.getElementById('titan-workforce');
 const role = root.dataset.role;
@@ -52,7 +52,7 @@ function render(state) {
   const context = panel('Current company');
   fields(context, { Company: state.context.company_id, Actor: state.context.actor_id, 'DirectAdmin role (presentation only)': role, 'Execution authority': 'Re-evaluated by the canonical host for every request' }); root.append(context);
   const nav = node('nav', undefined, { 'aria-label': 'Workforce views' });
-  for (const title of ['Roster', 'Organisation', 'Work', 'Controls', 'Evidence', 'Health']) {
+  for (const title of ['Roster', 'Teams', 'Organisation', 'Work', 'Controls', 'Evidence', 'Health']) {
     const item = button(title, () => { tab = title; render(controller.state); }); item.setAttribute('aria-current', title === tab ? 'page' : 'false'); nav.append(item);
   }
   root.append(nav);
@@ -60,7 +60,7 @@ function render(state) {
   const work = state.status?.work ?? [];
   const view = panel(tab); root.append(view);
   if (tab === 'Roster') {
-    table(view, ['Identity', 'Kind / position', 'Status', 'Manager', 'Capabilities'], workers.map(worker => [button(worker.worker_id, () => { selectedAgent = worker.worker_id; render(controller.state); }), position(worker), worker.active ? 'Active' : 'Inactive', worker.manager_id ?? 'Not supplied', (worker.capabilities ?? []).join(', ')]));
+    table(view, ['Identity', 'Identity type', 'Position', 'Activity status', 'Team', 'Manager', 'Capabilities'], workers.map(worker => [button(worker.worker_id, () => { selectedAgent = worker.worker_id; render(controller.state); }), identityType(worker), position(worker), worker.active ? 'Active' : 'Inactive', worker.team_id ?? 'Unassigned', worker.manager_id ?? 'Not supplied', (worker.capabilities ?? []).join(', ')]));
     const agent = workers.find(worker => worker.worker_id === selectedAgent);
     if (agent) {
       const detail = panel('Agent / participant detail'); fields(detail, { Identity: agent.worker_id, Company: agent.company_id, Kind: agent.kind, Position: position(agent), Team: agent.team_id, Manager: agent.manager_id, Capabilities: agent.capabilities });
@@ -68,6 +68,18 @@ function render(state) {
       table(detail, ['Current work', 'State', 'Evidence'], work.filter(item => item.assignee === agent.worker_id).map(item => [item.work_id, workState(item.state), (item.evidence_refs ?? []).join(', ')]));
       unavailable(detail, 'Operation-specific trust, approved knowledge references, model/provider bindings and attributable value'); root.append(detail);
     }
+  } else if (tab === 'Teams') {
+    const groups = teamMemberships(workers);
+    table(view, ['Team', 'Human participants', 'AI / digital participants', 'Active', 'Inactive', 'Members'], groups.map(group => {
+      const humans = group.members.filter(worker => worker.kind === 'human');
+      const digital = group.members.filter(worker => worker.kind === 'digital');
+      return [group.team_id ?? 'Unassigned', humans.length, digital.length,
+        group.members.filter(worker => worker.active).length,
+        group.members.filter(worker => !worker.active).length,
+        group.members.map(worker => `${worker.worker_id} (${identityType(worker)})`).join(', ')];
+    }));
+    view.append(node('p', 'Membership is grouped from the current company roster’s canonical team_id values; it is not a separate team registry.', { class: 'notice' }));
+    unavailable(view, 'Hosted team names and skill catalog');
   } else if (tab === 'Organisation') {
     // Flat relation table cannot recurse forever on malformed/cyclic upstream hierarchy.
     table(view, ['Participant', 'Kind / position', 'Reports to', 'Team'], workers.map(worker => [worker.worker_id, position(worker), worker.manager_id ?? 'Not supplied', worker.team_id ?? 'Not supplied']));
@@ -107,7 +119,9 @@ function renderControls(view, state, workers, work) {
   view.append(node('p', 'Requests are proposals to the governed host. Role, capability availability and trust do not authorize execution.'));
   // Only the exact host-published allowlist can expose a control. Never raw shell or generic JSON.
   const supported = new Set(['pause', 'resume', 'cancel', 'reassign', 'escalate', 'revoke']);
-  const actions = (state.discovery?.controls ?? []).filter(item => supported.has(item.action) && typeof item.capability_id === 'string').map(item => item.action);
+  const actions = (state.discovery?.controls ?? []).filter(item => supported.has(item.action) && typeof item.capability_id === 'string' &&
+    (item.action !== 'reassign' || (item.capability_id === 'titan.workforce.reassign' &&
+      item.requires_fresh_approval === true && item.grants_authority === false))).map(item => item.action);
   if (!actions.length) {
     if (Array.isArray(state.discovery?.controls) && state.discovery.controls.length === 0) {
       view.append(node('p', 'This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { class: 'notice', role: 'status' }));
@@ -117,11 +131,49 @@ function renderControls(view, state, workers, work) {
   const form = node('form');
   const select = (label, options) => { const wrapper = node('label', label); const input = node('select'); for (const [value, text] of options) input.append(node('option', text, { value })); wrapper.append(input); form.append(wrapper); return input; };
   const action = select('Operation', actions.map(value => [value, value]));
-  const target = select('Work item', work.map(item => [item.work_id, item.work_id]));
-  const worker = select('Target participant (reassign / escalate)', [['', 'No target'], ...workers.map(item => [item.worker_id, item.worker_id])]);
+  const target = select('Work item', []);
+  const worker = select('Target participant', []);
   const label = node('label', 'Reason'); const reason = node('textarea', undefined, { required: '', maxlength: '2000', rows: '3' }); label.append(reason); form.append(label);
   const send = node('button', 'Submit governed request', { type: 'submit', class: 'primary' }); send.disabled = state.phase !== 'ready' || !work.length || Boolean(state.error); form.append(send);
-  form.addEventListener('submit', event => { event.preventDefault(); if (!reason.value.trim()) return; void controller.submit({ action: action.value, work_id: target.value, target_worker_id: worker.value || undefined, reason: reason.value.trim() }); }); view.append(form);
+  const hint = node('p', '', { class: 'muted', role: 'status' });
+  const replaceOptions = (selectElement, options, emptyLabel) => {
+    const selected = selectElement.value;
+    selectElement.replaceChildren(node('option', emptyLabel, { value: '' }));
+    for (const [value, text] of options) selectElement.append(node('option', text, { value }));
+    if (options.some(([value]) => value === selected)) selectElement.value = selected;
+    else selectElement.value = options[0]?.[0] ?? '';
+  };
+  const refreshChoices = () => {
+    const reassignment = action.value === 'reassign';
+    const workChoices = work.filter(item => !reassignment || item.state === 'READY');
+    replaceOptions(target, workChoices.map(item => [item.work_id, item.work_id]),
+      reassignment ? 'No READY work available' : 'No work available');
+    const selectedWork = workChoices.find(item => item.work_id === target.value);
+    const required = selectedWork?.required_capabilities;
+    const validRequirements = required === undefined || (Array.isArray(required) &&
+      required.every(capability => typeof capability === 'string' && capability.trim()));
+    const workerChoices = workers.filter(item => !reassignment ||
+      (item.active === true && item.worker_id !== selectedWork?.assignee && validRequirements &&
+        (!Array.isArray(required) || required.every(capability => (item.capabilities ?? []).includes(capability)))));
+    replaceOptions(worker, workerChoices.map(item => [item.worker_id, item.worker_id]), 'No eligible participant available');
+    if (!reassignment) worker.value = '';
+    target.required = reassignment;
+    worker.required = reassignment;
+    hint.textContent = reassignment
+      ? 'Reassignment applies to READY work. The request includes the currently projected assignee; the hosted owner rechecks assignment, target eligibility, authority and fresh approval.'
+      : '';
+    send.disabled = state.phase !== 'ready' || Boolean(state.error) || !workChoices.length ||
+      (reassignment && (!selectedWork || !workerChoices.length || !worker.value));
+  };
+  action.addEventListener('change', refreshChoices);
+  target.addEventListener('change', refreshChoices);
+  refreshChoices();
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!reason.value.trim() || (action.value === 'reassign' && (!target.value || !worker.value))) return;
+    void controller.submit({ action: action.value, work_id: target.value,
+      target_worker_id: worker.value || undefined, reason: reason.value.trim() });
+  }); view.append(form, hint);
 }
 
 // #1049 owns the real session, CSRF/origin protection, expiry and cross-plugin invalidation.

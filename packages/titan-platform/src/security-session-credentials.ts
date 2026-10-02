@@ -5,15 +5,34 @@ import { isIdentityRegistryUnavailableError, type CurrentSessionContext, type Id
 
 type Algorithm = 'ES256' | 'RS256' | 'HS256' | 'EdDSA';
 type Key = CryptoKey | Uint8Array;
-type Trust = Readonly<{ issuer: string; audience: string; key_id: string; algorithm: Algorithm; verification_key: Key }>;
+export type DirectAdminAssertionTrust = Readonly<{
+  issuer: string; audience: string; key_id: string; algorithm: Algorithm; verification_key: Key;
+}>;
+type Trust = DirectAdminAssertionTrust;
 export type CredentialExpectation = Readonly<{
   company_id: string; device_id: string; actor_id?: string; context_revision?: string;
+}>;
+export type DirectAdminSessionRole = 'admin' | 'reseller' | 'user';
+/** Documented identity sub-schema of DirectAdmin GET /api/session. */
+export type DirectAdminSessionInfo = Readonly<{
+  effectiveRole: DirectAdminSessionRole;
+  effectiveUsername: string;
+  realUsername: string;
+}>;
+/** Provider scoped identity; the effective account is always `subject`. */
+export type DirectAdminExternalSessionIdentity = Readonly<{
+  issuer: string; subject: string; real_subject: string;
+  da_role: DirectAdminSessionRole; impersonating: boolean;
 }>;
 export type WorkforceZeroExchangeOptions = Readonly<{
   issuer: string; key_id: string; algorithm: Algorithm; verification_key: Key; signing_key: Key;
   lifetime_seconds?: number;
 }>;
-export type DirectAdminCredentialBinding = Readonly<{ node_id: string; csrf_sha256: string; da_role: 'admin' | 'reseller' | 'user' }>;
+export type DirectAdminCredentialBinding = Readonly<{
+  node_id: string; csrf_sha256: string; da_role: DirectAdminSessionRole;
+  /** Signed login-as provenance; it does not grant Titan authority. */
+  real_subject?: string; da_impersonating?: boolean;
+}>;
 export type AuthenticatedSessionCredential = Readonly<{
   context: CurrentSessionContext; provider: string; subject: string;
   credential_expires_at: string;
@@ -35,6 +54,39 @@ export type SessionCredentialOptions = Trust & Readonly<{
 }>;
 export type IssuedSessionCredential = Readonly<{ credential: string; context: CurrentSessionContext; credential_expires_at: string }>;
 
+/** Untrusted ambient proof envelope passed by the server-only DirectAdmin
+ * bridge. Runtime validation requires a non-null allowlisted Cookie header. */
+export type DirectAdminBootstrapProofEnvelope = Readonly<{
+  origin: string; cookie: string | null; authorization: string | null; csrf_nonce: string;
+}>;
+export type DirectAdminBootstrapContextRequest = DirectAdminExternalSessionIdentity & Readonly<{
+  csrf_nonce: string;
+}>;
+export type DirectAdminBootstrapSelection = Readonly<{ company_id: string; device_id: string }>;
+/** Host supplied atomic one-time nonce consumer. It returns exactly one current
+ * company/device context for the authenticated issuer, effective subject,
+ * real operator, role and impersonation provenance. */
+export type DirectAdminBootstrapNonceConsumer = (
+  request: DirectAdminBootstrapContextRequest,
+) => Promise<DirectAdminBootstrapSelection | null>;
+export type DirectAdminLoginAssertionInput = Readonly<{
+  login_assertion: string; company_id: string; device_id: string; csrf_token: string;
+}>;
+export type DirectAdminSessionApiFetch = (input: string | URL, init?: RequestInit) => Promise<Response>;
+export type DirectAdminBootstrapAssertionProviderOptions = Readonly<{
+  origin: string;
+  node_id: string;
+  upstream: DirectAdminAssertionTrust;
+  signing_key: Key;
+  consumePreAuthNonce: DirectAdminBootstrapNonceConsumer;
+  fetcher?: DirectAdminSessionApiFetch;
+  now?: () => Date;
+  lifetime_seconds?: number;
+}>;
+export type DirectAdminLoginAssertionProvider = Readonly<{
+  provide: (proof: DirectAdminBootstrapProofEnvelope) => Promise<DirectAdminLoginAssertionInput>;
+}>;
+
 /** Configured host identity, never Host/X-Forwarded-Host or a request URL. */
 export function directAdminIssuer(origin: string): string {
   const url = new URL(origin);
@@ -42,6 +94,46 @@ export function directAdminIssuer(origin: string): string {
     throw new Error('directadmin-issuer-origin-invalid');
   }
   return `directadmin:${url.origin}`;
+}
+
+function directAdminSessionField(record: object, key: keyof DirectAdminSessionInfo): unknown {
+  const descriptor = Object.getOwnPropertyDescriptor(record, key);
+  if (!descriptor || !('value' in descriptor)) throw new Error('directadmin-session-schema-unsupported');
+  return descriptor.value;
+}
+
+/** Validate only the installed session identity sub-schema. The session API
+ * contains unrelated host configuration fields, which are neither required
+ * nor copied into the identity projection. This does not authenticate input. */
+export function parseDirectAdminSessionInfo(value: unknown): DirectAdminSessionInfo {
+  try {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) throw new Error();
+    const prototype = Object.getPrototypeOf(value);
+    if (prototype !== Object.prototype && prototype !== null) throw new Error();
+    const effectiveRole = directAdminSessionField(value, 'effectiveRole');
+    const effectiveUsername = directAdminSessionField(value, 'effectiveUsername');
+    const realUsername = directAdminSessionField(value, 'realUsername');
+    if (typeof effectiveRole !== 'string' || !['admin', 'reseller', 'user'].includes(effectiveRole) ||
+        typeof effectiveUsername !== 'string' || typeof realUsername !== 'string' ||
+        effectiveUsername.length > 256 || realUsername.length > 256) throw new Error();
+    requireSecurityId(effectiveUsername, 'effectiveUsername');
+    requireSecurityId(realUsername, 'realUsername');
+    return Object.freeze({ effectiveRole: effectiveRole as DirectAdminSessionRole, effectiveUsername, realUsername });
+  } catch {
+    throw new Error('directadmin-session-schema-unsupported');
+  }
+}
+
+/** Namespace identities by the configured HTTPS DirectAdmin host. Preserve
+ * effective and real usernames separately; role remains presentation only. */
+export function projectDirectAdminSessionIdentity(
+  configuredOrigin: string,
+  value: unknown,
+): DirectAdminExternalSessionIdentity {
+  const info = parseDirectAdminSessionInfo(value);
+  return Object.freeze({ issuer: directAdminIssuer(configuredOrigin), subject: info.effectiveUsername,
+    real_subject: info.realUsername, da_role: info.effectiveRole,
+    impersonating: info.realUsername !== info.effectiveUsername });
 }
 
 function trust(input: Trust): Trust {
@@ -69,6 +161,252 @@ function expected(input: CredentialExpectation): void {
   requireSecurityId(input.device_id, 'device_id');
   if (input.actor_id !== undefined) requireSecurityId(input.actor_id, 'actor_id');
   if (input.context_revision !== undefined) requireSecurityId(input.context_revision, 'context_revision');
+}
+
+const DIRECTADMIN_SESSION_RESPONSE_LIMIT = 256 * 1024;
+const DIRECTADMIN_BOOTSTRAP_TIMEOUT_MS = 5_000;
+
+function exactDataProperties(value: object, expectedKeys: readonly string[]): Record<string, unknown> {
+  const keys = Reflect.ownKeys(value);
+  if (keys.length !== expectedKeys.length || keys.some(key => typeof key !== 'string' || !expectedKeys.includes(key))) {
+    throw new Error('invalid');
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  const result: Record<string, unknown> = Object.create(null) as Record<string, unknown>;
+  for (const key of expectedKeys) {
+    const descriptor = descriptors[key];
+    if (!descriptor || !('value' in descriptor)) throw new Error('invalid');
+    result[key] = descriptor.value;
+  }
+  return result;
+}
+
+const DIRECTADMIN_COOKIE_NAME = /^(?:session|key)$/;
+const COOKIE_TOKEN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+const COOKIE_OCTET = /^[\x21\x23-\x2b\x2d-\x3a\x3c-\x5b\x5d-\x7e]+$/;
+
+/** Keep only the installed DirectAdmin auth cookies and rebuild their header.
+ * Unknown/duplicate cookies are denied so caller-provided ambient cookies do
+ * not reach the configured `/api/session` endpoint. */
+export function directAdminSessionCookieHeader(value: unknown): string {
+  if (typeof value !== 'string' || !value || value.length > 8192 || /[\u0000-\u001f\u007f]/.test(value)) {
+    throw new Error('authentication-denied');
+  }
+  const pairs = value.split(';');
+  if (pairs.length !== 2) throw new Error('authentication-denied');
+  const parsed = new Map<string, string>();
+  for (const pair of pairs) {
+    const part = pair.replace(/^ +| +$/g, '');
+    const separator = part.indexOf('=');
+    if (separator <= 0) throw new Error('authentication-denied');
+    const name = part.slice(0, separator);
+    const cookieValue = part.slice(separator + 1);
+    if (!COOKIE_TOKEN.test(name) || !DIRECTADMIN_COOKIE_NAME.test(name) || !COOKIE_OCTET.test(cookieValue) || parsed.has(name)) {
+      throw new Error('authentication-denied');
+    }
+    parsed.set(name, cookieValue);
+  }
+  const session = parsed.get('session');
+  const key = parsed.get('key');
+  if (parsed.size !== 2 || session === undefined || key === undefined) throw new Error('authentication-denied');
+  return `session=${session}; key=${key}`;
+}
+
+function directAdminBootstrapProof(value: unknown, configuredOrigin: string): DirectAdminBootstrapProofEnvelope {
+  try {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) throw new Error();
+    const fields = exactDataProperties(value, ['origin', 'cookie', 'authorization', 'csrf_nonce']);
+    if (fields.origin !== configuredOrigin || fields.authorization !== null || typeof fields.csrf_nonce !== 'string' ||
+        !/^[A-Za-z0-9_-]{43,128}$/.test(fields.csrf_nonce)) throw new Error();
+    return Object.freeze({ origin: configuredOrigin, cookie: directAdminSessionCookieHeader(fields.cookie), authorization: null,
+      csrf_nonce: fields.csrf_nonce });
+  } catch {
+    throw new Error('authentication-denied');
+  }
+}
+
+function directAdminBootstrapSelection(value: unknown): DirectAdminBootstrapSelection {
+  try {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) throw new Error();
+    const fields = exactDataProperties(value, ['company_id', 'device_id']);
+    if (typeof fields.company_id !== 'string' || typeof fields.device_id !== 'string') throw new Error();
+    requireSecurityId(fields.company_id, 'company_id');
+    requireSecurityId(fields.device_id, 'device_id');
+    return Object.freeze({ company_id: fields.company_id, device_id: fields.device_id });
+  } catch {
+    throw new Error('authentication-denied');
+  }
+}
+
+function randomBase64Url(byteLength = 32): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(byteLength));
+  return btoa(String.fromCharCode(...bytes)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+async function sha256Base64Url(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+
+async function directAdminSessionJson(response: Response, configuredOrigin: string): Promise<unknown> {
+  if (response.status === 401 || response.status === 403) throw new Error('authentication-denied');
+  if (response.status !== 200 || response.redirected) throw new Error('directadmin-service-unavailable');
+  if (response.url) {
+    const finalUrl = new URL(response.url);
+    if (finalUrl.origin !== configuredOrigin || finalUrl.pathname !== '/api/session' || finalUrl.search || finalUrl.hash) {
+      throw new Error('directadmin-service-unavailable');
+    }
+  }
+  const contentType = response.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase();
+  if (contentType !== 'application/json') throw new Error('directadmin-session-schema-unsupported');
+  const declared = response.headers.get('content-length');
+  if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > DIRECTADMIN_SESSION_RESPONSE_LIMIT)) {
+    throw new Error('directadmin-session-response-invalid');
+  }
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error('directadmin-session-response-invalid');
+  const chunks: Uint8Array[] = [];
+  let length = 0;
+  try {
+    while (true) {
+      const item = await reader.read();
+      if (item.done) break;
+      length += item.value.byteLength;
+      if (length > DIRECTADMIN_SESSION_RESPONSE_LIMIT) {
+        void reader.cancel().catch(() => {});
+        throw new Error('directadmin-session-response-invalid');
+      }
+      chunks.push(item.value);
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message === 'directadmin-session-response-invalid') throw error;
+    throw new Error('directadmin-service-unavailable');
+  } finally {
+    try { reader.releaseLock(); } catch { /* cancelled stream */ }
+  }
+  try {
+    const bytes = new Uint8Array(length);
+    let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)) as unknown;
+  } catch {
+    throw new Error('directadmin-session-response-invalid');
+  }
+}
+
+/** Canonical DirectAdmin proof-to-login-assertion producer for #302. It calls
+ * only the configured HTTPS `/api/session` URL, forwards the allowlisted Cookie
+ * and rejects Authorization. The injected nonce consumer must atomically burn
+ * the nonce for this authenticated issuer/effective subject and return only the
+ * current selected company/device. Assertion replay is durably fenced again by
+ * the canonical session registry's unique session identity during `issue()`. */
+export function createDirectAdminBootstrapAssertionProvider(
+  options: DirectAdminBootstrapAssertionProviderOptions,
+): DirectAdminLoginAssertionProvider {
+  const configuredIssuer = directAdminIssuer(options.origin);
+  const configuredOrigin = new URL(options.origin).origin;
+  const upstream = trust(options.upstream);
+  if (upstream.issuer !== configuredIssuer || upstream.audience !== 'titan-login' ||
+      typeof options.consumePreAuthNonce !== 'function') throw new Error('directadmin-bootstrap-config-invalid');
+  requireSecurityId(options.node_id, 'node_id');
+  const lifetime = options.lifetime_seconds ?? 300;
+  if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > 300) throw new Error('credential-lifetime-invalid');
+  const signingKey = options.signing_key instanceof Uint8Array ? new Uint8Array(options.signing_key) : options.signing_key;
+  if (upstream.algorithm === 'HS256' && (!(signingKey instanceof Uint8Array) || signingKey.byteLength < 32)) {
+    throw new Error('credential-key-invalid');
+  }
+  if (upstream.algorithm !== 'HS256' && signingKey instanceof Uint8Array) throw new Error('credential-key-invalid');
+  const fetcher = options.fetcher ?? ((input: string | URL, init?: RequestInit) => fetch(input, init));
+  const clock = options.now ?? (() => new Date());
+
+  async function atNow(): Promise<Date> {
+    const value = clock();
+    if (!(value instanceof Date) || !Number.isFinite(value.getTime())) throw new Error('directadmin-service-unavailable');
+    return new Date(value.getTime());
+  }
+
+  let signingReady: Promise<void> | undefined;
+  async function ensureSigning(at: Date): Promise<void> {
+    signingReady ??= (async () => {
+      const iat = Math.floor(at.getTime() / 1000);
+      const probe = await new SignJWT({ probe: true })
+        .setProtectedHeader({ alg: upstream.algorithm, kid: upstream.key_id, typ: 'titan-login-probe+jwt' })
+        .setIssuer(upstream.issuer).setAudience(upstream.audience).setSubject('configuration-probe')
+        .setIssuedAt(iat).setExpirationTime(iat + 60).sign(signingKey);
+      await jwtVerify(probe, upstream.verification_key, {
+        algorithms: [upstream.algorithm], issuer: upstream.issuer, audience: upstream.audience,
+        typ: 'titan-login-probe+jwt', requiredClaims: ['iss', 'sub', 'aud', 'iat', 'exp'],
+        currentDate: at, clockTolerance: 0,
+      });
+    })();
+    try { await signingReady; } catch { throw new Error('directadmin-service-unavailable'); }
+  }
+
+  async function authenticatedSession(proof: DirectAdminBootstrapProofEnvelope): Promise<DirectAdminExternalSessionIdentity> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), DIRECTADMIN_BOOTSTRAP_TIMEOUT_MS);
+    try {
+      const response = await fetcher(new URL('/api/session', configuredOrigin), {
+        method: 'GET', headers: { accept: 'application/json', cookie: proof.cookie! },
+        redirect: 'error', cache: 'no-store', credentials: 'omit', signal: controller.signal,
+      });
+      const sessionInfo = await directAdminSessionJson(response, configuredOrigin);
+      return projectDirectAdminSessionIdentity(configuredOrigin, sessionInfo);
+    } catch (error) {
+      if (error instanceof Error && ['authentication-denied', 'directadmin-session-schema-unsupported',
+        'directadmin-session-response-invalid', 'directadmin-service-unavailable'].includes(error.message)) throw error;
+      throw new Error('directadmin-service-unavailable');
+    } finally { clearTimeout(timeout); }
+  }
+
+  async function provide(proofInput: DirectAdminBootstrapProofEnvelope): Promise<DirectAdminLoginAssertionInput> {
+    const proof = directAdminBootstrapProof(proofInput, configuredOrigin);
+    const at = await atNow();
+    await ensureSigning(at);
+    const identity = await authenticatedSession(proof);
+    let selection: DirectAdminBootstrapSelection | null;
+    try {
+      selection = await options.consumePreAuthNonce(Object.freeze({ ...identity, csrf_nonce: proof.csrf_nonce }));
+    } catch {
+      throw new Error('directadmin-service-unavailable');
+    }
+    if (selection === null) throw new Error('authentication-denied');
+    const current = directAdminBootstrapSelection(selection);
+    const issuedAt = Math.floor(at.getTime() / 1000);
+    const csrfToken = randomBase64Url();
+    const csrfHash = await sha256Base64Url(csrfToken);
+    // Repeated mint attempts for one server nonce keep the same assertion ID.
+    // The canonical registry derives its one-time session key from (issuer,jti),
+    // so replay remains rejected durably after a restart.
+    const jti = await sha256Base64Url(JSON.stringify([upstream.issuer, identity.subject, proof.csrf_nonce]));
+    try {
+      const loginAssertion = await new SignJWT({
+        company_id: current.company_id, device_id: current.device_id, node_id: options.node_id,
+        csrf_sha256: csrfHash, da_role: identity.da_role, real_sub: identity.real_subject,
+        da_impersonating: identity.impersonating,
+      }).setProtectedHeader({ alg: upstream.algorithm, kid: upstream.key_id, typ: 'titan-login+jwt' })
+        .setIssuer(upstream.issuer).setAudience(upstream.audience).setSubject(identity.subject)
+        .setJti(jti).setIssuedAt(issuedAt).setExpirationTime(issuedAt + lifetime).sign(signingKey);
+      const { payload, protectedHeader } = await jwtVerify(loginAssertion, upstream.verification_key, {
+        algorithms: [upstream.algorithm], issuer: upstream.issuer, audience: upstream.audience,
+        typ: 'titan-login+jwt', requiredClaims: ['iss', 'sub', 'aud', 'iat', 'exp', 'jti'],
+        currentDate: at, clockTolerance: 0,
+      });
+      if (protectedHeader.kid !== upstream.key_id ||
+          Object.keys(protectedHeader).some(key => !['alg', 'kid', 'typ'].includes(key)) ||
+          payload.aud !== upstream.audience || payload.sub !== identity.subject || payload.jti !== jti ||
+          payload.iat !== issuedAt || payload.exp !== issuedAt + lifetime || payload.exp! - payload.iat! > 300 ||
+          payload.real_sub !== identity.real_subject || payload.da_impersonating !== identity.impersonating) {
+        throw new Error('directadmin-assertion-self-check-failed');
+      }
+      return Object.freeze({ login_assertion: loginAssertion, company_id: current.company_id,
+        device_id: current.device_id, csrf_token: csrfToken });
+    } catch {
+      throw new Error('directadmin-service-unavailable');
+    }
+  }
+
+  return Object.freeze({ provide });
 }
 
 function sourceReference(value: unknown): SessionSourceReference {
@@ -187,12 +525,20 @@ export function createSessionCredentialService(options: SessionCredentialOptions
 
   function channel(claims: JWTPayload): DirectAdminCredentialBinding | undefined {
     if (daNode === undefined) {
-      if (claims.node_id !== undefined || claims.csrf_sha256 !== undefined || claims.da_role !== undefined) throw new Error('credential-channel-unconfigured');
+      if (claims.node_id !== undefined || claims.csrf_sha256 !== undefined || claims.da_role !== undefined ||
+          claims.real_sub !== undefined || claims.da_impersonating !== undefined) throw new Error('credential-channel-unconfigured');
       return undefined;
     }
     if (id(claims, 'node_id') !== daNode || !/^[A-Za-z0-9_-]{43}$/.test(id(claims, 'csrf_sha256'))
       || !['admin', 'reseller', 'user'].includes(id(claims, 'da_role'))) throw new Error('credential-channel-invalid');
-    return Object.freeze({ node_id: daNode, csrf_sha256: claims.csrf_sha256 as string, da_role: claims.da_role as DirectAdminCredentialBinding['da_role'] });
+    const provenance = claims.real_sub === undefined && claims.da_impersonating === undefined ? {} : (() => {
+      if (claims.real_sub === undefined || typeof claims.da_impersonating !== 'boolean') throw new Error('credential-channel-invalid');
+      const realSubject = id(claims, 'real_sub');
+      if (claims.da_impersonating !== (realSubject !== id(claims, 'sub'))) throw new Error('credential-channel-invalid');
+      return { real_subject: realSubject, da_impersonating: claims.da_impersonating };
+    })();
+    return Object.freeze({ node_id: daNode, csrf_sha256: claims.csrf_sha256 as string,
+      da_role: claims.da_role as DirectAdminCredentialBinding['da_role'], ...provenance });
   }
 
   async function signed(
@@ -210,7 +556,9 @@ export function createSessionCredentialService(options: SessionCredentialOptions
       target.source_session === undefined ? Number.MAX_SAFE_INTEGER : Math.floor(Date.parse(target.source_session.expires_at) / 1000));
     if (exp <= iat) throw new Error('credential-expired');
     const credential = await new SignJWT({
-      ...binding, identity_provider: upstream.issuer,
+      ...(binding ? { node_id: binding.node_id, csrf_sha256: binding.csrf_sha256, da_role: binding.da_role,
+        ...(binding.real_subject === undefined ? {} : { real_sub: binding.real_subject, da_impersonating: binding.da_impersonating }) } : {}),
+      identity_provider: upstream.issuer,
       session_id: current.session_id, device_id: current.device_id, company_id: current.company_id,
       actor_id: current.actor_id, session_revision: current.session_revision, context_revision: current.context_revision,
       ...(target.source_session ? { source_session: target.source_session, surface: 'zero' } : {}),

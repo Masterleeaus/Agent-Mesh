@@ -3,14 +3,26 @@
 The portfolio release is built from a clean checkout with:
 
 ```bash
+pnpm install --frozen-lockfile --filter . --ignore-scripts
 node scripts/package-directadmin-portfolio.mjs dist/directadmin
 ```
 
-The output contains the exact plugin-ID archives `titan-server-node.tar.gz` and `titan_dev_access.tar.gz` when both enabled source trees are present, plus `provenance.json` with version, source path and SHA-256 for each artifact. Archives are flat, use normalized ownership/timestamps, reject symlinks, and explicitly set role/lifecycle executable modes.
+The output contains `titan-server-node.tar.gz`, `titan_dev_access.tar.gz`, and
+`titan_workforce.tar.gz`, each with a SHA-256 sidecar, plus `provenance.json`.
+The Workforce archive uses the canonical Workforce package builder and a bundle
+of `packages/titan-platform/src/directadmin-plugin.ts` built with the locked
+`esbuild@0.27.3`. Provenance records the SDK source and compiled hashes and pins
+Workforce's Server Node dependency to the exact version and archive hash in the
+same portfolio. Archives are flat, use normalized ownership/timestamps, reject
+symlinks, and explicitly set role/lifecycle executable modes.
 
 ## Automated release checks
 
-CI runs the portfolio packaging tests, builds all enabled archives, validates the Server Node manifest, and runs shell syntax checks. The tests cover flat archive roots, stable filenames, executable entrypoints, provenance output, and symlink rejection.
+CI installs the locked root build dependencies, runs portfolio and Workforce
+package lifecycle tests, builds all enabled archives, validates the Server Node
+manifest, verifies the isolated Developer Portal candidate, and runs shell
+syntax checks. These checks prove package construction and disposable fixtures;
+they do not certify a live DirectAdmin host or exercise a real manager rollback.
 
 ## Disposable-host certification
 

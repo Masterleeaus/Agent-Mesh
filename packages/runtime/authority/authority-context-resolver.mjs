@@ -41,7 +41,7 @@ export class AuthorityContextResolver {
 
     const decision=evaluateWorkerAuthorityDecision({
       authority_decision_id:input.authority_decision_id??`authority:${operation_id}:${action_id}`,
-      company_id,operation_id,action_id,
+      company_id,actor_id:input.actor_id,operation_id,action_id,
       worker:{worker_id,worker_type:input.worker_type??"advanced-intelligence-worker",surface:input.surface??"zero"},
       requirement:requirement??{company_id,capability,effect:"write",required_permissions:["authority.context.missing"],minimum_autonomy_score:100},
       autonomy_snapshot,
