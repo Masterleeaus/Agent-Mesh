@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/auth/session";
+import { requireCompanyId } from "@/lib/db/contracts";
 import { CaptureRecorder } from "./CaptureRecorder";
 
 export const dynamic = "force-dynamic";
@@ -33,5 +34,5 @@ export default async function CapturePage() {
     );
   }
 
-  return <CaptureRecorder />;
+  return <CaptureRecorder key={requireCompanyId(session)} companyId={requireCompanyId(session)} />;
 }

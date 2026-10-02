@@ -110,7 +110,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
                 difficult_access, old_house_risk, coordination_required,
                 finish_expectation, travel_surcharge_cents, risk_adjustment_cents,
                 minimum_service_override_reason,
-                (SELECT COUNT(*)::int FROM estimate_line_items eli
+                (SELECT COUNT(*) FROM estimate_line_items eli
                  WHERE eli.estimate_id = estimates.id AND eli.visible_to_customer = true) AS line_item_count
          FROM estimates WHERE id = $1 AND account_id = $2`,
         [id, session.accountId]
