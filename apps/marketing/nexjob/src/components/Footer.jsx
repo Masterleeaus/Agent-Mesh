@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { getCurrentSiteContext, getIndustryDirectoryLinks } from '../config/siteContext'
+import { getCurrentSiteContext, getIndustryDirectoryLinks, getManagedSiteUrl } from '../config/siteContext'
 
 const footerLinks = {
   Product: [
@@ -101,7 +101,7 @@ function ConfiguredFooter({ context }) {
       }
     : context.kind === 'industry'
       ? {
-          Industry: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features & workforce', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', '/pricing']],
+          Industry: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features & workforce', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', getManagedSiteUrl('/pricing')]],
           OtherIndustries: getIndustryDirectoryLinks().filter(({ host }) => host !== context.site.host).map(({ label, href }) => [label, href]),
           Platform: [['Titan Zero platform', 'https://titanzero.io/']],
         }

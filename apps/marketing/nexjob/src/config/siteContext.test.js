@@ -1,7 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import {
+  MARKETING_DOMAINS,
   VERTICAL_SITES,
   getCanonicalUrl,
   getIndustryDirectoryLinks,
@@ -10,6 +11,7 @@ import {
   getSiteNavigation,
   resolveSiteContext,
 } from './siteContext.js'
+import { verticalCatalogue } from '../data/verticalCatalogue.js'
 
 test('the public host registry contains the approved twenty verticals exactly once', () => {
   assert.equal(VERTICAL_SITES.length, 20)
@@ -36,6 +38,9 @@ test('the public host registry contains the approved twenty verticals exactly on
     'Painting',
     'Plastering',
   ])
+  assert.deepEqual(VERTICAL_SITES.map(({ moduleId }) => moduleId), verticalCatalogue.map(({ id }) => id))
+  assert.ok(VERTICAL_SITES.every((site, index) => site.profile === verticalCatalogue[index]))
+  assert.ok(VERTICAL_SITES.every(({ canonicalUrl, hostname }) => canonicalUrl === `https://${hostname}/`))
 })
 
 test('host resolution keeps the product hub, managed site, app and vertical sites distinct', () => {
@@ -63,6 +68,7 @@ test('hub navigation has the approved labels and keeps managed service off its m
     'Resources',
   ])
   assert.equal(nav.some(({ href }) => href.includes('titanzero.pro')), false)
+  assert.equal(MARKETING_DOMAINS.app, 'app.titanzero.io')
 })
 
 test('managed and vertical navigation stays contextual and the directory links to one canonical host per vertical', () => {
@@ -76,17 +82,23 @@ test('managed and vertical navigation stays contextual and the directory links t
     'FAQs',
     'Assessment request',
   ])
+  assert.equal(managed.find(({ label }) => label === 'Service packages & pricing').href, '/#pricing')
 
   const vertical = getSiteNavigation(resolveSiteContext('plumbing.titanzero.io'))
   assert.ok(vertical.some(({ label }) => label === 'WordPress'))
   assert.ok(vertical.some(({ label }) => label === 'Chrome'))
-  assert.ok(vertical.some(({ label }) => label === 'Access & channels'))
+  assert.ok(vertical.some(({ label }) => label === 'Channels'))
+  assert.equal(vertical.find(({ label }) => label === 'WordPress').href, '/#wordpress')
+  assert.equal(vertical.find(({ label }) => label === 'Chrome').href, '/#chrome')
+  assert.equal(vertical.find(({ label }) => label === 'Pricing').href, 'https://titanzero.pro/pricing')
+  assert.equal(vertical.find(({ label }) => label === 'Start').disabled, true)
 
   const links = getIndustryDirectoryLinks()
   assert.equal(links.length, 20)
   assert.equal(links[0].href, 'https://cleaning.titanzero.io/')
   assert.equal(links.find(({ label }) => label === 'Pool Service').href, 'https://pool-service.titanzero.io/')
   assert.equal(links.find(({ label }) => label === 'Handyman & Property Maintenance').href, 'https://handyman-property-maintenance.titanzero.io/')
+  assert.equal(links.find(({ label }) => label === 'Locksmith & Security').profile.useCases.length, 3)
 })
 
 test('canonical and legacy URL helpers redirect old industry paths without sharing cookies or embedding credentials', () => {
@@ -120,4 +132,15 @@ test('Apache redirects cover each legacy path on the .io apex before SPA fallbac
   const wwwRedirectIndex = lines.findIndex((line) => line.trim() === 'RewriteCond %{HTTP_HOST} ^www\\.titanzero\\.(io|pro)$ [NC]')
   assert.ok(wwwRedirectIndex >= 0)
   assert.equal(lines[wwwRedirectIndex + 1].trim(), 'RewriteRule ^ https://titanzero.%1%{REQUEST_URI} [R=301,L,NE]')
+})
+
+test('review preview has no stale sitemap and blocks indexing', () => {
+  const rules = readFileSync(new URL('../../.htaccess', import.meta.url), 'utf8')
+  const robots = readFileSync(new URL('../../public/robots.txt', import.meta.url), 'utf8')
+  const entry = readFileSync(new URL('../../index.html', import.meta.url), 'utf8')
+
+  assert.equal(existsSync(new URL('../../public/sitemap.xml', import.meta.url)), false)
+  assert.ok(rules.split(/\r?\n/).includes('  RewriteRule ^sitemap\\.xml$ - [G,L]'))
+  assert.equal(robots.trim(), 'User-agent: *\nDisallow: /')
+  assert.match(entry, /name="robots" content="noindex, nofollow"/)
 })

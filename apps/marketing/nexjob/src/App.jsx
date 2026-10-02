@@ -16,6 +16,7 @@ import CostSovereignty from './pages/CostSovereignty'
 import EnvironmentalSystems from './pages/EnvironmentalSystems'
 import Compare from './pages/Compare'
 import IndustryHome, { industryConfigs } from './pages/IndustryHome'
+import CatalogueIndustryHome from './pages/CatalogueIndustryHome'
 import ScrollToTop from './components/ScrollToTop'
 import PageMeta from './components/PageMeta'
 import YourZero from './pages/YourZero'
@@ -42,8 +43,7 @@ function ExternalRedirect({ href }) {
 }
 
 function IndustryHostLanding({ site }) {
-  if (industryConfigs[site.moduleId]) return <IndustryHome industryOverride={site.moduleId} />
-  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title={`${site.name} Preview`} description={`The ${site.name} marketing module is not included in this review build.`} /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">{site.name}</h1><p className="text-nx-muted">This review build does not contain approved industry content for this vertical yet.</p><a href="https://titanzero.io/industries" className="inline-block mt-6 text-sm text-nx-purple-light">View all industries →</a></div></main>
+  return <CatalogueIndustryHome profile={site.profile} />
 }
 
 function SiteRoot({ context }) {

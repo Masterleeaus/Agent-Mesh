@@ -52,6 +52,7 @@ Options -MultiViews -Indexes
   RewriteRule ^industries/painting/?$ https://painting.titanzero.io/ [R=301,L,NE]
   RewriteCond %{HTTP_HOST} ^(www\.)?titanzero\.io$ [NC]
   RewriteRule ^industries/plastering/?$ https://plastering.titanzero.io/ [R=301,L,NE]
+  RewriteRule ^sitemap\.xml$ - [G,L]
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]

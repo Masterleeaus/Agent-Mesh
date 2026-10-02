@@ -190,7 +190,8 @@ function SiteLink({ item, context, closeMenu = () => {} }) {
   const active = href.startsWith('/') && (window.location.pathname === href || (href === '/' && window.location.pathname === '/'))
   const className = `block whitespace-nowrap px-3 py-2 rounded-lg text-sm transition-colors ${active ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`
   if (item.action && (item.disabled || !href || !APP_ACCESS_AVAILABLE || (context.kind === 'managed' && item.label === 'Assessment request'))) {
-    return <button type="button" disabled aria-disabled="true" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}{item.label === 'Assessment request' || !href ? ' unavailable' : ''}</button>
+    const unavailable = item.label === 'Assessment request' || !href || !APP_ACCESS_AVAILABLE
+    return <button type="button" disabled aria-disabled="true" aria-label={unavailable ? `${item.label} unavailable` : item.label} title={unavailable ? 'Unavailable in this review preview' : undefined} className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
   }
   if (item.external || href.startsWith('https://')) return <a href={href || '#'} onClick={closeMenu} className={className}>{item.label}</a>
   return <Link to={href || '/'} onClick={closeMenu} className={className}>{item.label}</Link>
@@ -207,7 +208,7 @@ function ConfiguredNavbar({ context }) {
   const accountActions = context.kind === 'hub'
     ? [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }, { label: 'Get started', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE }]
     : context.kind === 'industry'
-      ? [{ label: 'Start', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE }]
+      ? [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
       : [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
 
   return (

@@ -1,37 +1,34 @@
+import {
+  getVerticalByHostname,
+  getVerticalByLegacyPath,
+  verticalCatalogue,
+} from '../data/verticalCatalogue.js'
+
 export const MARKETING_DOMAINS = Object.freeze({
   hub: 'titanzero.io',
   managed: 'titanzero.pro',
   app: 'app.titanzero.io',
 })
 
-// Public hostname catalog. Content stays in the industry modules; this list is
-// only the domain/path routing contract shared by the site shell.
-export const VERTICAL_SITES = Object.freeze([
-  { host: 'cleaning', name: 'Cleaning', moduleId: 'cleaning', legacyPaths: ['cleaning'] },
-  { host: 'window-cleaning', name: 'Window Cleaning', moduleId: 'window-cleaning', legacyPaths: ['window-cleaning'] },
-  { host: 'pressure-washing', name: 'Pressure Washing', moduleId: 'pressure-washing', legacyPaths: ['pressure-washing'] },
-  { host: 'pool-service', name: 'Pool Service', moduleId: 'pools', legacyPaths: ['pools', 'pool-service'] },
-  { host: 'pest-control', name: 'Pest Control', moduleId: 'pest-control', legacyPaths: ['pest-control'] },
-  { host: 'plumbing', name: 'Plumbing', moduleId: 'plumbing', legacyPaths: ['plumbing'] },
-  { host: 'electrical', name: 'Electrical', moduleId: 'electrical', legacyPaths: ['electrical'] },
-  { host: 'hvac', name: 'HVAC', moduleId: 'hvac', legacyPaths: ['hvac'] },
-  { host: 'locksmith-security', name: 'Locksmith & Security', moduleId: 'locksmith-security', legacyPaths: ['locksmith-security'] },
-  { host: 'appliance-equipment-repair', name: 'Appliance & Equipment Repair', moduleId: 'appliance-equipment-repair', legacyPaths: ['appliance-equipment-repair'] },
-  { host: 'construction', name: 'Construction', moduleId: 'construction', legacyPaths: ['construction'] },
-  { host: 'roofing', name: 'Roofing', moduleId: 'roofing', legacyPaths: ['roofing'] },
-  { host: 'tiling', name: 'Tiling', moduleId: 'tiling', legacyPaths: ['tiling'] },
-  { host: 'concreting', name: 'Concreting', moduleId: 'concreting', legacyPaths: ['concreting'] },
-  { host: 'renovations', name: 'Renovations', moduleId: 'renovations', legacyPaths: ['renovations'] },
-  { host: 'landscaping-lawn-care', name: 'Landscaping & Lawn Care', moduleId: 'landscaping', legacyPaths: ['landscaping', 'landscaping-lawn-care'] },
-  { host: 'handyman-property-maintenance', name: 'Handyman & Property Maintenance', moduleId: 'handyman-property-maintenance', legacyPaths: ['handyman', 'property-maintenance', 'handyman-property-maintenance'] },
-  { host: 'mobile-services', name: 'Mobile Services', moduleId: 'mobile-services', legacyPaths: ['mobile-services'] },
-  { host: 'painting', name: 'Painting', moduleId: 'painting', legacyPaths: ['painting'] },
-  { host: 'plastering', name: 'Plastering', moduleId: 'plastering', legacyPaths: ['plastering'] },
-])
+// This is a route-facing projection of the source catalogue, not a second
+// industry registry. Content, hostnames and canonical URLs share one owner.
+export const VERTICAL_SITES = Object.freeze(verticalCatalogue.map((profile) => Object.freeze({
+  host: profile.slug,
+  hostname: profile.host,
+  name: profile.name,
+  moduleId: profile.id,
+  canonicalUrl: profile.canonicalUrl,
+  profile,
+  legacyPaths: Object.freeze([...new Set([
+    profile.slug,
+    ...profile.legacyPaths.map((path) => path.replace(/^\/industries\//, '')),
+  ])]),
+})))
 
 const verticalByHost = new Map(VERTICAL_SITES.map((site) => [site.host, site]))
+const verticalByHostname = new Map(VERTICAL_SITES.map((site) => [site.hostname, site]))
 const verticalByLegacyPath = new Map(
-  VERTICAL_SITES.flatMap((site) => site.legacyPaths.map((path) => [path, site])),
+  VERTICAL_SITES.flatMap((site) => site.legacyPaths.map((path) => [`/industries/${path}`, site])),
 )
 
 const hubNavigation = Object.freeze([
@@ -46,23 +43,22 @@ const hubNavigation = Object.freeze([
 
 const managedNavigation = Object.freeze([
   { label: 'Overview', href: '/' },
-  { label: 'What .pro manages', href: '/what-we-manage' },
-  { label: 'Assessment & implementation', href: '/assessment' },
-  { label: 'Service packages & pricing', href: '/pricing' },
-  { label: 'Case studies', href: '/case-studies' },
-  { label: 'FAQs', href: '/faq' },
+  { label: 'What .pro manages', href: '/#what-we-manage' },
+  { label: 'Assessment & implementation', href: '/#assessment' },
+  { label: 'Service packages & pricing', href: '/#pricing' },
+  { label: 'Case studies', href: '/#case-studies' },
+  { label: 'FAQs', href: '/#faq' },
   { label: 'Assessment request', href: '/#assessment-request', action: true },
 ])
 
 const verticalNavigation = Object.freeze([
-  { label: 'Overview', href: '/' },
   { label: 'Workflows', href: '/#workflows' },
-  { label: 'Industry features & workforce', href: '/#features' },
-  { label: 'WordPress', href: '/works-everywhere#wordpress' },
-  { label: 'Chrome', href: '/works-everywhere#chrome' },
-  { label: 'Access & channels', href: '/#channels' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Start', href: `https://${MARKETING_DOMAINS.app}/app`, external: true, action: true },
+  { label: 'Features', href: '/#features' },
+  { label: 'WordPress', href: '/#wordpress' },
+  { label: 'Chrome', href: '/#chrome' },
+  { label: 'Channels', href: '/#channels' },
+  { label: 'Pricing', href: `https://${MARKETING_DOMAINS.managed}/pricing`, external: true },
+  { label: 'Start', href: undefined, external: true, action: true, disabled: true },
 ])
 
 export function normalizeHostname(hostname = '') {
@@ -74,7 +70,7 @@ function stripWww(hostname) {
 }
 
 function verticalOrigin(site) {
-  return `https://${site.host}.${MARKETING_DOMAINS.hub}`
+  return (site.canonicalUrl || `https://${site.host}.${MARKETING_DOMAINS.hub}/`).replace(/\/$/, '')
 }
 
 export function resolveSiteContext(hostname) {
@@ -99,7 +95,8 @@ export function resolveSiteContext(hostname) {
   const suffix = `.${MARKETING_DOMAINS.hub}`
   if (normalized.endsWith(suffix)) {
     const host = normalized.slice(0, -suffix.length)
-    const site = verticalByHost.get(host)
+    const profile = getVerticalByHostname(normalized)
+    const site = profile ? verticalByHost.get(host) : null
     if (site) return { kind: 'industry', hostname: normalized, origin: verticalOrigin(site), site }
   }
 
@@ -116,14 +113,20 @@ export function getSiteNavigation(context) {
 export function getIndustryDirectoryLinks() {
   return VERTICAL_SITES.map((site) => ({
     label: site.name,
-    href: `${verticalOrigin(site)}/`,
+    href: site.canonicalUrl,
     host: site.host,
     moduleId: site.moduleId,
+    profile: site.profile,
   }))
 }
 
 export function getVerticalSiteForLegacyPath(routeSlug) {
-  return verticalByLegacyPath.get(String(routeSlug || '').toLowerCase()) || null
+  const slug = String(routeSlug || '').toLowerCase()
+  return verticalByLegacyPath.get(`/industries/${slug}`)
+    || (() => {
+      const profile = getVerticalByLegacyPath(`/industries/${slug}`)
+      return profile ? verticalByHost.get(profile.slug) || null : null
+    })()
 }
 
 export function getCanonicalUrl(context, pathname = '/') {
@@ -139,7 +142,7 @@ export function getLegacyIndustryRedirect(context, pathname = '/') {
   const match = String(pathname).match(/^\/industries\/([^/]+)\/?$/)
   if (!match) return null
 
-  const target = verticalByLegacyPath.get(decodeURIComponent(match[1]).toLowerCase())
+  const target = verticalByLegacyPath.get(`/industries/${decodeURIComponent(match[1]).toLowerCase()}`)
   if (!target) return null
 
   const targetUrl = `${verticalOrigin(target)}/`

@@ -3,7 +3,8 @@ import FadeIn from '../components/FadeIn'
 import CTASection from '../components/CTASection'
 import { Link } from 'react-router-dom'
 import { additionalIndustryConfigs } from '../data/industryExtensions'
-import { getCurrentSiteContext, getIndustryDirectoryLinks, VERTICAL_SITES } from '../config/siteContext'
+import { getAvailability } from '../data/verticalCatalogue'
+import { getCurrentSiteContext, VERTICAL_SITES } from '../config/siteContext'
 
 const existingIndustries = [
   { icon: '🧹', name: 'Cleaning', slug: 'cleaning', desc: 'Coordinate enquiries, recurring services, team assignments, property notes, checklists, customer communication and follow-up.', tags: ['Recurring Service', 'Team Coordination', 'Property Notes'] },
@@ -33,27 +34,16 @@ const profileBySlug = new Map([
 ].map((profile) => [profile.slug, profile]))
 
 const productionIndustries = VERTICAL_SITES.map((site) => {
-  if (site.moduleId === 'handyman-property-maintenance') {
-    const handyman = profileBySlug.get('handyman')
-    return {
-      ...site,
-      icon: handyman?.icon || '🛠️',
-      href: `https://${site.host}.titanzero.io/`,
-      desc: 'Coordinate small repairs, property requests, approved work, site tasks and service history in one industry context.',
-      tags: ['Page content pending'],
-      previewPath: 'handyman',
-      contentReady: false,
-    }
-  }
-  const profile = profileBySlug.get(site.moduleId)
   return {
     ...site,
-    icon: profile?.icon || '🧭',
-    href: `https://${site.host}.titanzero.io/`,
-    desc: profile?.directoryDescription || profile?.desc || `${site.name} content is being prepared for this review build.`,
-    tags: profile?.tags || ['Content in development'],
-    previewPath: site.legacyPaths[0],
-    contentReady: Boolean(profile),
+    icon: profileBySlug.get(site.moduleId)?.icon || (site.moduleId === 'handyman-property-maintenance' ? '🛠️' : '🧭'),
+    href: site.canonicalUrl,
+    desc: site.profile.intro,
+    tags: [
+      `Marketing ${getAvailability(site.profile.marketingAvailabilityRef).label}`,
+      `Host ${getAvailability(site.profile.hostnameAvailabilityRef).label}`,
+    ],
+    contentReady: true,
   }
 })
 

@@ -10,6 +10,14 @@ const pillars = [
   ['Team', 'Specialist capabilities and systems coordinated within the person’s role and approved scope.'],
 ]
 
+const personalServiceExamples = [
+  ['Enquiry and booking context', 'Bring a service request, preferred time and customer details together as an example of the context a business may need to review.'],
+  ['The person providing the service', 'Show an owner or team member the customer, service notes and agreed next steps that relate to their role.'],
+  ['Follow-through after a visit', 'Keep customer questions, service updates and future follow-up visible as part of an intended end-to-end journey.'],
+]
+
+const personalServiceIndustries = ['Hair salons', 'Barbers', 'Beauty', 'Nails', 'Massage', 'Spas', 'Personal trainers', 'Gyms & fitness', 'Wellness', 'Coaching']
+
 export default function PlatformHubHome() {
   return <>
     <PageMeta title="Titan Zero Platform" description="Explore the Titan Zero platform, its product capabilities, work surfaces and industry catalogue." />
@@ -33,6 +41,25 @@ export default function PlatformHubHome() {
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-8">A shared product model, adapted to the person.</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {pillars.map(([name, description]) => <article key={name} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><h3 className="text-xl font-bold mb-3">{name}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-24 border-y border-nx-border bg-nx-surface/40">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 items-end mb-10">
+            <div><SectionLabel>Personal Services</SectionLabel><h2 className="text-3xl sm:text-4xl font-extrabold mb-4">Service work, connected to the people doing it.</h2></div>
+            <p className="text-nx-muted leading-relaxed">Appointment-based and personal service businesses have their own customer relationships, schedules and follow-through. The examples below adapt useful parts of the Personal Services marketing source to the shared Titan Zero platform story. They describe intended workflows, not released features.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {personalServiceExamples.map(([title, description]) => <article key={title} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><h3 className="font-bold mb-3">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}
+          </div>
+          <div className="mt-8 flex flex-wrap gap-2" aria-label="Personal Services industry examples">
+            {personalServiceIndustries.map((industry) => <span key={industry} className="rounded-full border border-nx-border bg-nx-bg px-3 py-1.5 text-xs text-nx-muted">{industry}</span>)}
+          </div>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-nx-border bg-nx-bg p-6">
+            <p className="text-sm text-nx-muted">Implementation and ongoing management are covered on the separate service site.</p>
+            <a href="https://titanzero.pro/" className="text-sm font-semibold text-nx-purple-light hover:text-white">Titan Zero Managed Services →</a>
           </div>
         </div>
       </section>
