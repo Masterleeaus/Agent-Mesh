@@ -1,0 +1,152 @@
+{
+  "schema": "titan-package-license-audit/v1",
+  "manifests": [
+    {
+      "path": "apps/browser/package.json",
+      "name": "titan-zero-browser-node",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "9757c9fdc907b33e0b62abb6073c4d852df732cabdaa496c6496ada8d6aac10d"
+    },
+    {
+      "path": "apps/browser/src/browser/agent-runtime/package.json",
+      "name": null,
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "a4710f8ad3d474b62fae39aa1ffff43b9c4d838894610972ede32fbbabc085fa"
+    },
+    {
+      "path": "apps/directadmin/server-node/package.json",
+      "name": "@titan-zero/server-node",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "0b2dc9d3556c30dbbbe309defb31f9c91e2be135ac1ec9a0fc096824e54c31d7"
+    },
+    {
+      "path": "apps/llm-plugin/package.json",
+      "name": "titan-zero-chatgpt-app",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "8376161a8627f21cc2fa9a672ef6cd1a849f5fff0c15ea557ae42c194e2b244a"
+    },
+    {
+      "path": "apps/marketing/fieldops/package.json",
+      "name": "titan-zero-marketing-fieldops",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "4bcda907d7dd02eeb6e08c0e7c7983fda788b9747e211b694275cf7480a82e09"
+    },
+    {
+      "path": "apps/marketing/nexjob/package.json",
+      "name": "titan-zero-field-services-marketing",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "8dfef3adbbf03511e1f75c7eaa5bcd07c172617e48d55b3460cd04ad27cd50d4"
+    },
+    {
+      "path": "apps/marketing/tradepilot/package.json",
+      "name": "titan-zero-marketing-tradepilot",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "1da53a40e56cf3c8a51fcc0c8d2bba3b6314708b049d91f93898ce9f75a6ea12"
+    },
+    {
+      "path": "apps/pwa/package.json",
+      "name": "@titan-zero/pwa",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "dafd854bcdf02e6b3be861eca8586646027b44639c54eceae158eb185ccc6ed7"
+    },
+    {
+      "path": "apps/web/marketing-source/fieldops/package.json",
+      "name": "fieldops-marketing-site",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "2b905abb4f233c5b02d3804f8f70e362515836f0b0399c6751cad6119e29d903"
+    },
+    {
+      "path": "apps/web/marketing-source/tradepilot/package.json",
+      "name": "tradepilot-waitlist",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "5c8c1b8337716c8c1aa488d72eba6f387808a2c08fa9989337a415883ef7451e"
+    },
+    {
+      "path": "apps/web/package.json",
+      "name": "@titan-zero/web",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+    },
+    {
+      "path": "package.json",
+      "name": "titan-zero",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "b8d975a66b50c523615ffc3b35ec23995e636eb7b800cda815415cc6f189595a"
+    },
+    {
+      "path": "packages/domain/package.json",
+      "name": "@titan-zero/domain",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "60a9b5e8af31a90262011691d985b10e05ada86b0407a554a57223cd68cfa826"
+    },
+    {
+      "path": "packages/email-templates/package.json",
+      "name": "@titan-zero/email-templates",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "f522cff7de36b80dae8c59dc0a3ec7695e12a459186c8a1866f785dfae907b82"
+    },
+    {
+      "path": "packages/log/package.json",
+      "name": "@titan-zero/log",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "4b13aa9adb84540bdac68afc34fc8588992b92d0486885b500e07a7164e97972"
+    },
+    {
+      "path": "packages/money/package.json",
+      "name": "@titan-zero/money",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "183b675c0cb4d235e9a2f159790b3e628cacbde457f3beeec66b0cb214017e2b"
+    },
+    {
+      "path": "packages/storage/package.json",
+      "name": "@titan-zero/storage",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "cee710b2b5e027dc723926d819dedd0586a85212e045379b6ba6e1f249f90e65"
+    },
+    {
+      "path": "packages/titan-platform/package.json",
+      "name": "@titan-zero/titan-platform",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "becf3dce9c92f95a78c7083176d0935156d3351927485d2546601775e6cc6238"
+    },
+    {
+      "path": "packages/workforce/package.json",
+      "name": "@titan-zero/workforce-legacy",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "5f74323963b91ef7908b97b056d7f3fdb9563b90d7be4759bd3dd9a83f6b0471"
+    },
+    {
+      "path": "services/worker/package.json",
+      "name": "@titan-zero/worker",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "3c7221765b70ddf0a100df35487eba207ff5b782fcdf928997b48988dc537ea3"
+    },
+    {
+      "path": "services/workforce/package.json",
+      "name": "@titan-zero/workforce",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "b6bb193f2c87e0e7f72d96b555e93fa2ef3856dfd9d7774517381371fc8ca44a"
+    }
+  ]
+}
