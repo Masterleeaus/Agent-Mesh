@@ -457,9 +457,6 @@
     ],
     "WORKFORCE_WEB_SQLITE_PATH": [
       "services/workforce/src/production-dependencies.ts"
-    ],
-    "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE": [
-      "services/workforce/src/production-dependencies.ts"
     ]
   }
 }
