@@ -49,7 +49,7 @@ function SiteRoot({ context }) {
   if (context.kind === 'preview') return <><PageMeta /><Home /></>
   if (context.kind === 'hub') return <PlatformHubHome />
   if (context.kind === 'industry') return <IndustryHostLanding site={context.site} />
-  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title="Site not found" description="This Titan Zero site host is not configured." /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">This site is not configured.</h1><p className="text-nx-muted">Use the Titan Zero platform site.</p><div className="flex justify-center gap-5 mt-6"><a href="https://titanzero.io/" className="text-sm text-nx-purple-light">Titan Zero platform</a></div></div></main>
+  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title="Site not found" description="This Titan Zero site host is not configured." /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">This site is not configured.</h1><p className="text-nx-muted">Use the Titan Zero platform or managed-services site.</p><div className="flex justify-center gap-5 mt-6"><a href="https://titanzero.io/" className="text-sm text-nx-purple-light">Titan Zero platform</a><a href="https://titanzero.pro/" className="text-sm text-nx-purple-light">Titan Zero Managed Services</a></div></div></main>
 }
 
 function LegacyIndustryPath({ context }) {

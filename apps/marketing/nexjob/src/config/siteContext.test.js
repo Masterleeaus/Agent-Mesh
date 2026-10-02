@@ -94,7 +94,7 @@ test('vertical navigation stays contextual and the directory links to one canoni
   assert.equal(links.find(({ label }) => label === 'Locksmith & Security').profile.useCases.length, 3)
 })
 
-test('canonical and legacy URL helpers redirect old industry paths without sharing cookies or embedding credentials', () => {
+test('canonical and legacy URL helpers preserve contextual service links without sharing cookies or embedding credentials', () => {
   const hub = resolveSiteContext('titanzero.io')
   const cleaning = resolveSiteContext('cleaning.titanzero.io')
   assert.equal(getCanonicalUrl(hub, '/features'), 'https://titanzero.io/features')
@@ -105,7 +105,14 @@ test('canonical and legacy URL helpers redirect old industry paths without shari
   assert.equal(getLegacyIndustryRedirect(hub, '/industries/not-a-vertical'), null)
   assert.ok(VERTICAL_SITES.every(({ host }) => `https://${host}.titanzero.io/`.includes('token=') === false))
   const appSource = readFileSync(new URL('../App.jsx', import.meta.url), 'utf8')
-  assert.doesNotMatch(appSource, /titanzero\.pro|ManagedSiteHome|\/what-we-manage|\/case-studies/)
+  assert.match(appSource, /href="https:\/\/titanzero\.pro\/"/)
+  assert.doesNotMatch(appSource, /ManagedSiteHome|\/what-we-manage|\/case-studies/)
+  const hubSource = readFileSync(new URL('../pages/PlatformHubHome.jsx', import.meta.url), 'utf8')
+  assert.match(hubSource, /Implementation and ongoing management are covered on the separate service site\./)
+  assert.match(hubSource, /href="https:\/\/titanzero\.pro\/"/)
+  const verticalSource = readFileSync(new URL('../pages/IndustryHome.jsx', import.meta.url), 'utf8')
+  assert.match(verticalSource, /\['Fully Managed','https:\/\/titanzero\.pro\/'\]/)
+  assert.doesNotMatch(readFileSync(new URL('../pages/CatalogueIndustryHome.jsx', import.meta.url), 'utf8'), /titanzero\.pro/)
 })
 
 test('Apache redirects cover each legacy path on the .io apex before SPA fallback', () => {

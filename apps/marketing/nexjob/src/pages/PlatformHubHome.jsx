@@ -56,6 +56,10 @@ export default function PlatformHubHome() {
           <div className="mt-8 flex flex-wrap gap-2" aria-label="Personal Services industry examples">
             {personalServiceIndustries.map((industry) => <span key={industry} className="rounded-full border border-nx-border bg-nx-bg px-3 py-1.5 text-xs text-nx-muted">{industry}</span>)}
           </div>
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-nx-border bg-nx-bg p-6">
+            <p className="text-sm text-nx-muted">Implementation and ongoing management are covered on the separate service site.</p>
+            <a href="https://titanzero.pro/" className="text-sm font-semibold text-nx-purple-light hover:text-white">Titan Zero Managed Services →</a>
+          </div>
         </div>
       </section>
 
