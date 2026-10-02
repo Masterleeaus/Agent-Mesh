@@ -62,6 +62,13 @@ Unrun/blocked checks and residual risk:
 - [ ] Conflicts were resolved on this branch, not by creating a replacement branch
 - [ ] Verification invalidated by conflict resolution was rerun
 
+### Product gate
+
+**Subproduct gate:** defer / run
+
+Set this to `run` only when this PR completes the full linked subproduct and should
+run the broad Titan CI suite. Ordinary implementation slices leave it at `defer`.
+
 ### Slice evidence
 
 For a partial PR, keep `Refs #<parent>` and provide:
