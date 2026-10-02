@@ -90,7 +90,12 @@ ordering by exact filename. Their actual applied status is recorded as
 in this repository. Existing filename-only rows remain checksum-unverified;
 the runner does not invent a checksum for them. Newly applied rows record the
 manifest checksum, and a later checksum mismatch fails before applying further
-migrations. Before certifying a supported historical deployment, collect a
+migrations. Pending SQL and its ledger insert run in a single PostgreSQL
+transaction. Legacy no-ledger adoption seeds all filenames in one transaction,
+so an interrupted seed cannot look like a partial established history.
+Migration 088's explicit top-level transaction markers are removed only in the
+generated execution wrapper so its unchanged, checksum-verified source
+participates in the same transaction. Before certifying a supported historical deployment, collect a
 sanitized per-company filename inventory and schema fingerprint, then classify
 each pair as applied/not applied for that installation. Do not infer live
 history from the repository manifest.
