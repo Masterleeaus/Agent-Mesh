@@ -209,6 +209,8 @@ test("builds a deterministic escaped sitemap for live drafts and blocks preview 
  assert.equal(live.sitemap_xml,'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://brand.example/</loc></url><url><loc>https://brand.example/about&amp;team</loc></url></urlset>');
  assert.equal(live.robots_txt,"User-agent: *\nAllow: /\nSitemap: https://brand.example/sitemap.xml\n");
  assert.equal(live.authority_granted,false);
+ const slashOrigin=createMicroweberSitemapDraft(site,"https://brand.example/");
+ assert.equal(slashOrigin.robots_txt,live.robots_txt);
  const preview=createMicroweberSitemapDraft({...site,environment:"preview"},"https://preview.example");
  assert.equal(preview.sitemap_xml,"");
  assert.equal(preview.robots_txt,"User-agent: *\nDisallow: /\n");
