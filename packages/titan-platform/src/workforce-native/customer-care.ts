@@ -152,7 +152,7 @@ export function buildTitanCustomerCarePlan(input: TitanCustomerCarePlanInput) {
 
   return Object.freeze({
     schema: "titan.zero.workforce-native.customer-care-plan/v1",
-    agentKey: "customer_care",
+    agentKey: "customer_care" as const,
     company_id,
     actor_id,
     action: input.action,

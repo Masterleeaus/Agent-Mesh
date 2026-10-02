@@ -10,6 +10,7 @@ const VALID_ENV = {
 
 const ENV_KEYS = [
   "DATABASE_URL",
+  "DATABASE_DIALECT",
   "REDIS_URL",
   "AUTH_SECRET",
   "NODE_ENV",
@@ -44,16 +45,16 @@ describe("getEnv validation", () => {
     expect(() => getEnv()).toThrow(/AUTH_SECRET must be at least 32 characters/);
   });
 
-  it("throws when DATABASE_URL is missing", () => {
+  it("defaults to the canonical local SQLite URL when DATABASE_URL is absent", () => {
     Object.assign(process.env, { ...VALID_ENV });
     delete process.env.DATABASE_URL;
-    expect(() => getEnv()).toThrow(/DATABASE_URL/);
+    expect(getEnv().DATABASE_URL).toBe("file:./data/titan-zero.db");
   });
 
-  it("throws in production when DATABASE_URL is missing", () => {
+  it("retains the SQLite runtime default in production with a valid secret", () => {
     Object.assign(process.env, { ...VALID_ENV, NODE_ENV: "production" });
     delete process.env.DATABASE_URL;
-    expect(() => getEnv()).toThrow(/DATABASE_URL/);
+    expect(getEnv().DATABASE_URL).toBe("file:./data/titan-zero.db");
   });
 
   it("succeeds when REDIS_URL is absent (field is optional)", () => {
@@ -80,10 +81,21 @@ describe("getEnv validation", () => {
   });
 
   it("build-time bypass activates when NEXT_PHASE=phase-production-build", () => {
-    // No DATABASE_URL set — would normally throw
+    // Build discovery needs no runtime secrets; it must not choose PostgreSQL.
     process.env.NEXT_PHASE = "phase-production-build";
     expect(() => getEnv()).not.toThrow();
-    expect(getEnv().DATABASE_URL).toBe("postgres://placeholder");
+    expect(getEnv().DATABASE_URL).toBe("file:./data/titan-zero.db");
+    expect(getEnv().DATABASE_DIALECT).toBe("sqlite");
+  });
+
+  it("rejects an explicitly empty storage URL instead of silently selecting a database", () => {
+    Object.assign(process.env, { ...VALID_ENV, DATABASE_URL: "" });
+    expect(() => getEnv()).toThrow(/DATABASE_URL/);
+  });
+
+  it("does not apply the build secret bypass at production runtime", () => {
+    process.env.NODE_ENV = "production";
+    expect(() => getEnv()).toThrow(/AUTH_SECRET/);
   });
 
   it("caches the result on second call", () => {
