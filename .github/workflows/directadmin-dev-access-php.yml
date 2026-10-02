@@ -202,7 +202,8 @@ jobs:
             cd "$release"
             sha256sum titan_dev_access.tar.gz > titan_dev_access.tar.gz.sha256
           )
-          python3 - "$release" "$GITHUB_SHA" "$GITHUB_RUN_ID" <<'PY'
+          source_commit="${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 - "$release" "$GITHUB_SHA" "$source_commit" "$GITHUB_RUN_ID" <<'PY'
           import hashlib
           import json
           import pathlib
@@ -240,8 +241,9 @@ jobs:
               "plugin_id": "titan_dev_access",
               "display_name": "Developer Portal",
               "version": "1.3.4",
-              "source_commit": sys.argv[2],
-              "workflow_run_id": int(sys.argv[3]),
+              "source_commit": sys.argv[3],
+              "workflow_commit": sys.argv[2],
+              "workflow_run_id": int(sys.argv[4]),
               "php_cli": php,
               "archive": {
                   "file": "titan_dev_access.tar.gz",
@@ -265,13 +267,13 @@ jobs:
           (release / "provenance.json").write_text(
               json.dumps(provenance, indent=2, sort_keys=True) + "\n", encoding="utf-8"
           )
-          print(f"Prepared v1.3.4 candidate SHA-256 {digest} from {sys.argv[2]}")
+          print(f"Prepared v1.3.4 candidate SHA-256 {digest} from source {sys.argv[3]} in workflow commit {sys.argv[2]}")
           PY
 
       - name: Upload review-only v1.3.4 candidate artifact
         uses: actions/upload-artifact@v4
         with:
-          name: developer-portal-v1.3.4-${{ github.sha }}
+          name: developer-portal-v1.3.4-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/developer-portal-v1.3.4
           if-no-files-found: error
           retention-days: 14
