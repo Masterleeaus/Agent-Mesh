@@ -40,8 +40,16 @@ ENV_FILE="${INSTALL_ROOT%/}/shared/env/.env"
 [[ -f "$COMPOSE" ]] || die "Compose file not found: $COMPOSE"
 [[ -f "$ENV_FILE" ]] || die "Environment file not found: $ENV_FILE"
 
+# These install-root paths are required by infra/compose.vps.yml for Compose
+# interpolation; --env-file alone does not define them.
+export TZ_ENV_FILE="$ENV_FILE"
+export TZ_DATA_ROOT="${INSTALL_ROOT%/}/shared/data"
+
 compose=(docker compose --env-file "$ENV_FILE" -f "$COMPOSE")
-if [[ -z "$("${compose[@]}" ps --all --quiet workforce)" ]]; then
+if ! CONTAINERS="$("${compose[@]}" ps --all --quiet workforce)"; then
+  die 'Could not inspect the Workforce Compose service; no removal was attempted.'
+fi
+if [[ -z "$CONTAINERS" ]]; then
   log 'Workforce service is already absent; nothing to remove.'
   exit 0
 fi

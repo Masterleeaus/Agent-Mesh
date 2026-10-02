@@ -42,6 +42,9 @@ registry, keys, environment, or uploads. Repeating the command succeeds after
 the container is already absent. It fails closed if the active release's
 Compose file or shared environment is missing.
 
+Serialize removal with install or upgrade operations; do not run lifecycle
+commands concurrently against the same install root.
+
 This is a service removal, not a full host uninstall. Rerunning the supported
 installer will recreate Workforce from the release configuration. To remove
 other services or shared state, use a separately reviewed host retirement
