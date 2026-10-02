@@ -40,6 +40,17 @@ def active_evidence_sources(root=ROOT):
     return found
 
 
+PRIMARY_ROLES = {
+    "accepted-factual-business-evidence-ledger",
+    "execution-provider-receipt",
+    "observed-verification-artifact",
+    "restart-recovery-evidence",
+    "derived-value-analytics",
+    "simulation-counterfactual",
+    "donor-history-compatibility",
+}
+
+
 def main():
     document = json.loads(INVENTORY.read_text())
     rows = document.get("inventory")
@@ -52,8 +63,8 @@ def main():
             raise ValueError(f"missing or duplicate inventory path: {path!r}")
         if not (ROOT / path).is_file():
             raise ValueError(f"inventoried source does not exist: {path}")
-        if not row.get("role") or not row.get("scope") or not row.get("durability"):
-            raise ValueError(f"incomplete classification: {path}")
+        if row.get("role") not in PRIMARY_ROLES or not row.get("role_detail") or not row.get("scope") or not row.get("durability"):
+            raise ValueError(f"incomplete or invalid primary-role classification: {path}")
         by_path[path] = row
 
     critical = document.get("ownership_critical_paths")
@@ -76,7 +87,7 @@ def main():
         if stale:
             print("Inventory entries no longer match active durable-evidence or ledger sources:", *stale, sep="\n  ", file=sys.stderr)
         return 1
-    accepted = [row["path"] for row in rows if row["role"] == "accepted-factual-history"]
+    accepted = [row["path"] for row in rows if row["role"] == "accepted-factual-business-evidence-ledger"]
     if accepted != [document.get("accepted_factual_owner")]:
         raise ValueError("exactly the declared accepted factual owner must hold that role")
     print(f"Evidence ownership inventory is complete ({len(sources)} ledger-named, durable evidence-writer, or ownership-critical sources).")
