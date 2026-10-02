@@ -16,9 +16,18 @@ export const GRANDFATHERED = {
   137: ["137_accounts_day_review_settings.sql", "137_project_work_order_visit_schema.sql"],
   141: ["141_invoice_source_visit.sql", "141_vehicle_session_capture_method.sql"],
   142: ["142_client_square_customer_fields.sql", "142_invoice_line_item_source_expense.sql"],
+  151: ["151_business_pricing_settings.sql", "151_field_completion_evidence.sql"],
+  152: ["152_booking_routing_book_work.sql", "152_field_service_report_acknowledgements.sql"],
   153: ["153_booking_request_funnel.sql", "153_communications_outcome_received.sql"],
   162: ["162_expense_commercial_tag.sql", "162_materials_catalog_stats.sql"],
   175: ["175_capture_evidence.sql", "175_push_subscriptions.sql"],
+  177: ["177_invoice_kind_progress.sql", "177_workflow_events_reliable_outbox.sql"],
+  178: ["178_notification_delivery_reliability.sql", "178_runtime_login_boundary.sql"],
+  179: ["179_business_memberships.sql", "179_visit_closeout_kind.sql"],
+  180: ["180_complete_job_from_closeout.sql", "180_workforce_skills_availability.sql"],
+  181: ["181_expense_allocation_reviewed.sql", "181_field_job_templates.sql"],
+  182: ["182_field_service_report_deliveries.sql", "182_rls_estimate_change_order_backfill.sql"],
+  183: ["183_rls_subscription_portal_backfill.sql", "183_technician_vehicle_assignments.sql"],
 };
 
 export function groupMigrationFiles(filenames) {
