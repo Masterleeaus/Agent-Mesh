@@ -8,6 +8,8 @@ import {
   openExistingSqliteStorage,
   type StorageClient,
 } from "../../../packages/storage/src/index.js";
+import { verifyCompanyNativeSchemaAttestation } from "../../../packages/storage/src/company-native-schema-attestation.js";
+import { companyNativeWorkOrdersManifest } from "../../../packages/storage/src/company-native-schema-manifest.js";
 import { IdentitySessionRegistry } from "../../../packages/titan-platform/src/security-boundary.js";
 import { createWorkforceSessionCredentialVerifier } from "./session-credential-verifier.js";
 import type { HostedWorkforceDependencies } from "./hosted-runtime.js";
@@ -173,10 +175,9 @@ export async function createWorkforceDependencies(
     const webFile = Object.freeze({ device: webInfo.dev, inode: webInfo.ino });
     if (sameFile(registryFile, runtimeFile) || sameFile(registryFile, webFile)
       || sameFile(runtimeFile, webFile)) throw new Error("workforce-separate-control-storage-required");
-    // #809/#1232 still own the accepted COMPANY_NATIVE_FSM migration manifest
-    // and physical schema attestation. Table-shape probes below are defense in
-    // depth only; they must not be promoted into a production schema claim.
-    const companyNativeSchemaAttestationAvailable = false;
+    // The #809 native consumer verifies the pinned company-local witness. This
+    // observes physical schema only; placement provisioning and READY remain
+    // with the placement owner.
     let validatedPlacementVersion: number | undefined;
     let validatedCompanyStores = new Map<string, Readonly<{
       placement_id: string; placement_revision: number; file: Readonly<{ device: number; inode: number }>;
@@ -221,6 +222,9 @@ export async function createWorkforceDependencies(
             "SELECT id,status,completed_at,company_id,assigned_user_id,completion_criteria FROM work_orders LIMIT 0",
           );
           await opened.client.query("SELECT work_order_id,account_id,status FROM visits LIMIT 0");
+          await verifyCompanyNativeSchemaAttestation({
+            storage: opened.client, placement, manifest: companyNativeWorkOrdersManifest,
+          });
           await opened.assertPlacementBound();
           next.set(row.company_id, Object.freeze({
             placement_id: placement.placement_id, placement_revision: placement.placement_revision, file,
@@ -255,9 +259,6 @@ export async function createWorkforceDependencies(
     const companyStoreOpener = Object.freeze({
       async open(placement: Parameters<typeof physicalCompanyStoreOpener.open>[0], options?: Parameters<typeof physicalCompanyStoreOpener.open>[1]) {
         await ensureCompanyStoreIsolation(options?.signal);
-        if (!companyNativeSchemaAttestationAvailable) {
-          throw new Error("workforce-company-native-fsm-attestation-required");
-        }
         const validated = validatedCompanyStores.get(placement.company_id);
         if (!validated || validated.placement_id !== placement.placement_id
           || validated.placement_revision !== placement.placement_revision) {
@@ -270,6 +271,9 @@ export async function createWorkforceDependencies(
             || !sameFile(companyFile, validated.file)) {
             throw new Error("workforce-company-store-physical-isolation-required");
           }
+          await verifyCompanyNativeSchemaAttestation({
+            storage: opened.client, placement, manifest: companyNativeWorkOrdersManifest,
+          });
           return opened;
         } catch (error) {
           await opened.client.close().catch(() => undefined);

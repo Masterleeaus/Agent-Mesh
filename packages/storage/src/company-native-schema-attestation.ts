@@ -10,12 +10,24 @@ const digestPattern = /^[a-f0-9]{64}$/;
 export interface CompanyNativeSchemaManifest {
   readonly format: "titan-company-native-fsm-manifest/v1";
   readonly owner: "COMPANY_NATIVE_FSM";
+  readonly profile_id: string;
   readonly schema_version: string;
+  /** Declared bounded schema scope; this is not a claim of full FSM coverage. */
+  readonly schema_scope: readonly string[];
+  /** Exact legacy SQLite source bytes used as donors for this fresh profile. */
+  readonly source_provenance: readonly Readonly<{
+    path: string;
+    sha256: string;
+    included_objects: readonly string[];
+    excluded_objects: readonly string[];
+    adaptations: readonly string[];
+  }>[];
   /** Fingerprint of the expected SQLite schema after applying this manifest. */
   readonly schema_fingerprint_sha256: string;
   readonly migrations: readonly Readonly<{
     sequence: number;
     migration_id: string;
+    path: string;
     sha256: string;
   }>[];
 }
@@ -40,6 +52,8 @@ export interface VerifiedCompanyNativeSchemaAttestation extends CompanyNativeSch
 
 export type CompanyNativeSchemaAttestationErrorCode =
   | "company-native-schema-provider-unsupported"
+  | "company-native-schema-store-not-fresh"
+  | "company-native-schema-migration-source-mismatch"
   | "company-native-schema-manifest-invalid"
   | "company-native-schema-marker-missing"
   | "company-native-schema-marker-invalid"
@@ -70,11 +84,15 @@ export function computeCompanyNativeSchemaManifestDigest(manifest: CompanyNative
   const canonical = {
     format: manifest.format,
     owner: manifest.owner,
+    profile_id: manifest.profile_id,
     schema_version: manifest.schema_version,
+    schema_scope: manifest.schema_scope,
+    source_provenance: manifest.source_provenance,
     schema_fingerprint_sha256: manifest.schema_fingerprint_sha256,
     migrations: manifest.migrations.map(entry => ({
       sequence: entry.sequence,
       migration_id: entry.migration_id,
+      path: entry.path,
       sha256: entry.sha256,
     })),
   };
@@ -83,15 +101,30 @@ export function computeCompanyNativeSchemaManifestDigest(manifest: CompanyNative
 
 function validateManifest(manifest: CompanyNativeSchemaManifest): void {
   if (!manifest || manifest.format !== "titan-company-native-fsm-manifest/v1"
-    || manifest.owner !== "COMPANY_NATIVE_FSM" || !validId(manifest.schema_version)
+    || manifest.owner !== "COMPANY_NATIVE_FSM" || !validId(manifest.profile_id)
+    || !validId(manifest.schema_version) || !Array.isArray(manifest.schema_scope)
+    || manifest.schema_scope.length === 0 || manifest.schema_scope.some(item => !validId(item))
+    || !Array.isArray(manifest.source_provenance) || manifest.source_provenance.length === 0
     || !digestPattern.test(manifest.schema_fingerprint_sha256)
     || !Array.isArray(manifest.migrations) || manifest.migrations.length === 0) {
     throw new CompanyNativeSchemaAttestationError("company-native-schema-manifest-invalid");
+  }
+  const sources = new Set<string>();
+  for (const source of manifest.source_provenance) {
+    if (!source || !validId(source.path) || sources.has(source.path)
+      || !digestPattern.test(source.sha256) || !Array.isArray(source.included_objects)
+      || source.included_objects.length === 0 || source.included_objects.some((item: string) => !validId(item))
+      || !Array.isArray(source.excluded_objects) || source.excluded_objects.some((item: string) => !validId(item))
+      || !Array.isArray(source.adaptations) || source.adaptations.some((item: string) => !validId(item))) {
+      throw new CompanyNativeSchemaAttestationError("company-native-schema-manifest-invalid");
+    }
+    sources.add(source.path);
   }
   const ids = new Set<string>();
   for (let index = 0; index < manifest.migrations.length; index += 1) {
     const entry = manifest.migrations[index];
     if (!entry || entry.sequence !== index + 1 || !validId(entry.migration_id)
+      || !validId(entry.path)
       || ids.has(entry.migration_id) || !digestPattern.test(entry.sha256)) {
       throw new CompanyNativeSchemaAttestationError("company-native-schema-manifest-invalid");
     }
@@ -115,7 +148,7 @@ export async function fingerprintCompanyNativeSchema(storage: StorageClient): Pr
     sql: string | null;
   }>(
     `SELECT type,name,tbl_name,sql FROM sqlite_master
-      WHERE name NOT LIKE 'sqlite_%' AND name NOT IN ($1,$2)
+      WHERE name NOT GLOB 'sqlite_*' AND name NOT IN ($1,$2)
       ORDER BY type,name,tbl_name`,
     [attestationTable, migrationTable],
   )).rows;

@@ -54,9 +54,15 @@ async function fixture(overrides: {
   const manifest: CompanyNativeSchemaManifest = {
     format: "titan-company-native-fsm-manifest/v1",
     owner: "COMPANY_NATIVE_FSM",
+    profile_id: "native-fsm-test-v1",
     schema_version: "native-fsm/test-profile-1",
+    schema_scope: ["companies", "work_orders"],
+    source_provenance: [{
+      path: "db/sqlite/test.sql", sha256: "b".repeat(64),
+      included_objects: ["companies", "work_orders"], excluded_objects: [], adaptations: [],
+    }],
     schema_fingerprint_sha256: schemaFingerprint,
-    migrations: [{ sequence: 1, migration_id: migrationId, sha256: migrationHash }],
+    migrations: [{ sequence: 1, migration_id: migrationId, path: "db/sqlite/test.sql", sha256: migrationHash }],
   };
   const manifestDigest = computeCompanyNativeSchemaManifestDigest(manifest);
   if (!overrides.omitMarker) {
