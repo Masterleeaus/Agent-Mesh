@@ -170,3 +170,52 @@ A repository-by-repository naming map with proposed GitHub slugs, README titles,
 - Qualified Titan BOS feature descriptions as product direction, removed unsupported public pricing and savings figures, and replaced absolute service promises with design goals. Corrected the repository structure label and removed a stale hard-coded branch instruction.
 - Added setup/validation guidance to `ForgeMesh`, `Climate-crew`, and `Commerce-Crew`, including maturity/integration caveats. No application builds, scientific workflows, or test suites were run during this documentation pass.
 - The current `cleanly` README is repository-specific; earlier README duplication with `modules` has been resolved. The repos have distinct trees, so this is not a duplicate-repository finding.
+
+
+### CI and open pull-request inventory — 2026-10-02
+
+Read-only snapshot of GitHub check runs attached to each repository's current `main` commit and open pull requests. A missing check-run record does not prove that a repository has no workflow; it means no check run was attached to the inspected commit. Failure labels below are status signals, not root-cause diagnoses.
+
+#### Main-branch check status
+
+| Repository | Checks attached to current `main` | Review note |
+|---|---:|---|
+| `Titan-BOS` | 24 | Multiple platform build, deployment, and test checks fail; some platform jobs pass or are skipped. |
+| `zero` | 3 | All three checks pass. |
+| `Worksuite-Saas---Project-Management-System_Laravel` | 6 | Syntax check passes; Pint, SQLite/MySQL tests, PHPStan, and fresh-install checks fail. |
+| `clean` | 6 | Three integrity/scan checks fail; JavaScript, Python, and Actions analysis pass. |
+| `modules` | 2 | Test Suite and Fresh Migration Check fail. |
+| `TitanPro` | 5 | Backend, frontend, and module production checks fail; PR automation check passes. |
+| `Tenant-Forge` | 1 | Test check fails. |
+| `Uniquely` | 3 | Tests fail; build and install checks pass. |
+| `AI-Coding-Studio` | 2 | JavaScript/TypeScript and Actions analysis pass. |
+| `Titan-Builder` | 7 | Required CI, Linux/Windows verification, and workflow-policy checks fail; static analysis checks pass. |
+| `Titan-themes` | 1 | Validation passes. |
+| `workcore-extensions` | 1 | Validation passes. |
+| `Interaction-engine` | 1 | Verification check fails. |
+| `Titan-Zero-Field-Service-Workforce` | 2 | `verify` passes; `validate` fails. |
+
+The remaining 19 repositories had no check runs attached to the inspected `main` commit: `Ai_agent_voice_assistance_using_vapi`, `Ai-Medical-Voice-Agent-Saas-App`, `predictive-analytics-module`, `Delivery-Management-Platform`, `Titan-Zero`, `cleanhub`, `cleanhub2`, `cleanly`, `callingagent-`, `ZeroPay`, `Titancore`, `Titanzero`, `Documents`, `Ai-extensions`, `Climate-crew`, `ForgeMesh`, `Commerce-Crew`, `Developer-Workforce-Extension-`, and `gearbox`. Add a lightweight CI workflow where appropriate, or document why validation is manual.
+
+#### Open pull requests
+
+| Repository | Open PRs | Drafts | Older than 90 days |
+|---|---:|---:|---:|
+| `zero` | 1 | 1 | 1 |
+| `Worksuite-Saas---Project-Management-System_Laravel` | 1 | 0 | 1 |
+| `clean` | 6 | 1 | 0 |
+| `cleanly` | 4 | 4 | 0 |
+| `modules` | 5 | 4 | 5 |
+| `TitanPro` | 7 | 0 | 4 |
+| `Titancore` | 4 | 4 | 0 |
+| `AI-Coding-Studio` | 8 | 2 | 0 |
+| `Titan-Builder` | 18 | 14 | 0 |
+| `Ai-extensions` | 14 | 7 | 0 |
+| `Titan-Zero-Field-Service-Workforce` | 29 | 15 | 0 |
+| **Total** | **97** | **52** | **11** |
+
+The 11 PRs older than 90 days are `zero` #254; Worksuite #444; `modules` #84, #88–#91; and `TitanPro` #550, #554, #564, #567. Review whether each is still wanted, superseded, blocked, or ready before closing or merging.
+
+Five PRs currently target non-`main` bases: `AI-Coding-Studio` #4, #8, #22; `Titan-Builder` #289; and `Ai-extensions` #447. Confirm intended dependency chains before retargeting or merging.
+
+No PRs were closed or merged. The inventory is a status snapshot; checks and PR states can change after this date.
