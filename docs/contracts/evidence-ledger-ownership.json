@@ -418,6 +418,18 @@
       "limitations": [
         "The branch contract is not itself evidence storage; repository-wide proof that every simulated execution is excluded from factual persistence remains open."
       ]
+    },
+    {
+      "path": "services/workforce/src/directadmin-workforce-owners.ts",
+      "role": "execution-provider-receipt",
+      "scope": "DirectAdmin Workforce owner adapter resolves company-scoped projections and routes governed work through the canonical ExecutionGateway. Verified outcome admission delegates to AcceptedEvidenceLedger; this adapter is not a second accepted factual owner.",
+      "durability": "Persists company-scoped execution receipts and accepted ledger records through the injected Workforce evidence store and canonical ledger contract.",
+      "consumers": [],
+      "limitations": [
+        "Accepted factual business history remains owned by packages/tools/accepted-evidence-ledger.mjs.",
+        "Packaged browser/session route integration remains open under #1286."
+      ],
+      "role_detail": "Workforce execution and canonical evidence adapter"
     }
   ],
   "primary_roles": [

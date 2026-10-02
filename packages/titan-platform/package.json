@@ -10,6 +10,7 @@
     "./workforce": "./src/workforce.ts",
     "./intelligence": "./src/intelligence.ts",
     "./business-ops": "./src/business-ops.ts",
+    "./business-evidence": "./src/business-evidence.ts",
     "./workforce-native": "./src/workforce-native/index.ts",
     "./workforce-delegation": "./src/workforce-delegation/index.ts",
     "./workforce-capacity": "./src/workforce-capacity/index.ts",
