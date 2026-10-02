@@ -77,9 +77,9 @@ The only implementation claim lock is the exact GitHub branch ref:
 Rules:
 1. Immediately before claiming, fetch the issue, current `main` SHA, live `agent/*` refs, dependencies, and relevant PRs.
 2. Atomically create the exact mission claim branch `agent/issue-<issue-number>` from the required current `main`.
-3. If it already exists, another agent owns the claim. Do not create a suffix, timestamp, worker-name branch, or alternate prefix.
+3. If the exact claim branch already exists, check for a live owner before treating it as locked. Re-fetch the issue, latest issue activity, exact branch head, current `main`, and all PRs using that head immediately before resuming work. A stale-claim takeover is allowed only when (a) the issue and any associated PR have had no activity for at least one hour, (b) no open PR uses the exact branch, and (c) the branch has no commits ahead of current `main`. Use `.github/scripts/claim_recovery.py`'s `stale_claim_blockers` with these freshly fetched facts; it is a policy check, not a lock. If any fact is unknown, activity is newer than one hour, or unique commits exist, do not take over automatically. For an eligible stale claim, reuse the exact branch, preserve its history, fast-forward it to current `main` only when that is a non-destructive fast-forward, and post a durable takeover comment with the checks and time before editing. Never force-reset, delete, or create a suffix, timestamp, worker-name branch, or alternate prefix. Re-fetch the facts again if work is interrupted before the first change.
 4. Post a claim comment with workspace/agent identity, issue, subgoal, branch, and base SHA.
-5. One implementation claim per agent/workspace unless a Manager issue explicitly authorizes otherwise.
+5. When the user authorizes work across multiple independent issues, multiple claims may be held sequentially by one agent/workspace. Keep each issue on its exact canonical branch and preserve all work; only one branch may be checked out or written from this workspace at a time unless parallel work is explicitly authorized. A waiting PR, CI run, or review does not by itself block work on another independent issue. Recheck ownership before switching back to any branch.
 6. Use the same branch through implementation, verification, PR, fixes, and handoff.
 7. Never open a second branch because the first branch conflicts. Rebase/merge/fix the existing claim branch.
 8. The canonical PR targets `main`. Use `Closes #<issue>` only when the full mission closure gate below is satisfied; partial or unverified work must use `Refs #<issue>`.
@@ -87,6 +87,8 @@ Rules:
 10. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
 
 GitHub refs, commits, checks, PRs, merges, and issue state are the coordination and lifecycle record. Do not maintain a second Agent Mesh ledger.
+
+Stale-claim recovery changes only branch availability. It does not relax human review, required checks, tenant isolation, acceptance criteria, mission evidence, or the rule that issues close only after full completion (or the documented bounded handoff).
 
 ## 6. Verification contract
 
