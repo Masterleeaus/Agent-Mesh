@@ -69,6 +69,7 @@
     "src/ported/titan-connect/channel-binding.ts",
     "src/workforce-manager/manager-contract.ts",
     "src/business-engine-mapping.ts",
-    "src/field-service-lifecycle.ts"
+    "src/field-service-lifecycle.ts",
+    "src/directadmin-plugin.ts"
   ]
 }

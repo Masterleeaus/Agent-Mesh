@@ -14,7 +14,7 @@ It manages the business's digital system estate while canonical Titan services r
 ## Plugin portfolio
 
 - Business Node Core — #812
-- Cockpit SDK — #1049
+- Business Node SDK — #1049
 - Business Engine / Frappe — #1051
 - Zero — #1046
 - Workforce — #1050
