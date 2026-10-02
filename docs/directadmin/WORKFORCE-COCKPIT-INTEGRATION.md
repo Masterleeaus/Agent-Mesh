@@ -6,13 +6,16 @@ its last recorded draft update; its remote branch was deleted by that merge. The
 accepted #1145 history is preserved in main. A Jason-directed bounded follow-up
 now owns the same canonical `agent/issue-1050` ref, initially recreated at
 `c46774cc007a324ec618ecdfdfe5a04acd44780f` and normally fast-forwarded to current
-main `d508a2695fccc36e039f18e60cb96adfbe318813` after #1243. The existing claim
-branch then normally merged current main `8c1161f291d07ecf344ae062b2349c2a13280410`
-at `a1d364828991289254b04cdc1e16e0f92a5c1458` after #1242/#1244. Issue #1050
-remains open. Earlier records below are historical snapshots; current v0.1.5
-evidence is recorded at the end. The latest end record supersedes the earlier
-synthetic v2-marker test description with the current in-process loader-injection
-contract and exact #1242 host composition fixture.
+main `d508a2695fccc36e039f18e60cb96adfbe318813` after #1243. The branch merged
+main `8c1161f291d07ecf344ae062b2349c2a13280410` at
+`a1d364828991289254b04cdc1e16e0f92a5c1458` for #1242/#1244, then incorporated
+the #1241/#1245 main advance at `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`.
+Jason's updates `a7491161` and `87deeb75` on the same canonical claim are
+preserved by a normal merge. Issue #1050 remains open. Earlier records below are
+historical snapshots; the latest current-main test and package evidence is
+recorded at the end. The latest record supersedes the pre-merge fail-open status
+and synthetic v2-marker test description with the merged #1245 disabled-loader
+contract and exact #1242 host-composition fixture.
 
 ## Sources inspected
 
@@ -25,7 +28,7 @@ contract and exact #1242 host composition fixture.
   replace Workforce's canonical owner or relay contracts.
 - #1050 current issue and claim comments, #1143 and accepted #1145.
 - #1049 remains an open SDK mission; PR #1204 merged to main at `75cc7f02` from head `5b1275df`. The tested SDK implementation source `e428b67b34779e49f4dbc8d3e80b193e8737eb13` supplies the package bundle and contribution-version compatibility handling.
-- #811 / PR #1201 merged at exact head `25005f4f4d860e2ec1dddb9f0a2c4aa152fd0488`, including the optional DirectAdmin gateway mount. #1242 later merged the production dependency composition at main `8c1161f2`. #812 / PR #1211 remains in main from source head `89ff2427339a6f216281c970376be4634ee9fb9f`, including the experimental v2 config and Apache `:443` filter. Separate unmerged draft PR #1245 is at `589658ef10cf4c66af5ebb574799f281b126ced5`; it removes that filter and leaves the production RAW loader disabled with sanitized 503. The latest integration supplies #1242's required placement ports through canonical storage adapters in a disposable fixture, uses no relay config file or environment-selected forwarding, and injects a fake relay loader only in-process.
+- #811 / PR #1201 merged at exact head `25005f4f4d860e2ec1dddb9f0a2c4aa152fd0488`, including the optional DirectAdmin gateway mount. #1242 later merged the production dependency composition at main `8c1161f2`; it remains present at current main `faab3c5c`. #812 / PR #1211 introduced the experimental v2 config and Apache `:443` filter. PR #1245 (head `eb568f20ccc5403b968eaacbb97c3dbb3cab9b08`) merged at `faab3c5c`; it removes that filter and leaves the production RAW loader disabled with sanitized 503 `cookie_boundary_unverified`. The latest integration supplies #1242's required placement ports through canonical storage adapters in a disposable fixture, uses no relay config file or environment-selected forwarding, and injects a fake relay loader only in-process.
 - #1182 owns conversation transport; PR #1188's hosted conversation lifecycle is merged, but the Workforce panel does not integrate the transport. #302 remains the shared identity owner.
 - #1179 prerequisite ad43d010d50ba262c02beaf0ed892b656174ff58 merged with provenance.
 - No repository `.agents/skills` directory exists; executor `.agents` is empty.
@@ -48,7 +51,7 @@ proposals remain gated by host-published controls and shared intent ingress; an
 acknowledgement is never upgraded to a verified outcome.
 
 The #811 projection data schema `titan.workforce-cockpit.v1` merged to main at
-`14163faa` and remains present in current main `8c1161f2`. The earlier record
+`14163faa` and remains present in current main `faab3c5c`. The earlier record
 was checked at `ccf8010a`; the main-snapshot `468d42b1` rerun is recorded below.
 The schema contains
 `discovery: {company_id, workers, controls: []}` and `status: {company_id, work}`.
@@ -62,11 +65,11 @@ or grants authority from a control descriptor.
 | Owner | Observed published behavior | Needed for functioning cockpit |
 |---|---|---|
 | #1049 / #1204 | PR #1204 merged to main at `75cc7f02` from head `5b1275df`; the tested SDK implementation source remains `e428b67b`. It consumes the canonical #302 session issuer/registry, publishes trusted browser session context and a separate server-only Workforce/Zero exchange. The browser SDK hashes the opaque context revision to the relay's bounded `ctx1_` assertion; the gateway checks it against current #302 state. Typed unsupported Workforce actions map to a sanitized 403. The SDK preserves valid sibling session state on 403 and invalidates on authentication/context failure; bridge failures distinguish rejected request/session from owner outages. The host contribution registry supports SDK compatibility `1.0.0` and degrades an incompatible major independently. The plugin reads trusted host CSRF metadata and never creates identity/CSRF from CGI, environment, query or form data. | Workforce tags a 403 only when the shared SDK's governed-intent route rejects, then revalidates before restoring data. A stale response cannot recover a cleared company view. A 403 during post-acceptance projection refresh clears the view and tells the operator to inspect canonical history. Submit stays disabled after a denial until manual refresh. Production issuer/identity provisioning, trusted DirectAdmin HTML CSRF bootstrap, source credential verification and host/cookie-port commissioning remain unverified. |
-| #811 / #1201 / #1242 | PR #1201 merged to main at `14163faa` and #1242 merged production dependency composition at exact main `8c1161f291d07ecf344ae062b2349c2a13280410`. It contains `services/workforce/src/directadmin-workforce-owners.ts`, the optional `/v1/directadmin/*` Fetch mount, and operator-owned company placement/store ports. The owner reads company-filtered canonical `SqliteWorkforceStore` workers/work plus `SqliteRunStore.findByWork`. Outer projection is `{company_id,source,freshness,evidence_refs,data}`; `data` is `{schema:'titan.workforce-cockpit.v1',company_id,discovery,status}`. Worker/work records are company-bound; `discovery.controls` is explicitly `[]`. `requestIntent` validates/revalidates context then denies with a typed 403; it writes no state/event/evidence and fabricates no receipt. | The composition is in main, but not live-certified. Its production factory still needs commissioned operator dependencies, verified identity provisioning and pinned HTTPS `publicOrigin`; native company stores require owner attestation. The original extracted host run used pre-composition snapshot `c883304a`, #812 `8cae7034` and #1049 SDK `e428b67b`. The latest extracted integration now packages exact `8c1161f2` host/runtime/storage code and supplies the newly required company-placement registry/opener using canonical SQLite adapters over disposable test records; the empty-controls read-only route does not open a business store. The consumer revalidates after an intent-route 403; a denied refresh after accepted ingress is never called an action denial. The host exposes no authorized lifecycle control or successful action receipt, so the cockpit honestly renders read-only. |
+| #811 / #1201 / #1242 | PR #1201 merged to main at `14163faa` and #1242 merged production dependency composition at `8c1161f291d07ecf344ae062b2349c2a13280410`, still present at `faab3c5c`. It contains `services/workforce/src/directadmin-workforce-owners.ts`, the optional `/v1/directadmin/*` Fetch mount, and operator-owned company placement/store ports. The owner reads company-filtered canonical `SqliteWorkforceStore` workers/work plus `SqliteRunStore.findByWork`. Outer projection is `{company_id,source,freshness,evidence_refs,data}`; `data` is `{schema:'titan.workforce-cockpit.v1',company_id,discovery,status}`. Worker/work records are company-bound; `discovery.controls` is explicitly `[]`. `requestIntent` validates/revalidates context then denies with a typed 403; it writes no state/event/evidence and fabricates no receipt. | The composition is in main, but not live-certified. Its production factory still needs commissioned operator dependencies, verified identity provisioning and pinned HTTPS `publicOrigin`; native company stores require owner attestation. The original extracted host run used pre-composition snapshot `c883304a`, #812 `8cae7034` and #1049 SDK `e428b67b`. The latest extracted integration packages exact current-main `faab3c5c` host/runtime/storage code and supplies the required company-placement registry/opener through canonical SQLite adapters over disposable test records; the empty-controls read-only route does not open a business store. The consumer revalidates after an intent-route 403; a denied refresh after accepted ingress is never called an action denial. The host exposes no authorized lifecycle control or successful action receipt, so the cockpit honestly renders read-only. |
 | #1182 / #1188 | PR #1188 merged the hosted conversation retry-identity fix at `ae6db36d`; the owner contract preserves company/actor/device/session/context/conversation/operation/correlation/trace/idempotency and events. | The Workforce panel still does not integrate conversation transport. Add it through the shared gateway consumer when #1182 publishes its usable contract; preserve canonical conversation context and route consequential requests through governance. Do not create a plugin-local conversation ledger. |
-| #302 / #1183 / #1240 | Live main `8c1161f291d07ecf344ae062b2349c2a13280410` includes credential verification and durable current-company session work (`ae0d2c8e`), company-placement/storage contracts, #1243 session replacement/outage distinctions, and #1242's hosted runtime composition. The shared resolver head `68e4804f594503f3a205d2caefdb2f9f75701ee4` has 61 security and 63 web regression tests recorded by its owner. | This is implementation and regression evidence, not proof that upstream credentials are verified or protected provisioning is commissioned. Production issuer credentials, protected provisioning, trusted DirectAdmin CSRF bootstrap, approved audience-bound Workforce handoff, and real host/session commissioning remain upstream. |
-| #812 / #1211 / #1245 | The RAW endpoint and published fetch adapter remain the #812 routes consumed by #1050; no parser/proxy is duplicated. Current main `8c1161f2` still has the experimental v2 config and Apache `:443` cookie filter. The parent-confirmed filter fails open when the Titan cookie is split across duplicate physical `Cookie` headers. Unmerged draft PR #1245 at `589658ef` removes that filter and makes the production RAW loader return sanitized `503 cookie_boundary_unverified` on every origin; there is no supported production config or working relay in that draft. The latest disposable integration passes its in-process fake-loader test contract against both exact current main and this draft head; it does not test either Apache boundary. | Do not commission current main's filter or treat the disabled #1245 draft as an operational relay. Verify an approved cookie boundary and private transport on a real disposable Apache/DirectAdmin host before enabling a production path. Exact CGI `HEADERS`, port-2222 session/cookie isolation, protected relay config, actual host and #811 operator dependencies remain uncommissioned. Never place credentials in URLs or assume a `:443` rule affects DirectAdmin `:2222`. |
-| #648 / current reproducibility | Live main `8c1161f291d07ecf344ae062b2349c2a13280410` includes #1201, #812, #1183/#1240, portfolio packaging, #1048/#1209 Developer Portal work, #1243 session recovery, #1244 DirectAdmin request transport, and #1242 hosted runtime composition. | `gate:fast` and full `gate` results recorded below were run on code baseline `14163faa316ac6236e88167b7c8d8a5e95007c7e`, before this main advance. The known TASK-128 duplicate migration prefixes 151, 152 and 177–183 belong to #648's convergence scope; verify them on current main before using that as a current gate result. #1084 / #1179 owns shared web/index/CI repairs, not migration ownership. No migrations were renumbered here. |
+| #302 / #1183 / #1240 | Live main `faab3c5c` includes credential verification and durable current-company session work (`ae0d2c8e`), company-placement/storage contracts, #1243 session replacement/outage distinctions, and #1242's hosted runtime composition. The shared resolver head `68e4804f594503f3a205d2caefdb2f9f75701ee4` has 61 security and 63 web regression tests recorded by its owner. | This is implementation and regression evidence, not proof that upstream credentials are verified or protected provisioning is commissioned. Production issuer credentials, protected provisioning, trusted DirectAdmin CSRF bootstrap, approved audience-bound Workforce handoff, and real host/session commissioning remain upstream. |
+| #812 / #1211 / #1245 | The RAW endpoint and published fetch adapter remain the #812 routes consumed by #1050; no parser/proxy is duplicated. Current main `faab3c5c` includes merged PR #1245, which removed the experimental Apache `:443` filter and makes the production RAW loader return sanitized `503 cookie_boundary_unverified` on every origin. No supported production config or working relay exists. The latest disposable integration passes the in-process fake-loader contract against exact main and does not test Apache, DirectAdmin CGI, or a real cookie boundary. | Verify an approved cookie boundary and private transport on a real disposable Apache/DirectAdmin host before enabling a production path. Exact CGI `HEADERS`, port-2222 session/cookie isolation, protected relay config, actual host and #811 operator dependencies remain uncommissioned. Never place credentials in URLs or assume a `:443` rule affects DirectAdmin `:2222`. |
+| #648 / current reproducibility | Live main `faab3c5c` includes #1201, #812, #1183/#1240, portfolio packaging, #1048/#1209 Developer Portal work, #1241 environment alignment, #1243 session recovery, #1244 DirectAdmin request transport, #1242 hosted runtime composition, and #1245's disabled production relay. | `gate:fast` and full `gate` results recorded below were run on code baseline `14163faa316ac6236e88167b7c8d8a5e95007c7e`, before this main advance. The known TASK-128 duplicate migration prefixes 151, 152 and 177–183 belong to #648's convergence scope; verify them on current main before using that as a current gate result. #1084 / #1179 owns shared web/index/CI repairs, not migration ownership. No migrations were renumbered here. |
 
 Coordination requests are recorded on #1204 and #1201. The current bounded
 request and candidate file path are recorded on #1201. They are real missing
@@ -211,7 +214,7 @@ diff does not change workflows. The bounded CI follow-up belongs with #1157:
   fixture. No workflow or separate claim was added here; until the #1157-owned job
   actually executes these paths, do not report hosted cockpit test coverage.
 
-## Current-source continuation run — 2026-10-02
+## Pre-#1245-merge continuation run — main 8c1161f2 (2026-10-02)
 
 Current main is `8c1161f291d07ecf344ae062b2349c2a13280410` after #1242/#1244.
 The existing claim branch normally merged it at
@@ -249,14 +252,13 @@ checks, not Apache/DirectAdmin, production identity, or commissioning evidence.
 The hosted owner still publishes `controls: []`, so no authorized lifecycle
 control or successful action receipt is available.
 
-**Production relay blocker remains:** current main contains the experimental
-Apache `:443` filter, which fails open when the Titan cookie is split across
-duplicate physical `Cookie` headers. Draft PR #1245 removes that filter and
-disables production RAW forwarding, leaving no working production relay. The
-`:2222` RAW parser and in-process test seam do not verify the Apache boundary.
-Do not commission either state as a working relay. Verify an approved cookie
-boundary and private transport on an authorized disposable Apache/DirectAdmin
-host before enabling a production path.
+At the time of this run, main still contained the experimental Apache `:443`
+filter, which failed open when the Titan cookie was split across duplicate
+physical `Cookie` headers. PR #1245 subsequently merged to main as
+`faab3c5c9bdfd90179d5d3bfee21c479dceb3613` and removed that filter while
+disabling production RAW forwarding. The current main no longer has that filter,
+but it still has no working production relay. The `:2222` RAW parser and
+in-process test seam do not verify a live cookie boundary.
 
 Other missing inputs remain verified #302 production issuer credentials and
 protected provisioning; trusted DirectAdmin HTML CSRF bootstrap and an approved
@@ -266,3 +268,41 @@ private `publicOrigin`; actual DirectAdmin CGI `HEADERS`, POST-stdin and separat
 conversations, hierarchy/Missions, trust/autonomy, capacity/value, attendance,
 department pack, earned autonomy, and evidence journeys are not proved by this
 bounded consumer/package work. #1050 remains open.
+
+## Current-source continuation run — main faab3c5c (2026-10-02)
+
+Current main is `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`, merging #1245 head
+`eb568f20ccc5403b968eaacbb97c3dbb3cab9b08` and including #1241. The remote
+canonical claim advanced through Jason's commits `a7491161` and `87deeb75`; this
+continuation preserves both histories with a normal merge. The current integration
+uses exact #811/runtime/storage and #812 source archived from this main commit.
+
+The #1049 browser SDK source tree is unchanged across this main advance. It was
+bundled with Node v22.23.3 from exact main source; the SDK module used here has
+SHA256 `7d98fd60f5ccf83567e6763bf427768886b36f98c3a1def32d91d0695d40c011`.
+The Workforce consumer/browser/hosted-session/package suite passed **39/39**;
+the shared DirectAdmin session bridge suite passed **83/83**; and the portfolio
+package script suite passed **3/3**.
+
+The relay-to-host fixture passed **14 requests / 15 hosted routes** against this
+exact main. The production RAW default returns sanitized `503
+cookie_boundary_unverified` and makes no upstream request. The fixture then
+injects its fake loader in-process into the extracted relay module; no file,
+environment variable, production RAW process, Apache boundary or real DirectAdmin
+CGI is used to enable traffic. The #1242 host dependencies are supplied through
+the canonical SQLite placement-registry/opener adapters with only disposable
+test placement rows; unknown company placement fails closed, and empty controls
+do not open a company business store. Company switch, evidence projection, CSRF
+denial, typed governed-action denial without DB/event writes, and expiry clearing
+all passed. The host publishes `controls: []`, so there is no authorized
+lifecycle control or successful receipt to demonstrate.
+
+The two deterministic 19-file v0.1.5 package builds, checksum, SDK hash,
+extraction, modes and staged install/update/uninstall preflight are recorded in
+`docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`. An independent read-only
+security review found no issue in the fixture seam or package provenance. No
+hosted Workforce CI job ran these tests; that integration remains with #1157.
+Live identity commissioning, trusted CSRF bootstrap, private relay transport,
+DirectAdmin CGI behavior and the wider roster, conversations, lifecycle,
+trust/autonomy, attendance, department and evidence journeys remain open. #1050
+is partial and stays open.
