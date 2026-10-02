@@ -10,9 +10,20 @@ on:
       - 'packages/runtime/**'
       - 'packages/tools/**'
       - 'db/sqlite/**'
+      - 'apps/web/app/api/v1/auth/**'
+      - 'apps/web/lib/auth/**'
+      - 'apps/web/lib/env.ts'
+      - 'apps/web/lib/db/dialect.ts'
+      - 'apps/web/lib/db/**'
+      - 'apps/web/lib/company-storage/**'
+      - 'db/migrations/**'
       - 'apps/directadmin/workforce/**'
       - 'apps/directadmin/server-node/**'
       - 'scripts/package-directadmin-plugin.mjs'
+      - 'scripts/gate.sh'
+      - 'scripts/db-migrate.sh'
+      - 'scripts/db-seed.sh'
+      - 'scripts/db-provision-runtime.sh'
       - 'package.json'
       - 'pnpm-workspace.yaml'
       - 'pnpm-lock.yaml'
@@ -39,6 +50,113 @@ jobs:
           pnpm --filter @titan-zero/storage test
       - name: Focused company-storage web consumer test
         run: pnpm --filter @titan-zero/web exec vitest run lib/company-storage/consumer.test.ts
+      - name: Canonical cleaning projections and auth/session regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cleanup() { rm -rf packages/titan-platform/.cleaning-test-dist; }
+          trap cleanup EXIT
+          node_modules/.bin/tsc \
+            --target ES2022 \
+            --module NodeNext \
+            --moduleResolution NodeNext \
+            --strict \
+            --skipLibCheck \
+            --rootDir packages/titan-platform/src \
+            --outDir packages/titan-platform/.cleaning-test-dist \
+            packages/titan-platform/src/verticals/cleaning/*.ts
+          node --test packages/titan-platform/tests/cleaning-vertical-pass*.test.mjs
+          pnpm --filter @titan-zero/web exec vitest run \
+            lib/auth/__tests__/current-session.test.ts \
+            lib/auth/__tests__/session-context.test.ts \
+            lib/auth/__tests__/post-login-destination.unit.test.ts \
+            lib/auth/__tests__/middleware.unit.test.ts \
+            lib/auth/__tests__/permissions.test.ts \
+            lib/auth/__tests__/user-creation-session.test.ts
+
+  auth-http:
+    name: Web Login HTTP Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ai_fsm_test
+          POSTGRES_USER: ai_fsm_test
+          POSTGRES_PASSWORD: ai_fsm_gate_pw
+        ports:
+          - "15432:5432"
+        options: >-
+          --health-cmd "pg_isready -U ai_fsm_test -d ai_fsm_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://ai_fsm_test:ai_fsm_gate_pw@localhost:15432/ai_fsm_test
+      TEST_RUNTIME_DATABASE_URL: postgresql://ai_fsm_web:gate-runtime-only@localhost:15432/ai_fsm_test
+      TEST_AUTH_SECRET: gate-test-auth-secret-min-32-chars!!
+      TEST_INTERNAL_KEY: gate-internal-test-only
+      TEST_WEB_PORT: "3137"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply immutable migrations and provision the restricted runtime
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+          MIGRATION_DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+          RUNTIME_DB_PASSWORD: gate-runtime-only
+          TMPDIR: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          bash scripts/db-migrate.sh
+          bash scripts/db-seed.sh
+          bash scripts/db-provision-runtime.sh
+      - name: Verify the real HTTP login boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          server_log=/tmp/titan-login-http-server.log
+          DATABASE_URL="$TEST_DATABASE_URL" \
+          TITAN_DEPLOYMENT_PROFILE=compatibility \
+          AUTH_SECRET="$TEST_AUTH_SECRET" \
+          LOCATION_INTERNAL_KEY="$TEST_INTERNAL_KEY" \
+          E2E_SKIP_EMAIL_DELIVERY=1 \
+          E2E_DISABLE_LOGIN_RATE_LIMIT=1 \
+          NODE_ENV=development \
+            pnpm --filter @titan-zero/web exec next dev --port "$TEST_WEB_PORT" >"$server_log" 2>&1 &
+          server_pid=$!
+          cleanup() { kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; }
+          trap cleanup EXIT
+          ready=false
+          for _ in $(seq 1 60); do
+            if curl -fsS "http://localhost:${TEST_WEB_PORT}/api/health" >/dev/null 2>&1; then
+              ready=true
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat "$server_log"
+              exit 1
+            fi
+            sleep 2
+          done
+          if [[ "$ready" != true ]]; then
+            cat "$server_log"
+            exit 1
+          fi
+          cd apps/web
+          TEST_BASE_URL="http://localhost:${TEST_WEB_PORT}" \
+          TEST_DATABASE_URL="$TEST_DATABASE_URL" \
+          TEST_RUNTIME_DATABASE_URL="$TEST_RUNTIME_DATABASE_URL" \
+          LOCATION_INTERNAL_KEY="$TEST_INTERNAL_KEY" \
+            pnpm exec vitest run --config vitest.integration.config.ts lib/auth/__tests__/auth.integration.test.ts
 
   directadmin-workforce:
     name: DirectAdmin Workforce Consumer
