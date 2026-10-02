@@ -98,11 +98,22 @@ install_server_node "$SOURCE_DIR" "$INSTALLED" "$UNIT" "$STATE_DIR" "$CONFIG" "$
   return { dir, installed, unit, state, config, events, result };
 }
 
-async function uninstallFixture(t, { stopFails = false, noUnit = false } = {}) {
+async function uninstallFixture(t, { stopFails = false, noUnit = false, retainedArtifacts = false } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-node-uninstall-"));
   const unit = path.join(dir, "titan-server-node.service");
+  const runtime = path.join(dir, "usr/local/titan/server-node");
+  const token = path.join(dir, "etc/titan/server-node.env");
+  const controlState = path.join(dir, "var/lib/titan/server-node");
   const events = path.join(dir, "systemctl-events.log");
   if (!noUnit) fs.copyFileSync(path.join(root, "titan-server-node.service"), unit);
+  if (retainedArtifacts) {
+    fs.mkdirSync(runtime, { recursive: true });
+    fs.writeFileSync(path.join(runtime, "runtime.mjs"), "fixture runtime\n");
+    fs.mkdirSync(path.dirname(token), { recursive: true });
+    fs.writeFileSync(token, "TITAN_NODE_AUTH_TOKEN=fixture-only-secret\n", { mode: 0o600 });
+    fs.mkdirSync(controlState, { recursive: true });
+    fs.writeFileSync(path.join(controlState, "control.json"), "{}\n");
+  }
   const harness = path.join(dir, "run-uninstall.sh");
   fs.writeFileSync(harness, `#!/usr/bin/env bash
 set -Eeuo pipefail
@@ -124,11 +135,11 @@ systemctl() {
   esac
 }
 source "$ROOT_SCRIPT"
-uninstall_server_node "$UNIT" "$EXPECTED_UID"
+uninstall_server_node "$UNIT" "$EXPECTED_UID" "${runtime}" "${token}" "${controlState}"
 `);
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   const result = await run(harness, [path.join(root, "uninstall.sh"), unit, String(process.getuid())]);
-  return { dir, unit, events, result };
+  return { dir, unit, runtime, token, controlState, events, result };
 }
 
 // The fixture supervisor starts real Node processes. The production updater
@@ -142,6 +153,7 @@ async function fixture(t, behavior = "healthy") {
   const config = path.join(dir, "etc/titan/server-node.env");
   const store = path.join(dir, "var/lib/titan/server-node/control.json");
   const pidFile = path.join(dir, "service.pid");
+  const stopCountFile = path.join(dir, "stop-count");
   const log = path.join(dir, "supervisor.log");
   const port = await unusedPort();
   for (const target of [source, installed, path.dirname(unit), path.dirname(config), path.dirname(store)]) fs.mkdirSync(target, { recursive: true });
@@ -152,7 +164,7 @@ server.listen(Number(process.env.TITAN_NODE_PORT), "127.0.0.1");
 process.once("SIGTERM", () => server.close(() => process.exit(0)));
 `;
   const oldRuntime = runtime("old", true);
-  const newRuntime = runtime("new", behavior !== "unready");
+  const newRuntime = runtime("new", !["unready", "rollback-stop-fails"].includes(behavior));
   const packageFiles = [
     "plugin.conf", "package.json", "health.sh", "titan-server-node.service", "directadmin-relay.mjs",
     "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
@@ -178,13 +190,28 @@ process.once("SIGTERM", () => server.close(() => process.exit(0)));
   fs.writeFileSync(supervisor, `import fs from "node:fs";
 import { spawn } from "node:child_process";
 const [command, ...args] = process.argv.slice(2);
-const pidFile = ${JSON.stringify(pidFile)}, log = ${JSON.stringify(log)};
+const pidFile = ${JSON.stringify(pidFile)}, stopCountFile = ${JSON.stringify(stopCountFile)}, log = ${JSON.stringify(log)};
 fs.appendFileSync(log, [command, ...args].join(" ") + "\\n");
 const readPid = () => { try { return Number(fs.readFileSync(pidFile, "utf8")); } catch { return 0; } };
 const stop = async () => { const pid = readPid(); if (pid) { try { process.kill(pid, "SIGTERM"); } catch {} } fs.rmSync(pidFile, { force:true }); for (let i=0;i<100;i++) { try { await fetch("http://127.0.0.1:${port}/live"); await new Promise(r=>setTimeout(r,10)); } catch { break; } } };
 if (command === "daemon-reload") process.exit(0);
-if (command === "stop") { await stop(); process.exit(0); }
-if (command === "show") { console.log(readPid()); process.exit(0); }
+if (command === "stop") {
+  let count=0; try { count=Number(fs.readFileSync(stopCountFile, "utf8")); } catch {}
+  count++; fs.writeFileSync(stopCountFile, String(count));
+  if (${JSON.stringify(behavior)} === "rollback-stop-fails" && count === 2) process.exit(1);
+  if (${JSON.stringify(behavior)} === "rollback-stop-fails-before-promotion" && count <= 2) process.exit(1);
+  await stop(); process.exit(0);
+}
+if (command === "show") {
+  const propertyFlag=args.find(a=>a.startsWith("--property="));
+  const property=propertyFlag ? propertyFlag.slice("--property=".length) : args[args.indexOf("--property") + 1];
+  const pid=readPid(); let alive=false;
+  try { if (pid) { process.kill(pid, 0); alive=true; } } catch {}
+  if (property === "MainPID") console.log(alive ? pid : 0);
+  else if (property === "ActiveState") console.log(alive ? "active" : "inactive");
+  else process.exit(2);
+  process.exit(0);
+}
 if (command === "is-active") { const pid = readPid(); try { if (!pid) throw Error(); process.kill(pid,0); process.exit(0); } catch { process.exit(1); } }
 if (command === "restart" || command === "start" || command === "try-restart") {
   await stop();
@@ -204,6 +231,20 @@ throw new Error("unexpected systemctl command: " + command);
     fs.rmSync(dir, { recursive: true, force: true });
   });
   return { dir, source, installed, unit, backups, store, config, log, oldRuntime, newRuntime, oldRelay, newRelay, port,
+    startInstalledRuntime: async () => {
+      const child = spawn(process.execPath, [path.join(installed, "runtime.mjs")], {
+        detached: true,
+        stdio: "ignore",
+        env: { ...process.env, TITAN_NODE_PORT: String(port) },
+      });
+      child.unref();
+      fs.writeFileSync(pidFile, String(child.pid));
+      for (let attempt = 0; attempt < 100; attempt++) {
+        try { await fetch(`http://127.0.0.1:${port}/live`); return; }
+        catch { await new Promise((resolve) => setTimeout(resolve, 10)); }
+      }
+      throw new Error("fixture runtime did not start");
+    },
     update: () => run(harness, [path.join(root, "update.sh"), source, installed, unit, backups, config]),
   };
 }
@@ -327,6 +368,44 @@ test("rollback verification failure is reported without claiming recovery", asyn
   assert.equal(report.rollback, "failed");
   assert.equal(fs.readFileSync(path.join(f.installed, "runtime.mjs"), "utf8"), f.oldRuntime);
   assert.equal(fs.readFileSync(f.unit, "utf8"), "previous service unit\n");
+});
+
+test("rollback leaves active runtime and all artifacts in place when stop cannot be confirmed", async (t) => {
+  const f = await fixture(t, "rollback-stop-fails");
+  const result = await f.update();
+  assert.notEqual(result.status, 0);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.lifecycle, "update-failed");
+  assert.equal(report.rollback, "failed");
+  assert.deepEqual(report.preserved_staging_artifacts ?? [], []);
+  assert.equal(fs.readFileSync(path.join(f.installed, "runtime.mjs"), "utf8"), f.newRuntime);
+  assert.equal(fs.readFileSync(f.unit, "utf8"), fs.readFileSync(path.join(f.source, "titan-server-node.service"), "utf8"));
+  assert.equal(fs.readFileSync(path.join(report.rollback_artifact, "displaced-runtime/runtime.mjs"), "utf8"), f.oldRuntime);
+  assert.equal(fs.existsSync(path.join(report.rollback_artifact, "failed-runtime")), false);
+  const actions = fs.readFileSync(f.log, "utf8").trim().split("\n");
+  assert.equal(actions.filter((line) => line.startsWith("restart ")).length, 1);
+  assert.equal((await (await fetch(`http://127.0.0.1:${f.port}/live`)).json()).version, "new");
+  assert.equal(fs.readFileSync(f.store, "utf8"), '{"fixture":"durable control metadata"}\n');
+});
+
+test("rollback preserves staged artifacts when the active service cannot be stopped before promotion", async (t) => {
+  const f = await fixture(t, "rollback-stop-fails-before-promotion");
+  await f.startInstalledRuntime();
+  const result = await f.update();
+  assert.notEqual(result.status, 0);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.lifecycle, "update-failed");
+  assert.equal(report.rollback, "failed");
+  assert.equal(report.preserved_staging_artifacts.length, 2);
+  const [runtimeStage, unitStage] = report.preserved_staging_artifacts;
+  assert.equal(fs.readFileSync(path.join(f.installed, "runtime.mjs"), "utf8"), f.oldRuntime);
+  assert.equal(fs.readFileSync(f.unit, "utf8"), "previous service unit\n");
+  assert.equal(fs.readFileSync(path.join(runtimeStage, "runtime.mjs"), "utf8"), f.newRuntime);
+  assert.equal(fs.readFileSync(unitStage, "utf8"), fs.readFileSync(path.join(f.source, "titan-server-node.service"), "utf8"));
+  assert.equal(fs.readFileSync(path.join(report.rollback_artifact, "runtime/runtime.mjs"), "utf8"), f.oldRuntime);
+  const actions = fs.readFileSync(f.log, "utf8").trim().split("\n");
+  assert.equal(actions.filter((line) => line.startsWith("restart ")).length, 0);
+  assert.equal((await (await fetch(`http://127.0.0.1:${f.port}/live`)).json()).version, "old");
 });
 
 test("invalid configured port fails closed without restarting or touching the installation", async (t) => {
@@ -489,7 +568,7 @@ test("uninstall reports service-stop failures and retains recovery state", async
 });
 
 test("uninstall verifies inactive and disabled while preserving runtime artifacts", async (t) => {
-  const f = await uninstallFixture(t);
+  const f = await uninstallFixture(t, { retainedArtifacts: true });
   assert.equal(f.result.status, 0, f.result.stderr);
   const report = JSON.parse(f.result.stdout);
   assert.equal(report.lifecycle, "uninstalled");
@@ -507,4 +586,20 @@ test("uninstall is idempotent when systemd no longer knows the unit", async (t) 
   assert.equal(report.lifecycle, "uninstalled");
   assert.equal(report.service, "absent");
   assert.deepEqual(report.retained, []);
+  assert.equal(report.retained_status, "complete");
+});
+
+test("uninstall inventories retained runtime, token, and control state when unit is missing", async (t) => {
+  const f = await uninstallFixture(t, { noUnit: true, retainedArtifacts: true });
+  assert.equal(f.result.status, 0, f.result.stderr);
+  const report = JSON.parse(f.result.stdout);
+  assert.equal(report.lifecycle, "uninstalled");
+  assert.equal(report.service, "absent");
+  assert.deepEqual(report.retained, ["runtime", "token", "control_state"]);
+  assert.equal(report.retained_status, "complete");
+  assert.equal(fs.existsSync(path.join(f.runtime, "runtime.mjs")), true);
+  assert.equal(fs.existsSync(f.token), true);
+  assert.equal(fs.existsSync(path.join(f.controlState, "control.json")), true);
+  assert.equal(f.result.stdout.includes("fixture-only-secret"), false);
+  assert.equal(f.result.stderr.includes("fixture-only-secret"), false);
 });

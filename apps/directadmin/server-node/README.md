@@ -117,11 +117,53 @@ For commissioning diagnostics, verify cookie-name presence only: the browser sen
 
 ### DirectAdmin 1.711 commissioning checklist
 
-This checklist is for a later, explicitly authorized commissioning window. It is not evidence that the target panel, Workforce host, DNS, firewall, session issuer, or production identity path has been configured. The reported target snapshot is DirectAdmin 1.711, Apache 2.4.68, MariaDB 10.6.28, one CPU and 28.3 GB free disk; RAM is unknown and every value must be rechecked at commissioning.
+This checklist is for a later, separately authorized commissioning window. It is not evidence that the target panel, Workforce host, DNS, firewall, session issuer, or production identity path has been configured.
 
-**Reported host preflight blocker (not independently verified here):** an authenticated DirectAdmin panel is available, but no root shell is available. CustomBuild exposes `nodejs_provider=distro` with a `nodesource-22` choice only for the NGINX Unit Node module; Unit is disabled. This does not provide standalone `/usr/bin/node`. Do not enable Unit or change the web stack to obtain Node. There is no safe exact Node installation command until OS, architecture, glibc, RAM, package ownership, and root-level Node state are checked. No live setting was changed.
+**User-supplied read-only host report (not independently verified by this workspace):** AlmaLinux 9.8 x86_64, kernel `5.14.0-687.41.1.el9_8`, glibc 2.34; DirectAdmin 1.711, Apache 2.4.68, MariaDB 10.6.28, PHP-FPM 7.4/8.3, CSF/LFD enabled; one CPU, 28.3 GB free disk, 1.7 GiB RAM with about 908 MiB available, and 1 GiB swap with about 303 MiB used. `/usr/bin/node` reports v16.20.2, below this runtime's Node 20 minimum. systemd 252 and `flock` 2.37.4 are present. The report also observed UID/EUID 0 with `CapEff=0`, `NoNewPrivs=1`, `Seccomp=2`, and a denied systemd bus. That is a constrained sandbox, not unrestricted host-root access. Live site/service state and the RPM owner/module/repository/dependency chain remain unknown. Preserve Apache, CSF/LFD, MariaDB and the web stack. Use prebuilt x86_64 payloads in any future approved work; do not compile on this one-CPU, low-memory host. No live command, package, setting, service, credential, DNS or firewall change was made.
 
-1. **Confirm host prerequisites and artifact identity.** Record the approved host/OS and fresh resource readings. Verify the selected archive SHA-256 before extraction. Confirm `/usr/bin/node` is present and Node 20 or newer, plus the existing systemd and `flock` prerequisites; this is a prerequisite check, not Titan bootstrap, and remains unverified. Do not enable NGINX Unit, change the web stack, or install/upgrade Node based on the panel option alone. Confirm the RAW and plugin lifecycle scripts have mode 0755 and that DirectAdmin executes them as the expected Unix account.
+**Current blocker:** the reported `/usr/bin/node` v16.20.2 fails the Node 20+ runtime prerequisite. Do not overwrite `/usr/bin/node`, install over its package-owned files, enable DirectAdmin's NGINX Unit Node module, or change the web stack. First identify the installed package owner, enabled module stream, enabled repositories and reverse dependencies using an operator-authorized read-only host shell. The commands below are prepared for that later operator session; they have not been run here. Keep `dnf -C` (`--cacheonly`) so missing metadata is reported instead of downloaded, and stop if any command would require repository or package changes.
+
+#### Minimum read-only Node/RPM preflight
+
+```sh
+cat /etc/os-release
+uname -m
+uname -r
+getconf GNU_LIBC_VERSION
+free -h
+swapon --show
+df -h / /usr /var
+type -a node nodejs
+readlink -e /usr/bin/node
+/usr/bin/node --version
+rpm -qf /usr/bin/node "$(readlink -e /usr/bin/node)"
+node_package="$(rpm -qf --qf '%{NAME}\n' "$(readlink -e /usr/bin/node)")"
+rpm -qi "$node_package"
+rpm -ql "$node_package"
+rpm -q --requires "$node_package"
+rpm -q --whatrequires "$node_package"
+dnf -C info --installed "$node_package"
+dnf -C module list nodejs --all
+dnf -C module list --enabled nodejs
+dnf -C repolist --enabled
+```
+
+Record the owner and version of both `/usr/bin/node` and its resolved path, package vendor/repository, file list, requirements/reverse dependencies, active Node module stream, enabled repositories, and current memory/disk. If the RPM owner, module state, or dependency information cannot be read from cached metadata, stop and ask the host operator; do not refresh metadata, add a repository, or infer ownership from the version string.
+
+#### Later Node 22 plan — separate approval required
+
+The AlmaLinux 9.8 release notes list an updated Node.js 24 module stream; they do not establish which stream or package owns this host's Node 16 binary. Node.js 22 is currently an LTS line, and NodeSource documents a prebuilt Node 22 RPM path for Enterprise Linux. DirectAdmin's CustomBuild `nodesource-22` option remains specific to the NGINX Unit Node module and is not the host runtime. See the [AlmaLinux 9.8 release notes](https://wiki.almalinux.org/release-notes/9.8.html), [Node.js release schedule](https://nodejs.org/en/about/previous-releases), and [NodeSource Enterprise Linux RPM instructions](https://github.com/nodesource/distributions/blob/master/DEV_README.md#rpm-installation-instructions).
+
+Only after a separate approval for a named maintenance window and after the read-only owner/dependency report is reviewed:
+
+1. Choose and record the approved vendor/repository. If NodeSource is selected, retrieve its Node 22 setup script from the official source as a file, inspect and pin the exact script/repository metadata and signing key before executing it; do not pipe an unreviewed script to a shell. Do not run a repository setup script under this preflight.
+2. Use the vendor's signed prebuilt x86_64 RPMs; do not compile from source or replace `/usr/bin/node` with a copied tarball. After repository setup is separately approved, preview the exact package transaction with `dnf --assumeno install nodejs`. Review every install, upgrade, erase, file conflict and dependency; stop if it proposes changes to DirectAdmin, Apache, PHP-FPM, MariaDB, CSF/LFD or another unapproved service. Do not use `--allowerasing` to force a transaction.
+3. Back up the current package identity and configuration, then execute only the reviewed package-manager transaction under its separate approval. Let RPM own the resulting `/usr/bin/node`; do not manually overwrite package-owned files. Preserve an explicit rollback path to the recorded prior package/version.
+4. Verify the installed package owner with `rpm -qf /usr/bin/node`, verify RPM files with `rpm -V <approved-node-package>`, confirm `/usr/bin/node --version` is Node 22, and check required shared libraries and the Server Node service's configured executable before any authorized service restart. Recheck memory/disk and stop if the package plan exceeds the host's approved resource budget.
+
+This is a future plan, not installation approval. Until then, the Server Node plugin and RAW relay remain uncommissioned because the required standalone `/usr/bin/node` version is not met. No Node package transaction or service operation was performed.
+
+1. **Confirm host prerequisites and artifact identity.** Recheck the approved host facts and resource readings. Verify the selected archive SHA-256 before extraction. Confirm `/usr/bin/node` meets the Node 20+ runtime prerequisite, plus the existing systemd and `flock` prerequisites; Node 16.20.2 does not pass. Confirm the RAW and plugin lifecycle scripts have mode 0755 and that DirectAdmin executes them as the expected Unix account.
 2. **Verify protected configuration and private transport.** Only after the relay security review and operator approval, create `/etc/titan/server-node-directadmin-relay.json` as a regular root-owned file with no group/world write permission. Keep it limited to the three documented origin/schema fields. Set `public_origin` exactly to #811's `HostedWorkforceDependencies.directAdmin.publicOrigin`. Use loopback HTTP only for a Workforce gateway on this same host; use HTTPS with valid certificate verification and private DNS/IP checks for a separate host. Verify the target is not publicly reachable on 3010/3015 and make no firewall opening for those ports.
 3. **Resolve the control hostname and cookie boundary.** Select an operator-approved dedicated control-plane hostname with a real Titan session issuer, or prove the 443 application strips `__Host-titan-da-session` before application code receives the request. A different port alone is insufficient. Use browser diagnostics that reveal cookie-name presence only: confirm the browser sends the Titan cookie to the intended `:2222` origin and that the `:443` application does not receive it. Never capture, log, export or screenshot cookie values or request headers.
 4. **Prove true Titan bootstrap separately from Node availability.** Confirm the #811 Workforce gateway is running and configured with the exact public origin and private route. Confirm the real #302 source-credential/session exchange and #1049 session, CSRF and company-membership resolver are commissioned for the chosen hostname. Log in through the real Titan issuer and verify the context/company and read-only Workforce projection for that current membership. DirectAdmin UNIX UID, panel role, root privilege, supplied headers, the Node `/live` response and a relay response alone are not Titan identity, authorization, or business readiness.

@@ -166,12 +166,21 @@ let raw=""; process.stdin.on("data", part => raw+=part); process.stdin.on("end",
 
 server_node_update_report() {
   node - "$@" <<'JS'
-const [lifecycle, status, artifact] = process.argv.slice(2);
+const [lifecycle, status, artifact, runtimeStage, unitStage] = process.argv.slice(2);
+const stagedArtifacts = [runtimeStage, unitStage].filter(Boolean);
 process.stdout.write(JSON.stringify({ plugin:'titan-server-node', lifecycle,
   installed: lifecycle === 'updated' || status === 'restored' ? true : null,
   updated: lifecycle === 'updated',
-  ...(lifecycle === 'updated' ? {status} : {rollback:status}), rollback_artifact:artifact }) + '\n');
+  ...(lifecycle === 'updated' ? {status} : {rollback:status}), rollback_artifact:artifact,
+  ...(stagedArtifacts.length ? {preserved_staging_artifacts:stagedArtifacts} : {}) }) + '\n');
 JS
+}
+
+server_node_confirm_stopped() {
+  local active_state main_pid
+  active_state="$(systemctl show --property=ActiveState --value titan-server-node.service 2>/dev/null)" || return 1
+  main_pid="$(systemctl show --property=MainPID --value titan-server-node.service 2>/dev/null)" || return 1
+  [ "$active_state" = inactive ] && [ "$main_pid" = 0 ]
 }
 
 # Paths are explicit so this host operation can be exercised using disposable
@@ -179,7 +188,7 @@ JS
 update_server_node() (
   set -Eeuo pipefail
   local source="$1" installed="$2" unit="$3" backups="$4" config="$5"
-  local stage='' unit_stage='' backup='' promoted=false port file
+  local stage='' unit_stage='' backup='' promoted=false preserve_staging=false port file
   validate_server_node_package "$source"
   for file in "$installed" "$unit" "$backups"; do
     [ ! -L "$file" ] || { echo "refusing symlink deployment target: $file" >&2; exit 1; }
@@ -189,7 +198,12 @@ update_server_node() (
   port="$(server_node_port "$config")"
   exec 9>"${installed}.update.lock"
   flock -n 9 || { echo 'another Server Node update is in progress' >&2; exit 1; }
-  trap '[ -z "$stage" ] || rm -rf -- "$stage"; [ -z "$unit_stage" ] || rm -f -- "$unit_stage"' EXIT
+  cleanup_update_staging() {
+    [ "$preserve_staging" = true ] && return 0
+    [ -z "$stage" ] || rm -rf -- "$stage"
+    [ -z "$unit_stage" ] || rm -f -- "$unit_stage"
+  }
+  trap cleanup_update_staging EXIT
   stage="$(mktemp -d "${installed}.stage.XXXXXX")"
   chmod 0755 "$stage"
   for file in runtime.mjs directadmin-relay.mjs package.json plugin.conf; do install -m 0644 "$source/$file" "$stage/$file"; done
@@ -213,17 +227,26 @@ update_server_node() (
     set +e
     echo "Server Node update failed; rollback artifact: $backup" >&2
     if [ "$promoted" = true ]; then
-      systemctl stop titan-server-node.service || restored=false
-      if [ -d "$backup/displaced-runtime" ]; then
-        if [ -d "$installed" ]; then mv -T -- "$installed" "$backup/failed-runtime" || restored=false; fi
-        mv -T -- "$backup/displaced-runtime" "$installed" || restored=false
+      # A stop command can fail after the service has gone inactive; observed
+      # ActiveState and MainPID below decide whether any rollback move is safe.
+      systemctl stop titan-server-node.service || true
+      if server_node_confirm_stopped; then
+        if [ -d "$backup/displaced-runtime" ]; then
+          if [ -d "$installed" ]; then mv -T -- "$installed" "$backup/failed-runtime" || restored=false; fi
+          mv -T -- "$backup/displaced-runtime" "$installed" || restored=false
+        fi
+        cp -p "$backup/titan-server-node.service" "$unit" || restored=false
+        systemctl daemon-reload || restored=false
+        systemctl restart titan-server-node.service || restored=false
+        verify_server_node_process "$port" false || restored=false
+      else
+        restored=false
+        preserve_staging=true
+        echo 'unable to confirm the Server Node service stopped; installed, rollback, and staged artifacts were preserved without file moves or restart' >&2
       fi
-      cp -p "$backup/titan-server-node.service" "$unit" || restored=false
-      systemctl daemon-reload || restored=false
-      systemctl restart titan-server-node.service || restored=false
-      verify_server_node_process "$port" false || restored=false
     fi
     if [ "$restored" = true ]; then server_node_update_report update-failed restored "$backup";
+    elif [ "$preserve_staging" = true ]; then server_node_update_report update-failed failed "$backup" "$stage" "$unit_stage";
     else server_node_update_report update-failed failed "$backup"; fi
     exit "$original_status"
   }
@@ -234,6 +257,7 @@ update_server_node() (
   # are already complete; every subsequent failure restores the prior artifact.
   promoted=true
   systemctl stop titan-server-node.service
+  server_node_confirm_stopped || { echo 'Server Node service stop was not confirmed; refusing to move runtime or unit files' >&2; return 1; }
   mv -T -- "$installed" "$backup/displaced-runtime"
   mv -T -- "$stage" "$installed"
   stage=''

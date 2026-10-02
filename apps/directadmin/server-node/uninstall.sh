@@ -5,17 +5,43 @@ test -f "$ROOT/update.sh" && [ ! -L "$ROOT/update.sh" ] || { echo "update.sh mus
 source "$ROOT/update.sh"
 
 uninstall_report() {
-  local lifecycle="$1" service="$2" enabled="$3" unit_present="$4" uninstalled=false retained='["runtime","token","control_state"]' enabled_json=null
+  local lifecycle="$1" service="$2" enabled="$3" unit_present="$4" uninstalled=false retained='[]' enabled_json=null
+  local retained_status=complete path_status index
+  local -a retained_names=() paths=("$unit" "$runtime_path" "$token_path" "$state_path")
+  local -a labels=(unit runtime token control_state)
+  for index in "${!paths[@]}"; do
+    path_status="$(server_node_path_presence "${paths[$index]}")" || path_status=unknown
+    case "$path_status" in
+      present) retained_names+=("\"${labels[$index]}\"") ;;
+      absent) ;;
+      *) retained_status=unknown ;;
+    esac
+  done
+  retained="[$(IFS=,; printf '%s' "${retained_names[*]}")]"
   [ "$lifecycle" = uninstalled ] && uninstalled=true
-  [ "$unit_present" = true ] && retained='["unit","runtime","token","control_state"]'
-  [ "$service" = absent ] && retained='[]'
   case "$enabled" in true|false) enabled_json="$enabled" ;; esac
-  printf '{"plugin":"titan-server-node","lifecycle":"%s","uninstalled":%s,"service":"%s","enabled":%s,"retained":%s}\n' \
-    "$lifecycle" "$uninstalled" "$service" "$enabled_json" "$retained"
+  printf '{"plugin":"titan-server-node","lifecycle":"%s","uninstalled":%s,"service":"%s","enabled":%s,"retained":%s,"retained_status":"%s"}\n' \
+    "$lifecycle" "$uninstalled" "$service" "$enabled_json" "$retained" "$retained_status"
+}
+
+server_node_path_presence() {
+  local path="$1" parent="${1%/*}"
+  if [ -e "$path" ] || [ -L "$path" ]; then
+    printf 'present'
+    return 0
+  fi
+  [ -n "$parent" ] || parent=/
+  while [ "$parent" != / ] && [ ! -e "$parent" ] && [ ! -L "$parent" ]; do
+    parent="${parent%/*}"
+    [ -n "$parent" ] || parent=/
+  done
+  if [ -d "$parent" ] && [ -x "$parent" ]; then printf 'absent'; else printf 'unknown'; fi
 }
 
 uninstall_server_node() {
-  local unit="$1" expected_owner="${2:-0}" load_state active_state unit_file_state unit_present=false
+  local unit="$1" expected_owner="${2:-0}" runtime_path="${3:-/usr/local/titan/server-node}"
+  local token_path="${4:-/etc/titan/server-node.env}" state_path="${5:-/var/lib/titan/server-node}"
+  local load_state active_state unit_file_state unit_present=false
   [ "$(id -u)" = "$expected_owner" ] || { echo 'privileged Server Node uninstall required' >&2; uninstall_report uninstall-failed unknown unknown false; return 1; }
   command -v systemctl >/dev/null 2>&1 || { echo 'systemd is required to stop the Server Node service' >&2; uninstall_report uninstall-failed unknown unknown false; return 1; }
   if [ -L "$unit" ]; then
@@ -93,7 +119,8 @@ main() {
     return 0
   fi
   [ "$#" -eq 0 ] || { echo 'usage: uninstall.sh [--validate-only]' >&2; return 2; }
-  uninstall_server_node /etc/systemd/system/titan-server-node.service 0
+  uninstall_server_node /etc/systemd/system/titan-server-node.service 0 \
+    /usr/local/titan/server-node /etc/titan/server-node.env /var/lib/titan/server-node
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi
