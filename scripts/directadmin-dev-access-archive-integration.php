@@ -166,16 +166,16 @@ unset($rawPostEnvironment['csrf'], $rawPostEnvironment['public_key'], $rawPostEn
 integration_expect(strpos($duplicate, 'Key already installed.') !== false, 'duplicate synthetic key submit must be idempotently rejected');
 integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'duplicate submit must not duplicate the synthetic key');
 
-$trailingByteBody = $body . "\n";
+$trailingSeparatorBody = $body . "&";
 $trailingByteEnvironment = array_replace($baseEnvironment, [
     'REQUEST_METHOD' => 'POST',
     'SCRIPT_NAME' => $route,
     'QUERY_STRING' => 'pipe_post=yes',
     'POST' => 'stdin=true',
-    'CONTENT_LENGTH' => (string)strlen($trailingByteBody),
+    'CONTENT_LENGTH' => (string)strlen($trailingSeparatorBody),
 ]);
-[$rejected] = integration_run_role($entrypoint, $pluginRoot, $trailingByteEnvironment, $trailingByteBody);
-integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'a trailing byte after the serialized form must fail closed with the reported diagnostic (observed=' . integration_rejection_kind($rejected) . ')');
+[$rejected] = integration_run_role($entrypoint, $pluginRoot, $trailingByteEnvironment, $trailingSeparatorBody);
+integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'an empty trailing form field must fail closed with the reported diagnostic (observed=' . integration_rejection_kind($rejected) . ')');
 integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'rejected trailing-byte form must not change authorized_keys');
 
 echo "Synthetic public-key form submission passed against the extracted archive; no real key or account data was used.\n";
