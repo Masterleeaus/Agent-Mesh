@@ -124,4 +124,12 @@ $oversizedStatus=normalize_server_node_status(str_repeat('x',65537));
 expect_true($oversizedStatus['state']==='UNAVAILABLE','oversized Server Node status must fail closed');
 
 
+
+
+expect_true(directadmin_role_can_mutate('admin')===true,'admin route must retain operator actions');
+expect_true(directadmin_role_can_mutate('reseller')===false,'reseller route must be read-only');
+expect_true(directadmin_role_can_mutate('user')===false,'user route must be read-only');
+expect_true(directadmin_role_can_mutate('unknown')===false,'unknown roles must fail closed');
+
+
 echo "Developer Portal security regression tests passed".PHP_EOL;
