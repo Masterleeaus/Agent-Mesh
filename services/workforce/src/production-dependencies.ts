@@ -327,9 +327,11 @@ export async function createWorkforceDependencies(
       },
       async close(options) {
         const signal = options?.signal;
-        throwIfAborted(signal);
-        try { await runtimeProbeStorage?.close(); }
-        finally { await identityStorage.close(); }
+        try { throwIfAborted(signal); }
+        finally {
+          try { await runtimeProbeStorage?.close(); }
+          finally { await identityStorage.close(); }
+        }
       },
     };
     return dependencies;

@@ -180,6 +180,36 @@ test("production factory fails on an empty identity file without migrating it", 
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
+test("production dependency close releases owned stores even when its signal is already aborted", async () => {
+  const root = mkdtempSync(join(tmpdir(), "titan-workforce-aborted-close-"));
+  const identityPath = join(root, "identity.sqlite");
+  const runtimePath = join(root, "workforce.sqlite");
+  const webPath = join(root, "titan-zero.db");
+  const companyRoot = join(root, "company-stores");
+  const identity = createSqliteStorage(identityPath);
+  let dependencies: Awaited<ReturnType<typeof createWorkforceDependencies>> | undefined;
+  try {
+    await createIdentitySessionRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+    await initializeSqliteCompanyPlacementRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+    await identity.close();
+    const { environment } = productionEnvironment({ root, identityPath, runtimePath, webPath, companyRoot });
+    const composed = await createWorkforceDependencies(environment);
+    dependencies = composed;
+    assert.ok(composed.close, "production dependencies own a close hook");
+    const close = composed.close;
+    const shutdown = new AbortController();
+    shutdown.abort();
+    await assert.rejects(close({ signal: shutdown.signal }), { name: "AbortError" });
+    assert.deepEqual(await composed.readiness({ signal: new AbortController().signal }), {
+      authentication: false, authority: false, provider: false, evidence: false,
+    }, "an aborted shutdown signal does not skip closing owned storage connections");
+  } finally {
+    await dependencies?.close?.({ signal: new AbortController().signal }).catch(() => undefined);
+    await identity.close().catch(() => undefined);
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("production readiness rejects a company store that aliases the read-only web database", async () => {
   const root = mkdtempSync(join(tmpdir(), "titan-workforce-web-alias-"));
   const identityPath = join(root, "identity.sqlite");
