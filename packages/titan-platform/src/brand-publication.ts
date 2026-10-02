@@ -377,7 +377,7 @@ export function createMicroweberSitemapDraft(value:unknown,canonical_origin:stri
  if(typeof canonical_origin!=="string")throw new Error("microweber-sitemap-origin-invalid");
  let origin:URL;
  try{origin=new URL(canonical_origin);}catch{throw new Error("microweber-sitemap-origin-invalid");}
- if(origin.protocol!=="https:"||origin.username||origin.password||origin.pathname!=="/"||origin.search||origin.hash||canonical_origin!==origin.origin)throw new Error("microweber-sitemap-origin-invalid");
+ if(origin.protocol!=="https:"||origin.username||origin.password||origin.pathname!=="/"||origin.search||origin.hash)throw new Error("microweber-sitemap-origin-invalid");
  const environment=value.environment as "preview"|"live";
  const sitemap_xml=environment==="preview"?"":`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.slice().sort().map(route=>`<url><loc>${escapeHtml(new URL(route,origin).href)}</loc></url>`).join("")}</urlset>`;
  const robots_txt=environment==="preview"?"User-agent: *\nDisallow: /\n":`User-agent: *\nAllow: /\nSitemap: ${origin.origin}/sitemap.xml\n`;
