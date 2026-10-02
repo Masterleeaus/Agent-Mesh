@@ -117,6 +117,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
+    credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) { dependencies.credentialVerifier = verifier; },
     get nativeInvocations() { return nativeInvocations; },
     afterComplete(hook: (signal?: AbortSignal) => Promise<void>) { afterComplete = hook; },
     beforeVerify(hook: (signal?: AbortSignal) => Promise<void>) { beforeVerify = hook; },
@@ -417,5 +418,48 @@ test("host strips legacy provider control-transaction port before native runtime
     assert.equal(await f.status(), "completed"); assert.equal(await f.status("b"), "in_progress");
     assert.equal((await f.control.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status, "in_progress");
     assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 1);
+  } finally { await f.close(); }
+});
+
+test("canonical issued session credentials authenticate real native host and reject tamper, audience and revocation", async () => {
+  const { createSessionCredentialService } = await import("../packages/titan-platform/src/security-boundary.ts");
+  const { createWorkforceSessionCredentialVerifier } = await import("../services/workforce/src/session-credential-verifier.ts");
+  const f = await fixture();
+  try {
+    // Keys exist only in this disposable test. The hosted verifier receives public keys only.
+    const access = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
+    const login = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
+    const config = { registry: f.registry, issuer: "titan:hosted-test", key_id: "access-test", algorithm: "EdDSA" as const, verification_key: access.publicKey, upstream: { issuer: "test-ed25519", audience: "titan-login", key_id: "login-test", algorithm: "EdDSA" as const, verification_key: login.publicKey } };
+    const service = createSessionCredentialService({ ...config, audience: "workforce", signing_key: access.privateKey });
+    f.credentialVerifier(createWorkforceSessionCredentialVerifier(config));
+    const jwt = async (payload: Record<string, unknown>, key: CryptoKey, kid: string, typ: string) => {
+      const signingInput = [Buffer.from(JSON.stringify({ alg: "EdDSA", kid, typ })).toString("base64url"), Buffer.from(JSON.stringify(payload)).toString("base64url")].join(".");
+      return `${signingInput}.${Buffer.from(await crypto.subtle.sign("Ed25519", key, Buffer.from(signingInput))).toString("base64url")}`;
+    };
+    const now = Math.floor(Date.now() / 1000);
+    const upstream = await jwt({ iss: config.upstream.issuer, aud: "titan-login", sub: "subject", jti: "hosted-canonical-once", company_id: "a", device_id: "device", iat: now, exp: now + 300 }, login.privateKey, "login-test", "titan-login+jwt");
+    const issued = await service.issue(upstream, { company_id: "a", device_id: "device" });
+    const input = { session_id: issued.context.session_id, context_revision: issued.context.context_revision };
+    const claims = JSON.parse(Buffer.from(issued.credential.split(".")[1], "base64url").toString("utf8"));
+    const wrongAudience = await jwt({ ...claims, aud: "other" }, access.privateKey, "access-test", "titan-session+jwt");
+    const parts = issued.credential.split(".");
+    const tampered = [parts[0], Buffer.from(JSON.stringify({ ...claims, actor_id: "forged" })).toString("base64url"), parts[2]].join(".");
+    const wrongRevision = await jwt({ ...claims, session_revision: 2 }, access.privateKey, "access-test", "titan-session+jwt");
+    for (const credential of [wrongAudience, tampered, wrongRevision]) {
+      const rejected = await f.post(input, `Bearer ${credential}`);
+      assert.equal(rejected.status, 401); assert.deepEqual(rejected.body, { error: "conversation-authentication-failed" });
+    }
+    for (const header of [`bearer ${issued.credential}`, `Bearer  ${issued.credential}`, `Basic ${issued.credential}`]) {
+      assert.equal((await f.post(input, header)).status, 401);
+    }
+    assert.equal((await f.run()).length, 0); assert.equal(f.nativeInvocations, 0);
+    const accepted = await f.post(input, `Bearer ${issued.credential}`);
+    assert.equal(accepted.status, 200, JSON.stringify(accepted.body)); assert.equal(await f.status(), "completed");
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 1);
+    await service.revoke(issued.credential, { company_id: "a", device_id: "device" });
+    await f.restart();
+    const rejected = await f.post({ ...input, client_message_id: "revoked-request" }, `Bearer ${issued.credential}`);
+    assert.equal(rejected.status, 401); assert.equal((await f.run()).length, 1); assert.equal(f.nativeInvocations, 1);
+    assert.equal(await f.status("b"), "in_progress");
   } finally { await f.close(); }
 });

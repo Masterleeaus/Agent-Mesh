@@ -33,6 +33,18 @@ credential issuer. No default verifier, sample credential, business fixture,
 authority grant or successful provider fallback ships. Missing configuration
 prevents launcher startup. Library callers without dependencies can inspect
 liveness/storage, but readiness stays 503 and conversation ingress stays disabled.
+
+Use `createWorkforceSessionCredentialVerifier` from
+`services/workforce/src/session-credential-verifier.ts` for canonical #302 signed
+sessions. It wraps `createSessionCredentialVerifier` with fixed audience
+`workforce` and surface `zero`, accepts strict Bearer JWTs, and exposes only the
+host verification port. Supply the canonical registry and trusted issuer/key
+configuration; asymmetric verification needs only public keys. It authenticates
+cryptographically and resolves current registry state before projecting identity.
+It creates no keys, credentials, sessions or provisioning routes. DirectAdmin
+audience credentials cannot be relabelled for Workforce; a commissioned
+Workforce-audience authentication handoff remains with #302/#1049.
+
 The old VPS smoke assumes an unconfigured host is ready; this is no longer a valid
 production acceptance claim and must be commissioned by the deployment owner.
 
@@ -123,9 +135,12 @@ second-surface acceptance remain commissioning evidence, not unit-test claims.
 
 ## Dependency provenance and rollback
 
-Preserved #1179 prerequisite `743e70789b85571fa0eafb1029630f0cbc6b7eb6`,
+Preserved #1179 prerequisite `eea8d6cc1eff2b49ae8e64f04687736612a99b16`,
 including #811 readiness, malformed URL protection, restored exports and compiler
-coverage; integrated #302 resolver `68e4804f594503f3a205d2caefdb2f9f75701ee4`.
+coverage, reviewed worker repairs and VPS setup fixes; integrated #302 resolver
+and credential owner `bd3075ef91222e32a23a1f09111a84b3c01af515` and main
+`ee1a3ee3709b9201fc728fc162067d9a5ab78e45`. The Docker launcher uses the
+package-local `tsx` command preserved from #1179.
 No edits to the DirectAdmin identity bridge or Server Node runtime owners.
 
 Rollback stops ingress and restores the prior service artifact. Retain durable
