@@ -361,6 +361,18 @@
       "limitations": [
         "Payment records are provider-backed domain state, not a substitute for the accepted evidence owner for consequential execution."
       ]
+    },
+    {
+      "path": "packages/tools/governed-execution-recovery.mjs",
+      "role": "restart-recovery-evidence",
+      "scope": "Persists governed execution lifecycle records and transition events used to resume, reconcile, retry, and compensate interrupted provider executions; it is not accepted factual business history.",
+      "durability": "Company-scoped execution_lifecycle_records and execution_lifecycle_events tables through the injected store.",
+      "consumers": [
+        "services/workforce/src/field-service-runtime.mjs"
+      ],
+      "limitations": [
+        "Recovery transition history governs safe execution replay but does not establish a verified business outcome; accepted outcome evidence remains in the canonical ledger."
+      ]
     }
   ]
 }
