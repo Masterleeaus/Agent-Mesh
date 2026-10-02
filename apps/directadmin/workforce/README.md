@@ -5,15 +5,19 @@ This package is the operator cockpit for the canonical hosted Workforce. It has
 no database, queue, agent executor, identity mapping, credentials or authority engine.
 Native Titan FSM remains the default; Frappe is optional.
 
+**Packaging candidate only — not live-install-ready.** This archive has only been
+validated in disposable test/staging environments; its upstream host contracts and
+real DirectAdmin/Apache behavior remain uncommissioned.
+
 ## Integration status
 
 The executable role routes render the same company-scoped cockpit. The browser
 uses the actual shared #1049 `DirectAdminCockpitSession`, with its fetcher supplied
 by the published #812 Server Node adapter.
-Open draft PR #1201 now contains the #811 canonical company-filtered read-only projection
-owner and an optional `/v1/directadmin/*` Fetch-handler mount. Its published controls list
-is empty and lifecycle proposals are explicitly denied pending canonical caller-management
-authority. This code is not merged to main or live-certified. Missing commissioned
+PR #1201 is merged to main and contains the #811 canonical company-filtered read-only
+projection owner and optional `/v1/directadmin/*` Fetch-handler mount. Its published
+controls list is empty and lifecycle proposals are explicitly denied pending canonical
+caller-management authority. The API is not live-certified. Missing commissioned
 session/CSRF bootstrap, denied identity, invalid company data or unavailable host fail closed.
 The current implementation is **not certified complete or ready for production**.
 Authenticated host HTML must supply `<meta name="titan-directadmin-csrf" content="…">`
@@ -48,6 +52,14 @@ Host and browser protections. Do not inject caller identity or CSRF from CGI, pu
 private token in a URL, or assume Apache 443 can install a handler on DirectAdmin's
 port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
+
+The relay integration evidence is pinned to #812 / PR #1211 pre-change source head
+`8cae7034f6d2ec7c9063ac0c3aba40c6f41b3d89`. Current main includes #812 commit
+`89ff2427339a6f216281c970376be4634ee9fb9f`, which adds experimental v2 relay config
+and an Apache `:443` cookie-boundary marker/template. This package has not adopted
+that marker or tested Apache behavior. Independent contract review and verification
+on a disposable real Apache/DirectAdmin host are required before relying on the new
+contract; a config marker alone does not prove cookie isolation.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
 states, owner-provided source/freshness/evidence and receipt references. It only

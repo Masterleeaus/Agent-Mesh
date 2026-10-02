@@ -302,15 +302,31 @@ try {
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'canonical controls=[] keeps the UI read-only');
   assert.deepEqual(pageErrors, [], 'packaged role has no browser runtime errors');
 
-  const wrongCsrf = await page.evaluate(async () => {
-    const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
-    const fetcher = relay.createDirectAdminRelayFetch();
-    const response = await fetcher('/v1/directadmin/context', { method: 'GET', headers: { Accept: 'application/json', 'X-Titan-CSRF': 'Z'.repeat(43) } });
-    return { status: response.status, body: await response.json() };
-  });
-  assert.ok([401, 403].includes(wrongCsrf.status), 'bad CSRF is denied by canonical session bridge');
-  assert.equal(wrongCsrf.body.read_only, true);
-  assert.ok(!JSON.stringify(wrongCsrf.body).includes(auth.token), 'denial response does not contain the session credential');
+  // A valid-length CSRF mismatch is a session-rejected response and clears
+  // that browser context's HttpOnly cookie. Keep it in an isolated context so
+  // the main operator session can continue through intent/company/expiry checks.
+  const csrfContext = await browser.newContext({ ignoreHTTPSErrors: true });
+  let wrongCsrf;
+  try {
+    await csrfContext.addCookies([{ name: '__Host-titan-da-session', value: auth.token, url: panelOrigin,
+      secure: true, httpOnly: true, sameSite: 'Strict' }]);
+    const csrfPage = await csrfContext.newPage();
+    await csrfPage.goto(panelOrigin);
+    await csrfPage.getByText('Current hosted projection', { exact: true }).waitFor();
+    wrongCsrf = await csrfPage.evaluate(async () => {
+      const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
+      const fetcher = relay.createDirectAdminRelayFetch();
+      const response = await fetcher('/v1/directadmin/context', { method: 'GET', headers: { Accept: 'application/json', 'X-Titan-CSRF': 'Z'.repeat(43) } });
+      return { status: response.status, body: await response.json() };
+    });
+    assert.equal(wrongCsrf.status, 401, 'a well-formed but incorrect CSRF token is denied by the canonical bridge');
+    assert.equal(wrongCsrf.body.read_only, true);
+    assert.ok(!JSON.stringify(wrongCsrf.body).includes(auth.token), 'denial response does not contain the session credential');
+    assert.equal((await csrfContext.cookies(panelOrigin)).some(cookie => cookie.name === '__Host-titan-da-session'), false,
+      'the invalid-CSRF session-rejected response clears its isolated HttpOnly cookie');
+  } finally { await csrfContext.close(); }
+  assert.ok(relayObservations.some(entry => entry.status === 401 && entry.code === 'directadmin-session-rejected'),
+    'the real RAW route preserves canonical invalid-session denial');
 
   const beforeWork = await (async () => {
     const db = createSqliteStorage(dbPath);
@@ -335,8 +351,10 @@ try {
       } catch (error) { return { accepted: false, error: String(error?.message ?? '') }; }
     } finally { session.dispose(); }
   }, `data:text/javascript;base64,${Buffer.from(await readFile(join(browserPackage, 'images/sdk.mjs'))).toString('base64')}`);
-  assert.equal(denial.accepted, false, 'a noncanonical context revision must not produce an action receipt');
+  assert.equal(denial.accepted, false, 'canonical context reaches the unsupported action owner and is denied');
   assert.equal(denial.error, 'directadmin-http-403', 'the current #1049 gateway maps the typed #811 unsupported-action denial');
+  assert.equal((await context.cookies(panelOrigin)).some(cookie => cookie.name === '__Host-titan-da-session' && cookie.value === auth.token), true,
+    'typed governed-intent 403 leaves the still-valid DirectAdmin session cookie intact');
   assert.equal(hostedObservations.some(entry => entry.path === '/v1/directadmin/titan_workforce/intents'), true,
     'the canonical revision assertion passes through #812 to the host owner');
   assert.ok(!denial.error.includes('fixture-operation-denied'), 'the UI receives no intent/owner detail');
