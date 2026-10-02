@@ -1,6 +1,7 @@
 # Web gate repair evidence — issue 1152
 
 Partial, blocked; no merge or product-completion claim. Canonical branch: `agent/issue-1152`.
+Current implementation commit: `865697a3aa6f4ce79f8bfa6f0b3b405b7367a1f5` (tested source is based on the previously published `fc6bd2bb`; latest `main` sync is pending #1179 owner coordination).
 
 ## Provenance and integration
 
