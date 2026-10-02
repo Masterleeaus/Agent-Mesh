@@ -1,4 +1,5 @@
 import { executionEvidenceToBusinessEvidence } from "./business-evidence-adapter.mjs";
+import { ExecutionGateway } from "./execution-gateway.mjs";
 
 const stable = value => {
   if (Array.isArray(value)) return value.map(stable);
@@ -81,4 +82,15 @@ export function createBusinessEvidenceExecutionSink({ store, projection_version 
       await appendIdempotently(fact);
     }
   };
+}
+
+/** Construct an ExecutionGateway whose lifecycle sink cannot bypass the canonical store. */
+export function createBusinessEvidenceExecutionGateway({ store, projection_version, ...gatewayOptions } = {}) {
+  if (Object.prototype.hasOwnProperty.call(gatewayOptions, "evidenceSink")) {
+    throw new Error("business-evidence-sink-override-forbidden");
+  }
+  return new ExecutionGateway({
+    ...gatewayOptions,
+    evidenceSink: createBusinessEvidenceExecutionSink({ store, projection_version }),
+  });
 }
