@@ -1,0 +1,9 @@
+{
+  "name": "@titan-zero/server-node",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node runtime.mjs --serve",
+    "test": "node --test runtime.test.mjs runtime.security.test.mjs directadmin-relay.test.mjs lifecycle.test.mjs"
+  }
+}
