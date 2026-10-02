@@ -145,7 +145,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
         [evidence.evidence_id, company_id, 'work', work_id, 'gateway_execution', JSON.stringify(provenance), JSON.stringify({ ...evidence, provenance, accepted_evidence })]);
     };
     const admitExecution = async (evidence, business) => {
-      const admit = async ({ proof, authenticated_identity, signal: fenceSignal } = {}) => storage.transaction(async tx => {
+      const admit = async ({ proof, authenticated_identity, signal: fenceSignal, acquire_deadline_ms } = {}) => storage.transaction(async tx => {
         const assertAdmissionLive = () => { executionSignal?.throwIfAborted(); fenceSignal?.throwIfAborted(); };
         assertAdmissionLive();
         const row = await one(tx, 'SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2', [company_id, run_id]);
@@ -175,7 +175,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
           if (!Number.isFinite(expiresAt) || expiresAt <= admissionCheckedAt) throw new Error('runtime-credential-expired');
         }
         return { decision: fencedDecision, proof };
-      });
+      }, acquire_deadline_ms === undefined ? undefined : { acquireDeadlineMs: acquire_deadline_ms });
       if (sessionAdmission) {
         return sessionAdmission({ company_id, actor_id: current.actor_id, run_id, work_id, signal: executionSignal }, admit);
       }
