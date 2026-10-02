@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -26,6 +27,28 @@ function psql(url, sql) {
 
 function scalar(url, sql) {
   return psql(url, sql).split(/\r?\n/).at(-1);
+}
+
+function assertManifestLedger(url, { legacyFilenameOnly = false } = {}) {
+  const rows = psql(url, "SELECT filename || E'\\t' || COALESCE(checksum, '<NULL>') FROM schema_migrations ORDER BY filename")
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((row) => row.split("\t"));
+  assert.equal(rows.length, manifest.entries.length, "ledger row count must match the immutable manifest");
+  const applied = new Map(rows.map(([filename, checksum]) => [filename, checksum]));
+  for (const entry of manifest.entries) {
+    assert.equal(
+      applied.get(entry.filename),
+      legacyFilenameOnly ? "<NULL>" : entry.sha256,
+      `ledger checksum mismatch for ${entry.filename}`,
+    );
+  }
+}
+
+function schemaFingerprint(url) {
+  const dump = spawnSync("pg_dump", [url, "--schema-only", "--no-owner", "--no-privileges"], { encoding: "utf8" });
+  assert.equal(dump.status, 0, `schema-only pg_dump failed: ${dump.stderr}`);
+  return createHash("sha256").update(dump.stdout).digest("hex");
 }
 
 function recreateDatabase(name) {
@@ -90,8 +113,11 @@ try {
   assert.equal(scalar(freshUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount);
   assert.equal(scalar(freshUrl, "SELECT COUNT(*) FROM schema_migrations WHERE checksum IS NULL"), "0");
   assert.equal(scalar(freshUrl, "SELECT COUNT(DISTINCT filename) FROM schema_migrations"), expectedCount);
+  assertManifestLedger(freshUrl);
+  console.log(`fresh schema fingerprint (schema only, no business rows): ${schemaFingerprint(freshUrl)}`);
   runMigrator(freshUrl);
   assert.equal(scalar(freshUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount, "a full replay must be idempotent");
+  assertManifestLedger(freshUrl);
 
   recreateDatabase(seedDb);
   const seedUrl = databaseUrl(seedDb);
@@ -104,6 +130,7 @@ try {
   runMigrator(seedUrl);
   assert.equal(scalar(seedUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount);
   assert.equal(scalar(seedUrl, "SELECT COUNT(*) FROM schema_migrations WHERE checksum IS NOT NULL"), "0");
+  assertManifestLedger(seedUrl, { legacyFilenameOnly: true });
 
   recreateDatabase(enumRetryDb);
   const enumRetryUrl = databaseUrl(enumRetryDb);
@@ -128,6 +155,7 @@ try {
   runMigrator(enumRetryUrl);
   assert.equal(scalar(enumRetryUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount);
   assert.equal(scalar(enumRetryUrl, "SELECT COUNT(*) FROM price_book WHERE code IN ('9010','9011','9012','9013')"), "4");
+  assertManifestLedger(enumRetryUrl);
 
   console.log("postgres migration integration: PASS (fresh rollback/resume/replay, atomic legacy seed, and migration 089 enum-stage retry)");
 } finally {
