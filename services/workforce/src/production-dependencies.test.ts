@@ -159,7 +159,7 @@ test("production dependency factory composes only existing identity, placement a
     }, "readiness reports absent authority/evidence and owner schema attestation as degraded");
     const placement = await dependencies.companyPlacementRegistry.findByCompanyId("a");
     assert.ok(placement);
-    await assert.rejects(dependencies.companyStoreOpener.open(placement), /workforce-company-native-fsm-attestation-required/);
+    await assert.rejects(dependencies.companyStoreOpener.open(placement), /company-native-schema-marker-missing/);
 
     runtime = createSqliteStorage(runtimePath);
     hostedIdentity = createSqliteStorage(identityPath);

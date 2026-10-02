@@ -2,8 +2,11 @@ import SectionLabel from '../components/SectionLabel'
 import FadeIn from '../components/FadeIn'
 import CTASection from '../components/CTASection'
 import { Link } from 'react-router-dom'
+import { additionalIndustryConfigs } from '../data/industryExtensions'
+import { getAvailability } from '../data/verticalCatalogue'
+import { getCurrentSiteContext, VERTICAL_SITES } from '../config/siteContext'
 
-const industries = [
+const existingIndustries = [
   { icon: '🧹', name: 'Cleaning', slug: 'cleaning', desc: 'Coordinate enquiries, recurring services, team assignments, property notes, checklists, customer communication and follow-up.', tags: ['Recurring Service', 'Team Coordination', 'Property Notes'] },
   { icon: '🌿', name: 'Landscaping & Lawn Care', slug: 'landscaping', desc: 'Keep recurring routes, seasonal work, crews, customer requests and follow-up connected around the systems you already use.', tags: ['Recurring Routes', 'Seasonal Work', 'Crew Coordination'] },
   { icon: '🏊', name: 'Pool Service', slug: 'pools', desc: 'Support recurring visits, service histories, customer communication, technician notes and exception handling across the service cycle.', tags: ['Service History', 'Recurring Visits', 'Customer Updates'] },
@@ -14,7 +17,42 @@ const industries = [
   { icon: '🚐', name: 'Mobile Services', slug: 'mobile-services', desc: 'Support businesses that take the service to the customer with location-aware scheduling, communication, job context and follow-up.', tags: ['Mobile Workforce', 'Location Context', 'Customer Comms'] },
 ]
 
+const industries = [
+  ...existingIndustries,
+  ...Object.entries(additionalIndustryConfigs).map(([slug, config]) => ({
+    icon: config.icon,
+    name: config.name,
+    slug,
+    desc: config.directoryDescription,
+    tags: config.tags,
+  })),
+]
+
+const profileBySlug = new Map([
+  ...existingIndustries,
+  ...Object.entries(additionalIndustryConfigs).map(([slug, config]) => ({ slug, ...config })),
+].map((profile) => [profile.slug, profile]))
+
+const productionIndustries = VERTICAL_SITES.map((site) => {
+  return {
+    ...site,
+    icon: profileBySlug.get(site.moduleId)?.icon || (site.moduleId === 'handyman-property-maintenance' ? '🛠️' : '🧭'),
+    href: site.canonicalUrl,
+    desc: site.profile.intro,
+    tags: [
+      `Marketing ${getAvailability(site.profile.marketingAvailabilityRef).label}`,
+      `Host ${getAvailability(site.profile.hostnameAvailabilityRef).label}`,
+    ],
+    contentReady: true,
+  }
+})
+
 export default function Industries() {
+  const siteContext = getCurrentSiteContext()
+  const directoryItems = siteContext.kind === 'preview'
+    ? industries.map((industry) => ({ ...industry, href: `/industries/${industry.slug}`, external: false, contentReady: true }))
+    : productionIndustries.map((industry) => ({ ...industry, external: true }))
+
   return (
     <>
       {/* Hero */}
@@ -34,9 +72,8 @@ export default function Industries() {
       {/* Grid */}
       <section className="px-6 pb-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {industries.map((ind, i) => (
-            <FadeIn key={ind.name} delay={i * 60}>
-              <Link to={`/industries/${ind.slug}`} className="bg-nx-surface border border-nx-border rounded-2xl p-7 transition-all hover:border-nx-purple hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 cursor-pointer h-full flex flex-col">
+          {directoryItems.map((ind, i) => {
+            const card = <>
                 <div className="text-3xl mb-4">{ind.icon}</div>
                 <h3 className="text-lg font-bold mb-2">{ind.name}</h3>
                 <p className="text-sm text-nx-muted leading-relaxed flex-1 mb-4">{ind.desc}</p>
@@ -51,9 +88,14 @@ export default function Industries() {
                   ))}
                 </div>
                 <span className="text-xs text-nx-purple-light mt-5 font-semibold">Explore {ind.name} →</span>
-              </Link>
+              </>
+            const className = "bg-nx-surface border border-nx-border rounded-2xl p-7 transition-all hover:border-nx-purple hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 cursor-pointer h-full flex flex-col"
+            return <FadeIn key={ind.host || ind.slug || ind.name} delay={i * 60}>
+              {ind.external
+                ? <a href={ind.href} className={className} aria-label={`Explore ${ind.name} site`}>{card}</a>
+                : <Link to={ind.href} className={className}>{card}</Link>}
             </FadeIn>
-          ))}
+          })}
         </div>
       </section>
 

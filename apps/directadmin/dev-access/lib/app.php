@@ -158,16 +158,19 @@ function directadmin_request_diagnostic($exception){
  if(!in_array($transport,['stdin','environment','query','marker','unavailable','unknown'],true)) $transport='unknown';
  $observed=$_SERVER['TDA_REQUEST_BODY_BYTES_READ']??null;
  if(!is_int($observed)||$observed<0||$observed>16387) $observed=null;
+ $terminalClass=$_SERVER['TDA_REQUEST_TERMINAL_CLASS']??'unknown';
+ if(!in_array($terminalClass,['empty','nul','lf','crlf','cr','control','high-bit','printable','unknown'],true)) $terminalClass='unknown';
  return [
   'code'=>directadmin_request_error_code($exception),
   'transport'=>$transport,
   'declared_bytes'=>directadmin_request_declared_length_hint(),
-  'body_bytes_read'=>$observed
+  'body_bytes_read'=>$observed,
+  'terminal_class'=>$terminalClass
  ];
 }
 function directadmin_request_diagnostic_summary(){
  $diagnostic=$_SERVER['TDA_REQUEST_DIAGNOSTIC']??null;
- if(!is_array($diagnostic)) return 'code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown';
+ if(!is_array($diagnostic)) return 'code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown terminal_class=unknown';
  $codes=['content_length_invalid','body_oversized','content_type_invalid','query_oversized','query_malformed','query_form_fields','stdin_unavailable','body_length_mismatch','malformed_terminator','too_many_fields','form_malformed','duplicate_field','array_field','field_count_invalid','field_invalid','field_value_invalid','action_ambiguous','action_invalid','post_marker_invalid','raw_post_missing','request_rejected'];
  $code=$diagnostic['code']??'request_rejected';
  if(!in_array($code,$codes,true)) $code='request_rejected';
@@ -177,7 +180,9 @@ function directadmin_request_diagnostic_summary(){
  if(!is_int($declared)||$declared<0||$declared>16384) $declared='unknown';
  $observed=$diagnostic['body_bytes_read']??null;
  if(!is_int($observed)||$observed<0||$observed>16387) $observed='unknown';
- return 'code='.$code.' transport='.$transport.' declared_bytes='.$declared.' body_bytes_read='.$observed;
+ $terminalClass=$diagnostic['terminal_class']??'unknown';
+ if(!in_array($terminalClass,['empty','nul','lf','crlf','cr','control','high-bit','printable','unknown'],true)) $terminalClass='unknown';
+ return 'code='.$code.' transport='.$transport.' declared_bytes='.$declared.' body_bytes_read='.$observed.' terminal_class='.$terminalClass;
 }
 function directadmin_request_body_length_matches($body,$expectedLength){
  if(!is_string($body)||($expectedLength!==null&&(!is_int($expectedLength)||$expectedLength<0))) return false;
@@ -185,6 +190,27 @@ function directadmin_request_body_length_matches($body,$expectedLength){
  if(strlen($body)===$expectedLength+1&&substr($body,-1)==="\n") return true;
  if(strlen($body)===$expectedLength+2&&substr($body,-2)==="\r\n") return true;
  return false;
+}
+function directadmin_normalize_stdin_transport_terminator($body,$expectedLength){
+ if(!is_string($body)||$body===''||substr($body,-1)!=="\0") return $body;
+ if($expectedLength!==null&&(!is_int($expectedLength)||$expectedLength<0)) return $body;
+ $length=strlen($body);
+ $prefix=substr($body,0,-1);
+ if($prefix===''||strpos($prefix,"\0")!==false) return $body;
+ if($expectedLength!==null&&$length!==$expectedLength+1) return $body;
+ return $prefix;
+}
+function directadmin_request_terminal_byte_class($body){
+ if(!is_string($body)||$body==='') return 'empty';
+ $length=strlen($body);
+ if($length>=2&&substr($body,-2)==="\r\n") return 'crlf';
+ $last=ord($body[$length-1]);
+ if($last===0) return 'nul';
+ if($last===10) return 'lf';
+ if($last===13) return 'cr';
+ if($last<32||$last===127) return 'control';
+ if($last>=128) return 'high-bit';
+ return 'printable';
 }
 function directadmin_fields_from_stdin($expectedLength){
  directadmin_validate_form_content_type();
@@ -194,7 +220,11 @@ function directadmin_fields_from_stdin($expectedLength){
  fclose($stream);
  if(!is_string($body)) throw new RuntimeException('Unable to read request body.');
  $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=strlen($body);
+ $_SERVER['TDA_REQUEST_TERMINAL_CLASS']=directadmin_request_terminal_byte_class($body);
  if(strlen($body)>16386) throw new RuntimeException('Form data exceeds the limit.');
+ // Normalize one raw NUL only at the pipe_post stdin boundary and only when it is outside the declared form bytes.
+ // The strict form parser still rejects interior, repeated, encoded, and invalid UTF-8 values.
+ $body=directadmin_normalize_stdin_transport_terminator($body,$expectedLength);
  if(!directadmin_request_body_length_matches($body,$expectedLength)) throw new RuntimeException('Request body length mismatch.');
  return directadmin_parse_form_body($body);
 }
@@ -231,6 +261,7 @@ function directadmin_fields_from_request(){
   }
   $_SERVER['TDA_REQUEST_TRANSPORT']='environment';
   $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=strlen($marker);
+  $_SERVER['TDA_REQUEST_TERMINAL_CLASS']=directadmin_request_terminal_byte_class($marker);
   if(strlen($marker)>16386) throw new RuntimeException('Form data exceeds the limit.');
   if(!directadmin_request_body_length_matches($marker,$length)) throw new RuntimeException('Request body length mismatch.');
   return directadmin_parse_form_body($marker);
@@ -244,7 +275,7 @@ function bootstrap_directadmin_request($role='admin'){
  if(PHP_SAPI!=='cli') return;
  $method=strtoupper(trim((string)(getenv('REQUEST_METHOD')?:'GET')));
  $_POST=[]; $_SERVER['REQUEST_METHOD']=$method;
- unset($_SERVER['TDA_REQUEST_REJECTED'],$_SERVER['TDA_REQUEST_DIAGNOSTIC'],$_SERVER['TDA_REQUEST_TRANSPORT'],$_SERVER['TDA_REQUEST_BODY_BYTES_READ']);
+ unset($_SERVER['TDA_REQUEST_REJECTED'],$_SERVER['TDA_REQUEST_DIAGNOSTIC'],$_SERVER['TDA_REQUEST_TRANSPORT'],$_SERVER['TDA_REQUEST_BODY_BYTES_READ'],$_SERVER['TDA_REQUEST_TERMINAL_CLASS']);
  if(!in_array($method,['GET','POST'],true)){
   $_SERVER['REQUEST_METHOD']='POST'; $_SERVER['TDA_REQUEST_REJECTED']='input'; return;
  }
@@ -504,6 +535,7 @@ function directadmin_git_environment(){
   'GIT_CONFIG_NOSYSTEM'=>'1',
   'GIT_CONFIG_GLOBAL'=>'/dev/null',
   'GIT_OPTIONAL_LOCKS'=>'0',
+  'GIT_NO_LAZY_FETCH'=>'1',
   'GIT_TERMINAL_PROMPT'=>'0',
   'GIT_PAGER'=>'cat',
   'PAGER'=>'cat'
@@ -521,6 +553,10 @@ function directadmin_git_probe($context,$arguments){
  $rc=proc_close($proc);
  if($rc!==0||strlen($out)>8192||strlen($err)>8192) return '';
  return trim($out);
+}
+function directadmin_git_parse_divergence($raw){
+ if(!is_string($raw)||strlen($raw)>32||!preg_match('/^(0|[1-9][0-9]{0,9})\t(0|[1-9][0-9]{0,9})$/D',$raw,$matches)) return null;
+ return ['ahead'=>(int)$matches[1],'behind'=>(int)$matches[2]];
 }
 function command_policy($cmd){
  $cmd=trim((string)$cmd);
@@ -638,6 +674,10 @@ function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $branch=$gitRepo?redact_text(directadmin_git_probe($gitContext,['branch','--show-current'])):'';
  $head=$gitRepo?redact_text(directadmin_git_probe($gitContext,['rev-parse','--short','HEAD'])):'';
  $dirty=$gitRepo?directadmin_git_probe($gitContext,['status','--porcelain']):'';
+ // Compare only existing local refs; this never fetches or contacts the remote.
+ $divergence=$gitRepo?directadmin_git_parse_divergence(directadmin_git_probe($gitContext,['rev-list','--left-right','--count','HEAD...@{u}'])):null;
+ $claimIssue=null;
+ if($gitRepo&&preg_match('/^agent\/issue-([1-9][0-9]{0,17})$/D',$branch,$claimMatch)) $claimIssue=$claimMatch[1];
  $sshDir=key_dir(); $auth=key_file();
  return [
   'cwd'=>$cwd,
@@ -647,6 +687,11 @@ function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
   'git_branch'=>$branch?:null,
   'git_head'=>$head?:null,
   'git_dirty'=>$gitRepo?($dirty!==''):null,
+  'git_claim_branch_format_valid'=>$gitRepo?($claimIssue!==null):null,
+  'git_claim_issue_number'=>$claimIssue,
+  'git_upstream_configured'=>$gitRepo?($divergence!==null):null,
+  'git_ahead'=>$divergence['ahead']??null,
+  'git_behind'=>$divergence['behind']??null,
   'ssh_public_keys'=>count($keys),
   'ssh_dir_mode'=>$includeSshState&&is_dir($sshDir)?substr(sprintf('%o',fileperms($sshDir)),-4):null,
   'authorized_keys_mode'=>$includeSshState&&is_file($auth)?substr(sprintf('%o',fileperms($auth)),-4):null,

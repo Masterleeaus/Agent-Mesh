@@ -1,0 +1,1583 @@
+{
+  "schema": "titan-db-migration-manifest/v1",
+  "stream": "legacy-postgres-compatibility",
+  "identity": "relative filename; checksum detects content drift",
+  "ordering": "ascending numeric prefix, then exact filename; sequence is explicit",
+  "history_note": "The repository does not contain deployed schema_migrations snapshots. Existing filename-only ledger rows remain legacy-unverified until an installation inventory is supplied.",
+  "entries": [
+    {
+      "sequence": 1,
+      "migration_id": "db/migrations/001_core_schema.sql",
+      "filename": "001_core_schema.sql",
+      "prefix": "001",
+      "sha256": "0515ce775df3a2e7e991d3743f0bc332e555f1e9ca8e67d0a21ea49c8508d15f"
+    },
+    {
+      "sequence": 2,
+      "migration_id": "db/migrations/003_rls_policies.sql",
+      "filename": "003_rls_policies.sql",
+      "prefix": "003",
+      "sha256": "c90da3fcb947a08ef86e6bb57df3d7e9b08289ae5608990b6883a6a24c13091e"
+    },
+    {
+      "sequence": 3,
+      "migration_id": "db/migrations/004_workflow_invariants.sql",
+      "filename": "004_workflow_invariants.sql",
+      "prefix": "004",
+      "sha256": "d67d5af5a86c5f69adf6519c6364884d1c39d81dfa0087fcbd5c597d91474db4"
+    },
+    {
+      "sequence": 4,
+      "migration_id": "db/migrations/005_audit_log_trace_id.sql",
+      "filename": "005_audit_log_trace_id.sql",
+      "prefix": "005",
+      "sha256": "6f70fb5e78db9a6cc6c09ba234289f3b2cd7ce72052e85ebd782e71f9bbf9c4e"
+    },
+    {
+      "sequence": 5,
+      "migration_id": "db/migrations/006_client_address.sql",
+      "filename": "006_client_address.sql",
+      "prefix": "006",
+      "sha256": "2c0c8d7f2e798e49b62f425bf02d325dfdc6a47193de4b7c86ca1c060b11fdcd"
+    },
+    {
+      "sequence": 6,
+      "migration_id": "db/migrations/007_expenses.sql",
+      "filename": "007_expenses.sql",
+      "prefix": "007",
+      "sha256": "73f1edba7ff6f9ceb7e37a9fe8f154c0ce03c3c8d3b9ef4ecb0cef528d39166d"
+    },
+    {
+      "sequence": 7,
+      "migration_id": "db/migrations/008_mileage_logs.sql",
+      "filename": "008_mileage_logs.sql",
+      "prefix": "008",
+      "sha256": "b4f37949b2c179c8522a191c34d8938b2bb5ee3d9eacab605288dbacc88caff2"
+    },
+    {
+      "sequence": 8,
+      "migration_id": "db/migrations/009_period_closes.sql",
+      "filename": "009_period_closes.sql",
+      "prefix": "009",
+      "sha256": "1f4b90da12cfbd584c6db102062d64b34c752abdf78d2722561ba9e483689422"
+    },
+    {
+      "sequence": 9,
+      "migration_id": "db/migrations/010_document_links.sql",
+      "filename": "010_document_links.sql",
+      "prefix": "010",
+      "sha256": "633fd41eb536a91bb9bb0b9a9026eaaa1761098b58db91512ecdc229fd6e9603"
+    },
+    {
+      "sequence": 10,
+      "migration_id": "db/migrations/011_visit_checklist.sql",
+      "filename": "011_visit_checklist.sql",
+      "prefix": "011",
+      "sha256": "671c2836458c53547bac7e2dad7c2b86b2cd7e596246b41e51ad2d70b4f5de2c"
+    },
+    {
+      "sequence": 11,
+      "migration_id": "db/migrations/012_asset_links.sql",
+      "filename": "012_asset_links.sql",
+      "prefix": "012",
+      "sha256": "869bb49dcb6f3b6435f60933b5c4767b7a8f4e66be2ca215718d9398b95dbe9c"
+    },
+    {
+      "sequence": 12,
+      "migration_id": "db/migrations/013_dovetails_domain.sql",
+      "filename": "013_dovetails_domain.sql",
+      "prefix": "013",
+      "sha256": "818fbd587b7ebd7d9de57a159de08b0bba4f8f2cff17c64b05120098cd192d25"
+    },
+    {
+      "sequence": 13,
+      "migration_id": "db/migrations/014_visit_materials.sql",
+      "filename": "014_visit_materials.sql",
+      "prefix": "014",
+      "sha256": "7af796cf8e4f3a9eca26956f0aa3885be9624ea5f68f99ddede63975acae84af"
+    },
+    {
+      "sequence": 14,
+      "migration_id": "db/migrations/015_client_portal.sql",
+      "filename": "015_client_portal.sql",
+      "prefix": "015",
+      "sha256": "c0aef672089782c5ed767c783ee9dd040bd89a4d931c96b97a04c847f582dbaa"
+    },
+    {
+      "sequence": 15,
+      "migration_id": "db/migrations/016_visit_repair_flow.sql",
+      "filename": "016_visit_repair_flow.sql",
+      "prefix": "016",
+      "sha256": "0091f1b1d505e976131b939e32cb5e1378abd444782a6a268860fc4d93aff764"
+    },
+    {
+      "sequence": 16,
+      "migration_id": "db/migrations/017_expanded_job_types.sql",
+      "filename": "017_expanded_job_types.sql",
+      "prefix": "017",
+      "sha256": "a1329b8d215c01d2f0d8794c28987dcc357345cde74554224588f82a26ac6422"
+    },
+    {
+      "sequence": 17,
+      "migration_id": "db/migrations/018_price_book.sql",
+      "filename": "018_price_book.sql",
+      "prefix": "018",
+      "sha256": "f475578b401f9f3a88b212f5ffc266660bee1e45f10563c3b3667413b4f42ad5"
+    },
+    {
+      "sequence": 18,
+      "migration_id": "db/migrations/019_maintenance_plans.sql",
+      "filename": "019_maintenance_plans.sql",
+      "prefix": "019",
+      "sha256": "73e42fd5ec00208ab745d73295933f2376f6f777ad76a1af71558ac5603b1337"
+    },
+    {
+      "sequence": 19,
+      "migration_id": "db/migrations/020_multi_option_estimates.sql",
+      "filename": "020_multi_option_estimates.sql",
+      "prefix": "020",
+      "sha256": "e9829163a7fe5acfc466e965a44c54912503f0259d096dc6f5d597bc83290206"
+    },
+    {
+      "sequence": 20,
+      "migration_id": "db/migrations/021_booking_requests.sql",
+      "filename": "021_booking_requests.sql",
+      "prefix": "021",
+      "sha256": "99ed8676ba361567135f728641b0f1df0931f573c9d72fb721a7ba544816736f"
+    },
+    {
+      "sequence": 21,
+      "migration_id": "db/migrations/022_change_orders.sql",
+      "filename": "022_change_orders.sql",
+      "prefix": "022",
+      "sha256": "ef34f05e8a7013b82dfe065e8daaba7d2dc14879006e34169c0138e2c7463451"
+    },
+    {
+      "sequence": 22,
+      "migration_id": "db/migrations/023_price_book_defaults.sql",
+      "filename": "023_price_book_defaults.sql",
+      "prefix": "023",
+      "sha256": "ceede031f55187f6debacca56d617bc4dcc4e5c14c8788cc18d7daef9f20139b"
+    },
+    {
+      "sequence": 23,
+      "migration_id": "db/migrations/024_document_categories.sql",
+      "filename": "024_document_categories.sql",
+      "prefix": "024",
+      "sha256": "6a80b65369205f125384722ef323197fb9e8cf4dea81f675f9238c2cbf9ec384"
+    },
+    {
+      "sequence": 24,
+      "migration_id": "db/migrations/025_membership_vault_foundation.sql",
+      "filename": "025_membership_vault_foundation.sql",
+      "prefix": "025",
+      "sha256": "c92973cbd20c7f9f286e64a6869a93b5b012b8cda6b23ef8facbb1ad3a43fe84"
+    },
+    {
+      "sequence": 25,
+      "migration_id": "db/migrations/026_estimate_pricing_guardrails.sql",
+      "filename": "026_estimate_pricing_guardrails.sql",
+      "prefix": "026",
+      "sha256": "fe04515ca17f7eadfb2dc6aa0e8cd5fa34d7f175e8079aa069e483beab9cec81"
+    },
+    {
+      "sequence": 26,
+      "migration_id": "db/migrations/027_digital_home_vault.sql",
+      "filename": "027_digital_home_vault.sql",
+      "prefix": "027",
+      "sha256": "d746e67a2a72eed4569ad4195115b96209871cb651e06bd5be4aa6db58059ce4"
+    },
+    {
+      "sequence": 27,
+      "migration_id": "db/migrations/028_job_intake_fields.sql",
+      "filename": "028_job_intake_fields.sql",
+      "prefix": "028",
+      "sha256": "bacdbd3fcd06be89e81d14cdecb23b5c3d407045d9d05dfee33fc3eac0509132"
+    },
+    {
+      "sequence": 28,
+      "migration_id": "db/migrations/029_member_priority.sql",
+      "filename": "029_member_priority.sql",
+      "prefix": "029",
+      "sha256": "b7225e0dd59dd15b46f657c960c81a4765a3238de91411425b4d8f16074a7a66"
+    },
+    {
+      "sequence": 29,
+      "migration_id": "db/migrations/030_membership_pricing_structures.sql",
+      "filename": "030_membership_pricing_structures.sql",
+      "prefix": "030",
+      "sha256": "203b74744c4ca0d872c3ccc461adf1ca6d073e8a94d611c7b57918078835f637"
+    },
+    {
+      "sequence": 30,
+      "migration_id": "db/migrations/031_document_master_template_uniqueness.sql",
+      "filename": "031_document_master_template_uniqueness.sql",
+      "prefix": "031",
+      "sha256": "4d95abd3d6a6ae889449dc8236d606e4dc5c94d4b8b6c8341a050f929864c2cb"
+    },
+    {
+      "sequence": 31,
+      "migration_id": "db/migrations/032_membership_snapshot_delivery.sql",
+      "filename": "032_membership_snapshot_delivery.sql",
+      "prefix": "032",
+      "sha256": "2c1b6ba0d8fa7192b323007d5c6ce5999e269789f61ab5730c208e5fc31b3b4e"
+    },
+    {
+      "sequence": 32,
+      "migration_id": "db/migrations/033_vault_item_media.sql",
+      "filename": "033_vault_item_media.sql",
+      "prefix": "033",
+      "sha256": "4d6a4f0ce460fb71bb0de06c36ca43aedd2e891710f348a3fc15262ab33f6f50"
+    },
+    {
+      "sequence": 33,
+      "migration_id": "db/migrations/034_automation_types_expand.sql",
+      "filename": "034_automation_types_expand.sql",
+      "prefix": "034",
+      "sha256": "6e5c1f1e197fc448c7e63bca2a8c509594122c9e64944ac7cdc381a6284107ee"
+    },
+    {
+      "sequence": 34,
+      "migration_id": "db/migrations/035_booking_requests_review.sql",
+      "filename": "035_booking_requests_review.sql",
+      "prefix": "035",
+      "sha256": "5ad3cd300c3c809eefc8f85595b8d4500314a1534b87ae95867f750524a3ce64"
+    },
+    {
+      "sequence": 35,
+      "migration_id": "db/migrations/036_status_history.sql",
+      "filename": "036_status_history.sql",
+      "prefix": "036",
+      "sha256": "d3220cee7652e33a0042b335df79b23bb62285136fcd80d9d30bd6d109ea11d6"
+    },
+    {
+      "sequence": 36,
+      "migration_id": "db/migrations/037_consent_contact_prefs.sql",
+      "filename": "037_consent_contact_prefs.sql",
+      "prefix": "037",
+      "sha256": "13d55104755b7d848bd75bbe3ec9400d7a83ead801a417832676187f5e3734c3"
+    },
+    {
+      "sequence": 37,
+      "migration_id": "db/migrations/038_duplicate_detection.sql",
+      "filename": "038_duplicate_detection.sql",
+      "prefix": "038",
+      "sha256": "9431f3ab8893beb39bbb49909014677520fdfe18efff3cb7f1eba15cf06f04cd"
+    },
+    {
+      "sequence": 38,
+      "migration_id": "db/migrations/039_completion_packets.sql",
+      "filename": "039_completion_packets.sql",
+      "prefix": "039",
+      "sha256": "ed9ab47c9906ea5235fb1b9e410915eea0ff7dd62940833a1a62974682624566"
+    },
+    {
+      "sequence": 39,
+      "migration_id": "db/migrations/040_sub_statuses.sql",
+      "filename": "040_sub_statuses.sql",
+      "prefix": "040",
+      "sha256": "43b134f92d47e7bb74898753c3174406a1f1f642e0735c1156dc9efae709e91a"
+    },
+    {
+      "sequence": 40,
+      "migration_id": "db/migrations/041_communications_log.sql",
+      "filename": "041_communications_log.sql",
+      "prefix": "041",
+      "sha256": "f47cb4695c863ed6e01cd12256bd31ac800e1cc7cc8283b17ee11c4d5122514e"
+    },
+    {
+      "sequence": 41,
+      "migration_id": "db/migrations/042_price_book_enriched.sql",
+      "filename": "042_price_book_enriched.sql",
+      "prefix": "042",
+      "sha256": "92a4eb70f3f14c1a23acfd58e01bc201f10555509c37a47e9e8beb0b0b626827"
+    },
+    {
+      "sequence": 42,
+      "migration_id": "db/migrations/043_visit_time_logs.sql",
+      "filename": "043_visit_time_logs.sql",
+      "prefix": "043",
+      "sha256": "e102a41277c66eeddd8e5d9c659dd01ad039522da3d6a1317c11484f75268a8b"
+    },
+    {
+      "sequence": 43,
+      "migration_id": "db/migrations/044_visit_cancel_from_in_progress.sql",
+      "filename": "044_visit_cancel_from_in_progress.sql",
+      "prefix": "044",
+      "sha256": "d935d2e1d8f9086272e9863cd4b10b4533f1a206ac314e3d5e314bcd47bf980b"
+    },
+    {
+      "sequence": 44,
+      "migration_id": "db/migrations/045_plan_templates_and_addons.sql",
+      "filename": "045_plan_templates_and_addons.sql",
+      "prefix": "045",
+      "sha256": "7ac6acfe4b452f6fc8b52e169bb769af858e2729266e117c612e39f787e1cdf3"
+    },
+    {
+      "sequence": 45,
+      "migration_id": "db/migrations/046_estimate_engine.sql",
+      "filename": "046_estimate_engine.sql",
+      "prefix": "046",
+      "sha256": "d682eebc8848fe51e621675374d162b91e0624ec2f01707e4fb6aa4a3f2647b1"
+    },
+    {
+      "sequence": 46,
+      "migration_id": "db/migrations/047_vault_estimate_link.sql",
+      "filename": "047_vault_estimate_link.sql",
+      "prefix": "047",
+      "sha256": "3e545d4ac6d7056c32f973f4b84194f2c3366dba674368aed11f780e0115c496"
+    },
+    {
+      "sequence": 47,
+      "migration_id": "db/migrations/048_price_book_estimate_link.sql",
+      "filename": "048_price_book_estimate_link.sql",
+      "prefix": "048",
+      "sha256": "8b055577c20405a2e1c97e093ffd6d19313dbf98c5b6484e0623177044f9d492"
+    },
+    {
+      "sequence": 48,
+      "migration_id": "db/migrations/049_automation_types_opinionated.sql",
+      "filename": "049_automation_types_opinionated.sql",
+      "prefix": "049",
+      "sha256": "6b4d4c10f7d4075cd396b6474e88dfb3af2d9d81baa021d7042d05894ff6e191"
+    },
+    {
+      "sequence": 49,
+      "migration_id": "db/migrations/050_automation_opinionated_defaults.sql",
+      "filename": "050_automation_opinionated_defaults.sql",
+      "prefix": "050",
+      "sha256": "29ab215615eac3223d6229c5b5328a4bb779ea5f95105932febb7df948726ad2"
+    },
+    {
+      "sequence": 50,
+      "migration_id": "db/migrations/051_visit_type_realtor_baseline.sql",
+      "filename": "051_visit_type_realtor_baseline.sql",
+      "prefix": "051",
+      "sha256": "42059b2f0f84621333125ec66e991f1f2384f1600699cf4e4b2728221f9f5d8a"
+    },
+    {
+      "sequence": 51,
+      "migration_id": "db/migrations/052_property_condition_snapshots.sql",
+      "filename": "052_property_condition_snapshots.sql",
+      "prefix": "052",
+      "sha256": "d5e124e8a387f061daea46d0f04f71d19ab3c6ab79d644e797ef32138be47354"
+    },
+    {
+      "sequence": 52,
+      "migration_id": "db/migrations/053_property_issues.sql",
+      "filename": "053_property_issues.sql",
+      "prefix": "053",
+      "sha256": "c07877e1b7a2cf62e7d732e6e9c161f5c859fe9aacc8ee38175ea709282637ff"
+    },
+    {
+      "sequence": 53,
+      "migration_id": "db/migrations/054_property_notes.sql",
+      "filename": "054_property_notes.sql",
+      "prefix": "054",
+      "sha256": "a3fd600c84fcea686e461aebf7dc75f37d1419d9722b0b67e74cf91bfea864a9"
+    },
+    {
+      "sequence": 54,
+      "migration_id": "db/migrations/055_vault_media_photo_roles.sql",
+      "filename": "055_vault_media_photo_roles.sql",
+      "prefix": "055",
+      "sha256": "ee05aba78c96754098537f6815a50c1a2fd2fea1762713b3e6596462e4918617"
+    },
+    {
+      "sequence": 55,
+      "migration_id": "db/migrations/056_visits_maintenance_plan_fk.sql",
+      "filename": "056_visits_maintenance_plan_fk.sql",
+      "prefix": "056",
+      "sha256": "74215da919337170202bc392174c5ff11ad7a87f42aac363edaf3fc2d3b46d90"
+    },
+    {
+      "sequence": 56,
+      "migration_id": "db/migrations/057_property_timeline_view.sql",
+      "filename": "057_property_timeline_view.sql",
+      "prefix": "057",
+      "sha256": "c4f35eea7d7692abea21272d6adf2243a56927cd9e43889c78aeed5a7b822000"
+    },
+    {
+      "sequence": 57,
+      "migration_id": "db/migrations/058_property_issue_scan_automation.sql",
+      "filename": "058_property_issue_scan_automation.sql",
+      "prefix": "058",
+      "sha256": "a836a6a4b00f08a329e56e6dd9d0b4015d6aa45208c7babb8374496ff0ba603d"
+    },
+    {
+      "sequence": 58,
+      "migration_id": "db/migrations/059_workflow_events.sql",
+      "filename": "059_workflow_events.sql",
+      "prefix": "059",
+      "sha256": "2d1676690ba92735605133a896a7fe32478c096b4472e213f8ba4a54dca3a709"
+    },
+    {
+      "sequence": 59,
+      "migration_id": "db/migrations/060_notification_queue.sql",
+      "filename": "060_notification_queue.sql",
+      "prefix": "060",
+      "sha256": "8c4ec058fd6fd2ba53dad5712c8c084dda0afb4fdb17ee0517d2ff21f12e867c"
+    },
+    {
+      "sequence": 60,
+      "migration_id": "db/migrations/061_automation_rules.sql",
+      "filename": "061_automation_rules.sql",
+      "prefix": "061",
+      "sha256": "e39c6442f7533c3190598f4b9bf00dd8421b3bc427ee63bf54c9229baf503b01"
+    },
+    {
+      "sequence": 61,
+      "migration_id": "db/migrations/062_new_automation_types.sql",
+      "filename": "062_new_automation_types.sql",
+      "prefix": "062",
+      "sha256": "145a42316b3f119db5cf62b9f76406f9946c2f7570164cd8384577bfe4cc7174"
+    },
+    {
+      "sequence": 62,
+      "migration_id": "db/migrations/063_fix_automation_configs.sql",
+      "filename": "063_fix_automation_configs.sql",
+      "prefix": "063",
+      "sha256": "86c971ce4ee570cad70d475b037e6577d28be296247ee5fdbb5407497e797840"
+    },
+    {
+      "sequence": 63,
+      "migration_id": "db/migrations/064_vendor_coordination.sql",
+      "filename": "064_vendor_coordination.sql",
+      "prefix": "064",
+      "sha256": "7fd94a77a63b49ba697698141f608026ffbf950aa931fdce4130ea4f92cb1ebb"
+    },
+    {
+      "sequence": 64,
+      "migration_id": "db/migrations/065_property_timeline_rename_equipment.sql",
+      "filename": "065_property_timeline_rename_equipment.sql",
+      "prefix": "065",
+      "sha256": "3a9404b00d2aac1ca7c2ed8010d68c8357cb08df7bbb31f3c77e8eefd69d1794"
+    },
+    {
+      "sequence": 65,
+      "migration_id": "db/migrations/066_rename_automation_rules.sql",
+      "filename": "066_rename_automation_rules.sql",
+      "prefix": "066",
+      "sha256": "e8b68dc3824edf47a860c767ef3d774003d6ce812cfcbd6c4aff762512d62278"
+    },
+    {
+      "sequence": 66,
+      "migration_id": "db/migrations/067_portal_auth.sql",
+      "filename": "067_portal_auth.sql",
+      "prefix": "067",
+      "sha256": "43cf3803f235d2f4de791ad09c6400aaf5c0d332fbf189f45a55ef12dcf846b5"
+    },
+    {
+      "sequence": 67,
+      "migration_id": "db/migrations/068_scope_intelligence.sql",
+      "filename": "068_scope_intelligence.sql",
+      "prefix": "068",
+      "sha256": "ae999bc48f01181753516d40da5d37ec90dfeab0d32f4c02793fe1761c5614fc"
+    },
+    {
+      "sequence": 68,
+      "migration_id": "db/migrations/069_scope_data.sql",
+      "filename": "069_scope_data.sql",
+      "prefix": "069",
+      "sha256": "c357bc52f5a83bb31828e889908ca60c936fe9b9e06b9c7f3d805b47e09d728d"
+    },
+    {
+      "sequence": 69,
+      "migration_id": "db/migrations/070_service_materials.sql",
+      "filename": "070_service_materials.sql",
+      "prefix": "070",
+      "sha256": "f316b6c48f8431aa7ca001d3249ce2a4ffc70a2cbd618736ddb1c99d3c97c65e"
+    },
+    {
+      "sequence": 70,
+      "migration_id": "db/migrations/071_service_materials_data.sql",
+      "filename": "071_service_materials_data.sql",
+      "prefix": "071",
+      "sha256": "c12ec021f6d71d4d99c92022db83bc799befbdce5950e6496244f361c570c088"
+    },
+    {
+      "sequence": 71,
+      "migration_id": "db/migrations/072_scope_snapshot_estimate_link.sql",
+      "filename": "072_scope_snapshot_estimate_link.sql",
+      "prefix": "072",
+      "sha256": "11015074e73ae8dc5e81b0d847a1af9b66fb22b9c4b33715c5565d0142d8f9f0"
+    },
+    {
+      "sequence": 72,
+      "migration_id": "db/migrations/073_service_materials_unique.sql",
+      "filename": "073_service_materials_unique.sql",
+      "prefix": "073",
+      "sha256": "632cceaaff656dba952040daab357eefe790604cf5e65391bdaaff6cd88e168b"
+    },
+    {
+      "sequence": 73,
+      "migration_id": "db/migrations/074_payment_integrity.sql",
+      "filename": "074_payment_integrity.sql",
+      "prefix": "074",
+      "sha256": "8d8757860cc5273594e2f56c29af2b30e5b18682b18c645e5c584da06b90b76d"
+    },
+    {
+      "sequence": 74,
+      "migration_id": "db/migrations/075_missing_indexes.sql",
+      "filename": "075_missing_indexes.sql",
+      "prefix": "075",
+      "sha256": "33f4ab9b8f042a8bcd3589834030098648f1f786ff579898b2d6bd49d065bc6b"
+    },
+    {
+      "sequence": 75,
+      "migration_id": "db/migrations/076_site_visit_type.sql",
+      "filename": "076_site_visit_type.sql",
+      "prefix": "076",
+      "sha256": "499b326314bd7a83845e03e8a75005318c9e7ba3f610fe10ce2ca9dabd97283f"
+    },
+    {
+      "sequence": 76,
+      "migration_id": "db/migrations/077_booking_request_routing.sql",
+      "filename": "077_booking_request_routing.sql",
+      "prefix": "077",
+      "sha256": "b59f63bd6d2a041c7265048e3eacd4512923a70813742eb88fb3c18ccceb3e1b"
+    },
+    {
+      "sequence": 77,
+      "migration_id": "db/migrations/078_referral_source.sql",
+      "filename": "078_referral_source.sql",
+      "prefix": "078",
+      "sha256": "4ec04890c8ac64e43a53a6a532a5100cc18cdb7847a604e66cbdb167b5025f59"
+    },
+    {
+      "sequence": 78,
+      "migration_id": "db/migrations/079_intake_metadata.sql",
+      "filename": "079_intake_metadata.sql",
+      "prefix": "079",
+      "sha256": "0601365ec087f74a678b22adfc06f7b686da212899ed0257dd4c979efc3afe39"
+    },
+    {
+      "sequence": 79,
+      "migration_id": "db/migrations/080_price_book_trip_fields.sql",
+      "filename": "080_price_book_trip_fields.sql",
+      "prefix": "080",
+      "sha256": "b46062d5310eb5a726bc7ad3ad0340d186c6d230bb2c2f39cfca3b9d3b13d1ab"
+    },
+    {
+      "sequence": 80,
+      "migration_id": "db/migrations/081_vehicles.sql",
+      "filename": "081_vehicles.sql",
+      "prefix": "081",
+      "sha256": "90e1452492d15644f5ce113ee44ef489db6b9324fa0128aa1eb99f4ad47d3411"
+    },
+    {
+      "sequence": 81,
+      "migration_id": "db/migrations/082_mileage_odometer.sql",
+      "filename": "082_mileage_odometer.sql",
+      "prefix": "082",
+      "sha256": "463abb3741b805e4de9552de4fe85eea66cb82faea3a433410c120b68f6514f2"
+    },
+    {
+      "sequence": 82,
+      "migration_id": "db/migrations/083_vehicle_sessions.sql",
+      "filename": "083_vehicle_sessions.sql",
+      "prefix": "083",
+      "sha256": "b17c87fbfaf889eefa72dbe00eca477ee935ec3b45353d55e9d78a8e2cab5789"
+    },
+    {
+      "sequence": 83,
+      "migration_id": "db/migrations/084_action_items.sql",
+      "filename": "084_action_items.sql",
+      "prefix": "084",
+      "sha256": "f87b6ef197b93d1747e81636b0b6087ba13479b3296e8515d29d2da111baa814"
+    },
+    {
+      "sequence": 84,
+      "migration_id": "db/migrations/085_site_visit_assessments.sql",
+      "filename": "085_site_visit_assessments.sql",
+      "prefix": "085",
+      "sha256": "2009428004a30be1a5138d658b5b88564cce3ccb4c9a53011b0e5de326b9ccb1"
+    },
+    {
+      "sequence": 85,
+      "migration_id": "db/migrations/086_materials_price_book.sql",
+      "filename": "086_materials_price_book.sql",
+      "prefix": "086",
+      "sha256": "e24943681ce033c7b660bcf01bdd269b879109c2451a7f20cfab2d04ab433a93"
+    },
+    {
+      "sequence": 86,
+      "migration_id": "db/migrations/087_scope_assumptions.sql",
+      "filename": "087_scope_assumptions.sql",
+      "prefix": "087",
+      "sha256": "4ba8fb488ff45b41ad1fb53edc897cc592f867ab71520e7e828f4d2eaf76c584"
+    },
+    {
+      "sequence": 87,
+      "migration_id": "db/migrations/088_condition_tier.sql",
+      "filename": "088_condition_tier.sql",
+      "prefix": "088",
+      "sha256": "6c838a66fa687fd820bebc4b573084c5cf220eb6228d5b0fb6ce6baef965b603"
+    },
+    {
+      "sequence": 88,
+      "migration_id": "db/migrations/089_flooring_catalog.sql",
+      "filename": "089_flooring_catalog.sql",
+      "prefix": "089",
+      "sha256": "95bf3e06880e85194ad0a89f383c88353780605d8e839f6238f42fe91f7ebd4f"
+    },
+    {
+      "sequence": 89,
+      "migration_id": "db/migrations/090_production_rates.sql",
+      "filename": "090_production_rates.sql",
+      "prefix": "090",
+      "sha256": "e50b9c146aff39694727abb63f6b9c66b034ca169d96cd83e9500b5a6c444a02"
+    },
+    {
+      "sequence": 90,
+      "migration_id": "db/migrations/091_painting_catalog.sql",
+      "filename": "091_painting_catalog.sql",
+      "prefix": "091",
+      "sha256": "45883c767f3fc85c4397a583495a7a95a2e1d6e8cdeb9887cfa6c64d2a3b0789"
+    },
+    {
+      "sequence": 91,
+      "migration_id": "db/migrations/092_trades_catalog.sql",
+      "filename": "092_trades_catalog.sql",
+      "prefix": "092",
+      "sha256": "0e1002c45fc6488cd493a5baca7dec6f6e8a0f563f1c213c442b8c3ee2c0b5d8"
+    },
+    {
+      "sequence": 92,
+      "migration_id": "db/migrations/093_shopping_list.sql",
+      "filename": "093_shopping_list.sql",
+      "prefix": "093",
+      "sha256": "89bc36f9c8ee516d25cf0d47e7fcac96b6e2c5c87485cb586cc306cc41ce3211"
+    },
+    {
+      "sequence": 93,
+      "migration_id": "db/migrations/094_intake_invites.sql",
+      "filename": "094_intake_invites.sql",
+      "prefix": "094",
+      "sha256": "313d5a0293619b0c23b5a84a8f64868adc901273ccb4f419e27fd5e6513560df"
+    },
+    {
+      "sequence": 94,
+      "migration_id": "db/migrations/095_estimate_room_specs.sql",
+      "filename": "095_estimate_room_specs.sql",
+      "prefix": "095",
+      "sha256": "32863cd740b26ca98fe5c1103f6f97343fd728728678277cf9cd59c9dbbf98bf"
+    },
+    {
+      "sequence": 95,
+      "migration_id": "db/migrations/096_intake_invites_v2.sql",
+      "filename": "096_intake_invites_v2.sql",
+      "prefix": "096",
+      "sha256": "c17980d0617bf87d31a2c11660ba87874a888b192afdc36424d294f483bd1f91"
+    },
+    {
+      "sequence": 96,
+      "migration_id": "db/migrations/097_realtor_brokerage.sql",
+      "filename": "097_realtor_brokerage.sql",
+      "prefix": "097",
+      "sha256": "c7fdd9cd0691911acf6770fd4348635fcdbaec17484e19d2f4cb3e74319ff4db"
+    },
+    {
+      "sequence": 97,
+      "migration_id": "db/migrations/098_follow_up_automations.sql",
+      "filename": "098_follow_up_automations.sql",
+      "prefix": "098",
+      "sha256": "854ac2e9058782e42aa858fad88dd3aac9d46ed19c9592f6fdfca926ab93a5d0"
+    },
+    {
+      "sequence": 98,
+      "migration_id": "db/migrations/099_painting_materials_fix.sql",
+      "filename": "099_painting_materials_fix.sql",
+      "prefix": "099",
+      "sha256": "4505147b86b22590c89a57e1e5b98eb8745f1a12dcb4635e9d97c4cb7592c76b"
+    },
+    {
+      "sequence": 99,
+      "migration_id": "db/migrations/100_booking_request_pricing_mode.sql",
+      "filename": "100_booking_request_pricing_mode.sql",
+      "prefix": "100",
+      "sha256": "23bdde021b0f66bb4c197576fa83415d12ae93eb8e5987ad7f233629355173a9"
+    },
+    {
+      "sequence": 100,
+      "migration_id": "db/migrations/100_comms_log_dedup.sql",
+      "filename": "100_comms_log_dedup.sql",
+      "prefix": "100",
+      "sha256": "75686e02c6c66a89174478a44263afc90bbae7024b41677bf8a158aee2b20fc8"
+    },
+    {
+      "sequence": 101,
+      "migration_id": "db/migrations/101_normalize_client_phones.sql",
+      "filename": "101_normalize_client_phones.sql",
+      "prefix": "101",
+      "sha256": "b5b35c887f34dbec1bbe1d88f1943901bf2eeb0a52fbe966faa2d8664e3d7f74"
+    },
+    {
+      "sequence": 102,
+      "migration_id": "db/migrations/102_client_360_indexes.sql",
+      "filename": "102_client_360_indexes.sql",
+      "prefix": "102",
+      "sha256": "f09d61576f96f139f5025ddceaef02c1c92c72addc97cf7763226225267eec69"
+    },
+    {
+      "sequence": 103,
+      "migration_id": "db/migrations/103_property_timeline_flat_columns.sql",
+      "filename": "103_property_timeline_flat_columns.sql",
+      "prefix": "103",
+      "sha256": "08fad65d16129eae136f9e80cacebe7ccb4a56e04bb1b2c0e6bfcfd974494142"
+    },
+    {
+      "sequence": 104,
+      "migration_id": "db/migrations/104_invoice_kind.sql",
+      "filename": "104_invoice_kind.sql",
+      "prefix": "104",
+      "sha256": "4352785205040e81196f8f2ec998c645a75e898f90a7b34da741f6b9f5f832e0"
+    },
+    {
+      "sequence": 105,
+      "migration_id": "db/migrations/105_estimate_job_link_carveout.sql",
+      "filename": "105_estimate_job_link_carveout.sql",
+      "prefix": "105",
+      "sha256": "ea2c333856072359b21fceb5f38d9ad9a4f8dcb72dd9827cdd42f57f758e568a"
+    },
+    {
+      "sequence": 106,
+      "migration_id": "db/migrations/106_price_book_add_on_defaults.sql",
+      "filename": "106_price_book_add_on_defaults.sql",
+      "prefix": "106",
+      "sha256": "d5143c8c6babf0f44da1b10c6a534fa01f2c3f4590b02a7f70ceaadac98af39c"
+    },
+    {
+      "sequence": 107,
+      "migration_id": "db/migrations/107_explicit_estimate_deposit_policy.sql",
+      "filename": "107_explicit_estimate_deposit_policy.sql",
+      "prefix": "107",
+      "sha256": "b156d2b3d77cd29f52749fe9bf0e6d938bf30c849c5a6f7f3bb12411e6733c0b"
+    },
+    {
+      "sequence": 108,
+      "migration_id": "db/migrations/108_request_traceability.sql",
+      "filename": "108_request_traceability.sql",
+      "prefix": "108",
+      "sha256": "c5d9102c9d3f6785ee11536ac6c5b915afe12c9ff1826ab57783989794b22b10"
+    },
+    {
+      "sequence": 109,
+      "migration_id": "db/migrations/109_open_vehicle_sessions.sql",
+      "filename": "109_open_vehicle_sessions.sql",
+      "prefix": "109",
+      "sha256": "368378e063ee522a7c96db4cca4be4f2e1e2246a3a09d2e2bfdc981662820dc7"
+    },
+    {
+      "sequence": 110,
+      "migration_id": "db/migrations/110_expense_import_source.sql",
+      "filename": "110_expense_import_source.sql",
+      "prefix": "110",
+      "sha256": "8231e7b5548248b6236fc5575e03cd381259f0e4cf97d18eb38c941937cc073a"
+    },
+    {
+      "sequence": 111,
+      "migration_id": "db/migrations/111_activity_entries.sql",
+      "filename": "111_activity_entries.sql",
+      "prefix": "111",
+      "sha256": "07a41e509b15399069cbd72e019e205afc6a9551fe4ab9bc0bc388f06fdc5d8b"
+    },
+    {
+      "sequence": 112,
+      "migration_id": "db/migrations/112_invoice_reopen_to_draft.sql",
+      "filename": "112_invoice_reopen_to_draft.sql",
+      "prefix": "112",
+      "sha256": "c1742bc72bd65652b645b5d9d7fe31280dfcc0f1891c07a922de869e112fc68e"
+    },
+    {
+      "sequence": 113,
+      "migration_id": "db/migrations/113_vehicle_session_lifecycle.sql",
+      "filename": "113_vehicle_session_lifecycle.sql",
+      "prefix": "113",
+      "sha256": "b00a87411df39720de248e264d1d111d9faedf1c428b8b9e927a1817e2187061"
+    },
+    {
+      "sequence": 114,
+      "migration_id": "db/migrations/114_location_capture.sql",
+      "filename": "114_location_capture.sql",
+      "prefix": "114",
+      "sha256": "9bd7aed8a9e36a02fc346568c7e470b799d9224422b840298884ac6d709f5095"
+    },
+    {
+      "sequence": 115,
+      "migration_id": "db/migrations/115_drive_mileage.sql",
+      "filename": "115_drive_mileage.sql",
+      "prefix": "115",
+      "sha256": "0e4bb9fd54835ae91593e9edca1c047480d723e725884236e6d74e169e29e933"
+    },
+    {
+      "sequence": 116,
+      "migration_id": "db/migrations/116_location_event_vehicle_kinds.sql",
+      "filename": "116_location_event_vehicle_kinds.sql",
+      "prefix": "116",
+      "sha256": "0e6bdae5c57df616b641532d6668e1ca48b8e2f78c383144b6d824a7e39808a2"
+    },
+    {
+      "sequence": 117,
+      "migration_id": "db/migrations/117_payments_provider_model.sql",
+      "filename": "117_payments_provider_model.sql",
+      "prefix": "117",
+      "sha256": "183f611593bb0ae594f80423e089c9c03989a2870f70041f7c3c2fcb286b124a"
+    },
+    {
+      "sequence": 118,
+      "migration_id": "db/migrations/118_property_timeline_payments.sql",
+      "filename": "118_property_timeline_payments.sql",
+      "prefix": "118",
+      "sha256": "973eb96cb4dfb49740557ce8e87207737624526e632b6b8136670d6f87f14e98"
+    },
+    {
+      "sequence": 119,
+      "migration_id": "db/migrations/119_integration_settings.sql",
+      "filename": "119_integration_settings.sql",
+      "prefix": "119",
+      "sha256": "21a36db9de49be42e3341e47ae8743c8d31b6103da319400c7f16a54be9da500"
+    },
+    {
+      "sequence": 120,
+      "migration_id": "db/migrations/120_location_segment_noise.sql",
+      "filename": "120_location_segment_noise.sql",
+      "prefix": "120",
+      "sha256": "1015b43feb91ba97737693b0b50d0cd7cd78ea61ed8bb9903dcb468850375fdd"
+    },
+    {
+      "sequence": 121,
+      "migration_id": "db/migrations/121_visit_candidates.sql",
+      "filename": "121_visit_candidates.sql",
+      "prefix": "121",
+      "sha256": "8843121b9415e496e6982f6b8c8cc8b28507f63b91c37ec373283df2fab9d9be"
+    },
+    {
+      "sequence": 122,
+      "migration_id": "db/migrations/122_job_estimate_numbering.sql",
+      "filename": "122_job_estimate_numbering.sql",
+      "prefix": "122",
+      "sha256": "075bb00b35692a024afa0c2012cdc906e13d7a5fc0da7e3d0c5bb937d7fad782"
+    },
+    {
+      "sequence": 123,
+      "migration_id": "db/migrations/123_manual_visit_candidates.sql",
+      "filename": "123_manual_visit_candidates.sql",
+      "prefix": "123",
+      "sha256": "6eca58a77526a2fc54c60c600a65cf6b3bd4f67400d88d61590fc0895d5b140b"
+    },
+    {
+      "sequence": 124,
+      "migration_id": "db/migrations/124_location_privacy_controls.sql",
+      "filename": "124_location_privacy_controls.sql",
+      "prefix": "124",
+      "sha256": "8a8df85fa38e02f0b690ba18b2892e736923dc0233489e3f4e3450377b9b45db"
+    },
+    {
+      "sequence": 125,
+      "migration_id": "db/migrations/125_work_orders.sql",
+      "filename": "125_work_orders.sql",
+      "prefix": "125",
+      "sha256": "8a9a2777408cbd609721470fc91ff92eff8ed6f39b397392eee0208b4314fcbe"
+    },
+    {
+      "sequence": 126,
+      "migration_id": "db/migrations/126_property_timeline_work_orders.sql",
+      "filename": "126_property_timeline_work_orders.sql",
+      "prefix": "126",
+      "sha256": "374a0fd222b23fd3b526b9c607580a1df033a9d006858db8cecc86b89b4ec166"
+    },
+    {
+      "sequence": 127,
+      "migration_id": "db/migrations/127_business_days.sql",
+      "filename": "127_business_days.sql",
+      "prefix": "127",
+      "sha256": "620b98e476a11ce2ce28c41b176ea4a50b58cf0c845687a7a37a9647de29ee3c"
+    },
+    {
+      "sequence": 128,
+      "migration_id": "db/migrations/128_business_days_user_rls.sql",
+      "filename": "128_business_days_user_rls.sql",
+      "prefix": "128",
+      "sha256": "542f42b4ef02d324ff734aeeada447909e1efafa2ad47fa60ad806bea03fc2eb"
+    },
+    {
+      "sequence": 129,
+      "migration_id": "db/migrations/129_time_clock_sessions.sql",
+      "filename": "129_time_clock_sessions.sql",
+      "prefix": "129",
+      "sha256": "89fbae47adf5fe08fdf8925ac7631869da8ab3f5bab7f8f5f878e19e808f5670"
+    },
+    {
+      "sequence": 130,
+      "migration_id": "db/migrations/130_vehicle_session_links.sql",
+      "filename": "130_vehicle_session_links.sql",
+      "prefix": "130",
+      "sha256": "42c923cd1440bc56be1aea52f20b4a48b7bb61779e6cf75f9f14dea11a2f6cb5"
+    },
+    {
+      "sequence": 131,
+      "migration_id": "db/migrations/131_activity_entries_ops_ledger.sql",
+      "filename": "131_activity_entries_ops_ledger.sql",
+      "prefix": "131",
+      "sha256": "4e542632023c57f1400e43cea35358b4321b6ef861b671536f96f930542db392"
+    },
+    {
+      "sequence": 132,
+      "migration_id": "db/migrations/132_invoice_line_item_discounts.sql",
+      "filename": "132_invoice_line_item_discounts.sql",
+      "prefix": "132",
+      "sha256": "5b59d33e665c942c7480d8e8ee3d92f6d4b3800b76ae13620758c6dc49c4b9f6"
+    },
+    {
+      "sequence": 133,
+      "migration_id": "db/migrations/133_backfill_visit_time_logs_to_activity_entries.sql",
+      "filename": "133_backfill_visit_time_logs_to_activity_entries.sql",
+      "prefix": "133",
+      "sha256": "92626604013449a25b57b60b2bccc782fea29090d55abb4bf72d49a760ff4988"
+    },
+    {
+      "sequence": 134,
+      "migration_id": "db/migrations/134_drop_visit_time_logs.sql",
+      "filename": "134_drop_visit_time_logs.sql",
+      "prefix": "134",
+      "sha256": "c3bf240dea1080674c6f8d8efcff0982a4c3ef29fb6bf733df0b207c19ff8be1"
+    },
+    {
+      "sequence": 135,
+      "migration_id": "db/migrations/135_visit_completion_photo_waiver.sql",
+      "filename": "135_visit_completion_photo_waiver.sql",
+      "prefix": "135",
+      "sha256": "55c934579cf811904319e89fa9d4e74135c7e349c0bb4bb33304dc0ff91bf173"
+    },
+    {
+      "sequence": 136,
+      "migration_id": "db/migrations/136_business_days_review_prompted.sql",
+      "filename": "136_business_days_review_prompted.sql",
+      "prefix": "136",
+      "sha256": "543ae280138943e01e0fa15cff47bb513c4e1aadfd4ded2db4a9be26e6538022"
+    },
+    {
+      "sequence": 137,
+      "migration_id": "db/migrations/137_accounts_day_review_settings.sql",
+      "filename": "137_accounts_day_review_settings.sql",
+      "prefix": "137",
+      "sha256": "3e06095aec4b1fed8648196969a325ec2611031017f463c56bdcb1543df283e7"
+    },
+    {
+      "sequence": 138,
+      "migration_id": "db/migrations/137_project_work_order_visit_schema.sql",
+      "filename": "137_project_work_order_visit_schema.sql",
+      "prefix": "137",
+      "sha256": "a82cf84f367fd78ab902b980493d51c7cb7192b217f874b4f48efebd6c8df578"
+    },
+    {
+      "sequence": 139,
+      "migration_id": "db/migrations/138_work_orders_assigned_user.sql",
+      "filename": "138_work_orders_assigned_user.sql",
+      "prefix": "138",
+      "sha256": "c045fe3c44b43573864fda6cfe6a35004be92d3ca4300b97d98e5bcd1b5dce4a"
+    },
+    {
+      "sequence": 140,
+      "migration_id": "db/migrations/139_work_orders_lead_rls.sql",
+      "filename": "139_work_orders_lead_rls.sql",
+      "prefix": "139",
+      "sha256": "36ba99baab8524ffdd99aea6951ff23f97d4ab7fde817423f0dbd990fd5f51a0"
+    },
+    {
+      "sequence": 141,
+      "migration_id": "db/migrations/140_site_visit_assessment_complete_transition.sql",
+      "filename": "140_site_visit_assessment_complete_transition.sql",
+      "prefix": "140",
+      "sha256": "5475eb4bf5c5cb52e36202f3723dfba619b559dc6da6ba1ffe088d4f365965f7"
+    },
+    {
+      "sequence": 142,
+      "migration_id": "db/migrations/141_invoice_source_visit.sql",
+      "filename": "141_invoice_source_visit.sql",
+      "prefix": "141",
+      "sha256": "b175981d746b144f2f4df55aa1d5fd12df46d9868361580fd8b9c23818b116c1"
+    },
+    {
+      "sequence": 143,
+      "migration_id": "db/migrations/141_vehicle_session_capture_method.sql",
+      "filename": "141_vehicle_session_capture_method.sql",
+      "prefix": "141",
+      "sha256": "77f18d8992b9d23a644a03501b4dbaffd07960b2ebfb7c5ed0296d170263832d"
+    },
+    {
+      "sequence": 144,
+      "migration_id": "db/migrations/142_client_square_customer_fields.sql",
+      "filename": "142_client_square_customer_fields.sql",
+      "prefix": "142",
+      "sha256": "7038d38d951d6c6deb7aaed21b950b7e6d4c906211a06cc9548631a633f806ae"
+    },
+    {
+      "sequence": 145,
+      "migration_id": "db/migrations/142_invoice_line_item_source_expense.sql",
+      "filename": "142_invoice_line_item_source_expense.sql",
+      "prefix": "142",
+      "sha256": "faf264cb261dec7afcc8dcd136bb5520b1092df8815aaf9c5e3ea025bb62c3bc"
+    },
+    {
+      "sequence": 146,
+      "migration_id": "db/migrations/143_expense_line_items.sql",
+      "filename": "143_expense_line_items.sql",
+      "prefix": "143",
+      "sha256": "7cd867647c8be1d24c0588e6afc6a5ae5d3c58e08a0e3ff6b963cd16cd31e04a"
+    },
+    {
+      "sequence": 147,
+      "migration_id": "db/migrations/144_invoice_material_handling.sql",
+      "filename": "144_invoice_material_handling.sql",
+      "prefix": "144",
+      "sha256": "9017f8ec846e4fc2802bc1e8ae8657cac92c4443bce14f889f0dd8c9bd16e7d1"
+    },
+    {
+      "sequence": 148,
+      "migration_id": "db/migrations/145_backfill_invoice_estimate_property.sql",
+      "filename": "145_backfill_invoice_estimate_property.sql",
+      "prefix": "145",
+      "sha256": "f3663bc2b2c9b4f54ba79242c3ab14b0c31b5d7b3c37c611a0e6102726cdda9d"
+    },
+    {
+      "sequence": 149,
+      "migration_id": "db/migrations/146_document_link_carveout.sql",
+      "filename": "146_document_link_carveout.sql",
+      "prefix": "146",
+      "sha256": "1982b8894972b67bc82193495404dc989c015bb8dcd0ac9deae2605dfe72ba85"
+    },
+    {
+      "sequence": 150,
+      "migration_id": "db/migrations/147_user_prompt_mutes.sql",
+      "filename": "147_user_prompt_mutes.sql",
+      "prefix": "147",
+      "sha256": "3d1baff0d979bd9890c54a94629179788c2b22aec79cd444d10c88362779fa0b"
+    },
+    {
+      "sequence": 151,
+      "migration_id": "db/migrations/148_travel_mileage_system.sql",
+      "filename": "148_travel_mileage_system.sql",
+      "prefix": "148",
+      "sha256": "d6568874904f21d9b299092a2a868d3c3f9702938f9276b67c70db9498e90d29"
+    },
+    {
+      "sequence": 152,
+      "migration_id": "db/migrations/149_invoice_due_date_null_fill.sql",
+      "filename": "149_invoice_due_date_null_fill.sql",
+      "prefix": "149",
+      "sha256": "255da27c3a0b508900dc13b1cb9f4279ab6a3ff6604e0764ccfabdadb59c4b81"
+    },
+    {
+      "sequence": 153,
+      "migration_id": "db/migrations/150_invoice_immutability_restore_carveouts.sql",
+      "filename": "150_invoice_immutability_restore_carveouts.sql",
+      "prefix": "150",
+      "sha256": "36006b0fb3ca0bf78f5ddd0786e3a2c2aaacbbb1f8edad2995b4bc508c236b72"
+    },
+    {
+      "sequence": 154,
+      "migration_id": "db/migrations/151_business_pricing_settings.sql",
+      "filename": "151_business_pricing_settings.sql",
+      "prefix": "151",
+      "sha256": "05a63cad4d7610d090aa72286956cd4ad5f12a05eefd05ee26739c9b6f191618"
+    },
+    {
+      "sequence": 155,
+      "migration_id": "db/migrations/151_field_completion_evidence.sql",
+      "filename": "151_field_completion_evidence.sql",
+      "prefix": "151",
+      "sha256": "6ede96d3d01e03e081e1d60dc4796573aadf22cf6759bf0108bd0382aa5403a8"
+    },
+    {
+      "sequence": 156,
+      "migration_id": "db/migrations/152_booking_routing_book_work.sql",
+      "filename": "152_booking_routing_book_work.sql",
+      "prefix": "152",
+      "sha256": "b7758d250c068023a69c0ede5ab3d72d0d02a08426c3c1803fe4224039aaa484"
+    },
+    {
+      "sequence": 157,
+      "migration_id": "db/migrations/152_field_service_report_acknowledgements.sql",
+      "filename": "152_field_service_report_acknowledgements.sql",
+      "prefix": "152",
+      "sha256": "5a086bfa746bb65e7112d10ffdad7915a4316b465f8be535c2823050d3d9e7ce"
+    },
+    {
+      "sequence": 158,
+      "migration_id": "db/migrations/153_booking_request_funnel.sql",
+      "filename": "153_booking_request_funnel.sql",
+      "prefix": "153",
+      "sha256": "8fe2bd5ac95f4944e04bdee012f7dd9150bdbf468ab15a80af6491d76f026455"
+    },
+    {
+      "sequence": 159,
+      "migration_id": "db/migrations/153_communications_outcome_received.sql",
+      "filename": "153_communications_outcome_received.sql",
+      "prefix": "153",
+      "sha256": "f246af834528721a79dba5bb599283643303e3741469198791e4bae224262c7b"
+    },
+    {
+      "sequence": 160,
+      "migration_id": "db/migrations/154_invoice_deposit_policy.sql",
+      "filename": "154_invoice_deposit_policy.sql",
+      "prefix": "154",
+      "sha256": "3e8ebafee66110d3372e3edae772a094f662e2a93acf5bf163b5b7b9970b5d0f"
+    },
+    {
+      "sequence": 161,
+      "migration_id": "db/migrations/155_work_order_tasks.sql",
+      "filename": "155_work_order_tasks.sql",
+      "prefix": "155",
+      "sha256": "381d0a07f65835b13794f7142b9624acbdaf2f4c1a023950ca7463d94f93e13d"
+    },
+    {
+      "sequence": 162,
+      "migration_id": "db/migrations/156_activity_entries_task_link.sql",
+      "filename": "156_activity_entries_task_link.sql",
+      "prefix": "156",
+      "sha256": "6676eedeccb0e507df64a110d01cb119db288965e6924e73f189f23d80064a5b"
+    },
+    {
+      "sequence": 163,
+      "migration_id": "db/migrations/157_invoice_client_view.sql",
+      "filename": "157_invoice_client_view.sql",
+      "prefix": "157",
+      "sha256": "666110a231145bc65d3669bd1fa3f813df8b625dbcc3e1b05af4e4ff3c3a7302"
+    },
+    {
+      "sequence": 164,
+      "migration_id": "db/migrations/158_visit_tasks.sql",
+      "filename": "158_visit_tasks.sql",
+      "prefix": "158",
+      "sha256": "effee9b57a4bd1809710e318bf0dfc61eb1adf500100db080fec7f3043524cf3"
+    },
+    {
+      "sequence": 165,
+      "migration_id": "db/migrations/159_work_order_tasks_partial.sql",
+      "filename": "159_work_order_tasks_partial.sql",
+      "prefix": "159",
+      "sha256": "ba3f2c31c54a0586d45167503a03f0f979822273b8f9a22fd8bf285e5f44c6bc"
+    },
+    {
+      "sequence": 166,
+      "migration_id": "db/migrations/160_arrival_assignment_protocol.sql",
+      "filename": "160_arrival_assignment_protocol.sql",
+      "prefix": "160",
+      "sha256": "650924c3612d397aced956af4f941f4de05922add687552d41d3d7b586726c1a"
+    },
+    {
+      "sequence": 167,
+      "migration_id": "db/migrations/161_ignore_far_visit_candidates.sql",
+      "filename": "161_ignore_far_visit_candidates.sql",
+      "prefix": "161",
+      "sha256": "727dff42fe5f617d67305cffd531e1adc8d6a676e92bb64c1af9940cdfe547e9"
+    },
+    {
+      "sequence": 168,
+      "migration_id": "db/migrations/162_expense_commercial_tag.sql",
+      "filename": "162_expense_commercial_tag.sql",
+      "prefix": "162",
+      "sha256": "3db0ec6d23bb1f05837dd530a33d5dbbd6468f3fa3d42d684de031da9989162c"
+    },
+    {
+      "sequence": 169,
+      "migration_id": "db/migrations/162_materials_catalog_stats.sql",
+      "filename": "162_materials_catalog_stats.sql",
+      "prefix": "162",
+      "sha256": "8b7556f65efccdf8fcfed0463602e971842384fbadd7439b5cd27d9f5d123884"
+    },
+    {
+      "sequence": 170,
+      "migration_id": "db/migrations/163_communications_log_job_delete.sql",
+      "filename": "163_communications_log_job_delete.sql",
+      "prefix": "163",
+      "sha256": "72be833ef96c8e7aa2a38efe6e506d70b85425390c3ce4cb9ddde624d80d1ebb"
+    },
+    {
+      "sequence": 171,
+      "migration_id": "db/migrations/164_invoice_deposit_credit_paid_status.sql",
+      "filename": "164_invoice_deposit_credit_paid_status.sql",
+      "prefix": "164",
+      "sha256": "b42a567aa557391ffd21be37ca212dce6e0ab19e1b2a10abfaeafe1367bbc2e8"
+    },
+    {
+      "sequence": 172,
+      "migration_id": "db/migrations/165_attention_events.sql",
+      "filename": "165_attention_events.sql",
+      "prefix": "165",
+      "sha256": "b9e5f92c4df9ed76fb0347a540e86c330d39d52515981115934a4ac7b0c650e8"
+    },
+    {
+      "sequence": 173,
+      "migration_id": "db/migrations/166_job_material_lines.sql",
+      "filename": "166_job_material_lines.sql",
+      "prefix": "166",
+      "sha256": "4a03eabd7f6b38581b9d6c93b85aed9ef74e247d60e4fb9434acff4e0eba6327"
+    },
+    {
+      "sequence": 174,
+      "migration_id": "db/migrations/167_activity_entries_clamp_ended_at.sql",
+      "filename": "167_activity_entries_clamp_ended_at.sql",
+      "prefix": "167",
+      "sha256": "e2191d3890bcc125f246dbec2620fd42c175328575519f439070621e1120f8c4"
+    },
+    {
+      "sequence": 175,
+      "migration_id": "db/migrations/168_activity_one_active_per_user.sql",
+      "filename": "168_activity_one_active_per_user.sql",
+      "prefix": "168",
+      "sha256": "a85f2d0b9e4f3d1831245679c2f53977c3ae12c19e945d762487e7eb63a3e859"
+    },
+    {
+      "sequence": 176,
+      "migration_id": "db/migrations/169_site_visit_assessment_structured_scope.sql",
+      "filename": "169_site_visit_assessment_structured_scope.sql",
+      "prefix": "169",
+      "sha256": "d3401d02972b1e7754d8eed2db952547f07022b00279ff4b30f2f3cc0b1006f9"
+    },
+    {
+      "sequence": 177,
+      "migration_id": "db/migrations/170_vehicle_cost_of_ownership.sql",
+      "filename": "170_vehicle_cost_of_ownership.sql",
+      "prefix": "170",
+      "sha256": "c66ac95b24f587fb7754d03409fbbdb737ce909fbc19d925b2b640a15d120c3f"
+    },
+    {
+      "sequence": 178,
+      "migration_id": "db/migrations/171_job_store_run.sql",
+      "filename": "171_job_store_run.sql",
+      "prefix": "171",
+      "sha256": "34fc68a74c09e9e25dec37bbe7cbc10bed27402bb37105f176b54f6eb0f4ae45"
+    },
+    {
+      "sequence": 179,
+      "migration_id": "db/migrations/172_location_stop_noise.sql",
+      "filename": "172_location_stop_noise.sql",
+      "prefix": "172",
+      "sha256": "019872ff4b38c83032eea6f3b60fbb2883fe16dc00960b1d9bf536b906c2c7b2"
+    },
+    {
+      "sequence": 180,
+      "migration_id": "db/migrations/173_materials_builder_templates.sql",
+      "filename": "173_materials_builder_templates.sql",
+      "prefix": "173",
+      "sha256": "ee64d93d8acb3c9ec2b21ba414b62ba99ff7c88238c7c795f9823ec58ae706b5"
+    },
+    {
+      "sequence": 181,
+      "migration_id": "db/migrations/174_materials_templates_explicit_codes.sql",
+      "filename": "174_materials_templates_explicit_codes.sql",
+      "prefix": "174",
+      "sha256": "e25439fa0b3a4e43b4a5732e36a5f75223e0c648c6e6904d590f3216a579bbcc"
+    },
+    {
+      "sequence": 182,
+      "migration_id": "db/migrations/175_capture_evidence.sql",
+      "filename": "175_capture_evidence.sql",
+      "prefix": "175",
+      "sha256": "3df0a1c05005e528ddcf0a0c96df042767a00b3adacfde27d3cbe44389a96dd2"
+    },
+    {
+      "sequence": 183,
+      "migration_id": "db/migrations/175_push_subscriptions.sql",
+      "filename": "175_push_subscriptions.sql",
+      "prefix": "175",
+      "sha256": "c77c4af72eaaf3ae4340ab001dc462e94c59e5303535d12afc9d16debc5109e7"
+    },
+    {
+      "sequence": 184,
+      "migration_id": "db/migrations/176_action_items_promise_source.sql",
+      "filename": "176_action_items_promise_source.sql",
+      "prefix": "176",
+      "sha256": "a922a6c36ad53695c82376fe1580e66837e6bdf78c512700a6855736f8dafd01"
+    },
+    {
+      "sequence": 185,
+      "migration_id": "db/migrations/177_invoice_kind_progress.sql",
+      "filename": "177_invoice_kind_progress.sql",
+      "prefix": "177",
+      "sha256": "dad2e3f79f8bfdfc68a12f0d1e73ead038d725933a70144a375afa1bcbc0b79a"
+    },
+    {
+      "sequence": 186,
+      "migration_id": "db/migrations/177_workflow_events_reliable_outbox.sql",
+      "filename": "177_workflow_events_reliable_outbox.sql",
+      "prefix": "177",
+      "sha256": "a271e02021741f92e28c227c005e0215de0f222c1fdfe4d9c42dda1ef60edc8b"
+    },
+    {
+      "sequence": 187,
+      "migration_id": "db/migrations/178_notification_delivery_reliability.sql",
+      "filename": "178_notification_delivery_reliability.sql",
+      "prefix": "178",
+      "sha256": "a5b445a5d4445542e196dae51decc87e050cc795fbb533edcea9431baba7d4e1"
+    },
+    {
+      "sequence": 188,
+      "migration_id": "db/migrations/178_runtime_login_boundary.sql",
+      "filename": "178_runtime_login_boundary.sql",
+      "prefix": "178",
+      "sha256": "c58e9645a69e9256ed7b9b309ca13b47d9336dd008b23a6888de9c565f9df1b3"
+    },
+    {
+      "sequence": 189,
+      "migration_id": "db/migrations/179_business_memberships.sql",
+      "filename": "179_business_memberships.sql",
+      "prefix": "179",
+      "sha256": "d9e429f8a94dfb8858480df6a69c72facd09f0e217dd57bad0b76d4ec39635ea"
+    },
+    {
+      "sequence": 190,
+      "migration_id": "db/migrations/179_visit_closeout_kind.sql",
+      "filename": "179_visit_closeout_kind.sql",
+      "prefix": "179",
+      "sha256": "2a8f367b0ad3a9183c308049781abb36216d5d3bf8e891966c100583816475ff"
+    },
+    {
+      "sequence": 191,
+      "migration_id": "db/migrations/180_complete_job_from_closeout.sql",
+      "filename": "180_complete_job_from_closeout.sql",
+      "prefix": "180",
+      "sha256": "aff2df6668f762abea34a74a1fdc37b3cfb6f26667fbaabdcd3c964abf5d9820"
+    },
+    {
+      "sequence": 192,
+      "migration_id": "db/migrations/180_workforce_skills_availability.sql",
+      "filename": "180_workforce_skills_availability.sql",
+      "prefix": "180",
+      "sha256": "4ad2b9c8e0ae2a13ee2ecd7bebfefe49a7df100d89d9e2eeff788c6928ca56c0"
+    },
+    {
+      "sequence": 193,
+      "migration_id": "db/migrations/181_expense_allocation_reviewed.sql",
+      "filename": "181_expense_allocation_reviewed.sql",
+      "prefix": "181",
+      "sha256": "9a6b7899e500b4765f480a0d4014d61a700ef5f5417b00a194b86c768b40559a"
+    },
+    {
+      "sequence": 194,
+      "migration_id": "db/migrations/181_field_job_templates.sql",
+      "filename": "181_field_job_templates.sql",
+      "prefix": "181",
+      "sha256": "c78a3486ced69791a89ff269bae01955fae5c5f3913a22c1c33bf14f90bf1a72"
+    },
+    {
+      "sequence": 195,
+      "migration_id": "db/migrations/182_field_service_report_deliveries.sql",
+      "filename": "182_field_service_report_deliveries.sql",
+      "prefix": "182",
+      "sha256": "4e7484409f1b924aa047b9ea61c69ef9c8c02b42afbc586616eab426a3beef1e"
+    },
+    {
+      "sequence": 196,
+      "migration_id": "db/migrations/182_rls_estimate_change_order_backfill.sql",
+      "filename": "182_rls_estimate_change_order_backfill.sql",
+      "prefix": "182",
+      "sha256": "2430bad835e9ade4bd4f5c8b83a73abb23dfa903632e7fc53b4471d6d9e65caf"
+    },
+    {
+      "sequence": 197,
+      "migration_id": "db/migrations/183_rls_subscription_portal_backfill.sql",
+      "filename": "183_rls_subscription_portal_backfill.sql",
+      "prefix": "183",
+      "sha256": "f58e4a14a361820dd360ec5cd475f3cc127b08160be37d27b6f691925a207590"
+    },
+    {
+      "sequence": 198,
+      "migration_id": "db/migrations/183_technician_vehicle_assignments.sql",
+      "filename": "183_technician_vehicle_assignments.sql",
+      "prefix": "183",
+      "sha256": "59bac612bffcc59746a5f0b527fbf6d4b8b57749e0d4ec21ad393b0e2092f8b5"
+    },
+    {
+      "sequence": 199,
+      "migration_id": "db/migrations/184_rls_reference_portal_auth_backfill.sql",
+      "filename": "184_rls_reference_portal_auth_backfill.sql",
+      "prefix": "184",
+      "sha256": "402abde7e05e9024ddd1c6f8e7ec4b6061424c1f8041bf560f1a3e5df4a85ab9"
+    },
+    {
+      "sequence": 200,
+      "migration_id": "db/migrations/185_rls_worker_swept_backfill.sql",
+      "filename": "185_rls_worker_swept_backfill.sql",
+      "prefix": "185",
+      "sha256": "74a8fb41482913de9d2ca15a0a5c4dd2cbaeb5c522839f89bde9f13d9727b7de"
+    },
+    {
+      "sequence": 201,
+      "migration_id": "db/migrations/186_segment_stop_reason.sql",
+      "filename": "186_segment_stop_reason.sql",
+      "prefix": "186",
+      "sha256": "03dbb082fad85f20bf1c47500beeab77b1a807b9c51a86d8607f368703478152"
+    },
+    {
+      "sequence": 202,
+      "migration_id": "db/migrations/187_account_home_fence.sql",
+      "filename": "187_account_home_fence.sql",
+      "prefix": "187",
+      "sha256": "21cd9b6c824deba1074da0591971660296946e48dc7055ff19f18700c323f0ae"
+    },
+    {
+      "sequence": 203,
+      "migration_id": "db/migrations/188_job_pricing_mode.sql",
+      "filename": "188_job_pricing_mode.sql",
+      "prefix": "188",
+      "sha256": "0fee50abdf036f06deb95a032e973b645870e4fdc857946dbe201bacdae70789"
+    },
+    {
+      "sequence": 204,
+      "migration_id": "db/migrations/189_audit_log_nullable_actor.sql",
+      "filename": "189_audit_log_nullable_actor.sql",
+      "prefix": "189",
+      "sha256": "d612dbb4d11dad8eccb177c8e4e0b68a49e03fea97fb12849a130561815d52b6"
+    }
+  ],
+  "prefix_collisions": [
+    {
+      "prefix": "100",
+      "files": [
+        "100_booking_request_pricing_mode.sql",
+        "100_comms_log_dedup.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "137",
+      "files": [
+        "137_accounts_day_review_settings.sql",
+        "137_project_work_order_visit_schema.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "141",
+      "files": [
+        "141_invoice_source_visit.sql",
+        "141_vehicle_session_capture_method.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "142",
+      "files": [
+        "142_client_square_customer_fields.sql",
+        "142_invoice_line_item_source_expense.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "151",
+      "files": [
+        "151_business_pricing_settings.sql",
+        "151_field_completion_evidence.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "152",
+      "files": [
+        "152_booking_routing_book_work.sql",
+        "152_field_service_report_acknowledgements.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "153",
+      "files": [
+        "153_booking_request_funnel.sql",
+        "153_communications_outcome_received.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "162",
+      "files": [
+        "162_expense_commercial_tag.sql",
+        "162_materials_catalog_stats.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "175",
+      "files": [
+        "175_capture_evidence.sql",
+        "175_push_subscriptions.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "177",
+      "files": [
+        "177_invoice_kind_progress.sql",
+        "177_workflow_events_reliable_outbox.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "178",
+      "files": [
+        "178_notification_delivery_reliability.sql",
+        "178_runtime_login_boundary.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "179",
+      "files": [
+        "179_business_memberships.sql",
+        "179_visit_closeout_kind.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "180",
+      "files": [
+        "180_complete_job_from_closeout.sql",
+        "180_workforce_skills_availability.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "181",
+      "files": [
+        "181_expense_allocation_reviewed.sql",
+        "181_field_job_templates.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "182",
+      "files": [
+        "182_field_service_report_deliveries.sql",
+        "182_rls_estimate_change_order_backfill.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    },
+    {
+      "prefix": "183",
+      "files": [
+        "183_rls_subscription_portal_backfill.sql",
+        "183_technician_vehicle_assignments.sql"
+      ],
+      "resolution": "immutable-filename-identity-and-explicit-sequence",
+      "applied_history": "unverified-no-installation-ledger-snapshot-available"
+    }
+  ]
+}

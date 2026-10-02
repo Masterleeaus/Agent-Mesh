@@ -47,7 +47,7 @@ export class WorkforceController {
     for (const item of status.work) {
       scoped(item, companyId);
       if (typeof item.work_id !== 'string' || !item.work_id || typeof item.state !== 'string') throw new Error('workforce-projection-invalid');
-      if (!strings(item.context_refs) || !strings(item.evidence_refs)) invalid();
+      if (!strings(item.context_refs) || !strings(item.evidence_refs) || !strings(item.required_capabilities)) invalid();
       if (!optionalString(item.run_id)) invalid();
     }
   }

@@ -20,11 +20,11 @@ export const proof = { ...external, session_id: sessionId, device_id: 'device-1'
 export const expected = { company_id: 'company-a', audience: 'titan-directadmin:node-1' };
 export const csrf = b64(crypto.getRandomValues(new Uint8Array(32)));
 
-export async function fixture(t, { origin = ORIGIN, provider = external.provider, sessionOverrides = {} } = {}) {
+export async function fixture(t, { origin = ORIGIN, provider = external.provider, sessionOverrides = {}, storagePath = ':memory:' } = {}) {
   const externalIdentity = { provider, subject: external.subject };
   const now = Math.floor(Date.now() / 1000) * 1000;
   let clock = now;
-  const storage = createSqliteStorage(':memory:');
+  const storage = createSqliteStorage(storagePath);
   t.after(() => storage.close());
   const registry = await createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY' });
   await registry.putActor({ actor_id: 'actor-1', status: 'active' }, null);
@@ -57,8 +57,8 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
   const upstreamToken = `${loginPayload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(loginPayload)))}`;
   const issued = await sessions.issue(upstreamToken, { company_id: 'company-a', device_id: 'device-1' });
   const token = issued.credential;
-  const loginFor = async (provider, jti) => {
-    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode({ ...loginClaims, iss: provider, jti })}`;
+  const loginFor = async (provider, jti, changes = {}) => {
+    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode({ ...loginClaims, ...changes, iss: provider, jti })}`;
     return `${payload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(payload)))}`;
   };
   // Fixture-only inspection of a credential just issued through the canonical service.
@@ -76,7 +76,8 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
       if (v === null) headers.delete(k); else headers.set(k, v);
     }
     return new Request(options.url ?? `${origin}${path}`, { method: options.method ?? 'GET', headers,
-      ...(options.body === undefined ? {} : { body: options.body }) });
+      ...(options.body === undefined ? {} : { body: options.body }),
+      ...(options.signal === undefined ? {} : { signal: options.signal }) });
   };
   const effects = [];
   const owners = {
@@ -93,6 +94,6 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
       const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
     },
   };
-  return { registry, sessions, bridgeSessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
+  return { storage, registry, sessions, bridgeSessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
     loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }

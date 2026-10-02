@@ -19,62 +19,31 @@ mission tracker, runtime ledger or definition of authority.
 
 These are different issue outcomes, not automatic promotion states. A related
 commit, green CI, provider acknowledgement or checked box alone proves none of
-the parent mission's semantic completion. Ordinary implementation steps stay in
-the existing mission; create a separate issue only for an independently substantial
-outcome with no existing canonical owner.
+the parent mission's semantic completion. Split broad missions whenever a bounded,
+independently reviewable outcome can ship; link the slices and keep the parent
+open for product integration/certification.
 
 ## PR relationship
 
-Use the exact claim `agent/issue-N`, target `main`, and set the single metadata line
-`**Linked issue:** Refs #N` while any mission requirement remains unproven.
-The matching `**Claim branch:** agent/issue-N` is required. `Subgoal ID` is optional
-planning traceability, never an implementation claim or a second issue owner.
+Partial and ordinary code PRs may use any short-lived branch name and merge with
+focused checks. Use `Refs #N` to keep a parent issue open. The merge gate does not
+require a claim branch, full parent checklist or full evidence record for a slice.
 
-Only a full mission candidate uses `**Linked issue:** Closes #N`. The gate rejects
-extra closing targets, cross-repository closure, hidden closing directives in a
-partial PR, obsolete/suffixed agent branches, forks impersonating the claim, a
-closed/non-issue target, claim/head SHA drift, non-current-main ancestry and
-another open PR owning/closing the same mission. A PR merely referencing the
-mission from another exact claim is coordination, not a collision.
+Only PRs that actually close an issue receive strict closure validation. GitHub
+closing directives are scanned in the title, body, paginated commit messages and
+linked-issue metadata. A closing PR must target `main`, point to one open issue in
+this repository, and include the required full mission evidence. Non-closing PRs
+remain eligible to merge without those completion conditions.
 
-Closing directives are scanned conservatively even in code fences/comments.
-Do not put example closing directives or unrelated closures in the PR body.
-The gate also checks the PR title, all paginated commit messages, and GitHub's
-GraphQL closing-issue links, including manually linked issues. Review these again
-before merge: later GitHub changes or external/manual closure can invalidate a
-previously green check; this workflow does not block direct issue-close actions.
+Review closure evidence again before merging: later GitHub changes or an external
+issue-close action can invalidate a previous check. The workflow does not block
+direct issue-close actions.
 
 ## Machine-readable evidence version 1
 
-Include exactly one fenced `mission-evidence` JSON block in the PR's
-`### Completion evidence` section. Both PR templates carry the same example.
-A partial record still needs the current issue digest, explicit live-host status,
-remaining work and the human-review requirement. Criteria/checks may be empty
-when no complete item can yet be evidenced; do not invent passed checks.
-
-Fields:
-
-- `version`: integer `1`
-- `issue`: integer mission number matching the claim and linked issue
-- `mode`: `partial` for `Refs`, or `complete` for `Closes`
-- `issue_body_sha256`: SHA-256 of the entire current GitHub issue body encoded as
-  UTF-8 without adding a trailing newline. Issue edits invalidate old evidence
-- `criteria`: one object per criterion, with exact normalized `criterion` text,
-  nonempty `implementation` paths, and `checks` containing declared check IDs
-- `checks`: objects containing unique `id`, exact `command` or observation procedure,
-  concrete `evidence` (result/output or durable run/artifact link), boolean
-  `required`, `kind` (`automated`, `manual`, `live-host`), and `result`
-  (`passed`, `failed`, `blocked`, `not-run`, `unknown`)
-- `live_host`: `status` (`passed`, `not-required`, `not-run`, `blocked`, `unknown`)
-  and concrete `reason`. `passed` requires a passed `live-host` check record;
-  `not-required` must be justified and cannot contradict declared live-host checks
-- `remaining_work`: concrete strings; empty only for a full mission candidate
-- `human_review_required`: literal `true`; never a claim that review occurred
-
-For closing records, every declared check must have run and passed. Any failed,
-blocked, unknown or unrun check, outstanding live-host verification, or remaining
-mission work keeps the PR non-closing. Placeholder paths/evidence do not pass.
-A follow-up issue does not excuse omitting an original acceptance requirement.
+The `mission-evidence` JSON record is required only for a PR that closes an issue.
+A partial PR may instead include a concise slice outcome, focused commands/results,
+and links to remaining product-level work.
 
 ### Enumerating current acceptance
 

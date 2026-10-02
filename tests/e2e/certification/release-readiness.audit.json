@@ -1,0 +1,1417 @@
+{
+  "schema": "titan.readiness-audit-input/v1",
+  "observed_at": "2026-10-02T11:51:16Z",
+  "source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+  "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
+  "audit_completeness": "PARTIAL",
+  "production_eligibility": "DENIED_MISSING_EVIDENCE",
+  "published_state": "UNKNOWN",
+  "related_evidence": [
+    "tests/e2e/certification/critical-path-matrix.generated.json"
+  ],
+  "external_sources": [
+    {
+      "url": "https://titan-zero.titan-zero.chatgpt.site",
+      "kind": "METADATA_REPORTED",
+      "version": 39,
+      "source_commit": "1d27bd6c4309881244fe412bcf5b5ca63bd4f344",
+      "source_bytes_inspected": false,
+      "limitations": "Separate Sites source; metadata observed by coordinating audit. #1171 holds current source-scan report; not independently executed here."
+    }
+  ],
+  "delivery_board": {
+    "schema": "titan.directadmin-plugin-delivery-board/v1",
+    "observed_at": "2026-10-02T16:26:04Z",
+    "source_of_truth": "GitHub issue/claim branch/PR/CI; parent-supplied observations are labeled. This snapshot is not a second task ledger.",
+    "scope": "Only the three DirectAdmin plugins and immediate identity, runtime, authority, relay, and CI blockers.",
+    "basis": {
+      "main_sha": "15d8b1be1584ce07259762527f9abfe040c9d504",
+      "readiness_issue": 1172,
+      "readiness_pr": 1178,
+      "readiness_branch": "agent/issue-1172",
+      "pr_state_before_update": "OPEN_DRAFT",
+      "head_before_update": "af3a7f8e49b5533dc329e54bfd7be8a51093d1ee",
+      "issue_assignees": [],
+      "claim_check": "Existing workspace branch; no competing #1172 branch observed.",
+      "existing_28_area_audit_source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
+      "note": "The broad 28-area audit remains pinned to its prior d508 source snapshot; no repository-wide audit was rerun. This board alone is scoped to current main 15d8b1be and the three DirectAdmin plugins/dependencies."
+    },
+    "priority_order": [
+      "developer-portal",
+      "business-node",
+      "workforce"
+    ],
+    "workflow_guidance": [
+      "One owner per canonical GitHub issue; exact agent/issue-N branch and PR are the claim/status record. Do not duplicate issues or implementation work; do not invent completion percentages.",
+      "Sequence: verify the existing Portal candidate and safe commands → establish the authenticated private Business Node gateway → prove one company-scoped governed Workforce action with a durable, independently verified receipt.",
+      "Partial PRs, green fixtures, REQUESTED receipts, and fail-closed 503s do not close missions. Keep parent issues open until full acceptance/deployment proof; use Refs for partial work.",
+      "Keep the RAW relay fail-closed. No credential or network changes without explicit authorization. Refresh this snapshot on material owner/CI/deployment events, not routine polling.",
+      "PARENT_REPORTED: #1255/#1257 recovery-rules implementation is owned by external task 01a0fd2e-59f8-77c3-ae79-676547aec0bd. Task 01a0fd4d-0777-7635-bb4e-f6b47bda0018 is the independent reviewer only and has stopped duplicate edits; it is not the implementation owner or a DirectAdmin plugin owner."
+    ],
+    "plugins": [
+      {
+        "id": "developer-portal",
+        "priority": 1,
+        "owner_task_id": "01a0fa66-adde-70e9-994a-e4683def0034",
+        "issue": {
+          "number": 1048,
+          "title": "[P2][CODEX] Developer Portal — scoped developer access, diagnostics, Codex & capability debugging",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:36:49Z",
+          "age_hours": 104.97,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1048",
+          "open_pr": {
+            "number": 1250,
+            "state": "OPEN_DRAFT",
+            "head_sha": "a106179627626d9f847d69ae0194f826f7053aa9"
+          },
+          "latest_pr": {
+            "number": 1247,
+            "state": "MERGED",
+            "head_sha": "df8fb09b248a75fa97cd90a7ebfe1b146eed5b69",
+            "merge_sha": "64561e4d077ec07a3cb40dfb43284b0e7dff4dbf"
+          },
+          "candidate_pr": {
+            "number": 1244,
+            "state": "MERGED",
+            "head_sha": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8"
+          },
+          "remote_head": "a106179627626d9f847d69ae0194f826f7053aa9"
+        },
+        "file_ownership": [
+          "apps/directadmin/dev-access/**",
+          ".github/workflows/directadmin-dev-access-php.yml"
+        ],
+        "dependency": "PARENT_REPORTED: Library helper #401 returned HTTP 401 and did not deliver the archive; parent uploaded the exact artifact.",
+        "next_action": "PR #1250 at exact head a106179627626d9f847d69ae0194f826f7053aa9 proposes a bounded v1.3.6 POST transport repair. Its exact-head hosted PHP/package, portfolio, source-index and Titan Zero CI checks pass. PARENT_REPORTED: artifact 11236803104 was delivered to the user’s Library at 16:01 UTC; it is not installed or live-verified. Next executable step for the #1048 owner, after required host authorization, is install the exact artifact through Plugin Manager and retest harmless pwd/id on the installed form with the recorded checksum; do not certify unless the live retest passes.",
+        "candidate": {
+          "version": "1.3.5",
+          "archive": "Library v11",
+          "checksum_scheme": "SHA-256",
+          "sha256": "42b3ee3e100ff619ff72f2150db34690747615dc350f07b61b643beadc4cacfd",
+          "source_commit": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8",
+          "verification": "PARENT_REPORTED: exact archive verified; isolated PHP 8.3.35 extracted-package run 18/18 transport/security cases, 13 provenance hashes, safe packaging.",
+          "checksum_library_file_version": "v2"
+        },
+        "acceptance_evidence": [
+          "PR #1244 and #1247 merged as partial source slices; the exact v1.3.5 archive record remains Library v11, source 2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8, inner SHA-256 42b3ee3e100ff619ff72f2150db34690747615dc350f07b61b643beadc4cacfd.",
+          "PARENT_REPORTED: Jason explicitly instructed removal of the installed 1.3.3 plugin and reinstall, and secure password confirmation was received. Jason installed v1.3.5; DirectAdmin Plugin Manager confirmed it at 2026-10-02 15:10 UTC.",
+          "PARENT_REPORTED: three SSH fingerprints remain installed; ~/.ssh is mode 0700 and authorized_keys is mode 0600. Fingerprint values are omitted.",
+          "PARENT_REPORTED: harmless POST pwd returns field_value_invalid via transport=stdin, declared_bytes=unknown, body_bytes_read=108 versus expected ASCII 107; id returns 107 versus 106. Raw NUL or invalid UTF-8 are candidate causes; a one-byte trailer is not confirmed.",
+          "GitHub PR #1250 is OPEN_DRAFT at exact head a106179627626d9f847d69ae0194f826f7053aa9. Its body describes the v1.3.6 transport repair and review-only artifact with SHA-256 0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8. Exact-head PHP package/transport, portfolio, Source Evidence Index and Titan Zero CI checks are green. The PR body reports independent source review found no blocker; the GitHub review list is empty. This is hosted/source evidence, not an installed-host retest.",
+          "PARENT_REPORTED: Windows UI server-console/browser controls and private-key retry are unavailable and DirectAdmin Update is disabled. Plugin Manager sufficed for simple plugin replacement; a provider-console URL remains relevant only for privileged host/runtime operations if no supported route exists.",
+          "PARENT_REPORTED: artifact 11236803104 (v1.3.6; SHA-256 0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8) was delivered to the user’s Library at 2026-10-02 16:01 UTC. It has not been installed or live-verified."
+        ],
+        "still_required": "Install and verify the exact v1.3.6 candidate on an approved DirectAdmin host, then repeat harmless pwd and id POSTs through the installed form and confirm correct body bytes and CSRF acceptance. Preserve safe update/rollback and redaction/SSH-key lifecycle evidence. A provider-console URL is not a blocker for Plugin Manager replacement; it is relevant only for privileged host/runtime operations if no supported route exists.",
+        "deployment_state": "PARENT_REPORTED: v1.3.5 from the recorded exact archive remains installed and was confirmed by Plugin Manager at 15:10 UTC. Three SSH fingerprints and 0700/0600 modes remain. Harmless pwd/id POSTs still fail with field_value_invalid and the reported body-size discrepancies. The v1.3.6 candidate was delivered to the user’s Library at 16:01 UTC but is not installed or live-verified. Not working or certified.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T15:10:00Z",
+          "hours_since_last_observation": 0.92,
+          "live_1_3_3_post_observed_at": "2026-10-02T10:33:00Z",
+          "hours_since_live_post_observation": 5.04,
+          "mission_open_hours": 105.48
+        },
+        "repair_candidate": {
+          "version": "1.3.6",
+          "source_head": "a106179627626d9f847d69ae0194f826f7053aa9",
+          "artifact_id": 11236803104,
+          "artifact_name": "developer-portal-v1.3.6-a106179627626d9f847d69ae0194f826f7053aa9",
+          "sha256": "0ce80c3cb224de1a00b2d3c93f3f66c54fc153b1518cc4555aa6237ef12ddaf8",
+          "outer_artifact_digest": "sha256:94d704516cf3b3deb91a02df18677e19944e620dd3652bd687d47413c7315fce",
+          "delivery": "PARENT_REPORTED: delivered to the user’s Library at 2026-10-02 16:01 UTC.",
+          "installed": false,
+          "live_verified": false
+        }
+      },
+      {
+        "id": "business-node",
+        "priority": 2,
+        "owner_task_id": "01a0fac0-ec9f-767a-ba86-6836da88400b",
+        "issue": {
+          "number": 812,
+          "title": "[P0][CODEX] DirectAdmin Business Node control plane — meta-orchestration, Server Node & system estate",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+          "state": "OPEN",
+          "opened_at": "2026-09-27T09:41:03Z",
+          "age_hours": 125.9,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-812",
+          "remote_head": "b2bde38aa4a54f85cb690f7cc3c643602c482a17",
+          "same_as_main": false,
+          "open_pr": {
+            "number": 1251,
+            "state": "OPEN_DRAFT",
+            "head_sha": "b2bde38aa4a54f85cb690f7cc3c643602c482a17"
+          },
+          "latest_pr": {
+            "number": 1245,
+            "state": "MERGED",
+            "head_sha": "eb568f20ccc5403b968eaacbb97c3dbb3cab9b08",
+            "merge_sha": "faab3c5c9bdfd90179d5d3bfee21c479dceb3613"
+          }
+        },
+        "file_ownership": [
+          "apps/directadmin/server-node/**"
+        ],
+        "dependencies": [
+          "#7 canonical capability IDs",
+          "#14 governed ExecutionGateway",
+          "#322 deployment/release primitives",
+          "#811 persistent Workforce runtime",
+          "#1049 shared DirectAdmin SDK/session bridge"
+        ],
+        "next_action": "PR #1251 is OPEN_DRAFT at exact head b2bde38aa4a54f85cb690f7cc3c643602c482a17 with exact-head hosted checks green. Next executable step is for an authorized host operator to run its read-only external and panel verifier against the exact authorized #811 private target and attach sanitized reports; preserve production RAW 503 until those results and #811/#302/#1049 contract confirmations are independently reviewed.",
+        "acceptance_evidence": [
+          "PR #1245 merged as a partial Server Node/RAW relay slice; issue #812 remains open.",
+          "Production RAW deliberately returns sanitized 503 before config/upstream; this is source/fixture evidence, not a commissioned live gateway.",
+          "Open draft PR #1251 is at exact head b2bde38aa4a54f85cb690f7cc3c643602c482a17; its PR body reports 12/12 verifier tests and 102/102 Server Node tests. Current GitHub exact-head checks are green, but no live-host or independent-network run was performed."
+        ],
+        "still_required": "Authorized direct-host and independent-network boundary evidence for PR #1251, followed by completion of the #812 mission: valid DirectAdmin install/update/uninstall lifecycle, persistent canonical Workforce supervision, governed and independently verified capability execution with evidence, restart/recovery and backup/restore, representative deployment, cross-company denial, and replacement-substrate proof.",
+        "deployment_state": "No commissioned Server Node or live host acceptance is evidenced. Production RAW intentionally returns sanitized 503 before config/upstream; no credential or network change is authorized.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T14:37:57Z",
+          "hours_since_last_observation": 1.46,
+          "mission_open_hours": 126.41
+        }
+      },
+      {
+        "id": "workforce",
+        "priority": 3,
+        "owner_task_id": "01a0fa2c-44bb-7234-9dde-0e775943c028",
+        "issue": {
+          "number": 1050,
+          "title": "[P1][CODEX] Workforce Manager — agents, teams, work, autonomy, evidence & control",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
+          "state": "OPEN",
+          "opened_at": "2026-09-28T06:44:23Z",
+          "age_hours": 104.85,
+          "github_assignees": []
+        },
+        "claim": {
+          "branch": "agent/issue-1050",
+          "remote_ref": "ABSENT_AFTER_MERGED_PR_1249",
+          "open_pr": null,
+          "latest_pr": {
+            "number": 1249,
+            "state": "MERGED",
+            "head_sha": "1a5455f56064a268ca8c35612ab9044fd601bb35",
+            "merge_sha": "15d8b1be1584ce07259762527f9abfe040c9d504",
+            "merged_at": "2026-10-02T15:04:59Z"
+          }
+        },
+        "file_ownership": [
+          "apps/directadmin/workforce/**",
+          "docs/directadmin/WORKFORCE-*.md"
+        ],
+        "dependencies": [
+          "#811 runtime controls/durable receipts",
+          "#640 bounded authority/effect/evidence glue; PR #1253 is in independent review",
+          "#1049 shared SDK bootstrap producer/host composition; PR #1252 remains uncommissioned",
+          "#812 Server Node RAW relay",
+          "#1157/#1248 CI consuming the merged #1249 fixture; final human review pending"
+        ],
+        "next_action": "PARENT_REPORTED: the user approved PR #1248 for merge at 15:46 UTC, but it remains OPEN_DRAFT while explicit Ready state-change confirmation is pending; do not call it merged or change its draft state. Its exact head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c has green GitHub checks. After Ready confirmation, the existing #1157/#1248 owner may transition it through normal review/merge protections. Continue toward one positive company-scoped governed workflow with a durable, independently verified receipt after #811 controls/receipts, #1049 producer/host composition, and #640 acceptance are resolved. Do not add plugin-local authority/evidence or duplicate CI.",
+        "acceptance_evidence": [
+          "PR #1249 merged at source head 1a5455f56064a268ca8c35612ab9044fd601bb35 into main as merge commit 15d8b1be1584ce07259762527f9abfe040c9d504 at 2026-10-02T15:04:59Z; issue #1050 remains OPEN. Explicit human approval at 15:05 is PARENT_REPORTED.",
+          "Historical only: at prior head 054c3651, the #1249 owner reported 39/39 consumer/browser/hosted/package tests, 83/83 shared-bridge tests, 3/3 package tests, and 14 RAW requests/15 hosted routes. These totals are not attributed to merged head 1a5455f5.",
+          "GitHub confirms PR #1248 remains OPEN_DRAFT at head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c with workforce, DirectAdmin Workforce Consumer, validate, mobile and Mission Closure Evidence Gate checks green. PARENT_REPORTED: the user approved merge at 15:46 UTC; explicit Ready state-change confirmation is pending. It is not merged."
+        ],
+        "still_required": "One positive permitted host-owned control and durable receipt for the current company/session, independent outcome verification, idempotent recovery, and live-host commissioning. Current controls=[] and denial/no-write tests prove only fail-closed behavior.",
+        "deployment_state": "Packaging candidate only, not live-install-ready; no commissioned host or positive workflow receipt. Hosted /ready intentionally remains 503.",
+        "blocker_age": {
+          "specific_onset": "UNKNOWN",
+          "last_observed_at": "2026-10-02T15:35:08Z",
+          "hours_since_last_observation": 0.5,
+          "mission_open_hours": 105.35
+        }
+      }
+    ],
+    "dependency_owners": [
+      {
+        "id": "shared-identity",
+        "owner_task_id": "01a0fa3e-ef62-706b-bebc-9c82453ec02b",
+        "issue": 302,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1183,
+          "branch": "agent/issue-302",
+          "head": "14cb413fcb082f4426e298e46590de6e0fe577cc",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "apps/web/lib/auth/current-session.ts",
+          "packages/titan-platform/src/security-session-credentials.ts",
+          "packages/titan-platform/src/security-session-registry.ts"
+        ],
+        "used_by": [
+          "shared-sdk",
+          "workforce"
+        ],
+        "note": "Issue #302 current-session/company identity dependency. Owner evidence comment #5954574426; no production DirectAdmin commissioning evidenced.",
+        "evidence_comment_id": 5954574426
+      },
+      {
+        "id": "shared-sdk",
+        "owner_task_id": "01a0fa2b-6965-73e1-a96f-17b866d45036",
+        "issue": 1049,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1243,
+          "branch": "agent/issue-1049",
+          "head": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
+          "merge_sha": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "state": "MERGED"
+        },
+        "active_branch": {
+          "branch": "agent/issue-1049",
+          "head": "2006836d0ced2226f0d34585e1e3ba7b7e0b4d73"
+        },
+        "owned_paths": [
+          "packages/titan-platform/src/directadmin-{cockpit,gateway,plugin,session-bridge}.ts",
+          "packages/titan-platform/tests/directadmin-*",
+          "apps/directadmin/*/cockpit.mjs",
+          "docs/contracts/directadmin-authenticated-session-bridge.md"
+        ],
+        "used_by": [
+          "developer-portal",
+          "business-node",
+          "workforce"
+        ],
+        "note": "PR #1204/#1243 remain partial merged SDK/session-bridge source. GitHub confirms open draft PR #1252 at 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; its body reports 92 focused tests, and exact-head Mission Closure Evidence Gate, Titan Zero CI and Source Evidence Index checks pass. PARENT_REPORTED: independent source-blob comparison confirmed the gateway/bridge code is identical between 19893cac161e2cbdd3c839b0f051072cc97d1031 and 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; the non-blocking route security review and Node 22 reviewer CI 92/92 at the earlier head therefore carry over to the same code. This is source/test evidence, not host commissioning. The trusted #302 assertion producer and #811/#812 host/page composition remain absent.",
+        "dependencies": [
+          "#302 canonical current-session/company identity"
+        ],
+        "open_pr": {
+          "number": 1252,
+          "state": "OPEN_DRAFT",
+          "branch": "agent/issue-1049",
+          "head": "2006836d0ced2226f0d34585e1e3ba7b7e0b4d73"
+        }
+      },
+      {
+        "id": "runtime",
+        "owner_task_id": "01a0fa2b-37fd-76a5-b80f-1ba8f207f03f",
+        "issue": 811,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1242,
+          "branch": "agent/issue-811",
+          "head": "360b6bcf6a721757530f7913b88a28c8b3397a33",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "services/workforce/**",
+          "infra/compose.vps.yml"
+        ],
+        "used_by": [
+          "workforce"
+        ],
+        "note": "PARENT_REPORTED: the #811 owner is working the permitted-controls/durable-receipts dependency; bounded #640 claim is authorized. Executor recovery was confirmed in this workspace by actual commands: `pwd` returned `/workspace/Titan-Zero-Field-Service-Workforce`, `id` returned `uid=1000(agent) gid=1000(agent) groups=1000(agent)`, and `git fetch origin main` succeeded at 15d8b1be1584ce07259762527f9abfe040c9d504. This proves executor shell access only, not production host recovery or a Workforce receipt."
+      },
+      {
+        "id": "authority-effect-evidence",
+        "issue": 640,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1203,
+          "branch": "agent/issue-640",
+          "head": "c6aa8d8ece6e9e031360111992f8853cca98ca91",
+          "state": "MERGED"
+        },
+        "overlap_check_at": "2026-10-02T15:35:08Z",
+        "branch_available": false,
+        "open_pr": true,
+        "owned_paths": [
+          "packages/runtime/authority/**",
+          "packages/titan-platform/src/mission-authority-policy.ts",
+          "packages/titan-platform/src/workforce-trust/**"
+        ],
+        "next_action": "PR #1253 current head is 46e36435f620c3777450a8259a3c31208699c94e. PARENT_REPORTED and verified from run 37030700194/job 110916486687: at prior head 4000f2c9128efc609fbc2f24dfa34c3139863cae, hosted Workforce typecheck and full suite passed 52/52, including seven owner tests. The separate Mission Closure Evidence Gate failure at that head was for partial Refs wording, not the hosted test result. Current-head GitHub checks show Mission Closure Evidence Gate, workforce, cleaning-convergence, mobile and source-index passed; validate and sqlite-compose-and-build remain in progress. The PR body still names the prior exact head. Next: finish the two current-head checks, align the PR body/evidence to 46e36435, then obtain independent review; keep #640 open.",
+        "active_branch": {
+          "branch": "agent/issue-640",
+          "head": "46e36435f620c3777450a8259a3c31208699c94e"
+        },
+        "active_pr": {
+          "number": 1253,
+          "state": "OPEN_DRAFT",
+          "branch": "agent/issue-640",
+          "head": "46e36435f620c3777450a8259a3c31208699c94e"
+        },
+        "note": "Issue #640 remains OPEN on agent/issue-640. At prior PR #1253 head 4000f2c9128efc609fbc2f24dfa34c3139863cae, hosted Workforce typecheck and the full suite passed 52/52, including seven owner tests (parent-reported; job 110916486687 in run 37030700194 completed successfully). A separate Mission Closure Evidence Gate failure at that head concerned partial Refs wording. PR #1253 has since advanced to 46e36435f620c3777450a8259a3c31208699c94e; current-head gate, workforce, cleaning-convergence, mobile and source-index checks pass, while validate and sqlite-compose-and-build are still running. The PR body still declares 4000f2 as exact head. No production credentials, grants, or host commissioning are evidenced."
+      },
+      {
+        "id": "hosted-ci",
+        "owner_task_id": "01a0fa39-ea03-72de-87ef-d577685f0020",
+        "issue": 1157,
+        "state": "OPEN",
+        "active_branch": {
+          "branch": "agent/issue-1157",
+          "head": "920ff7c6e6ecb48fa7d819eb08b007c38f45832c"
+        },
+        "pr": {
+          "number": 1248,
+          "state": "OPEN_DRAFT",
+          "head": "920ff7c6e6ecb48fa7d819eb08b007c38f45832c",
+          "checks": "GREEN"
+        },
+        "fixture_pr": {
+          "number": 1249,
+          "branch": "agent/issue-1050",
+          "head": "1a5455f56064a268ca8c35612ab9044fd601bb35",
+          "state": "MERGED",
+          "merge_sha": "15d8b1be1584ce07259762527f9abfe040c9d504"
+        },
+        "note": "GitHub confirms PR #1248 at exact head 920ff7c6e6ecb48fa7d819eb08b007c38f45832c uses merged #1249’s native fixture and all listed checks are green. PARENT_REPORTED: user approval at 15:46 UTC, but the PR remains OPEN_DRAFT pending explicit Ready state-change confirmation; no merge occurred."
+      }
+    ],
+    "paused_workstreams": [
+      {
+        "name": "website/waitlist",
+        "issue": 373,
+        "state": "PAUSED_BY_OWNER",
+        "directive": "Preserve existing work and stop; no code push or scan.",
+        "provenance": "PARENT_REPORTED; not inspected here."
+      }
+    ]
+  },
+  "subsystems": [
+    {
+      "subsystem_id": "base-fsm",
+      "label": "Base TypeScript FSM",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/809",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/183",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/353"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/work-order-lifecycle.ts",
+        "packages/domain/src/completion-criteria.ts"
+      ],
+      "source_assessment": "Native work-order and completion criteria implementations exist; preserve their business behavior.",
+      "missing_requirements": [
+        "End-to-end company-isolated operational journeys and deployment remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "web-ui",
+      "label": "Web UI",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/809"
+      ],
+      "implementation_paths": [
+        "apps/web/app/layout.tsx",
+        "apps/web/package.json"
+      ],
+      "source_assessment": "Full Next.js base web application exists separately from canonical PWA.",
+      "missing_requirements": [
+        "Strict workspace reproducibility/typecheck repair is active under #1084/#648; production build/runtime and complete UX are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "pwa",
+      "label": "PWA",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1240"
+      ],
+      "implementation_paths": [
+        "apps/pwa/README.md",
+        "apps/pwa/src/api-client.mjs",
+        "apps/pwa/src/scope.mjs",
+        "apps/pwa/public/sw.js",
+        "apps/pwa/tests/contracts.test.mjs",
+        "apps/pwa/tests/browser-regression.test.mjs",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/server.ts",
+        "apps/pwa/public/app.mjs",
+        "apps/pwa/scripts/build.mjs",
+        "apps/web/app/api/v1/bootstrap/route.ts",
+        "apps/web/app/api/v1/zero/interactions/route.ts",
+        "apps/web/lib/auth/current-session.ts",
+        "packages/titan-platform/src/security-session-registry.ts",
+        "apps/directadmin/server-node/runtime.mjs",
+        "apps/directadmin/server-node/directadmin-relay.mjs",
+        "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+        "packages/titan-platform/src/security-session-credentials.ts",
+        "packages/titan-platform/tests/security-session-credentials.test.mjs",
+        "packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
+        "apps/web/lib/auth/__tests__/current-session.test.ts",
+        "packages/storage/src/company-storage-resolver.ts",
+        "packages/storage/src/company-storage-resolver.test.ts",
+        "packages/storage/src/company-placement-registry.ts",
+        "packages/storage/src/company-placement-persistence.test.ts",
+        "packages/storage/src/company-store-opener.ts"
+      ],
+      "source_assessment": "Current main d508a2695fccc36e039f18e60cb96adfbe318813 contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. The shipped apps/pwa/public/app.mjs remains a static mode/network shell: it says Workforce is not configured and does not authenticate or load company projections. createPwaProjectionClient and the in-memory PwaProjectionWorkingSet exist under apps/pwa/src, but apps/pwa/scripts/build.mjs copies only public/, so these helpers are absent from the deployable shell. The helper is GET-only and same-origin; its context requires company_id, actor_id, device_id, surface, context_revision and string session_revision, and it partitions memory by both revisions. It provides no conversation transport, durable store or offline replay. #811/#1201, #302/#1183 and #1049/#1204 are merged code slices while their mission issues remain open; #1171 remains the canonical PWA owner after partial PR #1176. The #302 CurrentWebSessionAdapter and canonical session registry are server-side primitives, not a composed PWA bootstrap route. CurrentSessionContext exposes numeric session_revision whereas the PWA context helper requires a string, so an explicit safe serialization contract is still needed. The PWA has no configured authenticated session/bootstrap/projection endpoint. Workforce exposes POST /v1/workforce/conversations but no general projection GET; the Server Node /v1/bootstrap is control metadata, and /v1/directadmin/titan_workforce/projection is panel-only. Workforce emits its text/event-stream representation only after awaited dispatch has returned and filters a completed event array by Last-Event-ID. No PWA incremental stream, revision-bound resume, cancel, authenticated offline replay, or complete logout/company-switch purge is wired. company_id must continue to come from host-verified canonical identity; client-selected company or mode grants no authority. The merged #1049/#1204 SDK and #1050 cockpit are DirectAdmin panel consumers, not a generic browser/PWA transport.",
+      "missing_requirements": [
+        "Within #1171, ship the PWA helpers through the public build/service-worker cache and add a host-owned bootstrap/projection route composed with #302 verified current-company identity and #811 projection contracts. Pass only server-resolved company_id, actor_id, device_id and precisely serialized session/context revisions; keep client-selected identity and mode non-authoritative.",
+        "Under #811, provide an authenticated projection and conversation/event contract for the PWA. Deliver events incrementally during work and persist an event log for replay after the last parsed event ID, bound to the still-current session/context revision; retain company-scoped authority checks on every continuation. Do not reuse DirectAdmin-only SDK/bootstrap routes.",
+        "Under #1171, implement shipped UI states for unconfigured, authentication-required, stale-context, unavailable, canceled and offline-shell-only outcomes; implement cancel and revision-bound resume, plus encrypted bounded private work staging that is quarantined and replayed only after server revalidation. Test the built PWA in browser storage/network failure cases and obtain hosted/physical-browser evidence. No deployment or host certification is established."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "native-mobile",
+      "label": "Native mobile",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1158",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1164",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1170",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1182",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811"
+      ],
+      "implementation_paths": [
+        "apps/mobile/lib/titan/core/titan_session.dart",
+        "apps/mobile/lib/titan/services/titan_gateway.dart",
+        "apps/mobile/lib/screens/titan_shell_screen.dart",
+        "apps/mobile/lib/titan/services/offline_replay_service.dart",
+        "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+        "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+        "apps/mobile/test/titan_conversation_gateway_test.dart",
+        "apps/mobile/test/titan_shell_conversation_test.dart",
+        "apps/mobile/test/mobile_release_certification_test.dart",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/conversation-api.test.ts",
+        "docs/contracts/hosted-workforce-runtime.md",
+        "apps/mobile/lib/titan/services/hosted_conversation_transport.dart",
+        "apps/mobile/test/hosted_conversation_transport_test.dart",
+        "apps/mobile/lib/screens/splash_screen.dart",
+        ".github/workflows/titan-ci.yml",
+        "apps/mobile/lib/titan/core/mobile_session_context.dart",
+        "apps/mobile/lib/titan/core/mobile_context_scope.dart",
+        "apps/mobile/lib/titan/core/mobile_bootstrap_config.dart",
+        "apps/mobile/lib/titan/storage/secure_store.dart",
+        "apps/mobile/test/titan/mobile_session_context_test.dart",
+        "apps/mobile/test/titan/scoped_offline_queue_test.dart",
+        "docs/mobile/ISSUE-1170-WORKFLOW-MATRIX.md",
+        "docs/mobile/MOBILE-COMPLETION-MATRIX.md"
+      ],
+      "source_assessment": "Current main includes the partial #1188 hosted conversation retry slice and #1196 mobile bootstrap/context isolation. The new mobile bootstrap reads a bearer from platform secure storage, requires build-time company/actor/device/surface and endpoint configuration in release, and has a retryable generic startup failure. Its own source says runtime identity/endpoints are build configuration, not authority. TitanSession still carries company/actor/device/surface but no session_revision. MobileSessionContext models server revalidation gates and MobileContextScope partitions by company, actor, device, surface and context_revision; neither is wired into the production screen/gateway or session-change lifecycle. SplashScreen loads config and constructs SurfaceSdkTitanGateway with HttpTitanSurfaceTransport only; although conversationEndpoint exists in config, HostedConversationTransport is not injected. The local ScopedOfflineCommandQueue now partitions and quarantines command intents by scope and has a restore-after-revalidation API, but it persists JSON in SharedPreferences, is not connected to a server revalidation call, does not include session_revision in MobileScopeKey, and is not a conversation/event replay queue. HostedConversationTransport carries session_id/context_revision and stable conversation, interaction, message, request, operation, correlation, trace and idempotency identities; it compares exact company/actor/device/surface/conversation/context_revision on completed responses and exposes start/continue/resume/cancel. It still sends Accept: application/json and joins the full response body before jsonDecode. Although the host response carries session_id, the client response check does not compare that field; TitanSession has no session_revision. It updates Last-Event-ID only after a completed response; reconnect() is a no-op. The host offers text/event-stream only when requested, but writes it only after dispatch returns; the mobile client currently requests JSON and neither parses live SSE nor gets durable event-log replay. Resume/cancel need a continuation token from a completed response; cancel is a follow-up request and does not abort the active request. No runtime logout, company-switch or revision-rotation hook clears in-flight request IDs, continuation/event IDs, projections or private queues. The later main commit #1199 adds inline unavailable messages for selected evidence/schedule/map/customer/commercial actions and notification/profile/attachment/voice controls until hosted scope/capabilities exist. These are client string/label heuristics, not server projection or capability authorization; generic conversation exceptions still collapse to one retry message, and startup remains generic rather than distinguishing auth, stale, unavailable and canceled outcomes. GitHub CI for #1199 passed the focused transport/context/audience step that includes the shell tests. Its tolerated legacy full-mobile diagnostic still exits nonzero: flutter analyze exit 1 and flutter test exit 1 (32 passed, 28 failed; unresolved package/import/test-source failures). Issue #1170 remains open after partial #1199; issue #1182 remains open after partial #1188; #302 and #1049 remain open after their merged partial identity/SDK slices. One native app and the distinct PWA each retain Zero/Go/Hub modes; mode names do not confer host authorization. The new #1158 mobile completion matrix is explicitly non-closing; its hosted conversation row still lists endpoint, reconnect/resume and deployed evidence as outstanding, so it does not change this source finding. No physical-device or live-host result is present.",
+      "missing_requirements": [
+        "Within the existing #1182 mobile owner, wire a production HostedConversationTransport from a host-authenticated current session and conversation endpoint. Use server-resolved company_id/actor/device/session identity; include and compare exact session_revision and context_revision after defining safe numeric revision serialization with #302. Do not change #302 identity implementation, #1049 SDK/Server Node consumers or #811 host authority in this client lane.",
+        "Add true incremental SSE/chunk parsing and maintain the last parsed event ID during response consumption. Resume against a durable #811 server event log using the same conversation/message identity and exact still-current session/context revision. Verify interrupted stream recovery has ordered events and no duplicate consequential actions; the existing retry test proves stable identity across a transient completed-request failure only.",
+        "Bind cancel to the live HTTP request and server cancellation path; clear conversation, continuation, event IDs, projections and queued private work on logout, company switch, actor/device change or revision rotation. Connect MobileSessionContext/scope freeze and command quarantine to actual lifecycle events; keep queued command replay separate from conversation replay and use encrypted private persistence where the canonical store permits it.",
+        "Build on the #1199 subset of inline unavailable messages with typed states for unconfigured, authentication-required/revoked, stale revision, unavailable/timeout, offline, canceled and recoverable outcomes; do not treat string/label guards as server authorization. Add Flutter cases for active cancel, chunked stream/disconnect/resume, revision rotation, logout/company isolation, deduplication and unavailable host; run analyzer and the complete mobile suite, then hosted integration with correlated IDs and signed physical iOS/Android Zero/Go/Hub verification. No mock transport or successful completed-event serialization substitutes for these results."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "directadmin",
+      "label": "DirectAdmin Business Node",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050"
+      ],
+      "implementation_paths": [
+        "apps/directadmin/server-node/README.md",
+        "apps/directadmin/server-node/runtime.mjs",
+        "apps/directadmin/server-node/runtime.test.mjs",
+        "apps/directadmin/server-node/install.sh",
+        "apps/directadmin/server-node/update.sh",
+        "services/workforce/src/hosted-runtime.ts",
+        "services/workforce/src/directadmin-workforce-owners.ts",
+        "services/workforce/src/server.ts",
+        "apps/directadmin/dev-access/README.md",
+        "apps/directadmin/dev-access/lib/app.php",
+        "apps/directadmin/server-node/runtime.security.test.mjs",
+        "apps/directadmin/server-node/directadmin-relay.mjs",
+        "apps/directadmin/server-node/directadmin-relay.test.mjs",
+        "apps/directadmin/server-node/images/directadmin-relay-client.mjs",
+        "apps/directadmin/server-node/lifecycle.test.mjs",
+        "apps/directadmin/server-node/user/directadmin-gateway.raw",
+        ".github/workflows/directadmin-plugin-portfolio.yml",
+        "apps/directadmin/dev-access/scripts/update.sh",
+        "docs/directadmin/PLUGIN-RELEASE-RUNBOOK.md",
+        "scripts/package-directadmin-portfolio.mjs",
+        "scripts/package-directadmin-portfolio.test.mjs",
+        "scripts/directadmin-dev-access-archive-integration.php",
+        "scripts/test-directadmin-dev-access-archive.mjs",
+        "scripts/test-directadmin-dev-access-candidate.mjs",
+        "scripts/package-directadmin-plugin.mjs",
+        ".github/workflows/directadmin-dev-access-php.yml",
+        "apps/directadmin/dev-access/tools/security-test.php",
+        "apps/directadmin/dev-access/tools/request-integration-test.php",
+        "apps/directadmin/dev-access/tools/update-hook-test.sh",
+        "apps/directadmin/dev-access/tools/plugin-lab.sh",
+        "apps/directadmin/dev-access/tools/package.sh",
+        "apps/directadmin/dev-access/dist/v1.3.2/provenance.json",
+        "apps/directadmin/dev-access/dist/v1.3.2/titan_dev_access.tar.gz",
+        "packages/titan-platform/src/developer-portal.ts",
+        "packages/titan-platform/tests/developer-portal.test.mjs",
+        "docs/directadmin/DEVELOPER-PORTAL-RECOVERY-RUNBOOK.md",
+        "packages/titan-platform/src/directadmin-plugin.ts",
+        "packages/titan-platform/src/directadmin-session-bridge.ts",
+        "packages/titan-platform/src/directadmin-gateway.ts",
+        "packages/titan-platform/src/directadmin-cockpit.ts",
+        "packages/titan-platform/tests/directadmin-bridge.test.mjs",
+        "packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs",
+        "packages/titan-platform/tests/directadmin-browser.browser.mjs",
+        "docs/contracts/directadmin-authenticated-session-bridge.md",
+        "apps/directadmin/README.md",
+        "apps/directadmin/zero-core/cockpit.mjs",
+        "apps/directadmin/operations-hub/cockpit.mjs",
+        "apps/directadmin/brand-studio/cockpit.mjs",
+        "apps/directadmin/workforce/AGENTS.md",
+        "apps/directadmin/workforce/README.md",
+        "apps/directadmin/workforce/admin/index.html",
+        "apps/directadmin/workforce/reseller/index.html",
+        "apps/directadmin/workforce/user/index.html",
+        "apps/directadmin/workforce/hooks/admin_txt.html",
+        "apps/directadmin/workforce/hooks/reseller_txt.html",
+        "apps/directadmin/workforce/hooks/user_txt.html",
+        "apps/directadmin/workforce/images/api.mjs",
+        "apps/directadmin/workforce/images/cockpit.mjs",
+        "apps/directadmin/workforce/images/controller.mjs",
+        "apps/directadmin/workforce/images/presentation.mjs",
+        "apps/directadmin/workforce/images/style.css",
+        "apps/directadmin/workforce/lib/entry.mjs",
+        "apps/directadmin/workforce/scripts/install.sh",
+        "apps/directadmin/workforce/scripts/update.sh",
+        "apps/directadmin/workforce/scripts/uninstall.sh",
+        "apps/directadmin/workforce/tools/package.mjs",
+        "apps/directadmin/workforce/tests/api.test.mjs",
+        "apps/directadmin/workforce/tests/browser.test.mjs",
+        "apps/directadmin/workforce/tests/controller.test.mjs",
+        "apps/directadmin/workforce/tests/hosted-sdk.integration.mjs",
+        "apps/directadmin/workforce/tests/relay-host.integration.mjs",
+        "apps/directadmin/workforce/tests/sdk-contract.integration.mjs",
+        "apps/directadmin/workforce/tests/package.test.mjs",
+        "docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md",
+        "docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md"
+      ],
+      "source_assessment": "Current main d508a2695fccc36e039f18e60cb96adfbe318813 includes the merged #1048/#1209 Dev Access hardening and #1197 deterministic package work, plus the partial #1049 DirectAdmin SDK/session bridge. PR #1204 merged at 75cc7f0; follow-up PR #1243 merged at d508a269 and distinguishes rejection of a replacement company-switch credential (401 and stale-cookie clearing) from canonical registry unavailability (redacted 503 without clearing the source cookie). Its source adds regression cases for both outcomes; issue #1049 remains open. The #1048 source rejects malformed/ambiguous requests and exercises them in PHP security/request-integration tests using a CLI-server fixture; the PHP 8.3 hosted package/transport workflow passed and builds a review-only v1.3.4 candidate. The previously archived v1.3.2 package has a locally verified checksum. This confirms isolated source/fixture behavior, not behavior on an installed DirectAdmin portal. The #1049 SDK now delegates identity and the fixed Workforce/Zero exchange to #302, uses a single-current-company browser context, Secure/HttpOnly session cookie and CSRF/Origin checks, binds child identity/revisions to the source session, and provides shared panel consumers. Hosted #1204 workflows passed (DirectAdmin package, Personal Zero Verification, Distribution Gateway contract, Source Evidence Index and Titan Zero CI); a local directadmin bridge/workforce-handoff run passed 83/83 tests using disposable identity fixtures. These are source-level and hosted CI results. The SDK remains a DirectAdmin panel bridge: it is not the PWA or native mobile transport, not a listener/deployment, and does not grant business authority. Its unsupported Workforce intent remains a typed 403 and the disposable coverage did not accept a consequential business action. Server Node /v1/bootstrap remains node-token control metadata; the DA projection route remains panel-specific. No live DirectAdmin install, update, rollback, root action, registered key lifecycle, production proxy check or business outcome is evidenced. The PWA still has no general authenticated bootstrap/projection endpoint; true incremental stream/replay and physical device behavior remain unverified. Main 468d42b also merges the partial #1050/#1143 DirectAdmin Workforce cockpit package. It has separate admin/reseller/user entrypoints and uses the shared #1049 DirectAdminCockpitSession plus the #812 relay adapter to consume the #811 company-scoped projection. The API validates nested company/freshness/evidence data; the controller clears view state on context change/revocation, drops stale async replies, and shows denied/unavailable states. Controls are rendered only from host-published capabilities; current #811 projection publishes controls:[], so it is read-only. Any receipt is REQUESTED with no evidence refs, not a verified outcome. The app README says packaging-candidate only; the tested relay integration is pinned to pre-change #812 source and does not attest current config-v2/Apache cookie-boundary marker. Issue #1050 remains open after PR #1143 merged. PR #1143 body reports 39/39 package/browser/hosted tests, but the #1143 hosted Actions inspected here ran DirectAdmin portfolio packaging, Source Evidence Index, and Titan Zero CI; they did not run apps/directadmin/workforce/tests/*.test.mjs. Treat 39/39 as owner-reported test evidence, not an independently rerun or live-host result. No approved DirectAdmin install or productive Workforce action is evidenced. This package is a distinct panel consumer, not the canonical PWA or native mobile application. Parent-reported host observation (not independently contacted from this execution environment): an authenticated DirectAdmin 1.711 session at 2026-10-02 10:33-10:34 UTC showed Developer Portal 1.3.3 installed, diagnostics admin UID 1000 at /home/admin with three keys, Server Node health unreachable, and a harmless pwd POST returning malformed/ambiguous. Source 1.3.4 at f7ae3aba4cc1287ee4d902b6321205d00091b18c was reportedly tested separately and is not installed; Library upload remains held pending user permission. These observations do not establish a functioning runtime or commissioned install.",
+      "missing_requirements": [
+        "Commission the #1050 package with the current #1049/#302 session and #812 relay against #811 in an approved DirectAdmin/Apache test host. The published package fixture is pinned to a pre-change relay; independently verify current config-v2 and Apache :443 cookie isolation, session/CSRF bootstrap, allowed CGI transport, and exact install/update/rollback on the host before relying on it.",
+        "Keep the current panel cockpit read-only while #811 publishes controls: []. Complete the canonical Workforce owner path for authorized lifecycle controls, identity/company scoping, persistent outcomes, cancellation/recovery and evidence receipts; a REQUESTED receipt or 403 is not a completed operation.",
+        "Finish the full #1050 mission acceptance (canonical roster/detail, conversations, Missions/hierarchy/approval, trust/autonomy, capacity/value/staffing, evidence views, and verified time-attendance/offline/payroll requirements) through its existing owner; PR #1143 is a partial consumer/package slice and #1050 remains open.",
+        "Do not reuse the DirectAdmin panel package as generic PWA/mobile API or host support. The PWA bootstrap/projection and native incremental conversation streaming/replay/cancel/lifecycle gaps listed in their rows remain open.",
+        "Recheck the parent-reported DirectAdmin 1.711 state in an authorized live session: health was unreachable and the harmless pwd POST was malformed/ambiguous; verify the installed 1.3.3 and any 1.3.4 candidate, exact endpoint health, and source/package identity. The 1.3.4 source commit is not installed, Library upload is held, and independent SSH/physical-client runtime evidence remains unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "The PR #1143 body reports 39/39 DirectAdmin Workforce package/browser/hosted tests in its owner report. Hosted Actions inspected here passed portfolio packaging, mobile and regression-gated Titan CI but did not execute the app-specific test glob. No test was run against a commissioned DirectAdmin/Apache host."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "workforce",
+      "label": "Workforce",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/639",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1182"
+      ],
+      "implementation_paths": [
+        "services/workforce/src/server.ts",
+        "services/workforce/src/server.test.ts",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/conversation-api.test.ts",
+        "services/workforce/src/hosted-runtime.ts",
+        "services/workforce/src/session-credential-verifier.ts",
+        "services/workforce/src/production-runtime-bootstrap.ts",
+        "services/workforce/src/production-runtime-bootstrap.test.ts",
+        "services/workforce/src/zero-runtime-dispatcher.ts",
+        "services/workforce/src/zero-runtime-dispatcher.test.ts",
+        "services/workforce/src/zero-runtime-correlation.test.ts",
+        "services/workforce/src/field-service-runtime.mjs",
+        "tests/hosted-workforce-runtime.test.ts",
+        "infra/compose.vps.yml",
+        "docs/contracts/hosted-workforce-runtime.md",
+        "docs/operations/workforce-clean-host-acceptance.md"
+      ],
+      "source_assessment": "Current main, including merged #811/#1201, contains a hosted runtime composed over durable SQLite run/work stores, cryptographically verified Workforce credentials, current identity-session resolution, company/session/context-revision binding, idempotent request/recovery, continuation and cancellation paths. POST /v1/workforce/conversations supports JSON and SSE and projects a bounded public event set. The server waits for dispatch/recovery/cancel to finish before writing the response; SSE and Last-Event-ID only serialize/filter the completed event array, not live incremental delivery or durable event-log replay. The hosted Workforce contract currently commissions the Zero surface; Go/Hub are rejected pending their authority-aware dispatcher. Code and local/CI tests establish implementation-level behavior, not a live commissioned host, production credential/provider operation or reboot/backup acceptance.",
+      "missing_requirements": [
+        "Run the clean-host commissioning, exact artifact/hash, real credential/provider, reboot/update/rollback and recovery acceptance in docs/operations/workforce-clean-host-acceptance.md. Deliver actual incremental stream and durable event resume plus broader mobile lifecycle under #1182; keep the host runtime at Zero-only until Go/Hub have their own authority-aware contract. Production/live-host and physical-client evidence remains outstanding."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "interaction",
+      "label": "Interaction Engine",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/21",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/725",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/interface-interaction-handoff.ts",
+        "packages/titan-platform/src/workforce-context/assembler.ts"
+      ],
+      "source_assessment": "Interface handoff and workforce-context components exist.",
+      "missing_requirements": [
+        "Cross-process production conversation/context binding and company-switch isolation require executed evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "decision",
+      "label": "Decision Engine",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/59",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/58",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/tools/decision-lifecycle.mjs",
+        "docs/contracts/decision-lifecycle.md"
+      ],
+      "source_assessment": "DecisionRuntime stores bounded in-memory packets; current contract file contains captured PowerShell error text.",
+      "missing_requirements": [
+        "Persistent real-provider governed path and usable contract documentation need owner follow-through."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "nexus",
+      "label": "Nexus",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/nexus/index.ts"
+      ],
+      "source_assessment": "Deterministic authority-neutral orchestration recommendation helper exists.",
+      "missing_requirements": [
+        "Durable production orchestration, provider integration and failure certification are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "signal",
+      "label": "Signal",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/signal/index.ts"
+      ],
+      "source_assessment": "Signal normalization and company-bound prioritization helper exists.",
+      "missing_requirements": [
+        "Production signal ingestion, persistence, correlation and failure behavior are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "model-council",
+      "label": "Model Council",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/647",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1055"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-intelligence/model-council/index.ts"
+      ],
+      "source_assessment": "Authority-neutral deterministic vote aggregation helper exists.",
+      "missing_requirements": [
+        "Real provider/model continuity and production consensus/outcome tests remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "evidence-ledger",
+      "label": "Evidence Ledger",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/913",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/tools/accepted-evidence-ledger.mjs",
+        "packages/tools/accepted-evidence-ledger.schema.json"
+      ],
+      "source_assessment": "Accepted evidence ledger contract/implementation exists for bounded business evidence.",
+      "missing_requirements": [
+        "All-domain factual history, recovery and integrated consequential outcomes are not established by this audit."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "governance",
+      "label": "Governance/authority",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/914",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/423"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/constitution.ts",
+        "packages/titan-platform/src/governance/constitution.ts"
+      ],
+      "source_assessment": "Constitution and governed authority contracts exist.",
+      "missing_requirements": [
+        "Cross-substrate bypass, revocation and effective-authority enforcement require integrated negative tests."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "communications",
+      "label": "Communications",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/333",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/403"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/communication-announcement.ts"
+      ],
+      "source_assessment": "Announcement contracts distinguish audience and authority.",
+      "missing_requirements": [
+        "Real delivery, callback correlation, consent and independently verified outcomes are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "channels-integrations",
+      "label": "Channels & Integrations",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1060",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/ported/titan-connect/channel-binding.ts",
+        "packages/titan-platform/src/connector-runtime.ts"
+      ],
+      "source_assessment": "Channel/provider binding and connector runtime source exists.",
+      "missing_requirements": [
+        "Current external-provider conformance, retries and company-safe production transport require execution evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "finance-commerce",
+      "label": "Finance/Commerce",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/263",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/343",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/383"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/commerce.ts",
+        "packages/domain/src/finance-readiness.ts"
+      ],
+      "source_assessment": "Native provider-neutral finance/commerce domain contracts exist.",
+      "missing_requirements": [
+        "Verified service-to-invoice-to-payment/reconciliation journeys remain unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "offline-edge",
+      "label": "Offline/edge",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/645",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/646",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1161"
+      ],
+      "implementation_paths": [
+        "packages/offline/index.mjs",
+        "packages/offline/authority-continuity.mjs"
+      ],
+      "source_assessment": "Offline recovery/checkpoint/authority-continuity components exist.",
+      "missing_requirements": [
+        "Real reconnect/process-death, fresh authority and physical company-storage replay need integrated/device verification."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "sprout-builder",
+      "label": "Titan Sprout/Industry Builder",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/titan-builder/intent-planner.ts",
+        "packages/titan-platform/src/titan-builder/security-gate.ts"
+      ],
+      "source_assessment": "Builder planning and security-gate source exists.",
+      "missing_requirements": [
+        "Full governed generation, runtime binding and production user journeys are not certified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "vertical-packs",
+      "label": "Vertical packs",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/719",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057"
+      ],
+      "implementation_paths": [
+        "packages/domain/src/vertical-profile.ts",
+        "packages/titan-platform/src/vertical-profile.ts"
+      ],
+      "source_assessment": "Two compileVerticalProfile implementations expose incompatible version/input shapes.",
+      "missing_requirements": [
+        "Owner reconciliation and registry-derived exposure/parity need verification; do not silently create a third compiler."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "distribution",
+      "label": "Distribution Gateway",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1068",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/distribution-gateway.ts"
+      ],
+      "source_assessment": "Distribution manifests and lifecycle transitions exist.",
+      "missing_requirements": [
+        "Production generation-provider outputs, platform conformance receipts, exact artifacts and publication/recovery are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "platform-adapters",
+      "label": "Platform adapters",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/compatibility-pipeline.ts",
+        "packages/titan-platform/src/interface-registry.ts"
+      ],
+      "source_assessment": "Compatibility projection tuples and interface contribution registry exist.",
+      "missing_requirements": [
+        "Complete supported-host adapter inventory, compatibility and startup/runtime negotiation evidence remain unavailable."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "authentication-security",
+      "label": "Authentication/security",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/security-boundary.ts",
+        "packages/titan-platform/src/runtime.ts"
+      ],
+      "source_assessment": "Session/company-context security primitives exist.",
+      "missing_requirements": [
+        "Global identity/membership bootstrap, revocation and physical storage routing need integrated production evidence."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "apis-mcp",
+      "label": "APIs/MCP",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/432",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/644"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/mcp-projection.ts",
+        "packages/titan-platform/src/ported/titan-connect/mcp-host-contract.ts"
+      ],
+      "source_assessment": "MCP projection and host contracts exist.",
+      "missing_requirements": [
+        "Production standalone-client transport and canonical authority traversal across actual endpoints are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "deployment",
+      "label": "Deployment/install/update/rollback",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/322",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718"
+      ],
+      "implementation_paths": [
+        "packages/deployment/release-lifecycle.mjs",
+        "docs/contracts/deployment-release-lifecycle.md",
+        "infra/compose.vps.yml"
+      ],
+      "source_assessment": "Release lifecycle implementation and compose exist; verification evidence gates lifecycle transitions.",
+      "missing_requirements": [
+        "Exact-artifact clean install, update, rollback, restart and live-host proof remain missing; certification handoff consumer is not integrated."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "observability",
+      "label": "Observability",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/313"
+      ],
+      "implementation_paths": [
+        "packages/observability/contracts.mjs",
+        "docs/contracts/observability-redaction.md"
+      ],
+      "source_assessment": "Canonical vendor-neutral company-scoped redaction/diagnostic contract exists.",
+      "missing_requirements": [
+        "End-to-end trace correlation, failure-injected SLO/alerts and reproducible load/scaling proof are unverified."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "testing-certification",
+      "label": "Testing/certification",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/648",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/642"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/certification-matrix.ts",
+        "tests/e2e/certification/critical-path-matrix.generated.json"
+      ],
+      "source_assessment": "Baseline evaluator allows empty and mandatory SKIPPED coverage; historical 12-stage fixture reports path presence, not product execution.",
+      "missing_requirements": [
+        "This PR hardens evaluator/consumer separately; full inherited cross-host suite, trusted producer and canonical upstream conformance receipts remain incomplete."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "documentation",
+      "label": "Documentation",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1066"
+      ],
+      "implementation_paths": [
+        "docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md",
+        "docs/architecture/CANONICAL-RULES.md"
+      ],
+      "source_assessment": "Canonical architecture/current rules establish hierarchy and full native FSM/PWA boundaries.",
+      "missing_requirements": [
+        "Documentation-to-current-runtime reconciliation and current command/contract correctness remain incomplete."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "subsystem_id": "release-readiness",
+      "label": "Release readiness",
+      "canonical_owner_refs": [
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1172",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/322",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/718",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1068"
+      ],
+      "implementation_paths": [
+        "packages/titan-platform/src/certification-matrix.ts",
+        "packages/titan-platform/src/compatibility-pipeline.ts",
+        "packages/deployment/release-lifecycle.mjs"
+      ],
+      "source_assessment": "Canonical eligibility, compatibility and deployment owners exist but baseline has no evaluator consumer.",
+      "missing_requirements": [
+        "No production candidate/artifact certification, upstream conformance receipts, deployment integration or publication proof is supplied."
+      ],
+      "assessment_status": "INCOMPLETE",
+      "source_evidence": "SOURCE_INSPECTED",
+      "test_evidence": {
+        "status": "NOT_RUN",
+        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+      },
+      "integration_evidence": {
+        "status": "NOT_RUN"
+      },
+      "deployment_evidence": {
+        "status": "NOT_RUN"
+      },
+      "runtime_evidence": {
+        "status": "UNKNOWN"
+      }
+    }
+  ]
+}

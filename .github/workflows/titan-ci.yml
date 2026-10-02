@@ -15,7 +15,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  slice-check:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR and base
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check patch hygiene
+        run: git diff --check origin/main...HEAD
+      - name: Validate repository guardrails
+        run: |
+          test -f AGENTS.md
+          test -f package.json
+          test -f pnpm-lock.yaml
+          ! git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'
+      - name: Validate mission claim checker
+        run: python3 .github/scripts/validate-agent-claim.py --self-test
+
   mobile:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -81,6 +102,7 @@ jobs:
             exit 1
           fi
   validate:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical repository
@@ -103,6 +125,7 @@ jobs:
             exit 1
           fi
           python3 .github/scripts/validate-agent-claim.py --self-test
+          python3 .github/scripts/check-evidence-ledger-ownership.py
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

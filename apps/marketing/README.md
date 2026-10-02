@@ -1,34 +1,31 @@
 # Titan Zero Marketing Network
 
-Titan Zero uses independently deployable vertical entry sites. Each vertical site is a complete sales entry point that can later be mapped to its own subdomain while routing product actions into the canonical Titan Zero application.
+This repository prepares the `.io` product hub and industry-specific host contexts. The `.pro` Personal Services site is separately owned and is not rendered or installed by the NexJob app. This file records proposed source selection and host boundaries; it does not authorize DNS changes, server changes, indexing, or public release.
 
-| Vertical | Entry site | Initial industry focus |
-|---|---|---|
-| Field Services | `marketing-nexjob` | Cleaning, landscaping, pools, pressure washing, pest control, window cleaning, property maintenance, mobile services |
-| Trades & Construction | `marketing-tradepilot` | Plumbing, electrical, HVAC, roofing, building, renovations, carpentry and related trades |
-| Personal Services | `marketing-trydrafted` | Salons, barbers, beauty, wellness, personal training and fitness |
-| Asset Services | `marketing-fieldops` | Automotive first, expanding to vehicles, appliances, devices, machinery and equipment |
-| Professional & Business Services | dedicated site pending | Accounting, consulting, agencies, recruitment, IT, marketing and advisory services |
+## Proposed host map
 
-`marketing-fieldcrew` remains available as the Cleaning-focused Field Services site/industry pack. Useful donor pages should be retained, corrected and Titan Zero branded rather than deleted merely because newer pages are added.
+| Surface | Proposed host | Source / owner | Current boundary |
+|---|---|---|---|
+| Product hub | `titanzero.io` | `marketing/nexjob` | Shared product story and directory; review preview remains `noindex`. |
+| Personal Services site | Established-brand subdomains under `titanzero.pro` | Separate Personal Services owner, issue #1238 | Source selection and installable artifact are pending there. NexJob has no `.pro` host context, managed-service routes, or sales menu. |
+| Canonical business application | `app.titanzero.io` | `apps/web` and its active owners | One shared application/backend. Marketing login links must target its canonical `/login` route when available. |
+| Dedicated PWA | `pwa.titanzero.io` | `apps/pwa`, issue #1171 / PR #1176 owner | Separate Zero/Go/Hub shell; not `apps/web`'s web manifest. Release readiness is tracked by its owner. |
+| Industry pages | `<slug>.titanzero.io` | Shared `marketing/nexjob` host-aware build using `src/data/verticalCatalogue.js` | Twenty catalogue-driven contexts; each has a distinct canonical host but shares the same static app and single backend. |
 
-## Shared page system
+The site remains a noindex review candidate until the parent confirms the final deployment plan. Hostnames and links in the source are planning values, not configured DNS or live services.
 
-Every vertical entry site should carry the same core Titan Zero differentiation architecture, rewritten for the vertical:
+## Source selection
 
-- **Fully Managed** — assessment, integration, software gap filling, workforce configuration, management, maintenance and improvement.
-- **Privacy & Architecture** — privacy first, device first, private/local LLMs, private RAG, edge nodes, customer-hosted options and provider choice.
-- **Cost Sovereignty** — BYO API/AI keys, local models, customer-owned compute and transparent third-party usage economics.
-- **Environmental Systems** — environmental assessment, auditing, evidence, compliance and improvement workflows, with appropriately qualified environmental scientists where professional judgement or sign-off is required.
-- **Compare** — explains the managed-system, locality, ownership and cost-model differences from typical software-first/bundled-AI approaches without unsupported competitor claims.
-- **Industries** — vertical-specific directory linking to dedicated industry landing pages.
+- `marketing/nexjob` is the shared Titan Zero marketing master. Its current Field Services site is the base for the `.io` hub and the host-aware implementation.
+- `marketing/tradepilot` is a **layout donor** for the industry home-page composition. Reuse only its page structure and adapt it to the existing NexJob font, color and component tokens. Its claims, synthetic metrics, forms, external login/signup links, and media with unresolved provenance are not publishable as-is.
+- `marketing/trydrafted/index.html` is an unadapted Personal Services donor. This PR uses only generic appointment-service positioning and industry examples in the `.io` platform hub; separate `.pro` source selection and publication belong to issue #1238. The donor's customer names, case-study figures, tracking, external booking/contact/payment paths, and live form behavior are not included.
+- `marketing/fieldops` is retired from the proposed public preview. Its repository source/history is retained for provenance; do not add it to public routing or a host map.
+- `marketing/fieldcrew` and the remaining legacy donor pages are not part of this host plan.
 
-Each listed industry should receive its own landing page. Those pages should reuse the vertical design system but contain industry-specific pain points, workflows, workforce roles, knowledge and capabilities.
+## Shared-site boundaries
 
-## Product architecture reflected in marketing
-
-Titan Zero does not only sit on top of existing systems. It keeps useful systems, integrates them, and **fills genuine gaps with additional Titan Zero software and interfaces where the business needs them**. The resulting system is managed as a whole.
-
-All product CTAs should resolve to the canonical Titan Zero application contract unless a verified vertical-specific destination is introduced. Marketing sites remain separate deployment surfaces and must never become runtime dependencies of `apps/web`.
-
-The canonical tenant boundary remains `company_id`.
+- The 20-profile catalogue in `marketing/nexjob/src/data/verticalCatalogue.js` is the source for vertical names, workflows, canonical hosts, and availability evidence. Do not create a second industry registry in the UI.
+- Every marketing login link resolves to the one canonical app host. Never place bearer credentials in a URL or share cookies across domains.
+- Marketing copy describes planned or verified capabilities according to the catalogue's evidence. No fabricated forms, demo results, metrics, testimonials, integrations, or install links.
+- `app.titanzero.io`, `pwa.titanzero.io`, and `.pro` hosts are separate surfaces, not NexJob marketing host contexts.
+- Keep preview `noindex` and `robots` restrictions. Production activation needs host-specific sitemap/robots behavior, verified TLS/DNS, and an approved deployment plan.

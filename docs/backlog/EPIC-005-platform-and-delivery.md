@@ -265,14 +265,16 @@ Notes / delivery record:
   just an install step. Untested on iOS (no device in the field yet).
 
 Follow-ups (not blocking):
-- The duplicate migration number `175` (`175_capture_evidence.sql` +
-  `175_push_subscriptions.sql`) is harmless **only because both are already
-  applied and left as-is** — `schema_migrations` is keyed by full filename and
-  they sort/apply deterministically and independently. **Do NOT renumber either
-  file:** `deploy-garonhome.sh` would treat the new name as unseen and re-run the
-  migration, hitting the unconditional `CREATE TRIGGER` and failing the deploy.
-  Applied migration filenames are immutable; only new numbers must avoid future
-  collisions.
+- Migration 175 (`175_capture_evidence.sql` + `175_push_subscriptions.sql`)
+  remains unrenumbered because either filename may exist in an installation's
+  history. This document previously asserted that both were deployed/applied,
+  citing PR #617; the current GitHub PR #617 is an unrelated mobile source-path
+  change, and this repository contains no sanitized `schema_migrations`
+  snapshot to support that assertion. Treat the actual applied status of both
+  files as **unverified** until #1232 records installation evidence. The
+  duplicate can be ordered deterministically by full filename, but that does
+  not prove either file ran on any supported database. Do not rename either
+  file without compatibility evidence.
 - Key-rotation auto-recovery (see the rotation caveat above): handle
   `pushsubscriptionchange` / compare the server key so devices re-subscribe
   without a manual off/on. Low priority — rotation is rare.
