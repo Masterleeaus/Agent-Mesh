@@ -73,3 +73,40 @@ the final path component and rejects inode or content metadata changes it detect
 while hashing. Promotion must consume the exact verified immutable digests.
 Preserve the envelope and output as evidence; they grant no business authority.
 Never treat a copied JSON success record as authorization.
+
+## Real build artifact inventory
+
+The release candidate gate now has a separate inventory step for bytes actually
+produced by the CI build. `vps-installer-smoke.yml` saves the built web, worker
+and Workforce container images, the VPS configuration inputs and SQLite
+migrations, then hashes those files with the same safe path and descriptor
+checks used by the signed verifier. Its unsigned build receipt records each
+image ID and the Node version inside the built image; it also records the limited
+CI observations from that run. The uploaded artifact is a short-lived review
+input, not a published release.
+
+The inventory CLI accepts only the source SHA, target profile and role/path map:
+
+```sh
+node scripts/inventory-release-artifacts.mjs inventory-request.json /staging/build-files
+```
+
+It outputs schema `titan.deployment.release-artifact-inventory.v1` with the
+exact artifact hashes, the canonical non-evidence `subject_sha256`, required
+roles and check IDs that are still absent or unattested. The inventory does not
+accept check statuses, host outcomes, a signature, or authority fields from its
+request. Its release gate is always `DENIED`; it is not a
+`titan.deployment.release-candidate.v1` manifest and cannot be passed off as
+`RELEASE_VERIFIED`.
+
+The current CI inventory intentionally reports `sbom` missing and every release
+check unattested. The smoke run builds images and exercises a disposable,
+uncommissioned Workforce; it does not start the production web/worker services,
+install on a fresh host, certify DirectAdmin, test company business effects,
+perform upgrade/rollback, destructive backup/restore, or verify another
+substrate. The CI build receipt is unsigned and is not a publisher provenance
+attestation. No production signing key or host credential is used. A trusted
+operator must still gather and review the exact required evidence, add the
+versioned compatibility/migration/rollback metadata, sign it with the separately
+provisioned Ed25519 key, and run the signed verifier. Until then release
+promotion remains denied and no authority is granted.

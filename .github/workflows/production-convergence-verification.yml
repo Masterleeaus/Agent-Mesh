@@ -11,6 +11,7 @@ on:
       - "packages/storage/**"
       - "packages/deployment/**"
       - "scripts/verify-release-candidate.mjs"
+      - "scripts/inventory-release-artifacts.mjs"
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
       - "packages/tools/execution-gateway.mjs"

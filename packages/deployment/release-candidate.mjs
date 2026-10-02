@@ -7,6 +7,7 @@ const CHECKS = ['ci_648', 'native_fsm_809', 'workforce_811', 'security_302',
   'fresh_install', 'production_readiness', 'native_without_frappe', 'company_isolation',
   'upgrade', 'rollback', 'reboot_recovery', 'backup_restore_semantic', 'second_substrate'];
 const ROLES = ['web', 'worker', 'workforce', 'config', 'migrations', 'sbom', 'provenance'];
+const INVENTORY_ROLES = [...ROLES, 'evidence'];
 const OWNERS = ['GLOBAL_REGISTRY', 'COMPANY_NATIVE_FSM', 'RUNTIME', 'WORKFORCE', 'AUTHORITY', 'EVIDENCE', 'COMPATIBILITY'];
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 function requireValue(condition, reason) {
@@ -17,6 +18,12 @@ const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value
 function list(value, name) {
   requireValue(Array.isArray(value) && value.length > 0, `${name}-required`);
   return value;
+}
+function subjectDigest(artifacts) {
+  const subject = artifacts.filter(a => a.role !== 'evidence')
+    .map(({ role, path, sha256 }) => ({ role, path, sha256 }))
+    .sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  return sha256(JSON.stringify(subject));
 }
 function date(value) {
   const timestamp = typeof value === 'string' ? Date.parse(value) : Number.NaN;
@@ -94,6 +101,56 @@ async function fileDigest(root, name) {
   } finally { await file.close(); }
 }
 
+/** Inventory already-produced bytes. This records hashes only: no test results,
+ * host certification, signature, promotion state or business authority is made.
+ */
+export async function inventoryReleaseArtifacts({ artifactRoot, source_sha, profile, artifacts }) {
+  requireValue(typeof source_sha === 'string' && /^[a-f0-9]{40}$/.test(source_sha), 'inventory-source-sha-invalid');
+  requireValue(['portable', 'directadmin'].includes(profile), 'inventory-profile-invalid');
+  requireValue(Array.isArray(artifacts) && artifacts.length > 0, 'inventory-artifacts-required');
+
+  const root = await fs.realpath(artifactRoot);
+  const paths = new Set();
+  const measured = [];
+  for (const artifact of artifacts) {
+    const role = artifact?.role;
+    const path = artifact?.path;
+    requireValue(INVENTORY_ROLES.includes(role), 'inventory-artifact-role-invalid');
+    validatePath(path);
+    const pathKey = path.toLowerCase();
+    requireValue(!paths.has(pathKey), 'inventory-duplicate-artifact-path');
+    paths.add(pathKey);
+    measured.push({ role, path, sha256: await fileDigest(root, path) });
+  }
+
+  const measuredPaths = new Set(measured.map(a => a.role));
+  const missingArtifactRoles = INVENTORY_ROLES.filter(role => !measuredPaths.has(role));
+  const requiredChecks = profile === 'directadmin' ? [...CHECKS, 'business_node_812'] : CHECKS;
+  const orderedArtifacts = measured.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  return Object.freeze({
+    schema: 'titan.deployment.release-artifact-inventory.v1',
+    status: 'ARTIFACTS_INVENTORIED',
+    source_sha,
+    profile,
+    observed_at: new Date().toISOString(),
+    artifacts: Object.freeze(orderedArtifacts.map(a => Object.freeze(a))),
+    subject_sha256: subjectDigest(orderedArtifacts),
+    required_artifact_roles: Object.freeze([...INVENTORY_ROLES]),
+    missing_artifact_roles: Object.freeze(missingArtifactRoles),
+    required_check_ids: Object.freeze(requiredChecks),
+    unattested_required_checks: Object.freeze([...requiredChecks]),
+    release_gate: Object.freeze({
+      status: 'DENIED',
+      reason: 'unsigned-artifact-inventory-is-not-a-release-candidate',
+      signature_status: 'NOT_SIGNED',
+      host_certification: 'NOT_PERFORMED',
+      promotion_allowed: false,
+      grants_authority: false,
+      store_status: 'NOT_SUBMITTED',
+    }),
+  });
+}
+
 /** Validate signed release assertions AND actual shipped bytes. This does not run
  * host acceptance or grant authority. The external trusted signer must review the
  * referenced owner/host evidence before signing; bundle keys are never trusted.
@@ -144,9 +201,7 @@ export async function verifyReleaseCandidate({ envelope, publicKey, artifactRoot
     paths.set(pathKey, artifact);
   }
   for (const role of ROLES) requireValue(artifacts.some(a => a.role === role), `artifact-${role}-required`);
-  const subject = artifacts.filter(a => a.role !== 'evidence')
-    .map(({ role, path, sha256 }) => ({ role, path, sha256 })).sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
-  const subjectDigest = sha256(JSON.stringify(subject));
+  const candidateSubjectDigest = subjectDigest(artifacts);
   const checks = list(manifest.checks, 'checks');
   requireValue(new Set(checks.map(c => c.id)).size === checks.length, 'duplicate-check');
   const required = manifest.profile === 'directadmin' ? [...CHECKS, 'business_node_812'] : CHECKS;
@@ -154,7 +209,7 @@ export async function verifyReleaseCandidate({ envelope, publicKey, artifactRoot
   for (const check of checks) {
     requireValue(check.status === 'passed', `check-${check.id}-unverified`);
     requireValue(check.release_id === manifest.release_id && check.source_sha === manifest.source_sha &&
-      check.subject_sha256 === subjectDigest, `check-${check.id}-candidate-mismatch`);
+      check.subject_sha256 === candidateSubjectDigest, `check-${check.id}-candidate-mismatch`);
     const observed = date(check.observed_at);
     requireValue(observed >= created && observed <= now, `check-${check.id}-time-invalid`);
     requireValue(typeof check.evidence_path === 'string' &&
@@ -169,7 +224,7 @@ export async function verifyReleaseCandidate({ envelope, publicKey, artifactRoot
   requireValue(verifiedAt >= now && verifiedAt < expires, 'time-expired-during-verification');
   return Object.freeze({ schema: 'titan.deployment.release-verification.v1', status: 'RELEASE_VERIFIED',
     release_id: manifest.release_id, version: manifest.version, source_sha: manifest.source_sha,
-    manifest_sha256: sha256(payload), subject_sha256: subjectDigest, channel: manifest.channel,
+    manifest_sha256: sha256(payload), subject_sha256: candidateSubjectDigest, channel: manifest.channel,
     verified_at: new Date(verifiedAt).toISOString(), expires_at: manifest.expires_at,
     store_status: 'NOT_SUBMITTED', grants_authority: false });
 }
