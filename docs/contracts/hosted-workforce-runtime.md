@@ -75,12 +75,12 @@ checks the incoming Host against that origin, forwards only the headers the
 shared SDK consumes, and never forwards the Workforce `Authorization` token.
 Without the separate bridge composition, DirectAdmin paths return read-only
 503. No audience or issuer is synthesized by the Workforce host.
-The #1049 bootstrap provider contract is in open PR #1252. The #302 producer is
-published as draft PR #1263: it authenticates the supplied DirectAdmin Cookie
+The #1049 bootstrap provider contract merged as PR #1252. The #302 producer
+merged as PR #1263: it authenticates the supplied DirectAdmin Cookie
 against the configured `/api/session`, then calls an injected
 `DirectAdminBootstrapNonceConsumer` with the verified issuer/effective subject,
 presentation role, login-as provenance and nonce. That consumer must atomically
-return the current selected company/device. PR #1263's tests use an in-memory
+return the current selected company/device. The #1263 tests use an in-memory
 `Set`; it does not provide the production durable nonce consumer. The #812 RAW
 relay core accepts only the `__Host-titan-da-session` cookie and drops other
 cookie names; its production loader currently fails closed with
@@ -106,13 +106,10 @@ operation/correlation IDs and bounded input, revalidates the current session,
 then rejects each proposal without calling unauthorised `WorkforceService`
 lifecycle methods, changing state, appending an event, or creating a receipt.
 Unknown actions are invalid. The owner raises a typed 403 unsupported-action
-denial, but current #1049 gateway code sanitizes all owner exceptions as generic
-503; it must add a typed, sanitized owner-denial mapping before the browser can
-distinguish that denial as 403/409. The live #1049 SDK route allowlist must also
-include `titan_workforce` before this mount is usable. #1050 carries this
-two-token allowlist addition on its consumer branch; it still needs to land in
-the shared #1049 owner. These are integration dependencies, not commissioned
-behavior.
+denial. The merged #1049 gateway maps typed owner denials to sanitized status
+codes. Its `titan_workforce` route allowlist is still an integration dependency;
+#1260 contains the consumer-side work and remains open. The host mount and these
+contracts are not commissioned behavior.
 
 The old VPS smoke assumes an unconfigured host is ready; this is no longer a valid
 production acceptance claim and must be commissioned by the deployment owner.
