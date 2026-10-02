@@ -12,7 +12,7 @@ EXTENSIONS = {".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"}
 IGNORED_PARTS = {"archive", "ported", "imports", "node_modules", "tests", "test", "__tests__"}
 IGNORED_SUFFIXES = (".test.js", ".test.jsx", ".test.mjs", ".test.cjs", ".test.ts", ".test.tsx", ".spec.js", ".spec.ts")
 PERSISTENT_EVIDENCE_WRITES = re.compile(
-    r"(?:(?:INSERT\s+INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?)\s+[\w.\"`-]*(?:evidence|ledger|facts?|receipt|verification|workflow_events|status_history)[\w.\"`-]*|"
+    r"(?:(?:INSERT\s+INTO|UPDATE|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?)\s+[\w.\"`-]*(?:evidence|ledger|facts?|receipt|verification|workflow_events|status_history|execution_lifecycle_(?:records|events))[\w.\"`-]*|"
     r"(?:evidenceSink|(?:persist|append|save|write)\w*(?:Evidence|Fact|Receipt))\s*[:=(])",
     re.IGNORECASE,
 )
