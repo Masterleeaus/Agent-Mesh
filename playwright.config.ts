@@ -29,7 +29,7 @@ export default defineConfig({
     ? {}
     : {
         webServer: {
-          command: `pnpm --filter @ai-fsm/web exec next dev --port ${port}`,
+          command: `pnpm --filter @titan-zero/web exec next dev --port ${port}`,
           url: baseURL,
           reuseExistingServer: !process.env.CI,
           timeout: 120 * 1000,
