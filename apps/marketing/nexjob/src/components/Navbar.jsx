@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, ChevronDown } from 'lucide-react'
-import { appRoutes, APP_ACCESS_AVAILABLE } from '../config'
+import { appRoutes, APP_ACCESS_AVAILABLE, APP_SIGNUP_AVAILABLE } from '../config'
+import { getCurrentSiteContext, getIndustryDirectoryLinks, getSiteNavigation } from '../config/siteContext'
 
 const industryLinks = [
   ['Cleaning','cleaning'],['Landscaping & Lawn Care','landscaping'],['Pool Service','pools'],['Pressure Washing','pressure-washing'],['Pest Control','pest-control'],['Window Cleaning','window-cleaning'],['Property Maintenance','property-maintenance'],['Mobile Services','mobile-services'],
@@ -41,7 +42,7 @@ const whyLinks = [
   ['FAQ','/faq'],
 ]
 
-export default function Navbar() {
+function LegacyNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { pathname } = useLocation()
 
@@ -109,7 +110,7 @@ export default function Navbar() {
           {APP_ACCESS_AVAILABLE ? (
             <>
               <a href={appRoutes.login} className="text-sm font-medium text-nx-muted hover:text-nx-text px-4 py-2 transition-colors">Login</a>
-              <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/30">Sign Up</a>
+              {APP_SIGNUP_AVAILABLE ? <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple hover:bg-nx-purple-dark px-5 py-2 rounded-lg transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-900/30">Sign Up</a> : <button type="button" disabled aria-disabled="true" className="text-sm font-semibold text-white bg-nx-purple px-5 py-2 rounded-lg opacity-60 cursor-not-allowed">Sign-up unavailable</button>}
             </>
           ) : (
             <>
@@ -169,7 +170,7 @@ export default function Navbar() {
             {APP_ACCESS_AVAILABLE ? (
               <>
                 <a href={appRoutes.login} className="text-sm font-medium text-nx-muted py-2 text-center">Log In</a>
-                <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">Sign Up</a>
+                {APP_SIGNUP_AVAILABLE ? <a href={appRoutes.signup} className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center">Sign Up</a> : <button type="button" disabled aria-disabled="true" className="text-sm font-semibold text-white bg-nx-purple py-2.5 rounded-lg text-center opacity-60 cursor-not-allowed">Sign-up unavailable</button>}
               </>
             ) : (
               <>
@@ -182,4 +183,84 @@ export default function Navbar() {
       )}
     </nav>
   )
+}
+
+function SiteLink({ item, context, closeMenu = () => {} }) {
+  const href = item.href || ''
+  const active = href.startsWith('/') && (window.location.pathname === href || (href === '/' && window.location.pathname === '/'))
+  const className = `block whitespace-nowrap px-3 py-2 rounded-lg text-sm transition-colors ${active ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`
+  if (item.action && (item.disabled || !href || !APP_ACCESS_AVAILABLE || (context.kind === 'managed' && item.label === 'Assessment request'))) {
+    return <button type="button" disabled aria-disabled="true" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}{item.label === 'Assessment request' || !href ? ' unavailable' : ''}</button>
+  }
+  if (item.external || href.startsWith('https://')) return <a href={href || '#'} onClick={closeMenu} className={className}>{item.label}</a>
+  return <Link to={href || '/'} onClick={closeMenu} className={className}>{item.label}</Link>
+}
+
+function ConfiguredNavbar({ context }) {
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const nav = getSiteNavigation(context)
+  const industries = context.kind === 'industry' ? getIndustryDirectoryLinks() : []
+  const brand = context.kind === 'industry'
+    ? `Titan Zero ${context.site.name}`
+    : context.kind === 'managed' ? 'Titan Zero Managed Services' : 'Titan Zero'
+
+  const accountActions = context.kind === 'hub'
+    ? [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }, { label: 'Get started', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE }]
+    : context.kind === 'industry'
+      ? [{ label: 'Start', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE }]
+      : [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-nx-border/60">
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16 gap-4">
+        <Link to="/" aria-label={`${brand} home`} className="flex items-center gap-2 font-extrabold text-lg tracking-tight whitespace-nowrap">
+          <span className="w-2 h-2 bg-nx-purple rounded-full" />{brand}
+        </Link>
+        <div className="hidden xl:flex items-center gap-1">
+          {context.kind === 'managed' ? <>
+            {nav.slice(0, 2).map((item) => <SiteLink key={item.label} item={item} context={context} />)}
+            <div className="relative group">
+              <button type="button" className="text-sm text-nx-muted hover:text-nx-text px-3 py-2 inline-flex items-center gap-1">Services <ChevronDown size={14} /></button>
+              <div className="absolute right-0 top-full mt-1 w-72 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+                {nav.slice(2, -1).map((item) => <SiteLink key={item.label} item={item} context={context} />)}
+              </div>
+            </div>
+            <SiteLink item={nav[nav.length - 1]} context={context} />
+          </> : nav.map((item) => <SiteLink key={item.label} item={item} context={context} />)}
+          {context.kind !== 'hub' && <a href="https://titanzero.io/" className="block whitespace-nowrap px-3 py-2 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">Platform</a>}
+          {industries.length > 0 && <div className="relative group">
+            <button type="button" className="text-sm text-nx-muted hover:text-nx-text px-3 py-2 inline-flex items-center gap-1">Other industries <ChevronDown size={14} /></button>
+            <div className="absolute right-0 top-full mt-1 w-72 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+              {industries.filter(({ host }) => host !== context.site.host).map((item) => <a key={item.host} href={item.href} className="block px-3 py-2.5 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">{item.label}</a>)}
+              <a href="https://titanzero.io/industries" className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-nx-purple-light hover:bg-white/5">All industries</a>
+            </div>
+          </div>}
+          {accountActions.map((item) => <SiteLink key={item.label} item={item} context={context} />)}
+        </div>
+        <button type="button" className="xl:hidden text-nx-text p-2 -mr-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-purple" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} aria-controls="site-mobile-navigation">
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+      {mobileOpen && <div id="site-mobile-navigation" aria-label="Mobile navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-4 pb-4 pt-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
+        {nav.map((item) => <SiteLink key={item.label} item={item} context={context} closeMenu={() => setMobileOpen(false)} />)}
+        {industries.length > 0 && <div className="mt-3 border-t border-nx-border pt-3">
+          <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Other industries</p>
+          {industries.filter(({ host }) => host !== context.site.host).map((item) => <a key={item.host} href={item.href} onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-nx-muted">{item.label}</a>)}
+          <a href="https://titanzero.io/industries" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold text-nx-purple-light">All industries</a>
+        </div>}
+        <div className="mt-3 border-t border-nx-border pt-3">
+          {accountActions.map((item) => <SiteLink key={item.label} item={item} context={context} closeMenu={() => setMobileOpen(false)} />)}
+        </div>
+        {context.kind !== 'hub' && <a href="https://titanzero.io/" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-nx-muted">Titan Zero platform</a>}
+      </div>}
+    </nav>
+  )
+}
+
+export default function Navbar() {
+  const context = getCurrentSiteContext()
+  if (context.kind === 'hub' || context.kind === 'managed' || context.kind === 'industry') {
+    return <ConfiguredNavbar context={context} />
+  }
+  return <LegacyNavbar />
 }

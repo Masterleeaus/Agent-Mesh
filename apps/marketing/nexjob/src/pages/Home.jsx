@@ -4,7 +4,7 @@ import { ButtonPrimary, ButtonOutline } from '../components/Button'
 import SectionLabel from '../components/SectionLabel'
 import FadeIn from '../components/FadeIn'
 import CTASection from '../components/CTASection'
-import { appRoutes, APP_ACCESS_AVAILABLE } from '../config'
+import { appRoutes, APP_ACCESS_AVAILABLE, APP_SIGNUP_AVAILABLE } from '../config'
 
 const heroProofs = [
   'Managed around the systems you already use',
@@ -88,7 +88,7 @@ export default function Home() {
           </p>
 
           <div className="flex justify-center gap-4 flex-wrap mb-8">
-            <ButtonPrimary size="lg" href={appRoutes.signup} disabled={!APP_ACCESS_AVAILABLE}>{APP_ACCESS_AVAILABLE ? 'Sign Up' : 'Sign-up temporarily unavailable'} &rarr;</ButtonPrimary>
+            <ButtonPrimary size="lg" href={appRoutes.signup} disabled={!APP_SIGNUP_AVAILABLE}>{APP_SIGNUP_AVAILABLE ? 'Sign Up' : 'Sign-up temporarily unavailable'} &rarr;</ButtonPrimary>
             <ButtonOutline size="lg" href={appRoutes.login} disabled={!APP_ACCESS_AVAILABLE}>{APP_ACCESS_AVAILABLE ? 'Login' : 'Login temporarily unavailable'}</ButtonOutline>
           </div>
 

@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { getCanonicalUrl, getCurrentSiteContext } from '../config/siteContext'
 
-const siteName = 'Titan Zero Field Services'
-const siteUrl = 'https://titanzero.io'
 const defaultDescription =
   'Titan Zero Field Services — managed Advanced Intelligence with personal Zeros, specialist workforce capabilities and governed business systems for field-service businesses.'
 
@@ -17,10 +16,17 @@ function ensureMeta(selector, attributes) {
 
 export default function PageMeta({ title, description = defaultDescription }) {
   const { pathname } = useLocation()
+  const siteContext = getCurrentSiteContext()
+  const siteName = siteContext.kind === 'industry'
+    ? `Titan Zero ${siteContext.site.name}`
+    : siteContext.kind === 'managed' ? 'Titan Zero Managed Services'
+      : siteContext.kind === 'hub' ? 'Titan Zero'
+        : 'Titan Zero Field Services'
 
   useEffect(() => {
     const pageTitle = title ? `${title} | ${siteName}` : `${siteName} — Managed Advanced Intelligence`
-    const canonicalUrl = `${siteUrl}${pathname === '/' ? '/' : pathname.replace(/\/$/, '')}`
+    const canonicalUrl = getCanonicalUrl(siteContext, pathname)
+      || `https://titanzero.io${pathname === '/' ? '/' : pathname.replace(/\/$/, '')}`
 
     document.title = pageTitle
     ensureMeta('meta[name="description"]', { name: 'description', content: description })
@@ -39,7 +45,7 @@ export default function PageMeta({ title, description = defaultDescription }) {
       document.head.appendChild(canonical)
     }
     canonical.href = canonicalUrl
-  }, [title, description, pathname])
+  }, [title, description, pathname, siteContext.kind, siteContext.origin, siteContext.site?.name])
 
   return null
 }
