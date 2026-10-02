@@ -545,18 +545,78 @@ function directadmin_git_probe($context,$arguments){
  $argv=array_merge(['/usr/bin/env','timeout','5s'],directadmin_git_command_args($context,$arguments));
  $spec=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
  $proc=@proc_open($argv,$spec,$pipes,$context['root'],directadmin_git_environment());
- if(!is_resource($proc)) return '';
+ if(!is_resource($proc)) return ['status'=>'unknown','output'=>null,'reason'=>'spawn_failed'];
  fclose($pipes[0]);
- $out=(string)stream_get_contents($pipes[1],8193);
- $err=(string)stream_get_contents($pipes[2],8193);
+ $out=stream_get_contents($pipes[1],8193);
+ $err=stream_get_contents($pipes[2],8193);
  fclose($pipes[1]); fclose($pipes[2]);
  $rc=proc_close($proc);
- if($rc!==0||strlen($out)>8192||strlen($err)>8192) return '';
- return trim($out);
+ if(!is_string($out)||!is_string($err)) return ['status'=>'unknown','output'=>null,'reason'=>'output_read_failed'];
+ if(strlen($out)>8192||strlen($err)>8192) return ['status'=>'unknown','output'=>null,'reason'=>'output_oversized'];
+ if(in_array($rc,[124,137,143],true)) return ['status'=>'unknown','output'=>null,'reason'=>'timeout'];
+ if($rc!==0) return ['status'=>'unknown','output'=>null,'reason'=>'command_failed'];
+ return ['status'=>'success','output'=>trim($out),'reason'=>null];
+}
+function directadmin_git_probe_output($probe){
+ if(!is_array($probe)||($probe['status']??null)!=='success'||!array_key_exists('output',$probe)||!is_string($probe['output'])) return null;
+ return $probe['output'];
 }
 function directadmin_git_parse_divergence($raw){
  if(!is_string($raw)||strlen($raw)>32||!preg_match('/^(0|[1-9][0-9]{0,9})\t(0|[1-9][0-9]{0,9})$/D',$raw,$matches)) return null;
  return ['ahead'=>(int)$matches[1],'behind'=>(int)$matches[2]];
+}
+function directadmin_git_readiness_projection($contextAvailable,$repositoryProbe,$branchProbe,$headProbe,$statusProbe,$upstreamProbe){
+ $repositoryOutput=directadmin_git_probe_output($repositoryProbe);
+ if(!$contextAvailable){
+  $repositoryState='unavailable';
+  $repository=false;
+ }elseif($repositoryOutput==='true'){
+  $repositoryState='available';
+  $repository=true;
+ }elseif($repositoryOutput==='false'){
+  $repositoryState='not_repository';
+  $repository=false;
+ }else{
+  $repositoryState='unknown';
+  $repository=null;
+ }
+ $branchOutput=$repository===true?directadmin_git_probe_output($branchProbe):null;
+ $headOutput=$repository===true?directadmin_git_probe_output($headProbe):null;
+ $statusOutput=$repository===true?directadmin_git_probe_output($statusProbe):null;
+ $upstreamOutput=$repository===true?directadmin_git_probe_output($upstreamProbe):null;
+ $branchState=$branchOutput===null
+  ?($repositoryState==='available'?'unknown':$repositoryState)
+  :($branchOutput===''?'detached':'named');
+ $branch=$branchState==='named'?redact_text($branchOutput):null;
+ $headState=$headOutput===null||$headOutput===''?($repositoryState==='available'?'unknown':$repositoryState):'available';
+ $head=$headState==='available'?redact_text($headOutput):null;
+ $worktreeState=$statusOutput===null
+  ?($repositoryState==='available'?'unknown':$repositoryState)
+  :($statusOutput===''?'clean':'dirty');
+ $dirty=$worktreeState==='clean'?false:($worktreeState==='dirty'?true:null);
+ $divergence=$upstreamOutput===null?null:directadmin_git_parse_divergence($upstreamOutput);
+ $upstreamState=$divergence===null
+  ?($repositoryState==='available'?'unknown':$repositoryState)
+  :'available';
+ $claimIssue=null;
+ if($branchState==='named'&&preg_match('/^agent\\/issue-([1-9][0-9]{0,17})$/D',$branch,$claimMatch)) $claimIssue=$claimMatch[1];
+ $claimValid=$branchState==='detached'?false:($branchState==='named'?($claimIssue!==null):null);
+ return [
+  'git_repository'=>$repository,
+  'git_repository_state'=>$repositoryState,
+  'git_branch'=>$branch,
+  'git_branch_state'=>$branchState,
+  'git_head'=>$head,
+  'git_head_state'=>$headState,
+  'git_dirty'=>$dirty,
+  'git_worktree_state'=>$worktreeState,
+  'git_claim_branch_format_valid'=>$claimValid,
+  'git_claim_issue_number'=>$claimIssue,
+  'git_upstream_configured'=>$divergence===null?null:true,
+  'git_upstream_state'=>$upstreamState,
+  'git_ahead'=>$divergence['ahead']??null,
+  'git_behind'=>$divergence['behind']??null
+ ];
 }
 function command_policy($cmd){
  $cmd=trim((string)$cmd);
@@ -670,28 +730,34 @@ function diagnostics(){
 function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $cwd=safe_cwd($cwd);
  $gitContext=directadmin_git_repository_context($cwd);
- $gitRepo=$gitContext!==null&&directadmin_git_probe($gitContext,['rev-parse','--is-inside-work-tree'])==='true';
- $branch=$gitRepo?redact_text(directadmin_git_probe($gitContext,['branch','--show-current'])):'';
- $head=$gitRepo?redact_text(directadmin_git_probe($gitContext,['rev-parse','--short','HEAD'])):'';
- $dirty=$gitRepo?directadmin_git_probe($gitContext,['status','--porcelain']):'';
+ $repositoryProbe=$gitContext!==null?directadmin_git_probe($gitContext,['rev-parse','--is-inside-work-tree']):null;
+ $repositoryOutput=directadmin_git_probe_output($repositoryProbe);
+ $gitRepo=$gitContext===null?false:($repositoryOutput==='true'?true:($repositoryOutput==='false'?false:null));
+ $branchProbe=$gitRepo===true?directadmin_git_probe($gitContext,['branch','--show-current']):null;
+ $headProbe=$gitRepo===true?directadmin_git_probe($gitContext,['rev-parse','--short','HEAD']):null;
+ $statusProbe=$gitRepo===true?directadmin_git_probe($gitContext,['status','--porcelain']):null;
  // Compare only existing local refs; this never fetches or contacts the remote.
- $divergence=$gitRepo?directadmin_git_parse_divergence(directadmin_git_probe($gitContext,['rev-list','--left-right','--count','HEAD...@{u}'])):null;
- $claimIssue=null;
- if($gitRepo&&preg_match('/^agent\/issue-([1-9][0-9]{0,17})$/D',$branch,$claimMatch)) $claimIssue=$claimMatch[1];
+ $upstreamProbe=$gitRepo===true?directadmin_git_probe($gitContext,['rev-list','--left-right','--count','HEAD...@{u}']):null;
+ $gitReadiness=directadmin_git_readiness_projection($gitContext!==null,$repositoryProbe,$branchProbe,$headProbe,$statusProbe,$upstreamProbe);
  $sshDir=key_dir(); $auth=key_file();
  return [
   'cwd'=>$cwd,
   'cwd_readable'=>is_readable($cwd),
   'cwd_writable'=>is_writable($cwd),
-  'git_repository'=>$gitRepo,
-  'git_branch'=>$branch?:null,
-  'git_head'=>$head?:null,
-  'git_dirty'=>$gitRepo?($dirty!==''):null,
-  'git_claim_branch_format_valid'=>$gitRepo?($claimIssue!==null):null,
-  'git_claim_issue_number'=>$claimIssue,
-  'git_upstream_configured'=>$gitRepo?($divergence!==null):null,
-  'git_ahead'=>$divergence['ahead']??null,
-  'git_behind'=>$divergence['behind']??null,
+  'git_repository'=>$gitReadiness['git_repository'],
+  'git_repository_state'=>$gitReadiness['git_repository_state'],
+  'git_branch'=>$gitReadiness['git_branch'],
+  'git_branch_state'=>$gitReadiness['git_branch_state'],
+  'git_head'=>$gitReadiness['git_head'],
+  'git_head_state'=>$gitReadiness['git_head_state'],
+  'git_dirty'=>$gitReadiness['git_dirty'],
+  'git_worktree_state'=>$gitReadiness['git_worktree_state'],
+  'git_claim_branch_format_valid'=>$gitReadiness['git_claim_branch_format_valid'],
+  'git_claim_issue_number'=>$gitReadiness['git_claim_issue_number'],
+  'git_upstream_configured'=>$gitReadiness['git_upstream_configured'],
+  'git_upstream_state'=>$gitReadiness['git_upstream_state'],
+  'git_ahead'=>$gitReadiness['git_ahead'],
+  'git_behind'=>$gitReadiness['git_behind'],
   'ssh_public_keys'=>count($keys),
   'ssh_dir_mode'=>$includeSshState&&is_dir($sshDir)?substr(sprintf('%o',fileperms($sshDir)),-4):null,
   'authorized_keys_mode'=>$includeSshState&&is_file($auth)?substr(sprintf('%o',fileperms($auth)),-4):null,
