@@ -1,0 +1,5 @@
+New/increased web test failures:
+  - lib/estimates/__tests__/public-acceptance.contract.test.ts > public estimate acceptance contract > records the public response in the audit trail: 1 > allowed 0
+Web test baseline: current=86, baseline=86, failures=86/86
+Baseline improvements detected (safe to reduce baseline in follow-up):
+  - lib/estimates/__tests__/approval-artifacts.unit.test.ts > createApprovalArtifacts > creates a deposit invoice when deposit_required=true and deposit_cents>0: 1 -> 0

@@ -1,0 +1,55 @@
+# Repository naming and rebranding plan
+
+**Prepared:** 2026-10-02
+**Owner action:** the repository names below are proposed GitHub slugs. The connected GitHub tools in this session can edit repository files but do not expose repository-name or description settings, so the owner can apply the chosen slugs in GitHub after reviewing this map.
+
+These recommendations align repo names with their product identities, status, and provenance. They do not rename any repository. Imported third-party projects keep upstream attribution; deletion candidates are labelled as such and should not be renamed as portfolio products unless retained.
+
+| Current repository | Recommended GitHub name | README / portfolio title | Suggested GitHub description | Decision |
+|---|---|---|---|---|
+| [`Ai_agent_voice_assistance_using_vapi`](https://github.com/Masterleeaus/Ai_agent_voice_assistance_using_vapi) | `vapi-outbound-calling-prototype` | Vapi Outbound Calling Prototype | Experimental outbound voice-calling prototype using Vapi. Validate provider setup and call flows before reuse. | Keep public as a clearly labelled small prototype. |
+| [`Ai-Medical-Voice-Agent-Saas-App`](https://github.com/Masterleeaus/Ai-Medical-Voice-Agent-Saas-App) | `medical-voice-intake-documentation` | Medical Voice Intake and Documentation App | Medical voice-intake application derived from upstream work; retain attribution and verify licensing before reuse. | Keep only with clear fork provenance and license. |
+| [`predictive-analytics-module`](https://github.com/Masterleeaus/predictive-analytics-module) | `churn-risk-assessment-api` | Churn Risk Assessment API | Experimental churn-risk assessment API. Predictive performance and model training have not been validated. | Keep as experimental API; do not claim trained predictive ML. |
+| [`Delivery-Management-Platform`](https://github.com/Masterleeaus/Delivery-Management-Platform) | `delivery-management-reference-app` | Delivery Management Reference Application | Attributed delivery-management reference application retained for source and license review. | Keep as attributed upstream source archive only if license/relevance justify. |
+| [`Titan-BOS`](https://github.com/Masterleeaus/Titan-BOS) | `titan-zero-business-operating-system` | Titan Zero Business Operating System | Legacy Laravel business operating system exploring device-first and offline-capable operations. | Distinct historical implementation; label legacy if inactive. |
+| [`Titan-Zero`](https://github.com/Masterleeaus/Titan-Zero) | `titan-zero-integration-workbench` | Titan Zero Integration Workbench | Titan Zero integration workbench with branch-specific experiments; review unique work before retirement. | Review non-main integration branches before any retirement. |
+| [`zero`](https://github.com/Masterleeaus/zero) | `titan-zero-legacy-laravel-platform` | Titan Zero Legacy Laravel Platform | Legacy Laravel business-platform source archive; the current field-service workforce product is maintained separately. | Legacy archive; current workforce app is canonical. |
+| [`Worksuite-Saas---Project-Management-System_Laravel`](https://github.com/Masterleeaus/Worksuite-Saas---Project-Management-System_Laravel) | `worksuite-saas-vendor-source-archive` | Worksuite SaaS Vendor Source Archive | Imported Worksuite SaaS source archive retained for attribution and archive or deletion review. | Archive/deletion review; imported third-party source. |
+| [`cleanhub`](https://github.com/Masterleeaus/cleanhub) | `cleanhub-placeholder` | CleanHub Placeholder | Near-empty placeholder repository marked for deletion review. | Strong deletion candidate; check external references. |
+| [`cleanhub2`](https://github.com/Masterleeaus/cleanhub2) | `cleanhub-private-placeholder` | CleanHub Private Placeholder | Private near-empty placeholder repository marked for deletion review. | Deletion candidate; private near-empty placeholder. |
+| [`clean`](https://github.com/Masterleeaus/clean) | `titan-zero-cleaning-platform-recovery-lab` | Titan Zero Cleaning Platform Recovery Lab | Titan Zero cleaning-platform recovery lab containing source recovery and branch experiments. | Keep if branch-recovery work remains unique/useful. |
+| [`cleanly`](https://github.com/Masterleeaus/cleanly) | `titan-zero-private-development-workspace` | Titan Zero Private Development Workspace | Private Titan Zero development workspace for Laravel modules, integration work, and architecture documentation. | Private pending purpose, provenance and release review. |
+| [`modules`](https://github.com/Masterleeaus/modules) | `titan-zero-modular-business-platform` | Titan Zero Modular Business Platform | Laravel modular business-platform source and architecture; feature and pricing claims require implementation verification. | Canonical Laravel modular business source. |
+| [`callingagent-`](https://github.com/Masterleeaus/callingagent-) | `titan-voice-operations` | Titan Voice Operations | Titan Zero voice and communications workflows for call handling and business operations. | Communications and voice-agent system. |
+| [`ZeroPay`](https://github.com/Masterleeaus/ZeroPay) | `zeropay` | ZeroPay Payment Orchestration | Payment orchestration prototype prioritizing PayID, bank transfer, cash, and optional payment gateways. | Keep product brand. |
+| [`TitanPro`](https://github.com/Masterleeaus/TitanPro) | `titan-pro-business-operations-console` | Titan Pro Business Operations Console | Laravel business operations console; confirm upstream source lineage and attribution before portfolio promotion. | Clarify relation to current platform. |
+| [`Tenant-Forge`](https://github.com/Masterleeaus/Tenant-Forge) | `tenantforge-saas-foundation` | TenantForge SaaS Foundation | Laravel foundation for building multi-tenant SaaS applications. | Independent Laravel multi-tenant foundation. |
+| [`Uniquely`](https://github.com/Masterleeaus/Uniquely) | `liberu-laravel-saas-foundation` | Liberu Laravel SaaS Foundation | Liberu-based Laravel SaaS foundation; preserves upstream project identity and provenance. | Preserve upstream Liberu identity and provenance. |
+| [`Titancore`](https://github.com/Masterleeaus/Titancore) | `titancore-platform-framework-archive` | TitanCore Platform Framework Archive | Historical TitanCore framework source retained pending lineage and license review. | Historical source pending lineage/license review. |
+| [`Titanzero`](https://github.com/Masterleeaus/Titanzero) | `titan-zero-php-modules-archive` | Titan Zero PHP Modules Archive | Legacy PHP module collection; retain only if its code is distinct from maintained platform repositories. | Retain only if code is unique vs other Titan repos. |
+| [`AI-Coding-Studio`](https://github.com/Masterleeaus/AI-Coding-Studio) | `ai-coding-studio` | AI Coding Studio | AI-assisted development workspace for planning, building, and reviewing software. | Keep product name. |
+| [`Documents`](https://github.com/Masterleeaus/Documents) | `titan-product-documentation-archive` | Titan Product Documentation Archive | Titan product documentation archive; bundled content provenance and relevance require review. | Review bundled archive contents/provenance. |
+| [`Titan-Builder`](https://github.com/Masterleeaus/Titan-Builder) | `titan-builder-local-development-harness` | Titan Builder Local Development Harness | Local development harness and tooling for Titan projects. | Keep; distinguish from AI Coding Studio. |
+| [`Titan-themes`](https://github.com/Masterleeaus/Titan-themes) | `titan-design-system` | Titan Design System | Titan design-system themes and interface assets. | Keep as design-system foundation. |
+| [`workcore-extensions`](https://github.com/Masterleeaus/workcore-extensions) | `workcore-extension-suite` | WorkCore Extension Suite | WorkCore extension suite for host applications; confirm license and integration status before release. | Keep developer-facing package identity. |
+| [`Ai-extensions`](https://github.com/Masterleeaus/Ai-extensions) | `titan-ai-extension-library` | Titan AI Extension Library | Private AI extension library containing integrations and source material with varied provenance. | Private source library; preserve third-party provenance. |
+| [`Interaction-engine`](https://github.com/Masterleeaus/Interaction-engine) | `titan-interaction-runtime` | Titan Interaction Runtime | Interaction and orchestration runtime for host applications; integration maturity should be verified. | Keep; document host integration status. |
+| [`Titan-Zero-Field-Service-Workforce`](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce) | `titan-zero-field-service-workforce` | Titan Zero Field Service Workforce | Canonical field-service workforce platform for scheduling, dispatch, mobile operations, and business workflows. | Canonical current product. |
+| [`Climate-crew`](https://github.com/Masterleeaus/Climate-crew) | `climate-crew-research-platform` | Climate Crew Research Platform | Climate and environmental research platform prototype; validate integrations and scientific workflows before relying on outputs. | Keep independent evidence-led climate project. |
+| [`ForgeMesh`](https://github.com/Masterleeaus/ForgeMesh) | `forgemesh-adaptive-engineering-workforce` | ForgeMesh Adaptive Engineering Workforce | Adaptive engineering workforce and repository-intelligence project; preserve upstream agents-profiles attribution. | Keep independent product. |
+| [`Commerce-Crew`](https://github.com/Masterleeaus/Commerce-Crew) | `commerce-crew-platform` | Commerce Crew Platform | Conversational commerce extension suite for compatible Laravel and MagicAI host applications. | Keep distinct commerce product. |
+| [`Developer-Workforce-Extension-`](https://github.com/Masterleeaus/Developer-Workforce-Extension-) | `titan-developer-workforce-extension` | Titan Developer Workforce Extension | Titan developer-workforce extension and integration package. | Remove trailing punctuation in future repository slug. |
+| [`gearbox`](https://github.com/Masterleeaus/gearbox) | `gearbox-workshop-booking-platform` | Gearbox Workshop Booking Platform | Workshop booking and management application prototype; production readiness has not been verified. | Keep only as prototype unless readiness is verified. |
+
+## Naming rules
+
+- Keep the canonical field-service platform prominent; label old implementations as legacy, archive, prototype, or source reference.
+- Do not claim ownership of upstream vendor applications. Preserve vendor names, licenses, and attribution.
+- Avoid ambiguous generic names, doubled suffixes, trailing hyphens, and opaque slugs.
+- After renaming, keep the repository name, README H1, package identity, screenshots, and banner text aligned.
+- Before deleting placeholder candidates, verify integrations, branches, repository settings, and external links.
+
+
+### Applying descriptions
+
+The connected GitHub tools in this review cannot edit repository settings. The descriptions above are ready-to-apply suggestions; review each repo's visibility and provenance decision before setting a public-facing description.

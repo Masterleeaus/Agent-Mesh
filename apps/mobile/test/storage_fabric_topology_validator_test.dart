@@ -34,10 +34,12 @@ TitanStorageFabricEndpoint endpoint({
 TitanStorageFabricTopology topology({
   required List<TitanStorageFabricEndpoint> endpoints,
   required List<TitanStorageDataClassRoute> routes,
+  int sequence=1,
+  String revision='r1',
 })=>TitanStorageFabricTopology(
   companyId:'c1',
-  sequence:1,
-  revision:'r1',
+  sequence:sequence,
+  revision:revision,
   correlationId:'corr1',
   issuedAt:DateTime.utc(2026,9,20,10),
   endpoints:endpoints,
@@ -207,4 +209,27 @@ void main(){
       throwsStateError,
     );
   });
+
+  test('rejects replayed or non-advancing topology after an accepted snapshot',(){
+    final previous=topology(endpoints:const [],routes:const [],sequence:4,revision:'r4');
+    expect(
+      ()=>validator.validate(
+        topology:topology(endpoints:const [],routes:const [],sequence:4,revision:'r5'),
+        previouslyAccepted:previous,
+        companyId:'c1',
+        now:DateTime.utc(2026,9,20,10),
+      ),
+      throwsStateError,
+    );
+    expect(
+      ()=>validator.validate(
+        topology:topology(endpoints:const [],routes:const [],sequence:5,revision:'r4'),
+        previouslyAccepted:previous,
+        companyId:'c1',
+        now:DateTime.utc(2026,9,20,10),
+      ),
+      throwsStateError,
+    );
+  });
 }
+

@@ -5,7 +5,7 @@ import {
   TITAN_BUSINESS_OPS_AGENT_COMMANDS,
   getTitanBusinessOpsAgentCommand,
   assessTitanBusinessOpsAgentCommand,
-} from "../.test-dist/src/business-ops.js";
+} from "../.test-dist/business-ops.js";
 
 test("every declared Business Ops command id resolves to exactly one registered command", () => {
   const ids = TITAN_BUSINESS_OPS_AGENT_COMMANDS.map((command) => command.id);
