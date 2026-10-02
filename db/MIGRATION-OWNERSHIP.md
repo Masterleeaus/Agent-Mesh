@@ -106,7 +106,7 @@ history from the repository manifest.
 
 To collect sanitized evidence from a supported installation, set
 `MIGRATION_DATABASE_URL` through the host's protected environment and run
-`node scripts/export-migration-history-evidence-v3.mjs`. It emits migration
+`node scripts/export-migration-history-evidence.mjs`. It emits migration
 filenames, recorded checksums/status, duplicate-pair status, and a SHA-256 of a
 schema-only dump. It does not emit the connection URL, database name, applied
 timestamps, or company rows. Share only this JSON artifact; do not provide a

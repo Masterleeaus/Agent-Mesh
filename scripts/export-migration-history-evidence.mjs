@@ -39,7 +39,7 @@ if (tableExists) {
   const checksumExpr = columns.has("checksum") ? "COALESCE(checksum, '')" : "''";
   const hasAppliedAt = columns.has("applied_at");
   const appliedOrderExpr = hasAppliedAt
-    ? "row_number() OVER (ORDER BY applied_at NULLS FIRST, filename)"
+    ? "CASE WHEN applied_at IS NOT NULL AND COUNT(*) OVER (PARTITION BY applied_at) = 1 THEN row_number() OVER (ORDER BY applied_at, filename) ELSE NULL::bigint END"
     : "NULL::bigint";
   const orderByExpr = hasAppliedAt ? "applied_at NULLS FIRST, filename" : "filename";
   const rows = run("psql", [databaseUrl, "-X", "-A", "-t", "-F", "\t", "-v", "ON_ERROR_STOP=1", "-c",
