@@ -56,26 +56,28 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.change_history_rounded, size: 72),
-            SizedBox(height: 12),
-            Text('TITAN ZERO', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
-
+          children: [
+            const Icon(Icons.change_history_rounded, size: 72),
+            const SizedBox(height: 12),
+            const Text(
+              'TITAN ZERO',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            if (_bootstrapError != null) ...[
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(_bootstrapError!, textAlign: TextAlign.center),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: _openProduction,
+                child: const Text('Retry'),
+              ),
+            ],
           ],
         ),
       ),
-      if (_bootstrapError != null)
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(_bootstrapError!, textAlign: TextAlign.center),
-              const SizedBox(height: 8),
-              TextButton(onPressed: _openProduction, child: const Text('Retry')),
-            ],
-          ),
-        ),
     );
   }
 }
