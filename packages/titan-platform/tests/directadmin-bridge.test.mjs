@@ -136,7 +136,7 @@ test('SDK exchanges the authenticated DA session for a fixed selected-company Wo
       return { receipt_id: 'receipt-1' };
     });
   };
-  const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', {
+  const response = await gateway(f.request('/v1/directadmin/titan_zero/intents', {
     ...post(intentBody(f)), headers: { 'content-type': 'application/json', 'x-titan-company-id': 'company-b', caller_id: 'root' },
   }));
   assert.equal(response.status, 202);
@@ -185,6 +185,22 @@ test('gateway refuses to serialize an exchanged Workforce bearer as an owner rec
   assert.deepEqual(JSON.parse(bodyText), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
   assert.equal(bodyText.includes(childCredential), false);
   assert.equal(response.headers.get('set-cookie'), null);
+});
+
+test('non-Zero plugin owners cannot exchange the Workforce/Zero child credential', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  let childCredential;
+  f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, withWorkforceZeroSession) => {
+    await assert.rejects(withWorkforceZeroSession(async credential => {
+      childCredential = credential;
+      return { receipt_id: 'should-not-run' };
+    }), /directadmin-workforce-zero-unavailable/);
+    return { receipt_id: 'receipt-operations' };
+  };
+  const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', post(intentBody(f))));
+  assert.equal(response.status, 202);
+  assert.equal(childCredential, undefined);
+  assert.deepEqual(await response.json(), { status: 'REQUESTED', receipt_id: 'receipt-operations', correlation_id: 'correlation-1' });
 });
 
 test('company switch changes canonical revision and old credentials fail for all three plugins', async t => {

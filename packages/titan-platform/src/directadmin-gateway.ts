@@ -127,7 +127,13 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         const intent: GovernedIntentRequest = Object.freeze({ company_id: context.company_id, actor_id: context.actor_id,
           capability_id: input.capability_id as string, operation_id: input.operation_id as string,
           correlation_id: input.correlation_id as string, input: input.input as Record<string, unknown> });
-        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, session.withWorkforceZeroSession);
+        // Only Zero Core composes with the Workforce/Zero identity. Other
+        // DirectAdmin plugins may submit their own governed intents, but must
+        // not receive a Workforce child-credential capability.
+        const withWorkforceZeroSession: WithWorkforceZeroSession = plugin === 'titan_zero'
+          ? session.withWorkforceZeroSession
+          : async () => { throw new Error('directadmin-workforce-zero-unavailable'); };
+        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, withWorkforceZeroSession);
         if (!receipt || typeof receipt.receipt_id !== 'string' || receipt.receipt_id.length > 200 ||
             !/^[A-Za-z0-9:._-]+$/.test(receipt.receipt_id) ||
             /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(receipt.receipt_id)) {

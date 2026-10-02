@@ -12,7 +12,7 @@ The host issues `__Host-titan-da-session` as Secure, HttpOnly, SameSite=Strict, 
 
 ## Workforce/Zero exchange and consumers
 
-`requestIntent` receives a server-only `withWorkforceZeroSession(consume)` capability. It revalidates the DirectAdmin cookie, calls the fixed canonical exchange, checks child audience, selected company, actor, device, revisions and source-capped expiry, and supplies the child bearer only to the trusted server callback. The browser never receives it. The gateway returns only a bounded receipt ID and rejects JWT-shaped IDs. This callback is a request capability, not a queue credential; the downstream owner must retain the signed source proof and use current-session fencing at consequential effects.
+Only the Zero Core intent owner receives the server-only `withWorkforceZeroSession(consume)` capability; Operations Hub and Brand Studio cannot exchange a Workforce/Zero child. The capability revalidates the DirectAdmin cookie, calls the canonical fixed-target exchange, checks child audience, selected company, actor, device, revisions and source-capped expiry, and supplies the child bearer only to the trusted server callback. The browser never receives it. The gateway returns only a bounded receipt ID and rejects JWT-shaped IDs. This callback is a request capability, not a queue credential; the downstream owner must retain the signed source proof and use current-session fencing at consequential effects.
 
 The three SDK consumers—Zero Core, Operations Hub and Brand Studio—share one session, renderer and gateway. Their projections validate nested company identity, source, freshness and evidence shape; render untrusted values as text; isolate plugin failures; and show stale, unknown and incompatible data as read-only. These source consumers are not certified installed DirectAdmin role packages.
 
@@ -40,8 +40,8 @@ The Fetch gateway is not a listener, CLI or deployment. The launched #811/#812 h
 
 On the current branch after merging main `df52782d`:
 
-- `node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs` — 68/68 passed.
-- `node --test packages/titan-platform/tests/directadmin-*.test.mjs` after compiling the package test artifacts — 80/80 passed, including the standalone package contract tests.
+- `node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs` — 69/69 passed.
+- `node --test packages/titan-platform/tests/directadmin-*.test.mjs` after compiling the package test artifacts — 81/81 passed, including the standalone package contract tests.
 - `node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit` — passed. The malformed-newline/export blocker from the previous main snapshot is resolved by merged #1179 and is not a current blocker.
 - Strict standalone compilation of `directadmin-gateway.ts` and its imports — passed after the main merge. `git diff --check` passes for the current source and documentation changes.
 - The full `tests/*.test.mjs` package suite was attempted, but the shared `tsconfig.test.json` emits only its selected build inputs and leaves modules imported by many unrelated tests absent from `.test-dist`. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
