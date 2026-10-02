@@ -6,6 +6,9 @@ import assert from "node:assert/strict";
 import { RuntimeAuthorityGateway } from "../../../packages/runtime/authority/runtime-authority-gateway.mjs";
 // @ts-ignore
 import { AuthorityContextResolver } from "../../../packages/runtime/authority/authority-context-resolver.mjs";
+import { compileMissionAuthorityPolicy, evaluateMissionAuthorityPolicy, projectMissionAuthorityLimits } from "../../../packages/titan-platform/src/mission-authority-policy.js";
+import { evaluateTrustCycle } from "../../../packages/titan-platform/src/workforce-trust/trust-cycle.js";
+import { evaluateUnlockEligibility } from "../../../packages/titan-platform/src/workforce-trust/unlock-gates.js";
 
 const company_id="company-authority";
 const worker_id="worker-authority";
@@ -163,4 +166,39 @@ test("surface identity cannot widen or substitute for effective authority",async
     const denied=await resolver({limits:noLimits,usage:{},score:65,entitlements:[]}).evaluate({...authorityInput,surface});
     assert.equal(denied.decision,"DENY");
   }
+});
+
+
+test("mission policy compiles contraction-only spend provider and communications ceilings",()=>{
+  const policy=compileMissionAuthorityPolicy({
+    company_id,policy_id:"policy-1",version:1,statement:"Bound mission costs and communications",
+    source_ref:"human:policy-1",author_id:"owner-1",approver_id:"owner-2",
+    scope:{mission_id:"mission-1",agent_ids:[worker_id]},effective_from:"2026-10-01T00:00:00Z",
+    rules:[
+      {kind:"max_amount",currency:"AUD",amount:100},
+      {kind:"max_provider_cost",currency:"AUD",amount:5},
+      {kind:"max_messages",count:1},
+      {kind:"max_recipients",count:2},
+      {kind:"allowed_capabilities",capabilities:[capability]},
+    ],
+  });
+  assert.deepEqual(projectMissionAuthorityLimits(policy),{currency:"AUD",max_amount:100,max_provider_cost:5,max_messages:1,max_recipients:2});
+  assert.equal(evaluateMissionAuthorityPolicy(policy,{company_id,mission_id:"mission-1",agent_id:worker_id,operation:"create",capability,amount:100,provider_cost:5,messages:1,recipients:2,currency:"AUD",now:"2026-10-02T00:00:00Z"}).decision,"allow");
+  assert.equal(evaluateMissionAuthorityPolicy(policy,{company_id,mission_id:"mission-1",agent_id:worker_id,operation:"create",capability,amount:100,provider_cost:5.01,messages:1,recipients:2,currency:"AUD",now:"2026-10-02T00:00:00Z"}).decision,"deny");
+});
+
+test("trust unlock requires verified evidence and remains path scoped and authority neutral",()=>{
+  const cycles=Array.from({length:5},(_,i)=>evaluateTrustCycle({
+    company_id,agent_id:worker_id,capability,workflow:"booking.standard",context_ref:"region:melbourne",
+    outcome_success:true,outcome_verified:true,policy_compliant:true,human_correction:false,reversed:false,
+    evidence_refs:[`verification:${i}`],
+  }));
+  const eligible=evaluateUnlockEligibility({company_id,agent_id:worker_id,capability,workflow:"booking.standard",context_ref:"region:melbourne",cycles,user_approved:true,worker_accepted:true},"proactive_specialist");
+  assert.equal(eligible.eligible_for_authority_evaluation,true);
+  assert.equal(eligible.authority_granted,false);
+  assert.equal(eligible.execution_permitted,false);
+  const otherPath=evaluateUnlockEligibility({company_id,agent_id:worker_id,capability,workflow:"booking.emergency",context_ref:"region:melbourne",cycles,user_approved:true,worker_accepted:true},"proactive_specialist");
+  assert.equal(otherPath.eligible_for_authority_evaluation,false);
+  const asserted=Array.from({length:5},()=>evaluateTrustCycle({company_id,agent_id:worker_id,capability,outcome_success:true,policy_compliant:true,human_correction:false,reversed:false}));
+  assert.equal(evaluateUnlockEligibility({company_id,agent_id:worker_id,capability,cycles:asserted,user_approved:true,worker_accepted:true},"proactive_specialist").eligible_for_authority_evaluation,false);
 });
