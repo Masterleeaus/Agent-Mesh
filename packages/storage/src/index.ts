@@ -159,3 +159,5 @@ export function forCompany(storage: StorageClient, rawCompanyId: string): Compan
     transaction(fn) { return storage.transaction(tx => fn(forCompany(tx, companyId))); },
   };
 }
+
+export * from "./company-storage-resolver.js";
