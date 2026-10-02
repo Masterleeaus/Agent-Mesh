@@ -4,6 +4,20 @@ from pathlib import Path
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
+GATE_MARKER = "<!-- titan-subproduct-gate: run -->"
+GATE_EXPRESSION = "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
+GATED_WORKFLOWS = {
+    ".github/workflows/canonical-environment.yml": 1,
+    ".github/workflows/titan-ci.yml": 2,
+    ".github/workflows/workforce-verification.yml": 1,
+    ".github/workflows/production-convergence-verification.yml": 2,
+}
+
+
+def gate_should_run(event_name, pull_request_body):
+    return event_name == "workflow_dispatch" or (
+        event_name == "pull_request" and GATE_MARKER in pull_request_body
+    )
 
 
 class SliceCIGateTests(unittest.TestCase):
@@ -24,6 +38,26 @@ class SliceCIGateTests(unittest.TestCase):
         self.assertIn("contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')", workflow)
         self.assertNotIn("**Subproduct gate:** run", workflow)
         self.assertIn("github.event_name == 'workflow_dispatch'", workflow)
+
+    def test_gate_conditions_are_yaml_quoted_and_keep_marker_semantics(self):
+        for relative_path, expected_count in GATED_WORKFLOWS.items():
+            with self.subTest(workflow=relative_path):
+                workflow = (ROOT / relative_path).read_text()
+                conditions = [line.strip() for line in workflow.splitlines() if GATE_MARKER in line]
+                self.assertEqual(len(conditions), expected_count)
+                self.assertEqual(conditions, [f'if: "{GATE_EXPRESSION}"'] * expected_count)
+
+        cases = (
+            ("workflow_dispatch", "", True),
+            ("workflow_dispatch", GATE_MARKER, True),
+            ("pull_request", GATE_MARKER, True),
+            ("pull_request", "", False),
+            ("push", GATE_MARKER, False),
+            ("push", "", False),
+        )
+        for event_name, body, expected in cases:
+            with self.subTest(event_name=event_name, marker_present=GATE_MARKER in body):
+                self.assertEqual(gate_should_run(event_name, body), expected)
 
     def test_candidate_policy_workflow_avoids_global_test_discovery(self):
         workflow = (ROOT / ".github/workflows/mission-evidence-tests.yml").read_text()
