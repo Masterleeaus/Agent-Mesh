@@ -34,7 +34,7 @@ def package_manifests(root: Path) -> list[dict]:
     rows = []
     for path in sorted(set(candidates)):
         excluded = {"node_modules", "archive", ".next", "dist", "build", "coverage", ".test-dist"}
-        if not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
+        if path.is_symlink() or not path.is_file() or any(part in excluded for part in path.relative_to(root).parts):
             continue
         try:
             data = json.loads(path.read_text())
@@ -56,7 +56,7 @@ def archive_inputs(root: Path) -> list[dict]:
     if not archive_root.is_dir():
         return rows
     suffixes = {".zip", ".tar", ".gz", ".tgz", ".7z", ".rar"}
-    for path in sorted(item for item in archive_root.rglob("*") if item.is_file()):
+    for path in sorted(item for item in archive_root.rglob("*") if item.is_file() and not item.is_symlink()):
         if path.suffix.lower() not in suffixes:
             continue
         rows.append({
@@ -71,7 +71,7 @@ def archive_inputs(root: Path) -> list[dict]:
 
 def license_evidence_files(root: Path) -> list[dict]:
     search_roots = [root / name for name in ("apps", "packages", "services", "archive")]
-    root_evidence = [path for path in root.iterdir() if path.is_file()
+    root_evidence = [path for path in root.iterdir() if path.is_file() and not path.is_symlink()
                      and (path.name.lower().startswith(("license", "licence", "copying"))
                           or "notice" in path.name.lower())
                      and path.suffix.lower() in {"", ".txt", ".md"}]
@@ -80,7 +80,7 @@ def license_evidence_files(root: Path) -> list[dict]:
     candidates = list(root_evidence)
     for base in search_roots:
         if base.is_dir():
-            candidates.extend(item for item in base.rglob("*") if item.is_file())
+            candidates.extend(item for item in base.rglob("*") if item.is_file() and not item.is_symlink())
     for path in sorted(set(candidates)):
         if any(part in excluded for part in path.parts):
             continue
@@ -231,13 +231,31 @@ def generate_notices(root: Path, inventory: dict, artifact_id: str) -> str:
     if artifact.get("distribution_state") != "approved":
         raise PermissionError(f"distribution blocked: {artifact_id} is {artifact.get('distribution_state')}")
     errors = validate(root, inventory)
+    audit_path = root / "docs/contracts/package-license-audit.json"
+    expected_audit = repository_audit(root)
+    try:
+        if not audit_path.is_file() or json.loads(audit_path.read_text()) != expected_audit:
+            errors.append("package-license-audit.json is missing or stale")
+    except (OSError, json.JSONDecodeError):
+        errors.append("package-license-audit.json is missing or invalid")
     if errors:
         raise PermissionError("distribution provenance invalid: " + "; ".join(errors))
     chunks = ["THIRD-PARTY NOTICES", "", f"Artifact: {artifact_id}",
-              f"First-party SPDX: {artifact['first_party_spdx']}", ""]
+              f"First-party SPDX: {artifact['first_party_spdx']}", "",
+              "--- First-party license ---",
+              (root / artifact["first_party_license_file"]).read_text().rstrip(), ""]
     for rel in artifact["notice_files"]:
         chunks.extend([f"--- {rel} ---", (root / rel).read_text().rstrip(), ""])
     return "\n".join(chunks).rstrip() + "\n"
+
+
+def repository_audit(root: Path) -> dict:
+    return {
+        "schema": "titan-repository-license-audit/v2",
+        "manifests": package_manifests(root),
+        "archive_inputs": archive_inputs(root),
+        "license_evidence": license_evidence_files(root),
+    }
 
 
 def main() -> int:
@@ -250,12 +268,7 @@ def main() -> int:
     try:
         inventory = json.loads(INVENTORY.read_text())
         if args.write_package_audit:
-            report = {
-                "schema": "titan-repository-license-audit/v2",
-                "manifests": package_manifests(ROOT),
-                "archive_inputs": archive_inputs(ROOT),
-                "license_evidence": license_evidence_files(ROOT),
-            }
+            report = repository_audit(ROOT)
             AUDIT.write_text(json.dumps(report, indent=2) + "\n")
             print(f"wrote {AUDIT.relative_to(ROOT)} ({len(report['manifests'])} manifests)")
         errors = validate(ROOT, inventory)
@@ -265,12 +278,7 @@ def main() -> int:
                 return 1
             return 0
         if args.check:
-            expected = {
-                "schema": "titan-repository-license-audit/v2",
-                "manifests": package_manifests(ROOT),
-                "archive_inputs": archive_inputs(ROOT),
-                "license_evidence": license_evidence_files(ROOT),
-            }
+            expected = repository_audit(ROOT)
             if not AUDIT.is_file() or json.loads(AUDIT.read_text()) != expected:
                 errors.append("package-license-audit.json is missing or stale; refresh it after reviewing package metadata")
             if errors:
