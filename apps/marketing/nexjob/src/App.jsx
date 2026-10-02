@@ -101,7 +101,7 @@ export default function App() {
         <Route path="/compare" element={<><PageMeta title="Compare" description="Compare Titan Zero’s Cleaning-first managed operating model, trust progression, privacy architecture and software gap filling with conventional cleaning SaaS." /><Compare /></>} />
         <Route path="/about" element={<><PageMeta title="About" description="Learn the principles behind Titan Zero Cleaning: keep useful systems, fill gaps, govern intelligence, preserve choice and measure operational value." /><About /></>} />
         <Route path="/faq" element={<><PageMeta title="FAQ" description="Answers about personal Zeros, the managed workforce, integrations, private and local intelligence, authority controls, environmental systems and the commercial model." /><FAQ /></>} />
-        <Route path="/changelog" element={<><PageMeta title="System Evolution" description="Follow the evolution of Titan Zero Field Services and the managed operating-system capabilities available across customer deployments." /><Changelog /></>} />
+        <Route path="/changelog" element={<><PageMeta title="Cleaning System Evolution" description="Review the Cleaning-first Titan Zero product direction and its managed operating-system concepts. This review build does not document released production changes." /><Changelog /></>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />
