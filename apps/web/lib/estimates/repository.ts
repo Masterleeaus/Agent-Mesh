@@ -111,7 +111,7 @@ export async function getEstimateById(rawClient: DbClient, id: string, accountId
 
   if (estimateResult.rowCount === 0) return null;
 
-  const lineItemsResult = await client.query(
+  const lineItemsResult = await client.query<{ option_id: string | null } & Record<string, unknown>>(
     `SELECT id, estimate_id, option_id, description, quantity, unit_price_cents,
             total_cents, line_item_type, visible_to_customer, adjustment_type, sort_order, created_at
      FROM estimate_line_items
@@ -120,7 +120,7 @@ export async function getEstimateById(rawClient: DbClient, id: string, accountId
     [id]
   );
 
-  const optionsResult = await client.query(
+  const optionsResult = await client.query<{ id: string } & Record<string, unknown>>(
     `SELECT id, estimate_id, label, description, sort_order, subtotal_cents, tax_cents, total_cents, is_recommended, created_at
      FROM estimate_options
      WHERE estimate_id = $1

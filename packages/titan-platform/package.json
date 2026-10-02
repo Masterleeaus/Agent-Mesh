@@ -43,7 +43,14 @@
     "./mcp-projection": "./src/mcp-projection.ts",
     "./workforce-coverage": "./src/workforce-coverage.ts",
     "./business-reality": "./src/business-reality.ts",
-    "./constitution": "./src/constitution.ts"
+    "./constitution": "./src/constitution.ts",
+    "./field-service-lifecycle": "./src/field-service-lifecycle.ts"
+  },
+  "dependencies": {
+    "@titan-zero/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
