@@ -1,12 +1,18 @@
 import { constants } from "node:fs";
 import { lstat, open, realpath } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
-import type { CompanyFilePlacementRecord } from "./company-placement-registry.js";
+import {
+  isRegisteredCompanyFilePlacement,
+  type CompanyFilePlacementRegistry,
+  type RegisteredCompanyFilePlacement,
+} from "./company-placement-registry.js";
 import { CompanyStorageResolutionError } from "./company-storage-resolver.js";
 
 export interface LocalCompanyFileStoreOpenerOptions {
   /** Absolute, operator-owned root. It must already exist and cannot be a symlink. */
   readonly companyFileStoreRoot: string;
+  /** Fresh GLOBAL_REGISTRY reader used to revalidate status before every operation. */
+  readonly registry: CompanyFilePlacementRegistry;
 }
 
 export interface CompanyFileStore {
@@ -20,7 +26,7 @@ export interface CompanyFileStore {
 }
 
 export interface CompanyFileStoreOpener {
-  open(placement: CompanyFilePlacementRecord): Promise<CompanyFileStore>;
+  open(placement: RegisteredCompanyFilePlacement): Promise<CompanyFileStore>;
 }
 
 type DirectoryIdentity = Readonly<{ path: string; device: number; inode: number }>;
@@ -65,8 +71,8 @@ function sameDirectory(a: DirectoryIdentity, b: DirectoryIdentity): boolean {
   return a.path === b.path && a.device === b.device && a.inode === b.inode;
 }
 
-function assertPlacement(placement: CompanyFilePlacementRecord): void {
-  if (!placement || typeof placement !== "object" || !validId(placement.company_id)
+function assertPlacement(placement: RegisteredCompanyFilePlacement): void {
+  if (!isRegisteredCompanyFilePlacement(placement) || !validId(placement.company_id)
     || !validPlacementId(placement.file_placement_id)
     || !Number.isSafeInteger(placement.file_placement_revision) || placement.file_placement_revision < 1
     || placement.provider !== "localfs" || !validId(placement.schema_version)
@@ -96,6 +102,7 @@ export function createLocalCompanyFileStoreOpener(
     throw invalidStore();
   }
   const rootPath = resolve(options.companyFileStoreRoot);
+  if (!options.registry || typeof options.registry.findFileByCompanyId !== "function") throw invalidStore();
   let rootIdentityPromise: Promise<DirectoryIdentity>;
   const rootIdentity = (): Promise<DirectoryIdentity> => {
     rootIdentityPromise ??= inspectDirectory(rootPath);
@@ -103,8 +110,19 @@ export function createLocalCompanyFileStoreOpener(
   };
 
   return Object.freeze({
-    async open(placement: CompanyFilePlacementRecord): Promise<CompanyFileStore> {
+    async open(placement: RegisteredCompanyFilePlacement): Promise<CompanyFileStore> {
       assertPlacement(placement);
+      const assertCurrentPlacement = async (): Promise<void> => {
+        const current = await options.registry.findFileByCompanyId(placement.company_id);
+        if (!current || current.company_id !== placement.company_id
+          || current.file_placement_id !== placement.file_placement_id
+          || current.file_placement_revision !== placement.file_placement_revision
+          || current.provider !== placement.provider || current.schema_version !== placement.schema_version
+          || current.status !== "READY") {
+          throw new CompanyStorageResolutionError("placement-stale");
+        }
+      };
+      await assertCurrentPlacement();
       const root = await rootIdentity();
       const namespacePath = join(root.path, placement.file_placement_id);
       if (!isWithinRoot(root.path, namespacePath)) throw invalidStore();
@@ -126,6 +144,7 @@ export function createLocalCompanyFileStoreOpener(
         async putObject(objectKey: string, contents: Uint8Array): Promise<void> {
           assertObjectKey(objectKey);
           if (!(contents instanceof Uint8Array)) throw invalidStore();
+          await assertCurrentPlacement();
           const directory = await assertCurrentNamespace();
           const path = join(directory.path, objectKey);
           if (!isWithinRoot(directory.path, path) || relative(directory.path, path).includes(sep)) throw invalidStore();
@@ -148,6 +167,7 @@ export function createLocalCompanyFileStoreOpener(
         },
         async readObject(objectKey: string): Promise<Uint8Array> {
           assertObjectKey(objectKey);
+          await assertCurrentPlacement();
           const directory = await assertCurrentNamespace();
           const path = join(directory.path, objectKey);
           if (!isWithinRoot(directory.path, path) || relative(directory.path, path).includes(sep)) throw invalidStore();
