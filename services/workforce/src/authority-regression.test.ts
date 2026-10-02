@@ -151,3 +151,16 @@ test("authority class ceilings, entitlement separation and recursive handshake f
   assert.equal(missingUser.decision,"APPROVAL_REQUIRED");
   assert.ok(missingUser.reason_codes.includes("trusted_auto_user_handshake_missing"));
 });
+
+
+test("surface identity cannot widen or substitute for effective authority",async()=>{
+  const noLimits={currency:null,max_amount:null,max_provider_cost:null,max_messages:null,max_recipients:null};
+  for(const surface of ["zero","go","hub","mobile","browser"]){
+    const allowed=await resolver({limits:noLimits,usage:{},score:65}).evaluate({...authorityInput,surface});
+    assert.equal(allowed.decision,"ALLOW");
+    assert.equal(allowed.identity_confers_authority,false);
+    assert.equal(allowed.role_confers_authority,false);
+    const denied=await resolver({limits:noLimits,usage:{},score:65,entitlements:[]}).evaluate({...authorityInput,surface});
+    assert.equal(denied.decision,"DENY");
+  }
+});
