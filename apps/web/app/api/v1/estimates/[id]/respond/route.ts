@@ -4,6 +4,7 @@ import { getPool, getDatabaseDialect } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { getEnv } from "@/lib/env";
 import { writeWorkflowEvent } from "@/lib/workflow-events";
+import { appendAuditLog } from "@/lib/db/audit";
 import { createJobFromEstimate, getAccountOwnerUserId } from "@/lib/estimates/create-job-db";
 import { createApprovalArtifacts } from "@/lib/estimates/approve";
 import { advanceBookingRequestForEstimate } from "@/lib/booking-requests/advance-stage";
@@ -88,26 +89,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const { account_id } = rows[0];
       const eventType = action === "approve" ? "estimate.approved" : "estimate.declined";
 
-      // Audit log + workflow event (non-critical)
-      await Promise.all([
-        client.query(
-          `INSERT INTO audit_log
-             (account_id, entity_type, entity_id, action, actor_id, old_value, new_value)
-           VALUES ($1, 'estimate', $2, 'update', NULL, $3, $4)`,
-          [
-            account_id,
-            id,
-            JSON.stringify({ status: "draft_or_sent" }),
-            JSON.stringify({ status: newStatus, responded_at: new Date().toISOString(), via: "email_link" }),
-          ]
-        ),
-        writeWorkflowEvent(client, {
-          accountId: account_id,
-          eventType,
-          entityType: "estimate",
-          entityId: id,
-        }),
-      ]).catch((err) => logger.error("estimate respond: audit/event writes failed", err, { estimateId: id }));
+      // Both accepted history and its delivery event are required evidence.
+      // Keep them in this transaction so either failure rolls back the quote
+      // transition and leaves the signed link safe to retry.
+      await appendAuditLog(client, {
+        account_id,
+        entity_type: "estimate",
+        entity_id: id,
+        action: "update",
+        actor_id: null,
+        old_value: { status: current.rows[0].status },
+        new_value: { status: newStatus, responded_at: new Date().toISOString(), via: "email_link" },
+      });
+      await writeWorkflowEvent(client, {
+        accountId: account_id,
+        eventType,
+        entityType: "estimate",
+        entityId: id,
+      });
 
       const { emitAttentionEvent } = await import("@/lib/attention");
       await emitAttentionEvent(client, {
