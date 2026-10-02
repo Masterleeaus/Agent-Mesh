@@ -119,6 +119,7 @@ export type AdapterProjectionCoverageRow = Readonly<{
 }>;
 
 export type DistributionCoverageSnapshot = Readonly<{
+  source_issue_body_hashes: readonly Readonly<{ issue: SourceOwner; sha256: string }>[];
   schema: "titan.distribution-coverage/v1";
   source_owners: readonly SourceOwner[];
   foundation_configurations: readonly ConfigurationCoverageRow[];
@@ -189,6 +190,11 @@ export function buildDistributionCoverageSnapshot(): DistributionCoverageSnapsho
   requireUnique(adapterProjections.map((row) => row.projection_id), "distribution-projection");
 
   return Object.freeze({
+    source_issue_body_hashes: Object.freeze([
+      Object.freeze({ issue: 719 as const, sha256: "65aa851baa2a8f3e247641c8787da0f1d4520831e4c3124282ef013e1482d97c" }),
+      Object.freeze({ issue: 1042 as const, sha256: "763bdcf31676d2a657c25847676a4a74931432346c62afbcd3ec189cf962a1b9" }),
+      Object.freeze({ issue: 1068 as const, sha256: "dfcda6d835f92c4709685f6cd0796e0f51ad889f1063ae44f37d641e5370a82f" }),
+    ]),
     schema: "titan.distribution-coverage/v1",
     source_owners: Object.freeze([1042, 719, 1068]),
     foundation_configurations: Object.freeze(foundationConfigurations),
