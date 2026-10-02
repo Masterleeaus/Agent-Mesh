@@ -12,6 +12,8 @@ on:
       - 'services/worker/Dockerfile'
       - 'services/workforce/Dockerfile'
       - 'services/workforce/**'
+      - 'packages/deployment/**'
+      - 'scripts/inventory-release-artifacts.mjs'
       - '.github/workflows/vps-installer-smoke.yml'
   workflow_dispatch:
 
@@ -21,6 +23,15 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+          run_install: false
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.3
       - name: Validate SQLite VPS scripts and topology
         shell: bash
         run: |
@@ -238,3 +249,125 @@ jobs:
           else
             docker compose --env-file .env.vps -f infra/compose.vps.yml down -v --remove-orphans
           fi
+      - name: Inventory exact built images and CI observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          bundle_root="$RUNNER_TEMP/titan-release-artifact-inventory"
+          artifact_root="$bundle_root/artifacts"
+          mkdir -p "$artifact_root"
+
+          app_tag="$(sed -n 's/^APP_TAG=//p' infra/vps.env.example | head -n 1)"
+          test -n "$app_tag"
+          export APP_TAG="$app_tag"
+          for service in web worker workforce; do
+            image="titan-zero-${service}:${app_tag}"
+            docker image inspect "$image" >/dev/null
+            docker save "$image" | gzip -1 > "$artifact_root/${service}-image.tar.gz"
+            docker image load --input "$artifact_root/${service}-image.tar.gz" >/dev/null
+          done
+
+          tar --create --gzip --file "$artifact_root/config.tar.gz" \
+            infra/compose.vps.yml infra/vps.env.example \
+            scripts/vps/install-sqlite-vps.sh scripts/vps/update-vps.sh \
+            scripts/vps/backup-vps.sh scripts/sqlite-migrate.mjs
+          tar --create --gzip --file "$artifact_root/migrations.tar.gz" db/sqlite
+
+          node --input-type=module - "$artifact_root" "$bundle_root" <<'NODE'
+          import { execFileSync } from 'node:child_process';
+          import { writeFile } from 'node:fs/promises';
+          import { join } from 'node:path';
+
+          const [artifactRoot, bundleRoot] = process.argv.slice(2);
+          const services = ['web', 'worker', 'workforce'];
+          const images = services.map(service => {
+            const reference = `titan-zero-${service}:${process.env.APP_TAG || 'latest'}`;
+            const imageId = execFileSync('docker', ['image', 'inspect', '--format', '{{.Id}}', reference], { encoding: 'utf8' }).trim();
+            if (!/^sha256:[a-f0-9]{64}$/.test(imageId)) throw new Error(`invalid-image-id:${service}`);
+            const runtime_node_version = execFileSync('docker', [
+              'run', '--rm', '--entrypoint', 'node', reference, '--version',
+            ], { encoding: 'utf8' }).trim();
+            if (!/^v\d+\.\d+\.\d+$/.test(runtime_node_version)) throw new Error(`invalid-node-runtime:${service}`);
+            return { role: service, reference, image_id: imageId, runtime_node_version };
+          });
+          const source_sha = process.env.GITHUB_SHA;
+          if (!/^[a-f0-9]{40}$/.test(source_sha || '')) throw new Error('missing-build-source-sha');
+          const writeJson = (name, value) => writeFile(join(artifactRoot, name), `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' });
+
+          await writeJson('ci-build-observation.json', {
+            schema: 'titan.deployment.ci-build-observation.v1',
+            trust: 'unsigned-ci-observation-not-publisher-attestation',
+            source_sha,
+            workflow: process.env.GITHUB_WORKFLOW,
+            run_id: process.env.GITHUB_RUN_ID,
+            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+            workflow_run_url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+            event_name: process.env.GITHUB_EVENT_NAME,
+            runner_os: process.env.RUNNER_OS,
+            node: process.version,
+            pnpm: execFileSync('pnpm', ['--version'], { encoding: 'utf8' }).trim(),
+            docker: execFileSync('docker', ['--version'], { encoding: 'utf8' }).trim(),
+            built_images: images,
+          });
+          await writeJson('ci-smoke-observations.json', {
+            schema: 'titan.deployment.ci-smoke-observations.v1',
+            source_sha,
+            environment: 'disposable GitHub-hosted Ubuntu runner',
+            workflow_run_url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+            observations: [
+              { id: 'compose-images-built', result: 'passed' },
+              { id: 'sqlite-migrations-integrity', result: 'passed' },
+              { id: 'workforce-health', result: 'passed', http_status: 200 },
+              { id: 'workforce-uncommissioned-readiness', result: 'degraded-as-expected', http_status: 503 },
+              { id: 'workforce-authentication-denial', result: 'passed', http_status: 401 },
+              { id: 'workforce-disposable-store-integrity', result: 'passed' },
+            ],
+            not_performed: [
+              'live_host_install', 'directadmin_install', 'production_web_readiness', 'worker_service_startup',
+              'company_isolation', 'upgrade', 'rollback', 'reboot_recovery', 'destructive_backup_restore',
+              'second_substrate', 'business_action', 'release_signing', 'promotion',
+            ],
+            host_certification: 'NOT_PERFORMED',
+            grants_authority: false,
+          });
+
+          await writeFile(join(bundleRoot, 'inventory-request.json'), `${JSON.stringify({
+            schema: 'titan.deployment.release-artifact-inventory-request.v1',
+            source_sha,
+            profile: 'portable',
+            artifacts: [
+              { role: 'web', path: 'web-image.tar.gz' },
+              { role: 'worker', path: 'worker-image.tar.gz' },
+              { role: 'workforce', path: 'workforce-image.tar.gz' },
+              { role: 'config', path: 'config.tar.gz' },
+              { role: 'migrations', path: 'migrations.tar.gz' },
+              { role: 'provenance', path: 'ci-build-observation.json' },
+              { role: 'evidence', path: 'ci-smoke-observations.json' },
+            ],
+          }, null, 2)}\n`, { flag: 'wx' });
+          NODE
+
+          node scripts/inventory-release-artifacts.mjs \
+            "$bundle_root/inventory-request.json" "$artifact_root" > "$bundle_root/inventory.json"
+          python3 - "$bundle_root/inventory.json" <<'PY'
+          import json, sys
+          inventory = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert inventory['schema'] == 'titan.deployment.release-artifact-inventory.v1'
+          assert inventory['status'] == 'ARTIFACTS_INVENTORIED'
+          assert inventory['release_gate']['status'] == 'DENIED'
+          assert inventory['release_gate']['promotion_allowed'] is False
+          assert inventory['release_gate']['grants_authority'] is False
+          assert inventory['release_gate']['host_certification'] == 'NOT_PERFORMED'
+          assert inventory['release_gate']['signature_status'] == 'NOT_SIGNED'
+          assert inventory['missing_artifact_roles'] == ['sbom']
+          assert inventory['unattested_required_checks'] == inventory['required_check_ids']
+          print('real-build-artifact-inventory: recorded; release remains denied')
+          PY
+      - name: Upload unsigned artifact inventory and exact CI build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-release-artifact-inventory-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/titan-release-artifact-inventory/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
