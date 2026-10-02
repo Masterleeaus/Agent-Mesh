@@ -57,8 +57,10 @@ MIGRATE_MODE="$(psql_cmd -tAc "
 
 echo "migration mode: ${MIGRATE_MODE}"
 
-for file in "${MIGRATIONS_DIR}"/*.sql; do
-  filename="$(basename "$file")"
+MIGRATION_FILENAMES="$(node "${SCRIPT_DIR}/list-migrations.mjs" "${MIGRATIONS_DIR}")"
+while IFS= read -r filename; do
+  [[ -z "${filename}" ]] && continue
+  file="${MIGRATIONS_DIR}/${filename}"
   if [[ "$file" == *"seed"* ]]; then
     continue
   fi
@@ -80,6 +82,6 @@ for file in "${MIGRATIONS_DIR}"/*.sql; do
   echo "applying migration: $filename"
   psql_cmd -v ON_ERROR_STOP=1 -f "$file"
   psql_cmd -c "INSERT INTO schema_migrations (filename) VALUES ('$filename')"
-done
+done <<< "${MIGRATION_FILENAMES}"
 
 echo "migrations complete"
