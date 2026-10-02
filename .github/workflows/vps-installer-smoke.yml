@@ -19,6 +19,9 @@ jobs:
   sqlite-compose-and-build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      TZ_ENV_FILE: ${{ github.workspace }}/.env.vps
+      TZ_DATA_ROOT: ${{ runner.temp }}/titan-data
     steps:
       - uses: actions/checkout@v4
       - name: Validate SQLite VPS scripts and topology
