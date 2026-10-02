@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { queryOne, query, getPool, getDatabaseDialect } from "@/lib/db";
+import { appendAuditLog } from "@/lib/db/audit";
 import { createJobFromEstimate, getAccountOwnerUserId } from "@/lib/estimates/create-job-db";
 import { createApprovalArtifacts } from "@/lib/estimates/approve";
 import { logger } from "@/lib/logger";
@@ -141,6 +142,19 @@ export async function POST(
 
     if (updated.rowCount !== 1) throw new Error("Estimate response did not update exactly one row");
 
+    // A bearer-link response has no authenticated Titan principal. Preserve
+    // that provenance honestly and make its audit record part of the same
+    // transaction as the estimate transition. Never include the token or raw
+    // signature in audit metadata.
+    await appendAuditLog(dbClient, {
+      account_id: estimate.account_id,
+      entity_type: "estimate",
+      entity_id: estimate.id,
+      action: "update",
+      actor_id: null,
+      old_value: { status: "sent" },
+      new_value: { status: newStatus, via: "portal" },
+    });
 
     // On approval: set RLS context then create job + deposit invoice artifacts,
     // matching the behavior of the admin transition and email respond paths.

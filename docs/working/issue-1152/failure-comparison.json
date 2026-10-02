@@ -1,7 +1,7 @@
 {
-  "code_head": "d756d2ad7356474d497eb8576f992ce91d8f0096",
-  "dependency": "743e70789b85571fa0eafb1029630f0cbc6b7eb6",
-  "main": "ee1a3ee3709b9201fc728fc162067d9a5ab78e45",
+  "code_head": "working tree based on fc6bd2bbd7c75261fbe334fb5af7dfb530d2351d",
+  "dependency": "latest reviewed PR1179 head 13279000737e7714f18024047954bd373de8ee58 pending merge",
+  "main": "987728413bfdae855dba1a0796a686efb53e8805 observed; not integrated into tested branch",
   "runtime": "Node22.23.3 / pnpm9.12.0",
   "before": [
     "app/api/booking/__tests__/booking.unit.test.ts > POST /api/booking > creates client, property, job, and booking request but not a visit",
@@ -162,7 +162,6 @@
     "lib/estimates/__tests__/deposit-policy.unit.test.ts > createApprovalArtifacts deposit policy > approval with deposit creates a draft deposit invoice",
     "lib/estimates/__tests__/lifecycle-mysql-portability.contract.test.ts > estimate lifecycle MySQL portability > response endpoint does not require PostgreSQL RETURNING or set_config",
     "lib/estimates/__tests__/mysql-portability.contract.test.ts > estimate MySQL portability contract > uses portable IN placeholders rather than PostgreSQL ANY arrays on the estimate list",
-    "lib/estimates/__tests__/public-acceptance.contract.test.ts > public estimate acceptance contract > records the public response in the audit trail",
     "lib/estimates/__tests__/revision-lineage.contract.test.ts > estimate revision lineage > has a MySQL representation for existing revision lineage fields",
     "lib/expenses/__tests__/attribution-portability.contract.test.ts > expense attribution and portability > fuel attachment is free of PostgreSQL-only casts/RETURNING/NULLS LAST/IS DISTINCT FROM",
     "lib/expenses/__tests__/attribution-portability.contract.test.ts > expense attribution and portability > guards PostgreSQL RLS context",
@@ -202,35 +201,16 @@
     "lib/vehicles/__tests__/capture.unit.test.ts > createServiceRecordWithExpense > soft-flags odometer on service when reading regresses"
   ],
   "removed": [
-    "app/app/capture/pending-queue.unit.test.ts > pending capture storage company scope > builds a stable encoded key",
-    "app/app/capture/pending-queue.unit.test.ts > pending capture storage company scope > namespaces the same capture id by company",
-    "app/app/capture/pending-queue.unit.test.ts > pending capture storage company scope > requires company_id",
-    "lib/__tests__/env.unit.test.ts > getEnv validation > build-time bypass activates when NEXT_PHASE=phase-production-build",
-    "lib/__tests__/env.unit.test.ts > getEnv validation > throws in production when DATABASE_URL is missing",
-    "lib/__tests__/env.unit.test.ts > getEnv validation > throws when DATABASE_URL is missing",
-    "lib/__tests__/vocabulary.unit.test.ts > nav speaks those nouns > calls jobs Jobs, estimates Quotes, invoices Bills, properties Houses",
-    "lib/__tests__/vocabulary.unit.test.ts > nav speaks those nouns > gives the admin phone tabs Desk / Jobs / People / Money",
-    "lib/__tests__/vocabulary.unit.test.ts > nav speaks those nouns > gives the owner phone tabs Today / Jobs / People / Money",
-    "lib/__tests__/vocabulary.unit.test.ts > nav speaks those nouns > gives the tech Today and Visits",
-    "lib/__tests__/vocabulary.unit.test.ts > nav speaks those nouns > labels the field home Today and the office home Desk",
-    "lib/auth/__tests__/post-login-destination.unit.test.ts > Business Ops post-login deep links > canonicalises retained standalone aliases after login",
-    "lib/auth/__tests__/post-login-destination.unit.test.ts > Business Ops post-login deep links > preserves safe standalone app destinations",
-    "lib/change-orders/__tests__/lifecycle-portability.contract.test.ts > change order lifecycle portability > creates IDs in application code without INSERT RETURNING",
-    "lib/communications/__tests__/communications-log.unit.test.ts [ lib/communications/__tests__/communications-log.unit.test.ts ]",
-    "lib/communications/__tests__/outbound-orchestrator.unit.test.ts [ lib/communications/__tests__/outbound-orchestrator.unit.test.ts ]",
-    "lib/db/sqlite-params.test.ts [ lib/db/sqlite-params.test.ts ]",
-    "lib/estimates/__tests__/approval-artifacts.unit.test.ts > createApprovalArtifacts > creates a deposit invoice when deposit_required=true and deposit_cents>0",
-    "lib/estimates/__tests__/approval-artifacts.unit.test.ts > createApprovalArtifacts > puts the deposit on the job when the estimate already has one",
-    "lib/estimates/__tests__/lifecycle-mysql-portability.contract.test.ts > estimate lifecycle MySQL portability > send and transition validation do not use PostgreSQL casts",
-    "lib/estimates/__tests__/public-acceptance.contract.test.ts > public estimate acceptance contract > guards PostgreSQL RLS context from MySQL",
-    "lib/estimates/__tests__/public-acceptance.contract.test.ts > public estimate acceptance contract > serializes acceptance and only transitions sent estimates"
-  ],
-  "added": [],
-  "outside_unchanged_baseline": [
     "lib/estimates/__tests__/public-acceptance.contract.test.ts > public estimate acceptance contract > records the public response in the audit trail"
   ],
+  "added": [],
+  "outside_unchanged_baseline": [],
   "log_sha256": {
     "before": "dd85a14b3d1f01c93674271c36a352b43dec23fb3b57f4a8b4539d8d393c53cb",
-    "after": "34d427262bc66787f6fdbee4406628d9dc64a3108a8cf68743840c04a073baa3"
-  }
+    "after": "4ba4be3383d6c9a8c660f8d08f26b51c0b2fdf4fbcd6d8801b2e6184bec59aa3"
+  },
+  "current_failures": 85,
+  "configured_baseline_failures": 86,
+  "exact_name_gate": "pass; no new names; one previously allowed failure removed",
+  "restricted_role_rls": "unresolved: share-token lookup precedes app.current_account_id; owner/storage contract pending"
 }
