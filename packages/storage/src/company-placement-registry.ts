@@ -1,4 +1,5 @@
 import type { StorageClient } from "./index.js";
+import { randomUUID } from "node:crypto";
 import {
   CompanyStorageResolutionError,
   type CompanyPlacementRecord,
@@ -15,6 +16,19 @@ const placementStatuses = ["READY", "PROVISIONING", "MIGRATING", "FAILED", "DISA
 export interface GlobalRegistryStorageInput {
   readonly storage: StorageClient;
   readonly storage_role: "GLOBAL_REGISTRY";
+}
+
+export interface CompanyPlacementRegistryWriter {
+  /** Reserve an opaque placement before any company database is created. */
+  beginProvisioning(input: { company_id: string; schema_version: string }): Promise<CompanyPlacementRecord>;
+  /** Record a failed or disabled placement without changing its physical identity. */
+  setUnavailable(input: {
+    company_id: string;
+    placement_id: string;
+    placement_revision: number;
+    expected_status: "PROVISIONING" | "MIGRATING" | "READY";
+    status: "FAILED" | "DISABLED";
+  }): Promise<CompanyPlacementRecord>;
 }
 
 function requireGlobalRegistry(input: GlobalRegistryStorageInput): StorageClient {
@@ -134,6 +148,69 @@ export async function createSqliteCompanyPlacementRegistry(
       if (rows.length === 0) return null;
       if (rows.length !== 1) throw new CompanyStorageResolutionError("placement-invalid");
       return placementFromRow(rows[0]);
+    },
+  });
+}
+
+/**
+ * Create the narrowly scoped GLOBAL_REGISTRY mutation port used by a trusted
+ * provisioning owner. It can reserve placements and fail/disable them, but it
+ * deliberately cannot mark a placement READY: only an owner that performs the
+ * physical database, schema and file health checks may do that transition.
+ */
+export async function createSqliteCompanyPlacementRegistryWriter(
+  input: GlobalRegistryStorageInput,
+): Promise<CompanyPlacementRegistryWriter> {
+  const storage = requireGlobalRegistry(input);
+  // Reuse the reader's schema validation before exposing any mutation API.
+  await createSqliteCompanyPlacementRegistry(input);
+  return Object.freeze({
+    async beginProvisioning({ company_id, schema_version }: { company_id: string; schema_version: string }) {
+      if (!validId(company_id) || !validId(schema_version)) {
+        throw new CompanyStorageResolutionError("placement-invalid");
+      }
+      const record = Object.freeze({
+        company_id,
+        placement_id: randomUUID(),
+        placement_revision: 1,
+        provider: "sqlite" as const,
+        schema_version,
+        status: "PROVISIONING" as const,
+      });
+      await storage.transaction(async tx => {
+        const existing = await tx.query<{ company_id: string }>(
+          `SELECT company_id FROM ${placementTable} WHERE company_id = $1`, [company_id],
+        );
+        if (existing.rowCount !== 0) throw new Error("company-placement-already-registered");
+        await tx.query(
+          `INSERT INTO ${placementTable}
+            (company_id, placement_id, placement_revision, provider, schema_version, status)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [record.company_id, record.placement_id, record.placement_revision, record.provider,
+            record.schema_version, record.status],
+        );
+      });
+      return record;
+    },
+    async setUnavailable(input: Parameters<CompanyPlacementRegistryWriter["setUnavailable"]>[0]) {
+      if (!validId(input.company_id) || !validPlacementId(input.placement_id)
+        || !Number.isSafeInteger(input.placement_revision) || input.placement_revision < 1
+        || !["PROVISIONING", "MIGRATING", "READY"].includes(input.expected_status)
+        || !["FAILED", "DISABLED"].includes(input.status)) {
+        throw new CompanyStorageResolutionError("placement-invalid");
+      }
+      const changed = await storage.query(
+        `UPDATE ${placementTable} SET status = $1
+          WHERE company_id = $2 AND placement_id = $3 AND placement_revision = $4 AND status = $5`,
+        [input.status, input.company_id, input.placement_id, input.placement_revision, input.expected_status],
+      );
+      if (changed.rowCount !== 1) throw new CompanyStorageResolutionError("placement-stale");
+      const record = await storage.query<PlacementRow>(
+        `SELECT company_id, placement_id, placement_revision, provider, schema_version, status
+           FROM ${placementTable} WHERE company_id = $1`, [input.company_id],
+      );
+      if (record.rows.length !== 1) throw new CompanyStorageResolutionError("placement-missing");
+      return placementFromRow(record.rows[0]);
     },
   });
 }

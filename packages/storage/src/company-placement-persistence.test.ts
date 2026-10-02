@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   createSqliteCompanyPlacementRegistry,
+  createSqliteCompanyPlacementRegistryWriter,
   initializeSqliteCompanyPlacementRegistry,
 } from "./company-placement-registry.js";
 import { createSqliteCompanyStoreOpener } from "./company-store-opener.js";
@@ -147,6 +148,31 @@ describe("persistent SQLite company placements", () => {
     expect((await reopened.client.query<{ company_id: string; label: string }>(
       "SELECT company_id, label FROM work_orders WHERE id = $1", ["same-work-order"],
     )).rows).toEqual([{ company_id: "company-a", label: "A-only row" }]);
+  });
+
+  it("reserves opaque placements in PROVISIONING and uses compare-and-set for failure state", async () => {
+    const directory = tempDirectory();
+    const storage = trackStorage(join(directory, "global-registry.sqlite"));
+    await initializeSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+    const writer = await createSqliteCompanyPlacementRegistryWriter({ storage, storage_role: "GLOBAL_REGISTRY" });
+    const reader = await createSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+
+    const reserved = await writer.beginProvisioning({ company_id: "company-a", schema_version: "native-fsm/1" });
+    expect(reserved).toMatchObject({ company_id: "company-a", status: "PROVISIONING", provider: "sqlite", placement_revision: 1 });
+    expect(reserved.placement_id).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(await reader.findByCompanyId("company-a")).toEqual(reserved);
+    await expect(writer.beginProvisioning({ company_id: "company-a", schema_version: "native-fsm/1" }))
+      .rejects.toThrow();
+
+    await expect(writer.setUnavailable({
+      company_id: "company-a", placement_id: reserved.placement_id,
+      placement_revision: reserved.placement_revision, expected_status: "PROVISIONING", status: "FAILED",
+    })).resolves.toMatchObject({ status: "FAILED" });
+    await expect(writer.setUnavailable({
+      company_id: "company-a", placement_id: reserved.placement_id,
+      placement_revision: reserved.placement_revision, expected_status: "PROVISIONING", status: "DISABLED",
+    })).rejects.toMatchObject({ code: "placement-stale" });
+    expect(Object.keys(writer).sort()).toEqual(["beginProvisioning", "setUnavailable"]);
   });
 
   it("fails closed for missing, unready, and revision-changed persistent placements", async () => {
