@@ -58,13 +58,13 @@ The hosted test exercises the real #302 fixture credential issuer/registry and #
 
 ## Current artifact record
 
-For this continuation, the package builder produced 19 files for plugin version **0.1.1** at:
+For this continuation, the package builder produced 19 files for plugin version **0.1.2** at:
 
 `/tmp/1050-package-final/titan_workforce.tar.gz`
 
-SHA256: `8fad0ede774ec0d6dc863384fbebf8b65f3000fc31b49f3b88c892ba237707c8`
+SHA256: `b702ce34e083e458c9d2cf231ebc47d5389d8ed63cace919a56d71469ca44ecd`
 
-The generated `.sha256` sidecar records the same value. Rebuild and refresh this record after any source change.
+The `.sha256` sidecar records the same value; rebuild and refresh this record after any source change.
 
 ## Approved host update and rollback procedure
 
@@ -76,4 +76,10 @@ This is a procedure for a later, separately approved deployment; it has not been
 4. If the package fails, restore the retained archive through DirectAdmin Plugin Manager and repeat read-only checks.
 5. Keep runtime state, company storage, credentials, revocations and evidence under their canonical owners throughout. Never use plugin rollback to restore or delete them.
 
-The role executable does not read DirectAdmin CGI stdin/environment values. The package test supplies hostile POST-like stdin and environment values and verifies they do not appear in the rendered page; this is an isolation test, not proof of a working DirectAdmin transport. Installed Dev Access 1.1.3 has a reported POST CSRF failure, and #1048 must verify the actual environment/stdin bridge before session bootstrap and POST intents can be commissioned.
+The role executable does not read DirectAdmin CGI stdin/environment values. The package test supplies hostile POST stdin and DA request environment values and verifies they do not appear in the rendered page; this is an isolation test, not proof of a working DirectAdmin transport. Installed Dev Access 1.1.3 has a reported POST CSRF failure; #1048 must certify its own Developer Portal form path, while Workforce separately needs #812/#1049 route wiring and live DirectAdmin transport/session tests.
+
+## Install readiness
+
+**Can execute now:** package build, deterministic archive/checksum validation, staged install/update/uninstall preflight, and each role script as a CLI renderer. DirectAdmin's documented `pipe_post=yes` mode supplies `POST=stdin=true` and POST bytes on stdin; the packaged role process has been exercised with these values and ignores request data safely. Install/update scripts only preflight and do not mutate a host.
+
+**Unavailable until owners commission and verify it:** same-origin `/v1/directadmin/...` routing to the shared gateway; trusted DirectAdmin session-to-HTTP-Request adaptation; the #302-backed #1049 actor/company/CSRF bridge and nonce bootstrap; #811's live projection and governed intent owners; and real DirectAdmin admin/reseller/user installation, POST, Evolution theme, update, rollback and session tests. The CGI CLI parser in #1048 Developer Portal is specific to that plugin and does not supply Workforce identity or routes.

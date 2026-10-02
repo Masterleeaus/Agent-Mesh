@@ -48,9 +48,12 @@ test('published SDK without commissioned CSRF/session fails closed in real execu
     execFileSync('tar', ['-xzf', result.archivePath, '-C', folder]);
     browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
     for (const role of ['admin', 'reseller', 'user']) {
+      const hostilePost = 'company_id=attacker-company&csrf=attacker-token&action=cancel';
       const html = execFileSync(join(folder, role, 'index.html'), [], {
-        encoding: 'utf8', input: 'company_id=attacker-company&csrf=attacker-token',
-        env: { ...process.env, REQUEST_METHOD: 'POST', QUERY_STRING: 'company_id=query-company', CONTENT_TYPE: 'application/x-www-form-urlencoded', CONTENT_LENGTH: '48', TITAN_COMPANY_ID: 'env-company', TITAN_DIRECTADMIN_CSRF: 'env-token', HTTP_COOKIE: 'session=attacker-session' },
+        encoding: 'utf8', input: hostilePost,
+        // DirectAdmin's documented pipe_post=yes convention passes POST=stdin=true
+        // and the parsed form body on stdin to the executable role route.
+        env: { ...process.env, POST: 'stdin=true', REQUEST_METHOD: 'POST', QUERY_STRING: 'pipe_post=yes', CONTENT_TYPE: 'application/x-www-form-urlencoded', CONTENT_LENGTH: String(Buffer.byteLength(hostilePost)), TITAN_COMPANY_ID: 'env-company', TITAN_DIRECTADMIN_CSRF: 'env-token', HTTP_COOKIE: 'session=attacker-session' },
       });
       assert.doesNotMatch(html, /attacker-company|attacker-token|query-company|env-company|env-token|attacker-session/);
       const page = await browser.newPage();

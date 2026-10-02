@@ -16,7 +16,7 @@ async function fixture(t) {
   for (const file of packageFiles) {
     await mkdir(dirname(join(sourceDir, file)), { recursive: true });
     if (file.startsWith('scripts/')) await copyFile(join(pluginRoot, file), join(sourceDir, file));
-    else if (file === 'plugin.conf') await writeFile(join(sourceDir, file), 'name=Titan Workforce\nauthor=Titan Zero\nversion=0.1.1\nactive=yes\n');
+    else if (file === 'plugin.conf') await writeFile(join(sourceDir, file), 'name=Titan Workforce\nauthor=Titan Zero\nversion=0.1.2\nactive=yes\n');
     else await writeFile(join(sourceDir, file), `Fixture only: ${file}\n`);
   }
   const sdkModulePath = join(root, 'compiled-sdk.mjs');

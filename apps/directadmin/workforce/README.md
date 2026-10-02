@@ -23,6 +23,22 @@ DirectAdmin POST/environment bridge is not assumed to work. Installed Dev Access
 1.1.3 has a reported CSRF failure and #1048 is repairing and verifying that bridge.
 Until the host request owner proves it, session bootstrap and governed POSTs remain
 uncommissioned and the cockpit stays unavailable/denied.
+DirectAdmin documents role entrypoints as executable scripts receiving request data
+through process environment; `pipe_post=yes` sets `POST=stdin=true` and delivers the
+POST body on stdin. The Workforce test now launches the packaged role executable as
+a real CLI child process with that transport and hostile identity/CSRF fields; it
+confirms the renderer ignores them. This checks the executable boundary, not a live
+DirectAdmin server or a functioning API route.
+
+The shared #1049 browser client requests same-origin `/v1/directadmin/...` routes and
+its server bridge validates a normal HTTP Request (origin, fetch-site, session cookie,
+CSRF, and canonical identity). This plugin's role route is only the HTML renderer;
+it does not translate DirectAdmin's CGI environment/stdin into that Request or mount
+those API paths. #1048's Developer Portal form parser is plugin-specific and cannot
+commission Workforce. #812 owns the Server Node HTTP/request route composition, using
+#1049's shared identity/CSRF bridge; #811 owns only Workforce projection and governed
+intent semantics. See the install-readiness checklist in
+`docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
 states, permitted lifecycle intent submission and receipt/evidence references.
@@ -51,7 +67,7 @@ The builder requires the current canonical browser session and package-validator
 and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
 staging-location preflight. The manifest controls the artifact version (currently
-0.1.1). Tests and development fixtures are excluded.
+0.1.2). Tests and development fixtures are excluded.
 
 Install/update only checks package/runtime prerequisites. It does not provision
 users, secrets, server processes, reverse proxies, permissions or databases.
