@@ -230,12 +230,29 @@ jobs:
           original_redis_ids="$("${smoke_compose[@]}" ps --status running --quiet redis)"
           [[ -n "$original_web_ids" && "$original_web_ids" != *$'\n'* ]]
           [[ -n "$original_redis_ids" && "$original_redis_ids" != *$'\n'* ]]
+          workforce_container_id="$(docker inspect --format '{{.Id}}' "$original_workforce_ids")"
           workforce_init_host_pid="$(docker inspect --format '{{.State.Pid}}' "$original_workforce_ids")"
           [[ "$workforce_init_host_pid" =~ ^[1-9][0-9]*$ ]]
           restart_count_before="$(docker inspect --format '{{.RestartCount}}' "$original_workforce_ids")"
           [[ "$restart_count_before" =~ ^[0-9]+$ ]]
-          # Signal the daemon-owned process so Docker observes a crash and applies restart policy.
-          sudo kill --signal KILL "$workforce_init_host_pid"
+          # Docker applies restart policy after a container has been up for at least 10 seconds.
+          sleep 12
+          [[ "$(docker inspect --format '{{.State.Running}} {{.State.Pid}}' "$original_workforce_ids")" \
+            == "true $workforce_init_host_pid" ]]
+          # Use a pidfd and verify cgroup ownership so a stale/reused host PID cannot hit another process.
+          sudo python3 - "$workforce_init_host_pid" "$workforce_container_id" <<'PY'
+          import os, pathlib, signal, sys
+          process_id = int(sys.argv[1])
+          expected_container_id = sys.argv[2]
+          process_fd = os.pidfd_open(process_id)
+          try:
+              process_cgroup = pathlib.Path(f'/proc/{process_id}/cgroup').read_text(encoding='utf-8')
+              if expected_container_id not in process_cgroup:
+                  raise SystemExit('refusing to signal a PID outside the Workforce container cgroup')
+              signal.pidfd_send_signal(process_fd, signal.SIGKILL)
+          finally:
+              os.close(process_fd)
+          PY
           recovered=0
           for attempt in $(seq 1 30); do
             running_workforce_ids="$("${smoke_compose[@]}" ps --status running --quiet workforce)"
