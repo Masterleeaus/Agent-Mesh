@@ -11,7 +11,7 @@ const routes = [
   ['/assessment-implementation/', 'assessment-implementation/index.html', 'Assessment & implementation'],
   ['/service-packages/', 'service-packages/index.html', 'Service packages'],
   ['/faqs/', 'faqs/index.html', 'FAQs'],
-  ['/assessment-path/', 'assessment-path/index.html', 'Assessment path'],
+  ['/request-assessment/', 'request-assessment/index.html', 'Request assessment'],
 ]
 const canonicalOrigin = 'https://personal.titanzero.pro'
 const readRoute = (file) => readFile(path.join(root, file), 'utf8')
@@ -68,6 +68,9 @@ test('the noindex review site collects no information or donor claims', async ()
   }
   const robots = await readFile(path.join(root, 'robots.txt'), 'utf8')
   assert.equal(robots, 'User-agent: *\nDisallow: /\n')
+  const requestPage = await readRoute('request-assessment/index.html')
+  assert.match(requestPage, /cannot receive or submit that request/)
+  assert.match(requestPage, /no way to submit an assessment request here/)
 })
 
 test('heading outline does not skip levels', async () => {

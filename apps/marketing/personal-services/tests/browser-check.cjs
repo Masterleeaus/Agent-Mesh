@@ -11,7 +11,7 @@ const routes = [
   ['/assessment-implementation/', 'Assessment and implementation | Titan Zero Personal Services'],
   ['/service-packages/', 'Service packages | Titan Zero Personal Services'],
   ['/faqs/', 'FAQs | Titan Zero Personal Services'],
-  ['/assessment-path/', 'Assessment path | Titan Zero Personal Services'],
+  ['/request-assessment/', 'Request an assessment | Titan Zero Personal Services'],
 ]
 const mime = {
   '.html': 'text/html; charset=utf-8',
