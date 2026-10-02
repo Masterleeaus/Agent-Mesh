@@ -226,8 +226,10 @@ jobs:
             -f "$RUNNER_TEMP/workforce-smoke.compose.yml")
           original_workforce_ids="$("${smoke_compose[@]}" ps --all --quiet workforce)"
           [[ -n "$original_workforce_ids" && "$original_workforce_ids" != *$'\n'* ]]
-          original_peer_ids="$("${smoke_compose[@]}" ps --status running --quiet web redis | sort)"
-          [[ "$(printf '%s\n' "$original_peer_ids" | sed '/^$/d' | wc -l)" -eq 2 ]]
+          original_web_ids="$("${smoke_compose[@]}" ps --status running --quiet web)"
+          original_redis_ids="$("${smoke_compose[@]}" ps --status running --quiet redis)"
+          [[ -n "$original_web_ids" && "$original_web_ids" != *$'\n'* ]]
+          [[ -n "$original_redis_ids" && "$original_redis_ids" != *$'\n'* ]]
           restart_count_before="$(docker inspect --format '{{.RestartCount}}' "$original_workforce_ids")"
           [[ "$restart_count_before" =~ ^[0-9]+$ ]]
           docker exec "$original_workforce_ids" node -e 'process.kill(1, "SIGKILL")' \
@@ -254,8 +256,10 @@ jobs:
           }
           all_workforce_ids="$("${smoke_compose[@]}" ps --all --quiet workforce)"
           [[ "$all_workforce_ids" == "$original_workforce_ids" ]]
-          peer_ids_after_restart="$("${smoke_compose[@]}" ps --status running --quiet web redis | sort)"
-          [[ "$peer_ids_after_restart" == "$original_peer_ids" ]]
+          web_ids_after_restart="$("${smoke_compose[@]}" ps --status running --quiet web)"
+          redis_ids_after_restart="$("${smoke_compose[@]}" ps --status running --quiet redis)"
+          [[ "$web_ids_after_restart" == "$original_web_ids" ]]
+          [[ "$redis_ids_after_restart" == "$original_redis_ids" ]]
           restart_readiness_status=$(curl --silent --show-error --output "$RUNNER_TEMP/workforce-ready-after-restart.json" \
             --write-out '%{http_code}' http://127.0.0.1:3010/ready)
           [[ "$restart_readiness_status" == "503" ]]
@@ -291,8 +295,10 @@ jobs:
           [[ -z "$workforce_ids_after_repeat" ]]
           running_worker_ids="$("${smoke_compose[@]}" ps --status running --quiet worker)"
           [[ -z "$running_worker_ids" ]]
-          peer_ids_after_removal="$("${smoke_compose[@]}" ps --status running --quiet web redis | sort)"
-          [[ "$peer_ids_after_removal" == "$original_peer_ids" ]]
+          web_ids_after_removal="$("${smoke_compose[@]}" ps --status running --quiet web)"
+          redis_ids_after_removal="$("${smoke_compose[@]}" ps --status running --quiet redis)"
+          [[ "$web_ids_after_removal" == "$original_web_ids" ]]
+          [[ "$redis_ids_after_removal" == "$original_redis_ids" ]]
           test -f "$RUNNER_TEMP/titan-data/runtime/workforce.db"
           test -f "$RUNNER_TEMP/titan-data/runtime/workforce-identity.db"
           test -d "$WORKFORCE_COMPANY_STORE_HOST_ROOT"
