@@ -49,6 +49,9 @@ class GovernanceContractTests(unittest.TestCase):
             self.assertIn(required, claim_rules)
         self.assertIn('It does not relax human review, required checks, tenant isolation', contract)
         self.assertIn('only after full completion', contract)
+        mission_template = (ROOT / 'docs/agent/MISSION_TEMPLATE.md').read_text()
+        self.assertIn('one-hour recovery procedure in root `AGENTS.md`', mission_template)
+        self.assertIn('may proceed sequentially', mission_template)
 
     def test_stale_claim_eligibility_requires_all_fresh_facts(self):
         now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
