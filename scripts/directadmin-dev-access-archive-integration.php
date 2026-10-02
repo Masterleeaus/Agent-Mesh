@@ -211,7 +211,7 @@ $trailingByteEnvironment = array_replace($baseEnvironment, [
     'CONTENT_LENGTH' => (string)strlen($trailingSeparatorBody),
 ]);
 [$rejected] = integration_run_role($entrypoint, $pluginRoot, $trailingByteEnvironment, $trailingSeparatorBody);
-integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'an empty trailing form field must fail closed with the reported diagnostic (observed=' . integration_rejection_kind($rejected) . ')');
+integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'an empty trailing form field must fail closed with the reported diagnostic');
 integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'rejected trailing-separator form must not change authorized_keys');
 
 $invalidHome = $fixture . '/embedded-newline-home';
