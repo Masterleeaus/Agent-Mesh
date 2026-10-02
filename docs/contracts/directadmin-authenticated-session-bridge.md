@@ -1,6 +1,6 @@
 # DirectAdmin authenticated session bridge — #1049
 
-Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / PR #1183 head `bd3075ef91222e32a23a1f09111a84b3c01af515` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). Its shared dependency changes are merged with provenance, not copied or reimplemented here.
+Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / PR #1183 head `363d3f018e971d09309d95e87c56bd5209511b9f` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). Its shared dependency changes are merged with provenance, not copied or reimplemented here.
 
 ## Canonical owner and API
 
@@ -67,11 +67,11 @@ node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/t
 PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers node --test packages/titan-platform/tests/directadmin-browser.browser.mjs
 ```
 
-197 Node tests pass: 61 bridge/consumer cases, 12 SDK cases, 61 canonical security/session cases, 59 canonical credential cases, and 4 package cases. Fixtures use ephemeral keys, actual canonical issuance and SQLite. The three real consumer modules run through a disposable HTTP gateway in Node integration tests.
+198 Node tests pass: 61 bridge/consumer cases, 12 SDK cases, 61 canonical security/session cases, 60 canonical credential cases, and 4 package cases. Fixtures use ephemeral keys, actual canonical issuance and SQLite. The three real consumer modules run through a disposable HTTP gateway in Node integration tests.
 
 One additional Chromium integration test passes over disposable loopback HTTPS. It exercises all three consumers, actual browser Origin/Fetch Metadata/CSRF headers, HttpOnly/Strict cookie handling, keyboard refresh, text-only injection-safe rendering, incompatible versions, cross-tab company invalidation, secure cookie rotation, reconnect to company B and logout cookie deletion. Its temporary self-signed key/certificate and isolated browser trust exception exist only for the fixture; cleanup removes them. No system trust setting or user server was changed. This is real-browser SDK evidence, not DirectAdmin Evolution host certification.
 
-The initial independent review found a microtask invalidation race; fixed and all four regression variants pass. Follow-up probes verified redacted exceptions, concurrency recovery and stalled-body cancellation. A fresh independent review of canonical delegation found the switch-delivery gap; it was fixed by delivering the canonical replacement only as an HttpOnly cookie. Required PR review remains independent of local test evidence.
+The initial independent review found a microtask invalidation race; fixed and all four regression variants pass. Follow-up probes verified redacted exceptions, concurrency recovery and stalled-body cancellation. A fresh independent review of canonical delegation found the switch-delivery gap; it was fixed by delivering the canonical replacement only as an HttpOnly cookie. The reviewer reran the focused bridge/typecheck and Chromium switch/reconnect/logout checks successfully and found no remaining API mismatch. Required PR review remains independent of local test evidence.
 
 On published head `51b22e92569b2d76ce97078fe3975ce7be091590`, corrected template/linkage passed Claim Gate run `36952805244`. Workforce, Production Convergence, Personal Zero, Browser Node and Source Evidence passed. General CI failed the worker regression gate (35 failures vs baseline 24); VPS smoke failed compose `TZ_ENV_FILE` handling. Subsequent merged #302 prerequisites include the shared owners' worker/VPS fixes; those are not independent SDK edits.
 
