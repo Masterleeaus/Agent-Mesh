@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { getCurrentSiteContext, getIndustryDirectoryLinks } from '../config/siteContext'
+import { getCurrentSiteContext } from '../config/siteContext'
 
 const footerLinks = {
   Product: [
@@ -110,7 +110,7 @@ function ConfiguredFooter({ context }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
         <div>
           <Link to="/" className="flex items-center gap-2 font-extrabold text-lg"><span className="w-2 h-2 bg-nx-purple rounded-full" />{brand}</Link>
-          <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">{context.kind === 'industry' ? `${context.site.name} product information, workflows and work surfaces.` : 'The Titan Zero platform, its capabilities and the work surfaces in development.'}</p>
+          <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">{context.kind === 'industry' ? `${context.site.name} product information, workflows and work surfaces.` : 'Titan Zero Cleaning SaaS, its managed-service option and the work surfaces in development.'}</p>
         </div>
         {Object.entries(columns).map(([heading, links]) => <div key={heading}>
           <h4 className="text-xs font-semibold text-nx-muted uppercase tracking-wider mb-4">{heading === 'OtherIndustries' ? 'Other industries' : heading}</h4>
