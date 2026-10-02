@@ -10,6 +10,7 @@ on:
       - 'scripts/db-migrate-runner.test.mjs'
       - 'scripts/db-migrate-postgres.integration.mjs'
       - 'scripts/export-migration-history-evidence.mjs'
+      - 'scripts/export-migration-history-evidence-v2.mjs'
       - 'db/MIGRATION-OWNERSHIP.md'
       - '.github/workflows/migration-history.yml'
   workflow_dispatch:
