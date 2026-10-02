@@ -1,5 +1,8 @@
 export type MissionPolicyRule =
   | { kind: "max_amount"; currency: string; amount: number }
+  | { kind: "max_provider_cost"; currency: string; amount: number }
+  | { kind: "max_messages"; count: number }
+  | { kind: "max_recipients"; count: number }
   | { kind: "requires_approval"; operation: string }
   | { kind: "allowed_capabilities"; capabilities: string[] };
 
@@ -30,6 +33,9 @@ export type MissionAuthorityContext = {
   operation: string;
   capability: string;
   amount?: number;
+  provider_cost?: number;
+  messages?: number;
+  recipients?: number;
   currency?: string;
   now?: string;
   mission_state?: "active" | "paused" | "closed";
@@ -72,9 +78,13 @@ export function compileMissionAuthorityPolicy(input: MissionPolicyInput): Compil
   if (effective_until && Date.parse(effective_until) <= Date.parse(effective_from)) throw new Error("policy-period-invalid");
   if (!Array.isArray(input.rules) || input.rules.length === 0) throw new Error("policy-rules-required");
   const rules = input.rules.map((rule) => {
-    if (rule.kind === "max_amount") {
-      if (!Number.isFinite(rule.amount) || rule.amount < 0) throw new Error("policy-amount-invalid");
+    if (rule.kind === "max_amount" || rule.kind === "max_provider_cost") {
+      if (!Number.isFinite(rule.amount) || rule.amount < 0) throw new Error(rule.kind === "max_amount" ? "policy-amount-invalid" : "policy-provider-cost-invalid");
       return { ...rule, currency: required(rule.currency, "currency").toUpperCase() };
+    }
+    if (rule.kind === "max_messages" || rule.kind === "max_recipients") {
+      if (!Number.isInteger(rule.count) || rule.count < 0) throw new Error(rule.kind === "max_messages" ? "policy-message-count-invalid" : "policy-recipient-count-invalid");
+      return { ...rule };
     }
     if (rule.kind === "requires_approval") return { ...rule, operation: required(rule.operation, "operation") };
     if (rule.kind === "allowed_capabilities") {
@@ -108,6 +118,17 @@ export function evaluateMissionAuthorityPolicy(policy: CompiledMissionPolicy, co
     return result(policy, "deny", "currency-mismatch");
   if (ceiling?.kind === "max_amount" && (context.amount == null || !Number.isFinite(context.amount) || context.amount > ceiling.amount))
     return result(policy, "deny", "amount-limit-exceeded");
+  const providerCost = policy.rules.find((rule) => rule.kind === "max_provider_cost");
+  if (providerCost?.kind === "max_provider_cost" && (context.currency ?? "").toUpperCase() !== providerCost.currency)
+    return result(policy, "deny", "provider-cost-currency-mismatch");
+  if (providerCost?.kind === "max_provider_cost" && (context.provider_cost == null || !Number.isFinite(context.provider_cost) || context.provider_cost > providerCost.amount))
+    return result(policy, "deny", "provider-cost-limit-exceeded");
+  const messageLimit = policy.rules.find((rule) => rule.kind === "max_messages");
+  if (messageLimit?.kind === "max_messages" && (!Number.isInteger(context.messages) || context.messages! < 0 || context.messages! > messageLimit.count))
+    return result(policy, "deny", "message-limit-exceeded");
+  const recipientLimit = policy.rules.find((rule) => rule.kind === "max_recipients");
+  if (recipientLimit?.kind === "max_recipients" && (!Number.isInteger(context.recipients) || context.recipients! < 0 || context.recipients! > recipientLimit.count))
+    return result(policy, "deny", "recipient-limit-exceeded");
   if (policy.rules.some((rule) => rule.kind === "requires_approval" && rule.operation === context.operation))
     return result(policy, "approval_required", "policy-approval-required");
   return result(policy, "allow", "policy-constraints-satisfied");
@@ -116,4 +137,34 @@ export function evaluateMissionAuthorityPolicy(policy: CompiledMissionPolicy, co
 function result(policy: CompiledMissionPolicy, decision: MissionAuthorityResult["decision"], reason: string): MissionAuthorityResult {
   return Object.freeze({ decision, reason, policy_id: policy.policy_id, policy_version: policy.version,
     constraints: Object.freeze(policy.rules.map((rule) => rule.kind)) });
+}
+
+
+export type MissionAuthorityLimitsProjection = Readonly<{
+  currency: string | null;
+  max_amount: number | null;
+  max_provider_cost: number | null;
+  max_messages: number | null;
+  max_recipients: number | null;
+}>;
+
+/**
+ * Projects accepted mission policy ceilings into the canonical authority
+ * requirement shape. This projection can only add/narrow ceilings; it grants no
+ * permission, entitlement, approval or autonomy by itself.
+ */
+export function projectMissionAuthorityLimits(policy: CompiledMissionPolicy): MissionAuthorityLimitsProjection {
+  const amount = policy.rules.find((rule) => rule.kind === "max_amount");
+  const provider = policy.rules.find((rule) => rule.kind === "max_provider_cost");
+  if (amount?.kind === "max_amount" && provider?.kind === "max_provider_cost" && amount.currency !== provider.currency)
+    throw new Error("policy-limit-currency-conflict");
+  const messages = policy.rules.find((rule) => rule.kind === "max_messages");
+  const recipients = policy.rules.find((rule) => rule.kind === "max_recipients");
+  return Object.freeze({
+    currency: amount?.kind === "max_amount" ? amount.currency : provider?.kind === "max_provider_cost" ? provider.currency : null,
+    max_amount: amount?.kind === "max_amount" ? amount.amount : null,
+    max_provider_cost: provider?.kind === "max_provider_cost" ? provider.amount : null,
+    max_messages: messages?.kind === "max_messages" ? messages.count : null,
+    max_recipients: recipients?.kind === "max_recipients" ? recipients.count : null,
+  });
 }
