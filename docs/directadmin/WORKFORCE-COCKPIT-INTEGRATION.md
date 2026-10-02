@@ -272,3 +272,21 @@ separate `Set-Cookie` behavior; and a supported host Node runtime. Full #1050
 roster/detail, conversations, hierarchy/Missions, trust/autonomy, capacity/value,
 attendance, department pack, earned autonomy, and evidence journeys are not
 proved by this bounded consumer/package work. #1050 remains open.
+
+
+## Latest relay boundary after #1245 merge — 2026-10-02
+
+PR #1245 merged to main at `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`.
+That source removes the experimental Apache `:443` cookie filter and keeps the
+production RAW handler disabled with sanitized `503 cookie_boundary_unverified`.
+The in-process fake-loader integration remains test-only; there is no production
+configuration that enables forwarding. The d508 source run above is historical
+compatibility evidence for the SDK/session changes and must not be read as the
+current production relay behavior.
+
+The current #1050 follow-up PR tests its extracted relay fixture using an in-process
+dependency injection seam and the merged #1245 source. These checks do not exercise
+Apache, DirectAdmin CGI, a real cookie boundary, host install, production credentials,
+or a live Workforce upstream. #1050 remains open, and production commissioning is
+blocked until an approved private transport and cookie boundary are independently
+verified on an authorized disposable host.

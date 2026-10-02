@@ -198,7 +198,7 @@ supported host Node runtime. No credentials, live package, service, firewall,
 DNS, or security setting was changed. This remains a package verification
 candidate, not a commissioned plugin or mission completion claim.
 
-## Current-source v0.1.5 candidate — main d508a269
+## Historical current-source v0.1.5 candidate — main d508a269
 
 The branch was fast-forwarded from its claimed base `c46774cc` to exact current
 main `d508a2695fccc36e039f18e60cb96adfbe318813` after #1243. The exact shared
@@ -239,3 +239,15 @@ Draft PR #1245 removes the filter and disables production forwarding; it is not
 merged and offers no working production relay contract. The 39/39 cockpit
 result is local evidence; the secretless Node 22 hosted CI job belongs with
 active #1157 owner `agent/issue-1157` and was not edited here.
+
+
+## Relay status after #1245 merge — 2026-10-02
+
+#812 follow-up PR #1245 merged at `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`.
+It removed the experimental Apache `:443` cookie filter and disables production
+RAW forwarding with sanitized `503 cookie_boundary_unverified`. The preceding
+d508 candidate tests remain historical; the current #1050 follow-up rechecks its
+package and extracted test seam against merged #1245. Neither the candidate nor
+its test-only injection path is production-install-ready. Verify DirectAdmin CGI,
+cookie isolation and the private Workforce transport on a commissioned disposable
+host before enabling forwarding.

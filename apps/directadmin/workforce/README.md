@@ -65,15 +65,13 @@ head `589658ef10cf4c66af5ebb574799f281b126ced5`, whose production default is
 not current main or commissioning. Neither run exercises Apache, DirectAdmin
 CGI, or a live cookie boundary.
 
-**Commissioning blocker:** current main still contains the experimental #812
-Apache `:443` cookie filter, which fails open when the Titan cookie is split
-across duplicate physical `Cookie` headers. The unmerged #812 draft PR #1245
-removes that filter and disables production RAW forwarding with a sanitized 503;
-it supplies no working production relay contract. The `:2222` RAW parser's
-duplicate-header behavior is a separate boundary and does not repair or verify
-the Apache filter. Do not commission or install until the cookie boundary and
-the replacement private transport are independently verified on an authorized
-disposable Apache/DirectAdmin host using cookie-name-only evidence. See the exact
+**Commissioning blocker:** merged #812 follow-up PR #1245 removed the experimental
+Apache `:443` cookie filter and makes the production RAW entrypoint return
+sanitized 503 `cookie_boundary_unverified` before forwarding. There is no
+production relay contract to commission yet. DirectAdmin `:2222` RAW parsing,
+private transport and cookie behavior remain unverified. Do not install or enable
+forwarding until the replacement boundary is independently verified on an
+authorized disposable Apache/DirectAdmin host using cookie-name-only evidence. See the exact
 run limits and remaining host inputs in
 `docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md`.
 
