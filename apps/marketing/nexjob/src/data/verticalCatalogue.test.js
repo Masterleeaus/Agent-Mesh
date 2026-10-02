@@ -128,10 +128,24 @@ test('availability labels are backed by explicit evidence references and release
     }
   }
   assert.equal(getAvailability('nativeMobile'), availabilityOffers.nativeMobile)
-  assert.equal(availabilityEvidence.previewObservation.observedOn, '2026-10-02')
-  assert.match(availabilityEvidence.previewObservation.result, /noindex,nofollow/)
-  assert.match(availabilityEvidence.previewObservation.result, /sign-up and login are disabled/)
-  assert.match(availabilityEvidence.applicationHostObservation.result, /no Titan Zero application/)
+  assert.equal(availabilityEvidence.apexSiteObservation.observedOn, '2026-10-02')
+  assert.match(availabilityEvidence.apexSiteObservation.result, /live v2 site/)
+  assert.match(availabilityEvidence.apexSiteObservation.result, /separate 20-profile host-aware review build/)
+  assert.match(availabilityEvidence.appLoginRouteObservation.result, /HTTP 404 for \/login and \/app/)
+  assert.match(availabilityEvidence.appLoginRouteObservation.result, /does not establish health or failure/)
+  assert.doesNotMatch(JSON.stringify(availabilityEvidence), /eight industry links|no Titan Zero application/i)
+  assert.equal(availabilityEvidence.noVerticalHostRelease.supportingReferences.length, 20)
+  assert.deepEqual(
+    new Set(availabilityEvidence.noVerticalHostRelease.supportingReferences),
+    new Set(verticalCatalogue.map(({ canonicalUrl }) => canonicalUrl)),
+  )
+  assert.match(availabilityEvidence.noVerticalHostRelease.result, /all 20 canonical HTTPS roots/)
+  assert.equal(availabilityOffers.verticalHostnames.label, 'Content not published')
+  assert.match(availabilityOffers.marketingCatalogue.explanation, /apex v2 site is live/)
+  assert.match(availabilityOffers.marketingCatalogue.explanation, /noindex review artifact/)
+  assert.equal(availabilityEvidence.pwaSource.reference, 'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171')
+  assert.match(availabilityEvidence.pwaSource.result, /does not treat apps\/web manifest or service-worker files as that PWA/)
+  assert.doesNotMatch(JSON.stringify(availabilityEvidence.pwaSource), /apps\/web\/(PRODUCT|public\/sw|scripts\/generate-pwa-icons)/)
   assert.equal(availabilityOffers.marketingCatalogue.state, 'in-development')
   assert.equal(availabilityOffers.verticalHostnames.state, 'planned')
   assert.equal(availabilityOffers.wordpressVerticalPlugin.state, 'planned')

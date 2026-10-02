@@ -212,8 +212,8 @@ function ConfiguredNavbar({ context }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-nx-border/60">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16 gap-4">
-        <Link to="/" aria-label={`${brand} home`} className="flex items-center gap-2 font-extrabold text-lg tracking-tight whitespace-nowrap">
-          <span className="w-2 h-2 bg-nx-purple rounded-full" />{brand}
+        <Link to="/" aria-label={`${brand} home`} className="flex min-w-0 items-center gap-2 font-extrabold text-lg tracking-tight whitespace-nowrap">
+          <span className="w-2 h-2 shrink-0 bg-nx-purple rounded-full" /><span className="min-w-0 truncate">{brand}</span>
         </Link>
         <div className="hidden xl:flex items-center gap-1">
           {nav.map((item) => <SiteLink key={item.label} item={item} />)}
@@ -227,7 +227,7 @@ function ConfiguredNavbar({ context }) {
           </div>}
           {accountActions.map((item) => <SiteLink key={item.label} item={item} />)}
         </div>
-        <button type="button" className="xl:hidden text-nx-text p-2 -mr-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-purple" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} aria-controls="site-mobile-navigation">
+        <button type="button" className="xl:hidden shrink-0 text-nx-text p-2 -mr-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-purple" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} aria-controls="site-mobile-navigation">
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>

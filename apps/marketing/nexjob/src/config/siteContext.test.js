@@ -94,6 +94,20 @@ test('vertical navigation stays contextual and the directory links to one canoni
   assert.equal(links.find(({ label }) => label === 'Locksmith & Security').profile.useCases.length, 3)
 })
 
+test('every configured vertical gets one canonical menu entry for each other host', () => {
+  for (const site of VERTICAL_SITES) {
+    const context = resolveSiteContext(site.hostname)
+    assert.equal(context.kind, 'industry', site.hostname)
+    assert.equal(getCanonicalUrl(context), site.canonicalUrl, site.hostname)
+
+    const links = getIndustryDirectoryLinks().filter(({ host }) => host !== site.host)
+    assert.equal(links.length, 19, `${site.hostname} other-industry count`)
+    assert.equal(new Set(links.map(({ href }) => href)).size, 19, `${site.hostname} unique menu targets`)
+    assert.ok(links.every(({ href }) => href.startsWith('https://') && href.endsWith('.titanzero.io/')), site.hostname)
+    assert.ok(links.every(({ href }) => !href.includes('token=') && !href.includes('titanzero.pro')), site.hostname)
+  }
+})
+
 test('canonical and legacy URL helpers preserve contextual service links without sharing cookies or embedding credentials', () => {
   const hub = resolveSiteContext('titanzero.io')
   const cleaning = resolveSiteContext('cleaning.titanzero.io')
@@ -107,6 +121,8 @@ test('canonical and legacy URL helpers preserve contextual service links without
   const appSource = readFileSync(new URL('../App.jsx', import.meta.url), 'utf8')
   assert.match(appSource, /href="https:\/\/titanzero\.pro\/"/)
   assert.doesNotMatch(appSource, /ManagedSiteHome|\/what-we-manage|\/case-studies/)
+  assert.match(appSource, /Workflow examples do not confirm installed services/)
+  assert.doesNotMatch(appSource, /no live service is represented/)
   const hubSource = readFileSync(new URL('../pages/PlatformHubHome.jsx', import.meta.url), 'utf8')
   assert.match(hubSource, /Implementation and ongoing management are covered on the separate service site\./)
   assert.match(hubSource, /href="https:\/\/titanzero\.pro\/"/)

@@ -15,23 +15,24 @@ export const marketingSiteRoles = Object.freeze({
 })
 
 export const availabilityEvidence = Object.freeze({
-  previewObservation: {
-    kind: 'deployed-observation',
-    reference: 'https://titanzero.io/?preview=20261002',
+  apexSiteObservation: {
+    kind: 'parent-reported-deployment',
+    reference: 'https://titanzero.io/',
     observedOn: '2026-10-02',
-    result: 'HTTP 200; page declares noindex,nofollow; eight industry links are present; sign-up and login are disabled with a preview-unavailable notice.',
+    result: 'The parent confirms the apex currently serves the live v2 site. A read-only HTTP check returned a Titan Zero Field Services page shell. This does not establish that the separate 20-profile host-aware review build is deployed.',
   },
-  applicationHostObservation: {
-    kind: 'deployed-observation',
-    reference: 'https://app.titanzero.io/',
+  appLoginRouteObservation: {
+    kind: 'route-observation',
+    reference: 'https://app.titanzero.io/login',
+    supportingReferences: ['https://app.titanzero.io/', 'https://app.titanzero.io/app'],
     observedOn: '2026-10-02',
-    result: 'HTTP 200 returns the generic body “webserver is functioning normally”; no Titan Zero application or sign-in UI is served.',
+    result: 'Read-only GET returned HTTP 404 for /login and /app. This is a route-level observation only; it does not establish health or failure of the shared backend, APIs, workers, or other services.',
   },
   catalogueSource: {
     kind: 'repository-snapshot',
-    reference: 'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/commit/df52782d26e0387608351b254c785911f99a20e9',
-    sourceCommit: 'df52782d26e0387608351b254c785911f99a20e9',
-    result: 'The main marketing template has eight existing industry definitions. This snapshot is the product/site evidence baseline, not a release of the additional catalogue.',
+    reference: 'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/commit/795e8466f4a6e4a89439b4e9d7807c6e719ef401',
+    sourceCommit: '795e8466f4a6e4a89439b4e9d7807c6e719ef401',
+    result: 'The NexJob marketing source contains 20 host-aware catalogue profiles. They are marketing examples and host contexts, not evidence of runtime-pack certification or public installation.',
   },
   distributionGatewayMission: {
     kind: 'open-mission',
@@ -86,16 +87,10 @@ export const availabilityEvidence = Object.freeze({
     result: 'Native shared Flutter source and release-evidence requirements exist. No signed AAB/IPA or store release evidence was observed in the repository.',
   },
   pwaSource: {
-    kind: 'repository-source',
-    reference: 'apps/web/PRODUCT.md',
-    supportingReferences: [
-      'apps/web/public/sw.js',
-      'apps/web/scripts/generate-pwa-icons.mjs',
-      'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542',
-      'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1059',
-    ],
-    sourceCommit: 'df52782d26e0387608351b254c785911f99a20e9',
-    result: 'Product docs define the installable PWA as distinct from the full base app; apps/web has manifest/service-worker groundwork. No deployed installable PWA release was verified.',
+    kind: 'owner-mission',
+    reference: 'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171',
+    supportingReferences: ['https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1176'],
+    result: 'The separate one-app Zero/Go/Hub PWA is tracked by its canonical owner under #1171. This marketing review does not verify its current production release and does not treat apps/web manifest or service-worker files as that PWA.',
   },
   chatGptSource: {
     kind: 'repository-source',
@@ -123,10 +118,32 @@ export const availabilityEvidence = Object.freeze({
     result: 'The repository browser extension is Titan Code development tooling, not a released Titan Zero per-vertical customer/staff extension.',
   },
   noVerticalHostRelease: {
-    kind: 'deployment-audit',
-    reference: 'https://titanzero.io/?preview=20261002',
+    kind: 'deployed-host-audit',
+    reference: 'https://cleaning.titanzero.io/',
+    supportingReferences: [
+      'https://cleaning.titanzero.io/',
+      'https://window-cleaning.titanzero.io/',
+      'https://pressure-washing.titanzero.io/',
+      'https://pool-service.titanzero.io/',
+      'https://pest-control.titanzero.io/',
+      'https://plumbing.titanzero.io/',
+      'https://electrical.titanzero.io/',
+      'https://hvac.titanzero.io/',
+      'https://locksmith-security.titanzero.io/',
+      'https://appliance-equipment-repair.titanzero.io/',
+      'https://construction.titanzero.io/',
+      'https://roofing.titanzero.io/',
+      'https://tiling.titanzero.io/',
+      'https://concreting.titanzero.io/',
+      'https://renovations.titanzero.io/',
+      'https://landscaping-lawn-care.titanzero.io/',
+      'https://handyman-property-maintenance.titanzero.io/',
+      'https://mobile-services.titanzero.io/',
+      'https://painting.titanzero.io/',
+      'https://plastering.titanzero.io/',
+    ],
     observedOn: '2026-10-02',
-    result: 'Only the noindex main preview was observed. No vertical subdomain deployment, TLS readiness, or canonical-host redirect was evidenced by this content audit.',
+    result: 'Read-only GETs to all 20 canonical HTTPS roots returned HTTP 200 with the generic response “webserver is functioning normally”; none returned Titan Zero vertical content. TLS handshakes succeeded. This does not assess DNS or server configuration beyond those responses.',
   },
 })
 
@@ -134,14 +151,14 @@ export const availabilityOffers = Object.freeze({
   marketingCatalogue: {
     label: 'In development',
     state: 'in-development',
-    evidenceRefs: ['previewObservation', 'catalogueSource'],
-    explanation: 'The observed site is a noindex preview with eight industry links; the 20-vertical product hub is not yet a published catalogue.',
+    evidenceRefs: ['apexSiteObservation', 'catalogueSource', 'noVerticalHostRelease'],
+    explanation: 'The apex v2 site is live. This separate 20-profile host-aware build remains a noindex review artifact, and the vertical hosts do not currently serve its content.',
   },
   verticalHostnames: {
-    label: 'Planned',
+    label: 'Content not published',
     state: 'planned',
     evidenceRefs: ['noVerticalHostRelease'],
-    explanation: 'The target host pattern is defined, but no vertical subdomain deployment or redirect was evidenced.',
+    explanation: 'All 20 canonical HTTPS hostnames respond, but their public roots currently return a generic server page rather than Titan Zero vertical content.',
   },
   runtimeCleaning: {
     label: 'In development',
@@ -164,14 +181,14 @@ export const availabilityOffers = Object.freeze({
   nativeMobile: {
     label: 'In development',
     state: 'in-development',
-    evidenceRefs: ['mobileSource', 'applicationHostObservation'],
-    explanation: 'Native source exists, but signed release/store evidence and a working shared app host were not observed.',
+    evidenceRefs: ['mobileSource'],
+    explanation: 'Native source exists; this marketing audit did not verify a signed release or store publication.',
   },
   pwa: {
     label: 'In development',
     state: 'in-development',
-    evidenceRefs: ['pwaSource', 'applicationHostObservation'],
-    explanation: 'PWA source/architecture exists, but deployed installation and the shared application host are not verified.',
+    evidenceRefs: ['pwaSource'],
+    explanation: 'The separate PWA release is owner-tracked; this marketing audit does not verify its deployment or sign-in flow.',
   },
   wordpressVerticalPlugin: {
     label: 'Planned',

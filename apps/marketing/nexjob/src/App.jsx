@@ -77,7 +77,7 @@ export default function App() {
       <Navbar />
       {!APP_ACCESS_AVAILABLE && (
         <div role="status" aria-live="polite" className="fixed top-16 left-0 right-0 z-40 border-b border-amber-300/20 bg-amber-950/95 px-4 py-2 text-center text-xs text-amber-100 sm:text-sm">
-          Review preview only. Marketing copy, capability statements and figures are unverified; no live service is represented. Login and sign-up are unavailable.
+          Review preview only. Workflow examples do not confirm installed services. Login and sign-up are disabled in this preview.
         </div>
       )}
       <Routes>
