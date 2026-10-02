@@ -59,10 +59,6 @@ export class RuntimeAuthorityGateway {
           action_id:previous.action_id??idempotency_key??run_id,
         })??previous
       : previous;
-    assertAuthorityDecisionAllowsExecution(parent,{
-      company_id,capability:capabilityName,worker_id:agent_id,
-    });
-
     const current=await this.contextResolver.evaluate({
       company_id,
       agent_id,
