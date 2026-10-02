@@ -22,12 +22,28 @@ export function validateVisualRequest(r:TitanVisualAnalysisRequest):TitanVisualA
  if(payloadSize({fields:["company_id","subject_type","subject_id","purpose","media_refs"],refs:r.evidence_refs.map(e=>e.media_ref)})>r.max_payload_bytes)throw Error("visual_prompt_payload_too_large");
  return r;
 }
+export type CaptureQualityPolicy=Readonly<{min_width:number;min_height:number;min_sharpness:number;min_exposure:number;min_subject_coverage:number;revision:number}>;
+export type CaptureQualityAssessment=Readonly<{company_id:string;evidence_ref:string;policy_revision:number;quality:"ACCEPTABLE"|"RETAKE";reasons:readonly string[];guidance:readonly string[];source_ref:string;authority_effect:false}>;
+export function assessCaptureQuality(i:{company_id:string;evidence:EvidenceRef;width:number;height:number;sharpness:number;exposure:number;subject_coverage:number;duplicate_of?:string|null;policy:CaptureQualityPolicy}):CaptureQualityAssessment{
+ if(i.company_id!==i.evidence.company_id)throw Error("visual_cross_company_evidence");
+ if(!i.evidence.accepted)throw Error("visual_evidence_not_accepted");
+ if(!Number.isInteger(i.policy.revision)||i.policy.revision<1)throw Error("visual_quality_policy_invalid");
+ for(const n of [i.width,i.height])if(!Number.isFinite(n)||n<0)throw Error("visual_quality_dimensions_invalid");
+ for(const n of [i.sharpness,i.exposure,i.subject_coverage])if(!Number.isFinite(n)||n<0||n>1)throw Error("visual_quality_metric_invalid");
+ const reasons:string[]=[];const guidance:string[]=[];
+ if(i.width<i.policy.min_width||i.height<i.policy.min_height){reasons.push("RESOLUTION_LOW");guidance.push("Move closer and recapture at full resolution.");}
+ if(i.sharpness<i.policy.min_sharpness){reasons.push("IMAGE_BLURRY");guidance.push("Hold the camera steady, focus on the work, and retake.");}
+ if(i.exposure<i.policy.min_exposure){reasons.push("EXPOSURE_LOW");guidance.push("Improve lighting and retake the image.");}
+ if(i.subject_coverage<i.policy.min_subject_coverage){reasons.push("SUBJECT_TOO_SMALL");guidance.push("Frame the subject more clearly and retake.");}
+ if(i.duplicate_of){reasons.push("DUPLICATE_IMAGE");guidance.push("Capture a distinct view of the required evidence.");}
+ return{company_id:i.company_id,evidence_ref:i.evidence.evidence_id+":"+i.evidence.revision,policy_revision:i.policy.revision,quality:reasons.length?"RETAKE":"ACCEPTABLE",reasons,guidance,source_ref:i.evidence.evidence_id+":"+i.evidence.revision,authority_effect:false};
+}
 export function createCaptureGuidance(i:{checklist:CaptureChecklist;company_id:string;subject_id:string;captured:readonly EvidenceRef[];offline:boolean;low_quality_refs?:readonly string[]}):CaptureGuidance{
  if(i.checklist.company_id!==i.company_id)throw Error("visual_checklist_company_mismatch");
  const mine=i.captured.filter(e=>e.accepted&&e.company_id===i.company_id&&e.subject_id===i.subject_id&&e.subject_type===i.checklist.subject_type);
  const have=new Set(mine.map(e=>e.evidence_id));
  const missing=i.checklist.items.filter(x=>x.required&&!have.has(x.id)).map(x=>x.id);
- const low=new Set(i.low_quality_refs??[]);
+ const low=new Set((i.low_quality_refs??[]).filter(ref=>have.has(ref)));
  return{checklist_id:i.checklist.id,checklist_revision:i.checklist.revision,company_id:i.company_id,subject_id:i.subject_id,missing_items:missing,quality:low.size?"LOW_QUALITY":missing.length?"INCOMPLETE":"READY",offline_queued:i.offline,source_refs:mine.map(e=>e.evidence_id+":"+e.revision),authority_effect:false};
 }
 export function pairBeforeAfter(before:EvidenceRef,after:EvidenceRef,company_id:string){
