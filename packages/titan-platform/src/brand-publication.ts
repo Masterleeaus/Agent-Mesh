@@ -1,4 +1,4 @@
-import { projectSurfaceEstate, type SurfaceDescriptor } from "./surface-manager.js";
+import { createSurfaceIntent, projectSurfaceEstate, type SurfaceDescriptor, type SurfaceIntent } from "./surface-manager.js";
 import { sanitizeBuilderProjection, type BuilderDocument } from "./titan-builder/index.js";
 import { assertBuilderSecurityGate } from "./titan-builder/security-gate.js";
 import { createTitanInterfaceRuntime, type InterfaceContext, type PresentationNode } from "./interface-runtime.js";
@@ -134,7 +134,7 @@ export function promoteBrandPublication(publication:BrandPublication,input:{comp
  if(publication.company_id!==req(input.company_id,"company_id"))throw new Error("publication-company-mismatch"); if(publication.status!=="approved")throw new Error("publication-approval-required"); if(publication.source_snapshot_hash!==req(input.approved_snapshot_hash,"approved_snapshot_hash"))throw new Error("publication-snapshot-mismatch");
  return Object.freeze({...publication,environment:"live",status:"published",created_at:input.now??publication.created_at});
 }
-export type BrandRollbackIntent=Readonly<{schema:"titan.brand-rollback-intent/v1";company_id:string;site_id:string;source_publication_id:string;source_version:number;target_publication_id:string;target_version:number;target_snapshot_hash:string;target_routes:readonly string[];state:"proposed";authority_granted:false}>;
+export type BrandRollbackIntent=Readonly<{schema:"titan.brand-rollback-intent/v1";company_id:string;site_id:string;source_publication_id:string;source_version:number;target_publication_id:string;target_version:number;target_snapshot_hash:string;target_routes:readonly string[];surface_intent:SurfaceIntent;state:"proposed";authority_granted:false}>;
 /** Describes a rollback request for the canonical deployment/execution owner.
  * This function does not mutate publication state or claim the provider changed. */
 export function createBrandRollbackIntent(currentValue:unknown,targetValue:unknown):BrandRollbackIntent {
@@ -145,7 +145,7 @@ export function createBrandRollbackIntent(currentValue:unknown,targetValue:unkno
  if(current.status!=="published"||current.environment!=="live")throw new Error("published-publication-required");
  if(target.status!=="published"||target.environment!=="live")throw new Error("known-good-publication-required");
  if(target.version>=current.version)throw new Error("rollback-target-not-older");
- return Object.freeze({schema:"titan.brand-rollback-intent/v1",company_id,site_id:current.site_id,source_publication_id:current.publication_id,source_version:current.version,target_publication_id:target.publication_id,target_version:target.version,target_snapshot_hash:target.source_snapshot_hash,target_routes:target.route_manifest,state:"proposed",authority_granted:false});
+ return Object.freeze({schema:"titan.brand-rollback-intent/v1",company_id,site_id:current.site_id,source_publication_id:current.publication_id,source_version:current.version,target_publication_id:target.publication_id,target_version:target.version,target_snapshot_hash:target.source_snapshot_hash,target_routes:target.route_manifest,surface_intent:createSurfaceIntent(company_id,current.site_id,"rollback"),state:"proposed",authority_granted:false});
 }
 
 export type BrandStudioProjection=Readonly<{schema:"titan.brand-studio.projection/v1";company_id:string;generated_at:string;surfaces:readonly SurfaceDescriptor[];publications:readonly BrandPublication[];authorityGranted:false}>;
