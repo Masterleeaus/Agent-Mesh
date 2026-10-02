@@ -38,8 +38,10 @@ jobs:
           set -euo pipefail
           bash -n scripts/vps/install-vps.sh
           bash -n scripts/vps/install-sqlite-vps.sh
+          bash -n scripts/vps/remove-workforce-service.sh
           bash -n scripts/vps/backup-vps.sh
           bash -n scripts/vps/update-vps.sh
+          node --test scripts/vps/remove-workforce-service.test.mjs
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/ci-smoke-placeholder-not-a-real-secret-00000000000000000000000000000000/g' .env.vps
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads" \

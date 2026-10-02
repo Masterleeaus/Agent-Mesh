@@ -1,6 +1,6 @@
 const required=(value,name)=>{const text=String(value??"").trim();if(!text)throw new Error(`execution-evidence-${name}-required`);return text;};
 
-const FACTUAL_STATES=new Set(["REQUESTED","AUTHORIZED","EXECUTING","PROVIDER_ACKNOWLEDGED","VERIFYING","VERIFIED","FAILED"]);
+const FACTUAL_STATES=new Set(["REQUESTED","AUTHORIZED","EXECUTING","PROVIDER_ACKNOWLEDGED","VERIFYING","VERIFIED","FAILED","UNCERTAIN"]);
 
 export function executionEvidenceToBusinessEvidence(evidence,{projection_version="execution-reality.v1",accepted_at=evidence?.finished_at}={}){
  const state=required(evidence?.state,"state");

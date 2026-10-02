@@ -16,9 +16,18 @@ export class WorkforceApi {
         projection.data?.status?.company_id !== context.company_id || projection.data?.schema !== 'titan.workforce-cockpit.v1') {
       throw new Error('workforce-projection-invalid');
     }
+    const skills = projection.data.discovery.skills;
+    if (skills !== undefined && (!skills || skills.schema !== 'titan.directadmin.workforce-skills.v1' ||
+        skills.company_id !== context.company_id || skills.context_revision !== context.context_revision ||
+        skills.read_only !== true || skills.grants_authority !== false ||
+        !['available', 'unavailable'].includes(skills.status))) {
+      throw new Error('workforce-skills-projection-invalid');
+    }
     return projection;
   }
   async discover(context) { return (await this.#load(context)).data.discovery; }
+  /** Returns the typed canonical proof projection, or null when connected to an older host. */
+  async skills(context) { return (await this.#load(context)).data.discovery.skills ?? null; }
   async status(context) { return (await this.#load(context)).data.status; }
   async metadata(context) {
     const projection = await this.#load(context);

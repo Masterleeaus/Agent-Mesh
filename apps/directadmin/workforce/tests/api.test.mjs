@@ -34,6 +34,55 @@ test('published read-only projection is displayed but cannot submit a lifecycle 
   await assert.rejects(api.control(context, { action: 'cancel', work_id: 'work1', reason: 'must remain read-only' }), /denied/);
   assert.equal(session.calls.filter(([kind]) => kind === 'intent').length, 0);
 });
+test('skills accessor preserves typed host proofs, supports older hosts and reloads after company context changes', async () => {
+  const session = fixture();
+  const companyA = { schema: 'titan.directadmin.workforce-skills.v1', company_id: 'company-a', context_revision: 'ctx1',
+    status: 'available', read_only: true, grants_authority: false, projection: { schema: 'titan.workforce.evidence-backed-skill-proof.v1' } };
+  const companyBContext = { ...context, company_id: 'company-b', actor_id: 'actor-a', context_revision: 'ctx2' };
+  const companyB = { ...companyA, company_id: 'company-b', context_revision: 'ctx2' };
+  let current = context;
+  let includeSkills = true;
+  let projectionCalls = 0;
+  session.connect = async () => current;
+  session.projection = async () => {
+    projectionCalls++;
+    const projected = fixture().projection;
+    const value = await projected('titan_workforce');
+    value.company_id = current.company_id;
+    value.data.company_id = current.company_id;
+    value.data.discovery.company_id = current.company_id;
+    value.data.status.company_id = current.company_id;
+    if (includeSkills) value.data.discovery.skills = current.company_id === 'company-a' ? companyA : companyB;
+    return value;
+  };
+  const api = new WorkforceApi(session);
+  const ctxA = await api.context();
+  assert.deepEqual(await api.skills(ctxA), companyA);
+  includeSkills = false;
+  await api.context();
+  assert.equal(await api.skills(context), null, 'older hosts may omit the additive skills field');
+  current = companyBContext;
+  includeSkills = true;
+  const ctxB = await api.context();
+  assert.deepEqual(await api.skills(ctxB), companyB);
+  assert.equal(projectionCalls, 3, 'each new context uses a fresh projection snapshot');
+  assert.equal(JSON.stringify(await api.discover(ctxB)).includes('company-a'), false);
+});
+test('skills accessor fails closed on stale context or cross-company proof envelopes', async () => {
+  for (const skills of [
+    { schema: 'titan.directadmin.workforce-skills.v1', company_id: 'company-a', context_revision: 'old', status: 'available', read_only: true, grants_authority: false },
+    { schema: 'titan.directadmin.workforce-skills.v1', company_id: 'company-b', context_revision: 'ctx1', status: 'available', read_only: true, grants_authority: false },
+  ]) {
+    const session = fixture();
+    session.projection = async () => {
+      const value = fixture().projection;
+      const result = await value('titan_workforce');
+      result.data.discovery.skills = skills;
+      return result;
+    };
+    await assert.rejects(new WorkforceApi(session).skills(context), /skills-projection-invalid/);
+  }
+});
 test('reassignment consumes the published READY descriptor and sends an assignee compare-and-set', async () => {
   const controls = [{ action: 'reassign', capability_id: 'titan.workforce.reassign',
     requires_fresh_approval: true, grants_authority: false }];
