@@ -31,6 +31,14 @@ jobs:
         working-directory: apps/mobile
         run: flutter pub get
 
+      - name: Emit formatter output for hosted mobile files
+        working-directory: apps/mobile
+        run: |
+          echo FORMATTED_TRANSPORT_BEGIN
+          dart format --output=show lib/titan/services/hosted_conversation_transport.dart
+          echo FORMATTED_TEST_BEGIN
+          dart format --output=show test/hosted_conversation_transport_test.dart
+
       - name: Check mobile formatting
         working-directory: apps/mobile
         run: dart format --output=none --set-exit-if-changed lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
