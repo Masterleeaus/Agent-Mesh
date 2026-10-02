@@ -46,7 +46,7 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('name: Mission Closure Evidence Gate', workflow)
         self.assertIn('pull_request_target:', workflow)
         self.assertNotRegex(workflow, r'(?m)^  pull_request:')
-        self.assertIn('ref: ${{ github.event.pull_request.base.sha || github.sha }}', workflow)
+        self.assertIn('ref: main', workflow)
         self.assertIn('persist-credentials: false', workflow)
         self.assertNotIn('secrets.', workflow)
         self.assertNotRegex(workflow, r'(?m)^\s+(contents|issues|pull-requests): write')
