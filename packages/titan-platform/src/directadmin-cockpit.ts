@@ -1,6 +1,7 @@
 import { directAdminContextRevisionAssertion, type DirectAdminBridgeContext } from './directadmin-session-bridge.js';
 import type { DirectAdminPluginId, DirectAdminProjection } from './directadmin-gateway.js';
 import { assertDirectAdminProjection } from './directadmin-gateway.js';
+import { assertDirectAdminWorkforceSkillsProjection } from './directadmin-workforce-skills.js';
 import type { DirectAdminApiFetch, GovernedIntentRequest } from './directadmin-plugin.js';
 
 /** One instance per cockpit; all consumers subscribe to invalidation. A channel
@@ -171,6 +172,21 @@ export class DirectAdminCockpitSession {
     const context = this.accept(result?.context);
     if (epoch !== this.#epoch) throw new Error('directadmin-projection-invalidated');
     assertDirectAdminProjection(result.projection, context.company_id);
+    if (plugin === 'titan_workforce') {
+      const data = result.projection.data as { discovery?: { workers?: unknown; skills?: unknown } };
+      if (data?.discovery && Object.hasOwn(data.discovery, 'skills')) {
+        const workerIds = Array.isArray(data.discovery.workers)
+          ? data.discovery.workers.flatMap(worker => worker && typeof worker === 'object' &&
+            typeof (worker as { worker_id?: unknown }).worker_id === 'string'
+            ? [(worker as { worker_id: string }).worker_id] : [])
+          : [];
+        assertDirectAdminWorkforceSkillsProjection(data.discovery.skills, {
+          company_id: context.company_id,
+          context_revision: context.context_revision,
+          worker_ids: workerIds,
+        });
+      }
+    }
     return result.projection;
   }
   async intent(plugin: DirectAdminPluginId, intent: GovernedIntentRequest): Promise<unknown> {
