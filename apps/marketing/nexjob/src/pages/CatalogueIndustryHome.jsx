@@ -94,7 +94,7 @@ export default function CatalogueIndustryHome({ profile }) {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8"><article className="bg-nx-surface border border-nx-border rounded-2xl p-8"><SectionLabel>Platform</SectionLabel><h2 className="text-2xl font-bold mb-3">A shared Titan Zero product foundation.</h2><p className="text-sm text-nx-muted leading-relaxed mb-5">Explore the product platform and its current release state.</p><a href="https://titanzero.io/" className="text-sm font-semibold text-nx-purple-light">Titan Zero platform →</a></article><article className="bg-nx-surface border border-nx-border rounded-2xl p-8"><SectionLabel>Availability</SectionLabel><h2 className="text-2xl font-bold mb-3">Check current work surfaces.</h2><p className="text-sm text-nx-muted leading-relaxed mb-5">Release state and installation availability are shown for each surface.</p><a href="/works-everywhere" className="text-sm font-semibold text-nx-purple-light">See work surfaces →</a></article></div>
       </section>
 
-      
+
     </main>
   </>
 }
