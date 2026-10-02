@@ -53,8 +53,8 @@ jobs:
           else
             git fetch --no-tags --depth=1 origin "${BASE_SHA}"
             RANGE="${BASE_SHA}...HEAD"
-            CONFIG_CHANGED="$(git diff --name-only "${BASE_SHA} HEAD" -- .env.example infra/vps.env.example infra/compose.vps.yml scripts/vps scripts/environment-inventory.mjs scripts/canonical-env-defaults.test.mjs docs/working/issue-1236/environment-inventory.json docs/deployment/README-VPS.md)"
-                        SOURCE_ENV_CHANGED="$(git diff --unified=0 "${BASE_SHA} HEAD" -- apps services packages | grep -E '^[+-][^+-].*(process[.]env|getenv[[:space:]]*[(]|(required|absolutePath|algorithm)[(]environment,|loadPublicKey[(]environment,)' || true)"
+            CONFIG_CHANGED="$(git diff --name-only "${BASE_SHA}" HEAD -- .env.example infra/vps.env.example infra/compose.vps.yml scripts/vps scripts/environment-inventory.mjs scripts/canonical-env-defaults.test.mjs docs/working/issue-1236/environment-inventory.json docs/deployment/README-VPS.md)"
+                        SOURCE_ENV_CHANGED="$(git diff --unified=0 "${BASE_SHA}" HEAD -- apps services packages | grep -E '^[+-][^+-].*(process[.]env|getenv[[:space:]]*[(]|(required|absolutePath|algorithm)[(]environment,|loadPublicKey[(]environment,)' || true)"
             if [ -n "${CONFIG_CHANGED}" ] || [ -n "${SOURCE_ENV_CHANGED}" ]; then
               echo "Environment inputs or statically discoverable bindings changed; checking the generated inventory."
               node scripts/environment-inventory.mjs --check
