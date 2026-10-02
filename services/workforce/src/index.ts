@@ -4,7 +4,12 @@ export type WorkerId = string;
 
 export type WorkerKind = "digital" | "human";
 export type WorkState = "CREATED" | "READY" | "CLAIMED" | "IN_PROGRESS" | "BLOCKED" | "WAITING" | "WAITING_APPROVAL" | "WAITING_EXTERNAL" | "COMPLETED" | "FAILED" | "CANCELLED";
-export interface AuthenticatedWorkIdentity { provider: string; subject: string; session_id: string; device_id: string; session_revision: number; audience: string; company_id: string; actor_id: string; context_revision: string; surface: string; }
+import type { SessionSourceReference } from "../../../packages/titan-platform/src/security-boundary.js";
+export interface AuthenticatedWorkIdentity {
+ provider: string; subject: string; session_id: string; device_id: string; session_revision: number;
+ audience: string; company_id: string; actor_id: string; context_revision: string; surface: string;
+ credential_expires_at?: string; source_session?: SessionSourceReference;
+}
 export interface WorkCorrelation { authenticated_identity?: AuthenticatedWorkIdentity; request_id?: string; operation_id?: string; trace_id?: string; idempotency_key?: string; session_id?: string; context_revision?: string | number; }
 export interface WorkOrigin extends WorkCorrelation { actor_id: string; conversation_id: string; surface?: "zero" | "go" | "hub" | "system"; correlation_id?: string; dispatch_fingerprint?: string; }
 export interface WorkforceWorker { company_id: CompanyId; worker_id: WorkerId; kind: WorkerKind; team_id?: string; manager_id?: WorkerId; capabilities: string[]; active: boolean; }

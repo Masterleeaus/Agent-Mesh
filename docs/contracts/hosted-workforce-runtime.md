@@ -119,15 +119,29 @@ membership/session, switched company/context, expired session or mismatched
 actor fail closed. Identity never grants execution authority: the existing
 worker access, policy, risk, assurance, evidence and approval owners still decide.
 
-At the effect boundary a SQLite `BEGIN IMMEDIATE` transaction rereads canonical
-control authority and cancellation, then holds that authority fence through the
-bounded provider call. A separate connection cannot commit revocation between
-that read and effect. Identity is revalidated before this transaction; business
-data stays in its physical company database. The optional trusted
-`completeInControlTransaction` port is only for the existing legacy same-store
-web composition; hosted providers receive no control transaction. This is not an
-atomic transaction across identity, control and company databases. The ephemeral
-guard also checks abort and authority expiry immediately before native mutation.
+For source-derived Workforce/Zero sessions, the #302 canonical fence revalidates
+the signed DirectAdmin source and derived child under the GLOBAL_REGISTRY writer
+transaction. The host loads the trusted proof from the durable run before this
+fence, then opens a short Workforce control transaction in the prescribed order
+(identity registry -> Workforce control DB). It compares the exact stored proof,
+rechecks the run/cancellation state and current Workforce authority, and records
+the execution admission. Neither store is reopened while the other transaction
+is active. The 500 ms fence callback ends before the slow company-scoped provider
+call; the provider runs after both writers release and receives the bounded
+AbortSignal plus the current authority/expiry guard immediately before mutation.
+Ordinary direct Workforce sessions retain current registry revalidation and do
+not receive fabricated DirectAdmin lineage.
+
+This is an admission boundary, not a transaction spanning identity, Workforce,
+and company databases. If a source revoke/company switch or cancellation wins
+before admission, no provider call starts. If admission wins, a later revoke,
+switch, or cancellation cannot undo or reliably stop that already-admitted
+provider call; it blocks later admissions and can make post-action verification
+fail. A timed-out or unverified action remains `UNCERTAIN`, and a non-cooperative
+adapter may mutate late. Never claim that revocation or cancellation stopped an
+in-flight external effect. The 5-second identity-registry busy timeout and
+30-120 second provider bound make it essential to release the identity writer
+before provider work. The host never accepts lineage from request fields.
 
 Work/run identity preserves company, actor, conversation, interaction, request,
 operation, trace, correlation and idempotency values. Conflicting start replay
@@ -139,12 +153,16 @@ Provider effects still require observed verification and factual evidence.
 ## Lifecycle and evidence
 
 Readiness requires actual runtime tables, current identity storage and all
-required dependency observations. Probe requests coalesce; the canonical bounded
-adapter call aborts and releases an expired probe so a later probe can retry.
-Liveness remains independent. Shutdown stops ingress and grants accepted work a
-bounded drain interval (default5000ms). At the deadline it aborts adapter signals
-and closes connections, waits for the bounded handlers to persist recovery state,
-then closes dependencies and stores. Dependency cleanup itself is bounded.
+required dependency observations. Each HTTP readiness request has a one-second
+response deadline, while storage-table checks share one underlying probe until
+that read sequence settles. A timed-out response therefore cannot enqueue new
+SQLite reads behind the same serialized store queue on every retry. The external
+`readiness({signal})` adapter must honor abort; JavaScript cannot forcibly stop a
+non-cooperative adapter promise. Liveness remains independent. Shutdown stops
+ingress and grants accepted work a bounded drain interval (default5000ms). At
+the deadline it aborts adapter signals and closes connections, waits for bounded
+handlers to persist recovery state, then closes dependencies and stores.
+Dependency cleanup itself is bounded.
 
 Canonical ExecutionGateway now distinguishes UNCERTAIN from FAILED/VERIFIED.
 Timeout, abort, exception after dispatch, missing verifier and an unverified

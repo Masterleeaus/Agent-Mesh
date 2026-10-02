@@ -125,7 +125,7 @@ for(const revocation of ['policy','access']) test(`revocation of ${revocation} i
  }finally{await f.close();}
 });
 
-test('control authority fence serializes another process revocation after authorized effect',async()=>{
+test('post-admission authority revocation commits during provider work; the admitted effect may finish',async()=>{
  let release:()=>void=()=>{};let entered:()=>void=()=>{};
  const barrier=new Promise<void>(resolve=>{release=resolve;});const atProvider=new Promise<void>(resolve=>{entered=resolve;});
  const f=await fixture();let pending:Promise<any>|undefined;let child:ReturnType<typeof spawn>|undefined;
@@ -134,40 +134,55 @@ test('control authority fence serializes another process revocation after author
   f.workOrders.complete=async(input:any)=>{entered();await barrier;input.authorityFence.assertCurrent();return complete(input);};
   pending=f.runtime.dispatch(f.input);await atProvider;
   child=spawn(process.execPath,['--import',fileURLToPath(new URL('../services/workforce/node_modules/tsx/dist/loader.mjs',import.meta.url)),fileURLToPath(new URL('./fixtures/native-execution-child.ts',import.meta.url)),f.file,'revoke-policy'],{env:{...process.env,TSX_TSCONFIG_PATH:fileURLToPath(new URL('../apps/web/tsconfig.json',import.meta.url))},stdio:['ignore','ignore','pipe','ipc']});
+  const exited=once(child,'exit');
   const messages:any[]=[];child.on('message',message=>messages.push(message));
   await once(child,'message');assert.equal(messages[0].phase,'attempting');
-  await new Promise(resolve=>setTimeout(resolve,20));assert.equal(messages.length,1);
-  const done=once(child,'exit');release();await pending;const [exit]=await done;assert.equal(exit,0);
+  await new Promise<void>((resolve,reject)=>{
+   const timeout=setTimeout(()=>reject(new Error('post-admission authority update remained blocked')),3000);
+   const committed=(message:any)=>{if(message.phase==='committed'){clearTimeout(timeout);child?.off('message',committed);resolve();}};
+   child?.on('message',committed);
+  });
+  assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'in_progress');
+  release();await pending;const [exit]=await exited;assert.equal(exit,0);
   assert.ok(messages.some(message=>message.phase==='committed'));
   assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'completed');
   assert.equal(JSON.parse((await f.storage.query("SELECT envelope FROM authority_state WHERE id='grant'")).rows[0].envelope).policy_allows,false);
+  assert.equal((await f.storage.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount,1);
  }finally{release();await pending?.catch(()=>{});if(child&&child.exitCode===null)child.kill('SIGKILL');await f.close();}
 });
 
-test('timed-out same-store adapter cannot use its closed transaction for a late write',async()=>{
+test('noncooperative provider may finish after timeout; UNCERTAIN recovery never reexecutes it',async()=>{
  const f=await fixture({timeoutMs:25});let release:()=>void=()=>{};
  const barrier=new Promise<void>(resolve=>{release=resolve;});
  try{
-  const complete=f.workOrders.complete;
-  f.workOrders.complete=async(input:any)=>{await barrier;return complete({...input,signal:undefined,authorityFence:undefined});};
+  const complete=f.workOrders.complete;let invocations=0;
+  f.workOrders.complete=async(input:any)=>{invocations++;await barrier;return complete({...input,signal:undefined,authorityFence:undefined});};
   await f.runtime.dispatch(f.input);
   const run=await f.runtime.runStore.findByWork('a','zero:conversation:message');assert.equal(run.state,'WAITING_EXTERNAL');
+  assert.equal(invocations,1);
+  assert.equal(JSON.parse((await f.storage.query('SELECT payload FROM execution_lifecycle_records')).rows[0].payload).status,'UNCERTAIN');
   release();await new Promise(resolve=>setImmediate(resolve));
-  assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'in_progress');
+  await new Promise(resolve=>setTimeout(resolve,20));
+  assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'completed');
   assert.equal((await f.storage.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount,0);
+  assert.equal(JSON.parse((await f.storage.query('SELECT payload FROM execution_lifecycle_records')).rows[0].payload).status,'UNCERTAIN');
+  await f.restart();await f.runtime.recover(f.input);
+  assert.equal(invocations,1,'recovery verifies the late effect and does not rerun the provider');
+  assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'completed');
  }finally{release();await f.close();}
 });
 
 
-test('identity invalidated during the final business read prevents native mutation',async()=>{
+test('identity invalidated before effect admission prevents native mutation',async()=>{
  let revoked=false;let reads=0;
  const f=await fixture({revalidateIdentity:async()=>{if(revoked)throw new Error('current-session-revoked');}});
  try{
   const read=f.workOrders.read;
-  f.workOrders.read=async(input:any)=>{const result=await read(input);if(++reads===3)revoked=true;return result;};
+  f.workOrders.read=async(input:any)=>{const result=await read(input);if(++reads===2)revoked=true;return result;};
   await f.runtime.dispatch(f.input);
-  assert.equal(reads,3);
+  assert.ok(reads>=2);
   assert.equal((await f.storage.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status,'in_progress');
+  assert.equal((await f.storage.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='EXECUTING'")).rowCount,0);
   assert.equal((await f.storage.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount,0);
  }finally{await f.close();}
 });

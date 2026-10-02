@@ -6,12 +6,13 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { decodeJwt, decodeProtectedHeader, generateKeyPair, SignJWT } from 'jose';
-import { createSqliteStorage } from './fixtures/sqlite-storage.mjs';
+import { tsImport } from 'tsx/esm/api';
 import {
   createIdentitySessionRegistry, createSessionCredentialService,
   createSessionCredentialVerifier, directAdminIssuer,
 } from '../.test-dist/security-boundary.js';
 
+const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 const epoch = Date.parse('2026-10-02T00:00:00Z');
 const origin = 'https://da-one.example.test:2222';
 const provider = directAdminIssuer(origin);
@@ -184,6 +185,9 @@ test('exchange rejects login assertions, wrong DA host/audience/node/algorithm/k
   await denied(f.source.exchangeWorkforceZero(loginAssertion, sourceExpectation));
 
   const wrongAlgorithmKey = crypto.getRandomValues(new Uint8Array(32));
+  const signatureBytes = Buffer.from(da.credential.split('.')[2], 'base64url');
+  signatureBytes[0] ^= 1;
+  const badSignature = `${da.credential.split('.').slice(0, 2).join('.')}.${signatureBytes.toString('base64url')}`;
   const variants = [
     ['host identity', await f.signSource(da.credential, { identity_provider: directAdminIssuer('https://da-two.example.test') })],
     ['source JWT issuer', await f.signSource(da.credential, { iss: 'titan:other-host' })],
@@ -195,7 +199,7 @@ test('exchange rejects login assertions, wrong DA host/audience/node/algorithm/k
     ['key identifier', await f.signSource(da.credential, {}, { kid: 'untrusted-key' })],
     ['type', await f.signSource(da.credential, {}, { typ: 'JWT' })],
     ['algorithm', await f.signSource(da.credential, {}, { alg: 'HS256', kid: 'da-session-key' }, wrongAlgorithmKey)],
-    ['signature', `${da.credential.slice(0, -1)}${da.credential.endsWith('a') ? 'b' : 'a'}`],
+    ['signature', badSignature],
   ];
   for (const [label, token] of variants) await assert.rejects(f.source.exchangeWorkforceZero(token, sourceExpectation), { message: 'authentication-denied' }, label);
 
@@ -249,20 +253,28 @@ test('derived child cannot switch independently and a revoked idempotent child i
   assert.equal((await f.storage.query('SELECT COUNT(*) AS count FROM titan_security_sessions')).rows[0].count, 2);
 });
 
-function startChildRevocation(path, sessionId, revision) {
+function startChildRevocation(path) {
   const child = fork(new URL('./fixtures/security-session-fence-revoke-child.mjs', import.meta.url),
-    [path, sessionId, String(revision)], { stdio: ['ignore', 'ignore', 'pipe', 'ipc'] });
+    [path], { stdio: ['ignore', 'ignore', 'pipe', 'ipc'] });
   let done = false;
   let error;
+  let readyResolve;
+  let attemptingResolve;
+  let readyReject;
+  let attemptingReject;
+  const ready = new Promise((resolve, reject) => { readyResolve = resolve; readyReject = reject; });
+  const attempting = new Promise((resolve, reject) => { attemptingResolve = resolve; attemptingReject = reject; });
+  const exited = once(child, 'exit');
   child.on('message', message => {
+    if (message?.type === 'ready') readyResolve();
+    if (message?.type === 'attempting') attemptingResolve();
     if (message?.type === 'done') done = true;
-    if (message?.type === 'error') error = message.message;
+    if (message?.type === 'error') { error = message.message; attemptingReject(new Error(error)); }
   });
-  const attempting = new Promise((resolve, reject) => {
-    child.once('message', message => message?.type === 'attempting' ? resolve() : reject(new Error('child-did-not-start')));
-    child.once('error', reject);
-  });
-  return { child, attempting, get done() { return done; }, get error() { return error; }, exited: once(child, 'exit') };
+  child.once('error', error => { readyReject(error); attemptingReject(error); });
+  return { child, ready, attempting, start(sessionId, revision) {
+    child.send({ type: 'revoke', session_id: sessionId, revision });
+  }, get done() { return done; }, get error() { return error; }, exited };
 }
 
 test('effect fence rejects when source revoke commits first', async t => {
@@ -271,7 +283,13 @@ test('effect fence rejects when source revoke commits first', async t => {
   const authenticated = await f.verifier.authenticate(workforce.credential);
   const proof = proofFor(authenticated, workforce.credential);
   let mutations = 0;
-  await f.source.revoke(da.credential, sourceExpectation);
+  const child = startChildRevocation(f.path);
+  await child.ready;
+  child.start(da.context.session_id, da.context.session_revision);
+  await child.attempting;
+  const [exitCode] = await child.exited;
+  assert.equal(exitCode, 0, child.error);
+  assert.equal(child.done, true);
   await assert.rejects(f.registry.withCurrentSessionFence(proof, expectedFor(authenticated), {}, () => {
     mutations += 1;
   }));
@@ -298,6 +316,8 @@ test('effect fence linearizes before cross-process source revoke and releases af
   const proof = proofFor(authenticated, workforce.credential);
   const entered = deferred();
   const release = deferred();
+  const child = startChildRevocation(f.path);
+  await child.ready;
   let mutations = 0;
   const fenced = f.registry.withCurrentSessionFence(proof, expectedFor(authenticated), {}, async () => {
     entered.resolve();
@@ -306,9 +326,9 @@ test('effect fence linearizes before cross-process source revoke and releases af
     return 'admitted';
   });
   await entered.promise;
-  const child = startChildRevocation(f.path, da.context.session_id, da.context.session_revision);
+  child.start(da.context.session_id, da.context.session_revision);
   await child.attempting;
-  await wait(100);
+  await wait(20);
   assert.equal(child.done, false);
   release.resolve();
   assert.equal(await fenced, 'admitted');
@@ -326,6 +346,8 @@ test('timed-out noncooperative effect is not claimed cancelled and may finish af
   const entered = deferred();
   const release = deferred();
   const lateFinish = deferred();
+  const child = startChildRevocation(f.path);
+  await child.ready;
   let mutations = 0;
   let observedAbort = false;
   const fenced = f.registry.withCurrentSessionFence(proof, expectedFor(authenticated), {}, async (_current, signal) => {
@@ -337,7 +359,7 @@ test('timed-out noncooperative effect is not claimed cancelled and may finish af
     lateFinish.resolve();
   });
   await entered.promise;
-  const child = startChildRevocation(f.path, da.context.session_id, da.context.session_revision);
+  child.start(da.context.session_id, da.context.session_revision);
   await child.attempting;
   await assert.rejects(fenced, { message: 'session-fence-timeout' });
   assert.equal(observedAbort, true);

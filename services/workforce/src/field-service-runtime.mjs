@@ -1,5 +1,6 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { isDeepStrictEqual } from 'node:util';
 import { createProductionRuntimeBootstrap } from './production-runtime-bootstrap.ts';
 import { SqliteWorkforceStore } from './sqlite-store.ts';
 import { assertAuthorityDecisionAllowsExecution } from '../../../packages/runtime/authority/authority-evaluator.mjs';
@@ -16,10 +17,11 @@ const one = async (storage, sql, params) => (await storage.query(sql, params)).r
  * Authority material is read, never issued here. The explicit command adapter is
  * deliberately limited; it is not a general language planner or another engine.
  */
-export async function createFieldServiceRuntime({ storage, workOrders, revalidateIdentity, timeoutMs = 30_000, signal } = {}) {
+export async function createFieldServiceRuntime({ storage, workOrders, revalidateIdentity, sessionAdmission, timeoutMs = 30_000, signal } = {}) {
   if (!storage || storage.dialect !== 'sqlite') throw new Error('zero-sqlite-storage-required');
   for (const method of ['complete', 'read']) if (typeof workOrders?.[method] !== 'function') throw new Error(`production-runtime-port-required:workOrders.${method}`);
   if (revalidateIdentity !== undefined && typeof revalidateIdentity !== 'function') throw new Error('production-runtime-port-required:revalidateIdentity');
+  if (sessionAdmission !== undefined && typeof sessionAdmission !== 'function') throw new Error('production-runtime-port-required:sessionAdmission');
   // Same canonical control-state tables used by db/sqlite/001_canonical.sql.
   // A standalone control store has no business companies table: company_id is
   // resolved by authenticated ingress and the protected company storage map.
@@ -116,7 +118,9 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     const idempotency_key = JSON.stringify([CAPABILITY, current.work_order_id]);
     const toResult = evidence => ({ request_fingerprint: executionRequestFingerprint({ company_id: evidence.company_id, capability: evidence.capability, input: evidence.request_summary?.input, idempotency_key: evidence.idempotency_key }), execution_id: evidence.execution_id, company_id, state: evidence.state, capability: CAPABILITY, evidence });
     let effectDecision;
-    const evidenceSink = async evidence => storage.transaction(async tx => {
+    let fencedDecision;
+    let executionSignal = signal;
+    const persistEvidence = async (tx, evidence) => {
       // Rebuild through the canonical ledger inside the append transaction. The
       // existing evidence table remains the durable owner; no parallel ledger.
       const history = await tx.query("SELECT payload FROM evidence WHERE company_id=$1 AND subject_type='work' AND subject_id=$2 AND evidence_type='gateway_execution' ORDER BY rowid", [company_id, work_id]);
@@ -139,7 +143,56 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
         source_evidence_refs: current.evidence_refs, effect_authority_decision_id: effectDecision?.decision_id ?? null };
       await tx.query('INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,$3,$4,$5,$6,$7)',
         [evidence.evidence_id, company_id, 'work', work_id, 'gateway_execution', JSON.stringify(provenance), JSON.stringify({ ...evidence, provenance, accepted_evidence })]);
-    });
+    };
+    const admitExecution = async (evidence, business) => {
+      const admit = async ({ proof, authenticated_identity, signal: fenceSignal } = {}) => storage.transaction(async tx => {
+        const assertAdmissionLive = () => { executionSignal?.throwIfAborted(); fenceSignal?.throwIfAborted(); };
+        assertAdmissionLive();
+        const row = await one(tx, 'SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2', [company_id, run_id]);
+        assertAdmissionLive();
+        const run = row ? JSON.parse(row.payload) : null;
+        if (authenticated_identity && !isDeepStrictEqual(run?.authenticated_identity, authenticated_identity)) {
+          throw new Error('zero-run-session-proof-changed');
+        }
+        if (authenticated_identity && !authenticated_identity.source_session) {
+          const expiresAt = Date.parse(authenticated_identity.credential_expires_at ?? '');
+          if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) throw new Error('runtime-credential-expired');
+        }
+        if (run?.state === 'CANCELLED') throw new Error('zero-run-cancelled');
+        if (!run || run.work_id !== work_id || !['RUNNING', 'WAITING_TOOL'].includes(run.state)) throw new Error('zero-run-not-executing');
+        fencedDecision = await authorize({ company_id, actor_id: current.actor_id, agent_id, run_id, work_id, input: input.input }, { control: tx, skipIdentity: true, business });
+        assertAdmissionLive();
+        if (fencedDecision.status !== 'allowed') throw new Error('zero-effect-authority-revoked');
+        assertAuthorityDecisionAllowsExecution(fencedDecision, { company_id, capability: CAPABILITY, operation_id: work_id, action_id: current.work_order_id, worker_id: agent_id, now: new Date().toISOString() });
+        // Admission and the durable EXECUTING transition share this exact
+        // control transaction. No provider work runs until both fences release.
+        effectDecision = fencedDecision;
+        await persistEvidence(tx, evidence);
+        assertAdmissionLive();
+        if (authenticated_identity) {
+          const admissionCheckedAt = Date.parse(new Date().toISOString());
+          const expiresAt = Date.parse(authenticated_identity.credential_expires_at ?? '');
+          if (!Number.isFinite(expiresAt) || expiresAt <= admissionCheckedAt) throw new Error('runtime-credential-expired');
+        }
+        return { decision: fencedDecision, proof };
+      });
+      if (sessionAdmission) {
+        return sessionAdmission({ company_id, actor_id: current.actor_id, run_id, work_id, signal: executionSignal }, admit);
+      }
+      // Standalone runtime tests have no hosted identity owner. Hosted
+      // production always supplies sessionAdmission.
+      await currentIdentity({ company_id, actor_id: current.actor_id, run_id, work_id }, executionSignal);
+      return admit();
+    };
+    const evidenceSink = async evidence => {
+      if (evidence.state === 'EXECUTING') {
+        // This possibly slow company read occurs before either admission lock.
+        const business = await readBusiness(businessInput, executionSignal);
+        await admitExecution(evidence, business);
+        return;
+      }
+      return storage.transaction(tx => persistEvidence(tx, evidence));
+    };
     const gateway = new ExecutionGateway({
       timeoutMs, evidenceSink,
       idempotencyStore: {
@@ -159,39 +212,21 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
       providers: [{
         id: 'native-assigned-work-order', executionClass: 'native', company_id, capabilities: [CAPABILITY],
         async execute(request) {
-          const business = await readBusiness(businessInput, request.signal);
-          // The provider read may yield long enough for a session revocation or
-          // company switch. Resolve identity again after it, before the fence.
-          await currentIdentity({ company_id, actor_id: current.actor_id, run_id, work_id }, request.signal);
-          // BEGIN IMMEDIATE fences current control authority through the bounded
-          // provider handoff. Company business storage is physically independent.
-          // The explicit legacy port alone may reuse this transaction.
-          let fencedDecision;
-          const result = await storage.transaction(async tx => {
-            request.signal?.throwIfAborted();
-            fencedDecision = await authorize({ company_id, actor_id: current.actor_id, agent_id, run_id, work_id, input: input.input }, { control: tx, skipIdentity: true, business });
-            if (fencedDecision.status !== 'allowed') throw new Error('zero-effect-authority-revoked');
-            const row = await one(tx, 'SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2', [company_id, run_id]);
-            const run = row ? JSON.parse(row.payload) : null;
-            if (run?.state === 'CANCELLED') throw new Error('zero-run-cancelled');
-            if (!run || run.work_id !== work_id || !['RUNNING', 'WAITING_TOOL'].includes(run.state)) throw new Error('zero-run-not-executing');
-            const assertCurrent = () => {
-              request.signal?.throwIfAborted();
-              assertAuthorityDecisionAllowsExecution(fencedDecision, { company_id, capability: CAPABILITY, operation_id: work_id, action_id: current.work_order_id, worker_id: agent_id, now: new Date().toISOString() });
-            };
-            assertCurrent();
-            const completed = await boundedAdapterCall(childSignal => {
-              childSignal.throwIfAborted();
-              const operation = { ...businessInput, signal: childSignal, authorityFence: { assertCurrent: () => { childSignal.throwIfAborted(); assertCurrent(); } } };
-              return workOrders.completeInControlTransaction ? workOrders.completeInControlTransaction(operation, tx) : workOrders.complete(operation);
-            }, { timeoutMs, signal: request.signal });
-            assertCurrent();
-            return completed;
-          });
-          effectDecision = fencedDecision;
+          if (!fencedDecision) throw new Error('zero-effect-admission-missing');
           request.signal?.throwIfAborted();
-          if (result.kind !== 'ok') throw new Error(`work-order-${result.kind}:${result.message ?? 'completion rejected'}`);
-          return { external_ref: current.work_order_id, result };
+          const assertCurrent = childSignal => {
+            childSignal?.throwIfAborted();
+            request.signal?.throwIfAborted();
+            assertAuthorityDecisionAllowsExecution(fencedDecision, { company_id, capability: CAPABILITY, operation_id: work_id, action_id: current.work_order_id, worker_id: agent_id, now: new Date().toISOString() });
+          };
+          const completed = await boundedAdapterCall(childSignal => {
+            assertCurrent(childSignal);
+            const operation = { ...businessInput, signal: childSignal, authorityFence: { assertCurrent: () => assertCurrent(childSignal) } };
+            return workOrders.complete(operation);
+          }, { timeoutMs, signal: request.signal });
+          assertCurrent(request.signal);
+          if (completed.kind !== 'ok') throw new Error(`work-order-${completed.kind}:${completed.message ?? 'completion rejected'}`);
+          return { external_ref: current.work_order_id, result: completed };
         },
         async verify(_raw, request) {
           await currentIdentity({ company_id, actor_id: current.actor_id, run_id, work_id }, request.signal);
@@ -207,6 +242,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
       trace_id: run?.trace_id, correlation_id: run?.correlation_id, interaction_id: run?.interaction_id,
       input: { work_order_id: current.work_order_id }, signal, timeoutMs,
       authority: { status: 'approved', expires_at: current.authority_lease?.lease_expires_at }, risk: { status: 'approved' } };
+    executionSignal = request.signal;
     const recovery = new GovernedExecutionRecovery({ gateway, store: lifecycleStore });
     const previous = await recovery.start(request);
     if (input.recovery && previous.status === 'READY') throw new Error('zero-execution-not-started');

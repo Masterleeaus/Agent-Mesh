@@ -3,7 +3,7 @@ import { isAbsolute, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { stat } from "node:fs/promises";
 import { Readable } from "node:stream";
-import { createSqliteStorage } from "../../../packages/storage/src/index.js";
+import { createSqliteStorage, type StorageClient } from "../../../packages/storage/src/index.js";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
 import { createHostedRuntime, type HostedWorkforceDependencies } from "./hosted-runtime.js";
 import { createDirectAdminWorkforceOwners, type DirectAdminFetchHandler } from "./directadmin-workforce-owners.js";
@@ -25,6 +25,26 @@ async function assertSeparateFiles(runtimePath: string, identityPath: string) {
     throw new Error("workforce-separate-identity-storage-required");
   }
 }
+
+/** Keep one underlying set of SQLite readiness reads active across HTTP timeouts.
+ * The canonical storage client serializes queries behind its async transaction;
+ * retrying a timed-out request must not enqueue more reads behind that fence. */
+export function createReadinessStorageProbe(storage: StorageClient, identityStorage?: StorageClient, hosted = false) {
+  let pending: Promise<void> | undefined;
+  return (): Promise<void> => {
+    if (pending) return pending;
+    const checking = (async () => {
+      await storage.query("SELECT 1 FROM workforce_work_items LIMIT 1");
+      if (hosted) await storage.query("SELECT 1 FROM agent_runs LIMIT 1");
+      if (hosted && identityStorage) await identityStorage.query("SELECT 1 FROM titan_security_sessions LIMIT 1");
+    })();
+    let coalesced: Promise<void>;
+    coalesced = checking.finally(() => { if (pending === coalesced) pending = undefined; });
+    pending = coalesced;
+    return coalesced;
+  };
+}
+
 function json(response: ServerResponse, status: number, body: unknown) {
   if (response.destroyed || response.writableEnded) return;
   if (response.headersSent) { response.destroy(); return; }
@@ -126,20 +146,17 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
   let closing: Promise<void> | undefined;
   const active = new Set<Promise<void>>();
   let probe: Promise<Record<string, string>> | undefined;
+  const checkStorage = createReadinessStorageProbe(storage, identityStorage, Boolean(hosted));
   async function checks(): Promise<Record<string, string>> {
     if (probe) return probe;
     const checking = boundedAdapterCall(async (signal: AbortSignal) => {
       const result: Record<string, string> = { storage: "fail", runtime: hosted ? "ok" : "unconfigured", authentication: "fail", authority: "fail", provider: "fail", evidence: "fail" };
       try {
         signal.throwIfAborted();
-        await storage.query("SELECT COUNT(*) FROM workforce_work_items");
+        await checkStorage();
         signal.throwIfAborted();
         result.storage = "ok";
         if (hosted && identityStorage && dependencies) {
-          await storage.query("SELECT COUNT(*) FROM agent_runs");
-          signal.throwIfAborted();
-          await identityStorage.query("SELECT COUNT(*) FROM titan_security_sessions");
-          signal.throwIfAborted();
           const observed = await dependencies.readiness({ signal });
           signal.throwIfAborted();
           for (const key of ["authentication", "authority", "provider", "evidence"] as const) result[key] = observed[key] === true ? "ok" : "fail";

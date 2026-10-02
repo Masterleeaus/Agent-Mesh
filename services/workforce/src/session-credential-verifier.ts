@@ -23,7 +23,7 @@ export function createWorkforceSessionCredentialVerifier(
         const match = /^Bearer ([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/.exec(authorization);
         if (!match) throw new Error("authentication-denied");
         // Never decode claims independently or derive identity from request fields.
-        const { context, provider, subject } = await verifier.authenticate(match[1]);
+        const { context, provider, subject, credential_expires_at, source_session } = await verifier.authenticate(match[1]);
         control?.signal.throwIfAborted();
         return Object.freeze({
           provider,
@@ -31,6 +31,8 @@ export function createWorkforceSessionCredentialVerifier(
           session_id: context.session_id,
           device_id: context.device_id,
           session_revision: context.session_revision,
+          credential_expires_at,
+          ...(source_session ? { source_session } : {}),
           audience: "workforce",
           surface: "zero" as const,
         });

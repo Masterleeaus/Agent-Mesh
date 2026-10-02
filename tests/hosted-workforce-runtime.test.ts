@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { request as httpRequest } from "node:http";
+import { SignJWT } from "jose";
 import Database from "better-sqlite3";
 import { createSqliteStorage } from "../packages/storage/src/index.js";
 import { createIdentitySessionRegistry } from "../packages/titan-platform/src/security-boundary.js";
@@ -52,7 +53,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   }
   const now = new Date().toISOString();
   const context = await registry.issueSession({ provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", company_id: "a", audience: "workforce", issued_at: now, expires_at: new Date(Date.now() + 3600000).toISOString() }, now);
-  const claims = { provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", session_revision: 1, audience: "workforce", surface: "zero" as const };
+  const claims = { provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", session_revision: 1, audience: "workforce", surface: "zero" as const, credential_expires_at: new Date(Date.now() + 3600000).toISOString() };
   const keys = generateKeyPairSync("ed25519");
   function credential(overrides: Record<string, unknown> = {}) {
     const payload = Buffer.from(JSON.stringify({ ...claims, ...overrides })).toString("base64url");
@@ -115,11 +116,44 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   }
   await start();
   const input = { action: "start", company_id: "a", actor_id: "lead", device_id: "device", surface: "zero", session_id: "session", context_revision: context.context_revision, conversation_id: "conversation", interaction_id: "interaction", client_message_id: "message", request_id: "request", operation_id: "operation", correlation_id: "correlation", trace_id: "trace", idempotency_key: "idempotency", text: "complete work order wo" };
-  return { control, registry, stores, claims, context, authority, envelope, credential, input,
+  return { control, identity, dependencies, registry, stores, claims, context, authority, envelope, credential, input,
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
+    async executionStateCount(state: string) { return (await control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')=$1", [state])).rowCount; },
     credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) { dependencies.credentialVerifier = verifier; },
+    async workforceZero() {
+      const { createSessionCredentialService, directAdminIssuer } = await import("../packages/titan-platform/src/security-boundary.js");
+      const { createWorkforceSessionCredentialVerifier } = await import("../services/workforce/src/session-credential-verifier.ts");
+      const provider = directAdminIssuer("https://da-host.test.invalid:2222");
+      const daLoginKeys = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
+      const daSessionKeys = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
+      const workforceKeys = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
+      for (const company_id of ["a", "b"]) await registry.putExternalBinding({ binding_id: `directadmin-${company_id}`, company_id, actor_id: "lead", provider, subject: "subject", status: "active" }, null);
+      const upstream = { issuer: provider, audience: "da-login", key_id: "da-login-key", algorithm: "EdDSA" as const, verification_key: daLoginKeys.publicKey };
+      const sourceService = createSessionCredentialService({
+        registry, issuer: "titan:directadmin-auth", audience: "directadmin-browser", key_id: "da-session-key",
+        algorithm: "EdDSA", signing_key: daSessionKeys.privateKey, verification_key: daSessionKeys.publicKey,
+        upstream, directadmin: { node_id: "node-one" }, workforce_zero_exchange: {
+          issuer: "titan:workforce-auth", key_id: "workforce-session-key", algorithm: "EdDSA",
+          signing_key: workforceKeys.privateKey, verification_key: workforceKeys.publicKey, lifetime_seconds: 120,
+        },
+      });
+      const csrf_sha256 = Buffer.from(await crypto.subtle.digest("SHA-256", crypto.getRandomValues(new Uint8Array(32)))).toString("base64url");
+      const login = await new SignJWT({ jti: `login-${Date.now()}`, company_id: "a", device_id: "device",
+        identity_provider: provider, node_id: "node-one", csrf_sha256, da_role: "admin" })
+        .setProtectedHeader({ alg: "EdDSA", kid: "da-login-key", typ: "titan-login+jwt" })
+        .setIssuer(provider).setAudience("da-login").setSubject("subject")
+        .setIssuedAt().setExpirationTime("5m").sign(daLoginKeys.privateKey);
+      const da = await sourceService.issue(login, { company_id: "a", device_id: "device" });
+      const workforce = await sourceService.exchangeWorkforceZero(da.credential, { company_id: "a", device_id: "device" });
+      const verifier = createWorkforceSessionCredentialVerifier({
+        registry, issuer: "titan:workforce-auth", key_id: "workforce-session-key", algorithm: "EdDSA",
+        verification_key: workforceKeys.publicKey, upstream, directadmin: { node_id: "node-one" },
+      });
+      dependencies.credentialVerifier = verifier;
+      return { authorization: `Bearer ${workforce.credential}`, context: workforce.context, da, workforce, sourceService };
+    },
     get nativeInvocations() { return nativeInvocations; },
     afterComplete(hook: (signal?: AbortSignal) => Promise<void>) { afterComplete = hook; },
     beforeVerify(hook: (signal?: AbortSignal) => Promise<void>) { beforeVerify = hook; },
@@ -180,6 +214,34 @@ test("hosted signed identity reaches real native completion and durable accepted
     assert.equal((await f.run())[0].run_id, runs[0].run_id); assert.equal((await f.run()).length, 1);
     assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
     assert.equal((await f.control.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status, "in_progress");
+  } finally { await f.close(); }
+});
+
+test("canonical DA-derived Zero identity is persisted, fenced and replayed through native accepted evidence", async () => {
+  const f = await fixture();
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    const first = await f.post(input, identity.authorization);
+    assert.equal(first.status, 200, JSON.stringify(first.body));
+    assert.equal(await f.status(), "completed");
+    assert.equal(f.nativeInvocations, 1);
+    const runs = await f.run();
+    assert.equal(runs.length, 1);
+    assert.equal(runs[0].authenticated_identity.source_session.session_id, identity.da.context.session_id);
+    assert.equal(runs[0].authenticated_identity.source_session.company_id, "a");
+    assert.equal(typeof runs[0].authenticated_identity.credential_expires_at, "string");
+    const evidence = (await f.control.query<{ payload: string }>("SELECT payload FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rows.map(row => JSON.parse(row.payload));
+    assert.equal(evidence.length, 1);
+    assert.equal(evidence[0].accepted_evidence.schema, "titan.business.accepted-evidence/v1");
+    assert.equal(evidence[0].run_id, runs[0].run_id);
+
+    await f.restart();
+    const replay = await f.post(input, identity.authorization);
+    assert.equal(replay.status, 200, JSON.stringify(replay.body));
+    assert.equal((await f.run())[0].run_id, runs[0].run_id);
+    assert.equal(f.nativeInvocations, 1, "restart replay observes the stored source proof and never repeats native work");
   } finally { await f.close(); }
 });
 
@@ -402,32 +464,38 @@ test("readiness replaces a timed-out probe without waiting for the old adapter p
   } finally { await f.close(); }
 });
 
-test("readiness deadline covers control-store queries held behind an authorized native effect", { timeout: 7000 }, async () => {
+test("readiness retries stay available while the slow provider runs outside storage locks", { timeout: 7000 }, async () => {
   const f = await fixture({ adapterTimeoutMs: 5000, shutdownTimeoutMs: 6000 });
   let enter!: () => void; let release!: () => void;
   const entered = new Promise<void>(resolve => { enter = resolve; });
   const blocked = new Promise<void>(resolve => { release = resolve; });
   let dependencyProbes = 0;
+  let execution: Promise<{ status: number; body: unknown }> | undefined;
   try {
     f.beforeComplete(async () => { enter(); await blocked; });
-    const execution = f.post();
-    await entered; // completion is now inside the control-store authority fence
+    execution = f.post();
+    await entered;
     f.readiness(async () => { dependencyProbes += 1; return { authentication: true, authority: true, provider: true, evidence: true }; });
 
-    const started = Date.now();
-    const degraded = await f.get("/ready");
-    assert.equal(degraded.status, 503);
-    assert.ok(Date.now() - started < 1500, "the whole readiness probe, including queued SQLite reads, has a deadline");
-    assert.equal((await degraded.json() as any).checks.runtime, "fail");
-    assert.equal(dependencyProbes, 0, "stale work after the timed-out storage read must stop");
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const started = Date.now();
+      const ready = await f.get("/ready");
+      assert.equal(ready.status, 200);
+      assert.ok(Date.now() - started < 1500, "readiness remains bounded while the provider runs outside writer locks");
+    }
+    assert.equal(dependencyProbes, 3);
     assert.equal((await f.get("/health")).status, 200);
 
     release();
-    assert.equal((await execution).status, 200);
+    assert.equal((await execution!).status, 200);
     const recovered = await f.get("/ready");
     assert.equal(recovered.status, 200);
-    assert.equal(dependencyProbes, 1);
-  } finally { release(); await f.close(); }
+    assert.equal(dependencyProbes, 4);
+  } finally {
+    release();
+    if (execution) await execution;
+    await f.close();
+  }
 });
 
 for (const alias of ["symlink", "hardlink", "directory-symlink"] as const) test(`host rejects identity/control physical ${alias} alias before migration`, async () => {
@@ -515,21 +583,164 @@ for (const surface of ["hub", "go"]) test(`signed ${surface} credentials cannot 
   } finally { await f.close(); }
 });
 
-for (const change of ["revoke", "company-switch"] as const) test(`identity ${change} during final provider read blocks the mutation fence`, async () => {
+for (const change of ["revoke", "company-switch"] as const) test(`identity ${change} before effect admission blocks the native mutation`, async () => {
   const f = await fixture(); let reads = 0;
   const hook = async () => {
     reads += 1;
-    if (reads < 3) { f.beforeRead(hook); return; }
+    if (reads < 2) { f.beforeRead(hook); return; }
     if (change === "revoke") await f.registry.revokeSession("session", 1);
     else await f.registry.switchCompany(f.claims, { audience: "workforce", company_id: "a", actor_id: "lead", context_revision: f.context.context_revision }, "b", new Date().toISOString());
   };
   try {
     f.beforeRead(hook); await f.post();
-    assert.equal(reads, 3); assert.equal(f.nativeInvocations, 0);
+    assert.equal(reads, 2); assert.equal(f.nativeInvocations, 0);
     assert.equal(await f.status(), "in_progress"); assert.equal(await f.status("b"), "in_progress");
     assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
     assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 0);
   } finally { await f.close(); }
+});
+
+for (const expiry of [undefined, "invalid-expiry", new Date(Date.now() - 1000).toISOString()] as const) test(`source-free durable credential rejects ${expiry === undefined ? "missing" : expiry === "invalid-expiry" ? "malformed" : "expired"} expiry`, async () => {
+  const f = await fixture();
+  try {
+    f.credentialVerifier({ async verify() {
+      const { credential_expires_at: _ignored, ...proof } = f.claims;
+      return { ...proof, audience: "workforce", surface: "zero", context_revision: f.context.context_revision,
+        ...(expiry === undefined ? {} : { credential_expires_at: expiry === "invalid-expiry" ? "not-a-date" : expiry }) } as any;
+    } });
+    await f.post();
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+    assert.equal(await f.status(), "in_progress");
+  } finally { await f.close(); }
+});
+
+test("hosted admission rolls back EXECUTING when credential expires during SQLite evidence persistence", async () => {
+  const f = await fixture();
+  let expiresAt = 0;
+  let persistenceDelayMs = 0;
+  try {
+    await f.closeHost();
+    f.credentialVerifier({ async verify() {
+      expiresAt = Date.now() + 150;
+      return { ...f.claims, audience: "workforce", surface: "zero", context_revision: f.context.context_revision,
+        credential_expires_at: new Date(expiresAt).toISOString() };
+    } });
+    const delayedStorage = {
+      dialect: f.control.dialect,
+      query: (sql: string, params?: readonly unknown[]) => f.control.query(sql, params),
+      transaction: (operation: (tx: any) => Promise<unknown>) => f.control.transaction((tx: any) => operation(Object.assign(Object.create(tx), {
+        query: async (sql: string, params: readonly unknown[] = []) => {
+          const result = await tx.query(sql, params);
+          if (sql.startsWith("INSERT INTO evidence") && params[4] === "gateway_execution") {
+            const evidence = JSON.parse(String(params[6] ?? "{}"));
+            if (evidence.state === "EXECUTING") {
+              const started = Date.now();
+              await new Promise(resolve => setTimeout(resolve, 250));
+              persistenceDelayMs = Date.now() - started;
+            }
+          }
+          return result;
+        },
+      }))),
+      close: async () => {},
+    } as any;
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { handleConversationRequest } = await import("../services/workforce/src/conversation-api.ts");
+    const hosted = await createHostedRuntime(delayedStorage, f.identity, f.dependencies, new AbortController().signal);
+    await handleConversationRequest({ ...f.input, action: "start" } as any, hosted.auth, hosted.runtime as any, "Bearer short-lived-test");
+    assert.ok(persistenceDelayMs >= 240, "the SQLite EXECUTING insert remained open past credential expiry");
+    assert.ok(Date.now() >= expiresAt, "credential expiry elapsed before the admission transaction returned");
+    assert.equal(f.nativeInvocations, 0, "expired credentials cannot enter the provider");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0, "expiry rolls back the uncommitted EXECUTING evidence");
+    assert.equal(await f.status(), "in_progress");
+  } finally { await f.close(); }
+});
+
+for (const change of ["source-revoke", "source-company-switch"] as const) test(`canonical DirectAdmin lineage rejects ${change} before effect admission`, async () => {
+  const f = await fixture();
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    let reads = 0;
+    const hook = async () => {
+      reads += 1;
+    if (reads < 2) { f.beforeRead(hook); return; }
+      if (change === "source-revoke") await f.registry.revokeSession(identity.da.context.session_id, identity.da.context.session_revision);
+      else await identity.sourceService.switchCompany(identity.da.credential, { company_id: "a", device_id: "device" }, "b");
+    };
+    f.beforeRead(hook);
+    await f.post(input, identity.authorization);
+    assert.equal(reads, 2);
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 0);
+  } finally { await f.close(); }
+});
+
+test("a session fence that wins admits the effect, releases both locks, and does not promise source revoke can cancel it", async () => {
+  const f = await fixture();
+  let enter!: () => void;
+  let release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const blocked = new Promise<void>(resolve => { release = resolve; });
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    f.beforeComplete(async () => { assert.equal(await f.executionStateCount("EXECUTING"), 1, "the admitted transition is durable before provider entry"); enter(); await blocked; });
+    const pending = f.post(input, identity.authorization);
+    await entered;
+    const started = Date.now();
+    await f.registry.revokeSession(identity.da.context.session_id, identity.da.context.session_revision);
+    assert.ok(Date.now() - started < 1000, "the slow provider owns neither identity nor Workforce control writer lock");
+    release();
+    const response = await pending;
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assert.equal(f.nativeInvocations, 1, "an effect admitted before revocation may finish after it");
+    assert.equal(await f.status(), "completed");
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'")).rowCount, 1,
+      "source revocation prevents later verification but cannot roll back an already admitted provider mutation");
+  } finally { release(); await f.close(); }
+});
+
+test("canonical source proof survives provider timeout and restart without replay", { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 30 });
+  let enter!: () => void;
+  let release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const blocked = new Promise<void>(resolve => { release = resolve; });
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    let adapterSignal: AbortSignal | undefined;
+    f.beforeComplete(async signal => { assert.equal(await f.executionStateCount("EXECUTING"), 1, "the admitted transition is durable before provider entry"); adapterSignal = signal; enter(); await blocked; signal?.throwIfAborted(); });
+    const started = Date.now();
+    const response = await f.post(input, identity.authorization);
+    assert.equal(response.status, 200, JSON.stringify(response.body));
+    assert.ok(Date.now() - started < 1000);
+    await entered;
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'")).rowCount, 1);
+    assert.equal(adapterSignal?.aborted, true);
+    assert.equal((await f.run())[0].authenticated_identity.source_session.session_id, identity.da.context.session_id);
+    release();
+    await new Promise<void>(resolve => setTimeout(resolve, 25));
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(f.nativeInvocations, 0, "the adapter observed abort before mutation");
+    await f.restart();
+    const restored = await f.post(input, identity.authorization);
+    assert.ok(restored.body.continuation_token);
+    const observed = await f.post({ ...input, action: "resume", continuation_token: restored.body.continuation_token }, identity.authorization);
+    assert.equal(observed.status, 200, JSON.stringify(observed.body));
+    assert.equal(f.nativeInvocations, 0, "UNCERTAIN recovery never reexecutes the provider");
+    assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
+  } finally {
+    release();
+    await f.close();
+  }
 });
 
 test("host strips legacy provider control-transaction port before native runtime composition", async () => {
