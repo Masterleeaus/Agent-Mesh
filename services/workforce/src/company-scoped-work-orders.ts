@@ -1,10 +1,13 @@
 import type { StorageClient } from "../../../packages/storage/src/index.js";
 import type {
   AuthenticatedCompanyContext,
+  CompanyPlacementRegistry,
+  CompanyStoreOpener,
   CompanyStorageResolver,
   RegisteredCompanyPlacement,
 } from "../../../packages/storage/src/company-storage-resolver.js";
-import type { CurrentSessionContext } from "../../../packages/titan-platform/src/security-boundary.js";
+import { createCompanyStorageResolver } from "../../../packages/storage/src/company-storage-resolver.js";
+import type { CurrentSessionContext, VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
 
 export type CompanyWorkOrderInput = Readonly<{
   company_id: string;
@@ -26,6 +29,42 @@ export type HostedCompanyWorkOrderOperations = Readonly<{
 }>;
 
 type CompanyStorageLeaseResolver = Pick<CompanyStorageResolver<StorageClient>, "resolve" | "open">;
+
+function companyAttestedOpener(opener: CompanyStoreOpener<StorageClient>): CompanyStoreOpener<StorageClient> {
+  return Object.freeze({
+    async open(
+      placement: Parameters<CompanyStoreOpener<StorageClient>["open"]>[0],
+      options?: Parameters<CompanyStoreOpener<StorageClient>["open"]>[1],
+    ) {
+      const opened = await opener.open(placement, options);
+      const assertCompanyBinding = async () => {
+        await opened.assertPlacementBound();
+        const rows = await opened.client.query<{ id: string }>("SELECT id FROM companies WHERE id=$1", [placement.company_id]);
+        if (rows.rowCount !== 1 || rows.rows[0]?.id !== placement.company_id) {
+          throw new Error("workforce-company-store-identity-mismatch");
+        }
+        // Keep the base opener's filesystem identity check on both sides of the
+        // database attestation; the open SQLite handle must still match the
+        // registered opaque placement after the query completes.
+        await opened.assertPlacementBound();
+      };
+      try {
+        options?.signal?.throwIfAborted();
+        await assertCompanyBinding();
+        options?.signal?.throwIfAborted();
+      } catch (error) {
+        await opened.client.close().catch(() => undefined);
+        throw error;
+      }
+      return Object.freeze({
+        ...opened,
+        async assertPlacementBound() {
+          await assertCompanyBinding();
+        },
+      });
+    },
+  });
+}
 
 function authenticatedScope(current: CurrentSessionContext): AuthenticatedCompanyContext {
   return Object.freeze({
@@ -86,18 +125,47 @@ function leaseBoundClient(client: StorageClient, lease: Awaited<ReturnType<Compa
  * Placement/lease values remain in-process and are never serialized as authority.
  */
 export function createCompanyScopedWorkOrders(options: {
-  resolver: CompanyStorageLeaseResolver;
-  resolveCurrentSession(input: CompanyWorkOrderInput): Promise<CurrentSessionContext>;
+  placementRegistry: CompanyPlacementRegistry;
+  storeOpener: CompanyStoreOpener<StorageClient>;
+  resolveCurrentSession(input: CompanyWorkOrderInput): Promise<Readonly<{
+    current: CurrentSessionContext;
+    proof: VerifiedSessionIdentity;
+  }>>;
+  revalidateCurrentSession(
+    proof: VerifiedSessionIdentity,
+    expected: CurrentSessionContext,
+    signal?: AbortSignal,
+    input?: CompanyWorkOrderInput,
+  ): Promise<CurrentSessionContext>;
   operations: HostedCompanyWorkOrderOperations;
 }) {
   const withLease = async <T>(input: CompanyWorkOrderInput, effect: (companyStorage: StorageClient, currentSession: CurrentSessionContext) => Promise<T>): Promise<T> => {
     input.signal?.throwIfAborted();
-    const current = await options.resolveCurrentSession(input);
+    const { current, proof } = await options.resolveCurrentSession(input);
     assertCurrentBinding(input, current);
-    const placement = await options.resolver.resolve({ kind: "authenticated", current: authenticatedScope(current) }, { signal: input.signal });
+    const resolver = createCompanyStorageResolver<StorageClient>({
+      registry: options.placementRegistry,
+      opener: companyAttestedOpener(options.storeOpener),
+      scopeRevalidator: {
+        async assertCurrent(scope, control) {
+          control?.signal?.throwIfAborted();
+          if (scope.kind !== "authenticated") throw new Error("authenticated-company-scope-required");
+          const expectedScope = scope.current;
+          const fresh = await options.revalidateCurrentSession(proof, current, control?.signal, input);
+          control?.signal?.throwIfAborted();
+          if (fresh.session_id !== expectedScope.session_id || fresh.session_revision !== expectedScope.session_revision
+            || fresh.context_revision !== expectedScope.context_revision || fresh.company_id !== expectedScope.company_id
+            || fresh.actor_id !== expectedScope.actor_id || fresh.audience !== expectedScope.audience
+            || fresh.expires_at !== expectedScope.expires_at || fresh.authority_neutral !== true) {
+            throw new Error("workforce-company-session-not-current");
+          }
+        },
+      },
+    });
+    const placement = await resolver.resolve({ kind: "authenticated", current: authenticatedScope(current) }, { signal: input.signal });
     assertPlacementBinding(input, placement);
 
-    const lease = await options.resolver.open(placement, { signal: input.signal });
+    const lease = await resolver.open(placement, { signal: input.signal });
     let effectFailed = false;
     try {
       if (lease.company_id !== input.company_id || lease.placement_id !== placement.placement_id

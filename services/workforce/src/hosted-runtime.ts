@@ -1,5 +1,6 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import type { StorageClient } from "../../../packages/storage/src/index.js";
-import type { CompanyStorageResolver } from "../../../packages/storage/src/company-storage-resolver.js";
+import type { CompanyPlacementRegistry, CompanyStoreOpener } from "../../../packages/storage/src/company-storage-resolver.js";
 import { IdentitySessionRegistry, type CurrentSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
 // Existing native composition owns authority, provider verification and evidence.
 // @ts-expect-error Native runtime owner is JavaScript.
@@ -21,8 +22,9 @@ export type HostedWorkforceDependencies = {
   credentialVerifier: {
     verify(authorization: string, options?: { signal: AbortSignal }): Promise<VerifiedSessionIdentity & { audience: string; surface: ConversationSurface }>;
   };
-  /** Canonical #1233 registered placement resolver; no request-provided paths or placements. */
-  companyStorageResolver: CompanyStorageResolver<StorageClient>;
+  /** Canonical #1233 registry and physical opener; no request-provided paths or placements. */
+  companyPlacementRegistry: CompanyPlacementRegistry;
+  companyStoreOpener: CompanyStoreOpener<StorageClient>;
   /** Existing native work-order owner, called only with the current leased company store. */
   workOrders: HostedCompanyWorkOrderOperations;
   /** Actual observations of credential, authority, provider and evidence dependencies. */
@@ -57,6 +59,27 @@ function deepFreeze<T>(value: T): T {
     Object.freeze(value);
   }
   return value;
+}
+
+function authBoundaryFailure(error: unknown): Error {
+  if (error instanceof Error && error.message === "identity-registry-unavailable") {
+    return new Error("identity-registry-unavailable");
+  }
+  return new Error("conversation-authentication-failed");
+}
+
+function sessionBoundaryFailure(error: unknown): Error {
+  if (error instanceof Error && error.message === "identity-registry-unavailable") {
+    return new Error("identity-registry-unavailable");
+  }
+  if (error instanceof Error && error.message === "session-fence-timeout") {
+    return new Error("identity-registry-unavailable");
+  }
+  if (error instanceof Error && /^(identity-|session-|derived-session-|runtime-authentication-|runtime-credential-)/.test(error.message)
+    && !/aborted|cancelled/.test(error.message)) {
+    return new Error("conversation-authentication-failed");
+  }
+  return error instanceof Error ? error : new Error("conversation-authentication-failed");
 }
 
 function isSessionSourceReference(value: unknown): value is SessionSourceReference {
@@ -105,10 +128,20 @@ function requireConsistentSessionProof(identity: AuthenticatedWorkIdentity): boo
 export async function createHostedRuntime(storage: StorageClient, identityStorage: StorageClient, dependencies: HostedWorkforceDependencies, signal?: AbortSignal) {
   const timeoutMs = dependencies.adapterTimeoutMs ?? 30_000;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120_000) throw new Error("workforce-adapter-timeout-invalid");
-  if (typeof dependencies.companyStorageResolver?.resolve !== "function" || typeof dependencies.companyStorageResolver?.open !== "function") {
-    throw new Error("production-runtime-port-required:companyStorageResolver");
+  if (typeof dependencies.companyPlacementRegistry?.findByCompanyId !== "function"
+    || typeof dependencies.companyStoreOpener?.open !== "function") {
+    throw new Error("production-runtime-port-required:companyPlacementPorts");
   }
   const registry = new IdentitySessionRegistry(identityStorage);
+  const requestIdentityFailure = new AsyncLocalStorage<{ failure?: string; effectAdmitted?: boolean }>();
+  const captureIdentityFailure = (error: unknown): Error => {
+    const mapped = sessionBoundaryFailure(error);
+    if (mapped.message === "identity-registry-unavailable" || mapped.message === "conversation-authentication-failed") {
+      const scope = requestIdentityFailure.getStore();
+      if (scope && !scope.effectAdmitted) scope.failure = mapped.message;
+    }
+    return mapped;
+  };
   async function loadRunIdentity(input: RunIdentityInput, callSignal?: AbortSignal) {
     callSignal?.throwIfAborted();
     const row = (await storage.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2", [input.company_id, input.run_id])).rows[0];
@@ -147,25 +180,60 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
     context_revision: identity.context_revision,
   });
   const companyWorkOrders = createCompanyScopedWorkOrders({
-    resolver: dependencies.companyStorageResolver,
+    placementRegistry: dependencies.companyPlacementRegistry,
+    storeOpener: dependencies.companyStoreOpener,
     async resolveCurrentSession(input) {
       const loaded = await loadRunIdentity(input, input.signal);
       input.signal?.throwIfAborted();
-      return registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), new Date().toISOString());
+      let current: CurrentSessionContext;
+      try {
+        current = await registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), new Date().toISOString());
+      } catch (error) { throw captureIdentityFailure(error); }
+      input.signal?.throwIfAborted();
+      return { current, proof: loaded.proof };
+    },
+    async revalidateCurrentSession(proof, current, callSignal, input) {
+      callSignal?.throwIfAborted();
+      let fresh: CurrentSessionContext;
+      try {
+        fresh = await registry.resolveCurrentSession(proof, {
+          audience: "workforce", company_id: current.company_id, actor_id: current.actor_id,
+          context_revision: current.context_revision,
+        }, new Date().toISOString());
+      } catch (error) { throw captureIdentityFailure(error); }
+      callSignal?.throwIfAborted();
+      return fresh;
     },
     operations: dependencies.workOrders,
   });
   const sessionAdmission: SessionAdmission = async (input, effect) => {
-    const loaded = await loadRunIdentity(input, input.signal);
+    let loaded: Awaited<ReturnType<typeof loadRunIdentity>>;
+    try { loaded = await loadRunIdentity(input, input.signal); }
+    catch (error) { throw captureIdentityFailure(error); }
     const context = expected(input, loaded.authenticated_identity);
     if (loaded.proof.source_session !== undefined) {
-      return registry.withCurrentSessionFence(loaded.proof, context, { signal: input.signal },
-        (current, signal, acquireDeadlineMs) => effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs }));
+      let enteredEffect = false;
+      try {
+        return await registry.withCurrentSessionFence(loaded.proof, context, { signal: input.signal },
+          (current, signal, acquireDeadlineMs) => {
+            enteredEffect = true;
+            const scope = requestIdentityFailure.getStore();
+            if (scope) scope.effectAdmitted = true;
+            return effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs });
+          });
+      } catch (error) {
+        if (!enteredEffect) throw captureIdentityFailure(error);
+        throw error;
+      }
     }
     // Ordinary Workforce sessions retain their existing current-identity check;
     // lineage is never synthesized for credentials that have no signed source.
-    const current = await registry.resolveCurrentSession(loaded.proof, context, loaded.now);
+    let current: CurrentSessionContext;
+    try { current = await registry.resolveCurrentSession(loaded.proof, context, loaded.now); }
+    catch (error) { throw captureIdentityFailure(error); }
     input.signal?.throwIfAborted();
+    const scope = requestIdentityFailure.getStore();
+    if (scope) scope.effectAdmitted = true;
     return effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: false, signal: input.signal });
   };
   const auth: ConversationAuth = {
@@ -197,7 +265,7 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
             actor_id: current.actor_id, context_revision: current.context_revision, surface: verified.surface,
             session_proof_type: hasSource ? AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived : AUTHENTICATED_SESSION_PROOF_TYPE.direct,
             ...(hasSource ? { source_session_required: true } : {}) } };
-      } catch { throw new Error("conversation-authentication-failed"); }
+      } catch (error) { throw authBoundaryFailure(error); }
     },
   };
   // Only these public provider ports cross the hosted boundary. In particular,
@@ -205,9 +273,30 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
   const runtime = await createFieldServiceRuntime({ storage, workOrders: companyWorkOrders, timeoutMs, signal, sessionAdmission,
     async revalidateIdentity(input: { company_id: string; actor_id: string; run_id: string }) {
       signal?.throwIfAborted();
-      const loaded = await loadRunIdentity(input, signal);
-      await registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), loaded.now);
+      let loaded: Awaited<ReturnType<typeof loadRunIdentity>>;
+      try { loaded = await loadRunIdentity(input, signal); }
+      catch (error) { throw captureIdentityFailure(error); }
+      try {
+        await registry.resolveCurrentSession(loaded.proof, expected(input, loaded.authenticated_identity), loaded.now);
+      } catch (error) { throw captureIdentityFailure(error); }
     },
   });
-  return { auth, runtime, registry, sessionAdmission };
+  const dispatch = runtime.dispatch;
+  const recover = runtime.recover;
+  const surfacedRuntime = Object.freeze({
+    ...runtime,
+    async dispatch(input: Parameters<typeof dispatch>[0]) {
+      const scope: { failure?: string; effectAdmitted?: boolean } = {};
+      const result = await requestIdentityFailure.run(scope, () => dispatch(input));
+      if (scope.failure) throw new Error(scope.failure);
+      return result;
+    },
+    async recover(input: Parameters<typeof recover>[0]) {
+      const scope: { failure?: string; effectAdmitted?: boolean } = {};
+      const result = await requestIdentityFailure.run(scope, () => recover(input));
+      if (scope.failure) throw new Error(scope.failure);
+      return result;
+    },
+  });
+  return { auth, runtime: surfacedRuntime, registry, sessionAdmission };
 }

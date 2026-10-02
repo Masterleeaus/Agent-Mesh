@@ -1,13 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash, generateKeyPairSync, sign, verify } from "node:crypto";
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { request as httpRequest } from "node:http";
 import { SignJWT } from "jose";
 import Database from "better-sqlite3";
-import { createCompanyStorageResolver, createSqliteStorage } from "../packages/storage/src/index.js";
+import {
+  createSqliteCompanyPlacementRegistry,
+  createSqliteCompanyStoreOpener,
+  createSqliteStorage,
+  initializeSqliteCompanyPlacementRegistry,
+} from "../packages/storage/src/index.js";
 import { createIdentitySessionRegistry } from "../packages/titan-platform/src/security-boundary.js";
 import { completeAssignedWorkOrder } from "../apps/web/lib/work-orders/lead-access.ts";
 // @ts-expect-error Canonical authority store owner is JavaScript.
@@ -22,7 +27,9 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const dir = mkdtempSync(join(tmpdir(), "titan-hosted-"));
   const storagePath = join(dir, "control.db");
   const identityStoragePath = join(dir, "identity.db");
-  const files = { a: join(dir, "company-a.db"), b: join(dir, "company-b.db") };
+  const companyStoreRoot = join(dir, "company-stores");
+  mkdirSync(companyStoreRoot, { mode: 0o700 });
+  const files = { a: join(companyStoreRoot, "company-a.sqlite"), b: join(companyStoreRoot, "company-b.sqlite") };
   for (const [company, file] of [["a", storagePath], ...Object.entries(files)]) {
     const db = new Database(file);
     for (const name of readdirSync(new URL("../db/sqlite/", import.meta.url)).filter(name => name.endsWith(".sql")).sort()) {
@@ -54,65 +61,32 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   const now = new Date().toISOString();
   const context = await registry.issueSession({ provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", company_id: "a", audience: "workforce", issued_at: now, expires_at: new Date(Date.now() + 3600000).toISOString() }, now);
   const claims = { provider: "test-ed25519", subject: "subject", session_id: "session", device_id: "device", session_revision: 1, audience: "workforce", surface: "zero" as const, credential_expires_at: new Date(Date.now() + 3600000).toISOString() };
-  const verifiedProofs = new Map<string, any>();
-  const placements = new Map<string, any>([
-    ["a", { company_id: "a", placement_id: "company-a", placement_revision: 1, provider: "sqlite", schema_version: "native-v1", status: "READY" }],
-    ["b", { company_id: "b", placement_id: "company-b", placement_revision: 1, provider: "sqlite", schema_version: "native-v1", status: "READY" }],
-  ]);
-  const placementFiles = new Map([["company-a", files.a], ["company-b", files.b]]);
+  await initializeSqliteCompanyPlacementRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+  for (const company_id of ["a", "b"]) {
+    await identity.query(`INSERT INTO titan_company_storage_placements
+      (company_id, placement_id, placement_revision, provider, schema_version, status)
+      VALUES ($1, $2, 1, 'sqlite', 'native-v1', 'READY')`, [company_id, `company-${company_id}`]);
+  }
+  const persistedPlacementRegistry = await createSqliteCompanyPlacementRegistry({ storage: identity, storage_role: "GLOBAL_REGISTRY" });
+  const physicalCompanyOpener = createSqliteCompanyStoreOpener({ companyStoreRoot });
+  let reportWrongPlacementCompany = false;
   let companyOpens = 0;
   let companyCloses = 0;
-  const companyStorageResolver = createCompanyStorageResolver({
-    registry: { async findByCompanyId(company_id, options) {
-      options?.signal?.throwIfAborted();
-      const placement = placements.get(company_id);
-      return placement ? { ...placement } : null;
-    } },
-    scopeRevalidator: { async assertCurrent(scope, options) {
-      options?.signal?.throwIfAborted();
-      if (scope.kind !== "authenticated") throw new Error("authenticated-company-scope-required");
-      const current = scope.current;
-      const proof = verifiedProofs.get(current.session_id);
-      if (!proof) throw new Error("verified-current-session-required");
-      const fresh = await registry.resolveCurrentSession(proof, {
-        audience: current.audience, company_id: current.company_id, actor_id: current.actor_id,
-        context_revision: current.context_revision,
-      }, new Date().toISOString());
-      if (fresh.session_id !== current.session_id || fresh.session_revision !== current.session_revision
-        || fresh.company_id !== current.company_id || fresh.actor_id !== current.actor_id
-        || fresh.context_revision !== current.context_revision || fresh.expires_at !== current.expires_at) {
-        throw new Error("company-session-not-current");
-      }
-    } },
-    opener: { async open(placement, options) {
-      options?.signal?.throwIfAborted();
-      const filename = placementFiles.get(placement.placement_id);
-      if (!filename) throw new Error("company-placement-not-mounted");
-      const client = createSqliteStorage(filename);
-      const identityProbe = createSqliteStorage(filename);
-      companyOpens += 1;
-      const companyStorage = { ...client, async close() { companyCloses += 1; await Promise.all([client.close(), identityProbe.close()]); } };
-      return {
-        company_id: placement.company_id, placement_id: placement.placement_id,
-        placement_revision: placement.placement_revision, provider: placement.provider,
-        schema_version: placement.schema_version, client: companyStorage,
-        async assertPlacementBound() {
-          const bound = await identityProbe.query("SELECT id FROM companies WHERE id=$1", [placement.company_id]);
-          if (bound.rowCount !== 1) throw new Error("company-database-identity-mismatch");
-        },
-      };
-    } },
-  });
-  const keys = generateKeyPairSync("ed25519");
-  const rememberVerifiedProof = (verified: any) => {
-    verifiedProofs.set(verified.session_id, {
-      provider: verified.provider, subject: verified.subject, session_id: verified.session_id,
-      device_id: verified.device_id, session_revision: verified.session_revision,
-      ...(verified.credential_expires_at ? { credential_expires_at: verified.credential_expires_at } : {}),
-      ...(verified.source_session ? { source_session: verified.source_session } : {}),
-    });
-    return verified;
+  const companyPlacementRegistry = {
+    async findByCompanyId(company_id: string, options?: { signal?: AbortSignal }) {
+      const placement = await persistedPlacementRegistry.findByCompanyId(company_id, options);
+      return placement && reportWrongPlacementCompany && company_id === "a" ? { ...placement, company_id: "b" } : placement;
+    },
   };
+  const companyStoreOpener = {
+    async open(placement: Parameters<typeof physicalCompanyOpener.open>[0], options?: { signal?: AbortSignal }) {
+      const opened = await physicalCompanyOpener.open(placement, options);
+      companyOpens += 1;
+      const companyStorage = { ...opened.client, async close() { companyCloses += 1; await opened.client.close(); } };
+      return { ...opened, client: companyStorage };
+    },
+  };
+  const keys = generateKeyPairSync("ed25519");
   function credential(overrides: Record<string, unknown> = {}) {
     const payload = Buffer.from(JSON.stringify({ ...claims, ...overrides })).toString("base64url");
     return `Bearer ${payload}.${sign(null, Buffer.from(payload), keys.privateKey).toString("base64url")}`;
@@ -140,9 +114,10 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
       options?.signal.throwIfAborted();
       const match = /^Bearer ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/.exec(authorization);
       if (!match || !verify(null, Buffer.from(match[1]), keys.publicKey, Buffer.from(match[2], "base64url"))) throw new Error("signature-invalid");
-      return rememberVerifiedProof(JSON.parse(Buffer.from(match[1], "base64url").toString("utf8")));
+      return JSON.parse(Buffer.from(match[1], "base64url").toString("utf8"));
     } },
-    companyStorageResolver,
+    companyPlacementRegistry,
+    companyStoreOpener,
     workOrders: {
       async complete({ company_id, actor_id, work_order_id, signal, authorityFence, companyStorage, currentSession }) {
         if (beforeComplete) await beforeComplete(signal);
@@ -176,14 +151,25 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
   }
   await start();
   const input = { action: "start", company_id: "a", actor_id: "lead", device_id: "device", surface: "zero", session_id: "session", context_revision: context.context_revision, conversation_id: "conversation", interaction_id: "interaction", client_message_id: "message", request_id: "request", operation_id: "operation", correlation_id: "correlation", trace_id: "trace", idempotency_key: "idempotency", text: "complete work order wo" };
-  return { control, identity, dependencies, registry, stores, placements, companyStorageResolver, companyOpens: () => companyOpens, companyCloses: () => companyCloses, claims, context, authority, envelope, credential, input,
+  return { control, identity, dependencies, registry, stores, companyPlacementRegistry, companyStoreOpener, companyOpens: () => companyOpens, companyCloses: () => companyCloses, claims, context, authority, envelope, credential, input,
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
     async executionStateCount(state: string) { return (await control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')=$1", [state])).rowCount; },
-    credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) {
-      dependencies.credentialVerifier = { async verify(authorization, options) { return rememberVerifiedProof(await verifier.verify(authorization, options)); } };
+    async rotatePlacement(company_id: "a" | "b") {
+      const result = await identity.query("UPDATE titan_company_storage_placements SET placement_revision=placement_revision+1 WHERE company_id=$1", [company_id]);
+      assert.equal(result.rowCount, 1);
     },
+    async pointCompanyAtForeignPhysicalStore() {
+      const filename = join(companyStoreRoot, "misbound-a.sqlite");
+      const wrong = new Database(filename);
+      wrong.exec("CREATE TABLE companies(id TEXT PRIMARY KEY); INSERT INTO companies(id) VALUES('b');");
+      wrong.close();
+      const result = await identity.query("UPDATE titan_company_storage_placements SET placement_id='misbound-a', placement_revision=placement_revision+1 WHERE company_id='a'");
+      assert.equal(result.rowCount, 1);
+    },
+    reportWrongPlacementCompany() { reportWrongPlacementCompany = true; },
+    credentialVerifier(verifier: HostedWorkforceDependencies["credentialVerifier"]) { dependencies.credentialVerifier = verifier; },
     async workforceZero() {
       const { createSessionCredentialService, directAdminIssuer } = await import("../packages/titan-platform/src/security-boundary.js");
       const { createWorkforceSessionCredentialVerifier } = await import("../services/workforce/src/session-credential-verifier.ts");
@@ -213,7 +199,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
         registry, issuer: "titan:workforce-auth", key_id: "workforce-session-key", algorithm: "EdDSA",
         verification_key: workforceKeys.publicKey, upstream, directadmin: { node_id: "node-one" },
       });
-      dependencies.credentialVerifier = { async verify(authorization, options) { return rememberVerifiedProof(await verifier.verify(authorization, options)); } };
+      dependencies.credentialVerifier = verifier;
       return { authorization: `Bearer ${workforce.credential}`, context: workforce.context, da, workforce, sourceService };
     },
     get nativeInvocations() { return nativeInvocations; },
@@ -284,10 +270,7 @@ test("hosted signed identity reaches real native completion and durable accepted
 test("placement rotation during a company read is denied before the native effect", async () => {
   const f = await fixture();
   try {
-    const current = f.placements.get("a");
-    f.beforeRead(async () => {
-      f.placements.set("a", { ...current, placement_revision: current.placement_revision + 1 });
-    });
+    f.beforeRead(() => f.rotatePlacement("a"));
     await f.post();
     assert.equal(await f.status(), "in_progress");
     assert.ok(f.companyOpens() > 0);
@@ -301,10 +284,7 @@ test("placement rotation during a company read is denied before the native effec
 test("placement rotation after effect admission leaves the native outcome uncertain and unaccepted", async () => {
   const f = await fixture();
   try {
-    const current = f.placements.get("a");
-    f.beforeComplete(async () => {
-      f.placements.set("a", { ...current, placement_revision: current.placement_revision + 1 });
-    });
+    f.beforeComplete(() => f.rotatePlacement("a"));
     const response = await f.post();
     assert.equal(response.status, 200, JSON.stringify(response.body));
     assert.equal(f.nativeInvocations, 1, "an already admitted native effect may finish while its store is rotated");
@@ -319,12 +299,109 @@ test("placement rotation after effect admission leaves the native outcome uncert
 test("a registered company mismatch is rejected before a physical database is opened", async () => {
   const f = await fixture();
   try {
-    f.placements.set("a", { ...f.placements.get("a"), company_id: "b" });
+    f.reportWrongPlacementCompany();
     await f.post();
     assert.equal(f.companyOpens(), 0);
     assert.equal(f.nativeInvocations, 0);
     assert.equal(await f.status(), "in_progress");
     assert.equal(await f.status("b"), "in_progress");
+  } finally { await f.close(); }
+});
+
+test("a persisted placement that opens another company's physical database is rejected", async () => {
+  const f = await fixture();
+  try {
+    await f.pointCompanyAtForeignPhysicalStore();
+    await f.post();
+    assert.equal(f.companyOpens(), 1, "the persisted opaque placement points to an existing trusted-root file");
+    assert.equal(f.companyCloses(), 1, "physical company identity failure closes the opened lease");
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.status("b"), "in_progress");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage during authentication is sanitized as 503", async () => {
+  const f = await fixture();
+  try {
+    await f.identity.query("DROP TABLE titan_security_sessions");
+    const response = await f.post();
+    assert.equal(response.status, 503, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "identity-registry-unavailable" });
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage at the initial company provider lookup is sanitized as 503", async () => {
+  const f = await fixture();
+  try {
+    let failOnSecondCurrentLookup = false;
+    let currentLookups = 0;
+    const wrapStorage = (storage: any): any => ({
+      dialect: storage.dialect,
+      async query(sql: string, params?: readonly unknown[]) {
+        if (failOnSecondCurrentLookup && /SELECT \* FROM titan_security_sessions/.test(sql)) {
+          currentLookups += 1;
+          if (currentLookups === 2) throw new Error("test-only registry outage");
+        }
+        return storage.query(sql, params);
+      },
+      transaction<T>(operation: (tx: any) => Promise<T>, options?: unknown) {
+        return storage.transaction((tx: any) => operation(wrapStorage(tx)), options);
+      },
+      close() { return storage.close(); },
+    });
+    const { createHostedRuntime } = await import("../services/workforce/src/hosted-runtime.ts");
+    const { handleConversationRequest, normalizeConversationRequest } = await import("../services/workforce/src/conversation-api.ts");
+    const hosted = await createHostedRuntime(f.control, wrapStorage(f.identity), f.dependencies);
+    const normalized = normalizeConversationRequest(f.input);
+    const auth = {
+      async resolve(input: Parameters<typeof hosted.auth.resolve>[0]) {
+        const context = await hosted.auth.resolve(input);
+        failOnSecondCurrentLookup = true;
+        return context;
+      },
+    };
+    await assert.rejects(
+      handleConversationRequest(normalized, auth, hosted.runtime, f.credential()),
+      { message: "identity-registry-unavailable" },
+    );
+    assert.equal(currentLookups, 2, "the first current identity check passed; the initial company-provider lookup failed");
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage during post-read revalidation is sanitized as 503 before effect admission", async () => {
+  const f = await fixture();
+  try {
+    f.beforeRead(async () => { await f.identity.query("DROP TABLE titan_security_sessions"); });
+    const response = await f.post();
+    assert.equal(response.status, 503, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "identity-registry-unavailable" });
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.executionStateCount("EXECUTING"), 0);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+  } finally { await f.close(); }
+});
+
+test("identity registry outage at source-session fence is sanitized as 503 without native effect", async () => {
+  const f = await fixture();
+  try {
+    const identity = await f.workforceZero();
+    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    f.beforeRead(async () => { await f.identity.query("DROP TABLE titan_security_sessions"); });
+    const response = await f.post(input, identity.authorization);
+    assert.equal(response.status, 503, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "identity-registry-unavailable" });
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress");
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
   } finally { await f.close(); }
 });
 
@@ -785,7 +862,8 @@ for (const alias of ["symlink", "hardlink", "directory-symlink"] as const) test(
     const unavailable = async (): Promise<never> => { throw new Error("must-not-call-adapter"); };
     await assert.rejects(() => createWorkforceServer({ storagePath, dependencies: {
       identityStoragePath, credentialVerifier: { verify: unavailable },
-      companyStorageResolver: { resolve: unavailable, open: unavailable },
+      companyPlacementRegistry: { findByCompanyId: unavailable },
+      companyStoreOpener: { open: unavailable },
       workOrders: { read: unavailable, complete: unavailable }, readiness: unavailable,
     } }), /workforce-separate-identity-storage-required/);
     const observed = new Database(storagePath);
@@ -945,7 +1023,9 @@ for (const change of ["source-revoke", "source-company-switch"] as const) test(`
       else await identity.sourceService.switchCompany(identity.da.credential, { company_id: "a", device_id: "device" }, "b");
     };
     f.beforeRead(hook);
-    await f.post(input, identity.authorization);
+    const response = await f.post(input, identity.authorization);
+    assert.equal(response.status, 401, JSON.stringify(response.body));
+    assert.deepEqual(response.body, { error: "conversation-authentication-failed" });
     assert.equal(reads, 2);
     assert.equal(f.nativeInvocations, 0);
     assert.equal(await f.status(), "in_progress");
