@@ -75,6 +75,19 @@ jobs:
           pnpm --dir packages/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
           pnpm --dir packages/titan-platform exec node --test ./tests/titan-forge-runtime.test.mjs
 
+      - name: Focused Titan Maps Intelligence compile and tests
+        if: ${{ hashFiles('packages/titan-platform/src/maps-intelligence/**', 'packages/titan-platform/tests/maps-intelligence-runtime.test.mjs') != '' }}
+        run: |
+          pnpm --dir packages/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+          pnpm --dir packages/titan-platform exec node --test ./tests/maps-intelligence-runtime.test.mjs
+
+
+      - name: Focused Titan Signal compile and tests
+        if: ${{ hashFiles('packages/titan-platform/src/signal/**', 'packages/titan-platform/tests/signal-runtime.test.mjs') != '' }}
+        run: |
+          pnpm --dir packages/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+          pnpm --dir packages/titan-platform exec node --test ./tests/signal-runtime.test.mjs
+
       - name: Web typecheck regression gate
         shell: bash
         run: |
