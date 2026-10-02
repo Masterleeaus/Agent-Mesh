@@ -27,7 +27,7 @@ export type CaptureQualityAssessment=Readonly<{company_id:string;evidence_ref:st
 export function assessCaptureQuality(i:{company_id:string;evidence:EvidenceRef;width:number;height:number;sharpness:number;exposure:number;subject_coverage:number;duplicate_of?:string|null;policy:CaptureQualityPolicy}):CaptureQualityAssessment{
  if(i.company_id!==i.evidence.company_id)throw Error("visual_cross_company_evidence");
  if(!i.evidence.accepted)throw Error("visual_evidence_not_accepted");
- if(!Number.isInteger(i.policy.revision)||i.policy.revision<1)throw Error("visual_quality_policy_invalid");
+ if(!Number.isInteger(i.policy.revision)||i.policy.revision<1||i.policy.min_width<1||i.policy.min_height<1||![i.policy.min_sharpness,i.policy.min_exposure,i.policy.min_subject_coverage].every(n=>Number.isFinite(n)&&n>=0&&n<=1))throw Error("visual_quality_policy_invalid");
  for(const n of [i.width,i.height])if(!Number.isFinite(n)||n<0)throw Error("visual_quality_dimensions_invalid");
  for(const n of [i.sharpness,i.exposure,i.subject_coverage])if(!Number.isFinite(n)||n<0||n>1)throw Error("visual_quality_metric_invalid");
  const reasons:string[]=[];const guidance:string[]=[];
@@ -43,7 +43,7 @@ export function createCaptureGuidance(i:{checklist:CaptureChecklist;company_id:s
  const mine=i.captured.filter(e=>e.accepted&&e.company_id===i.company_id&&e.subject_id===i.subject_id&&e.subject_type===i.checklist.subject_type);
  const have=new Set(mine.map(e=>e.evidence_id));
  const missing=i.checklist.items.filter(x=>x.required&&!have.has(x.id)).map(x=>x.id);
- const low=new Set((i.low_quality_refs??[]).filter(ref=>have.has(ref)));for(const report of i.quality_reports??[]){if(report.company_id!==i.company_id)throw Error("visual_cross_company_quality_report");if(have.has(report.evidence_ref.split(":")[0])&&report.quality==="RETAKE")low.add(report.evidence_ref.split(":")[0]);}
+ const low=new Set((i.low_quality_refs??[]).filter(ref=>have.has(ref)));for(const report of i.quality_reports??[]){if(report.company_id!==i.company_id)throw Error("visual_cross_company_quality_report");const source=mine.find(e=>report.evidence_ref===e.evidence_id+":"+e.revision);if(source&&report.quality==="RETAKE")low.add(source.evidence_id);}
  return{checklist_id:i.checklist.id,checklist_revision:i.checklist.revision,company_id:i.company_id,subject_id:i.subject_id,missing_items:missing,quality:low.size?"LOW_QUALITY":missing.length?"INCOMPLETE":"READY",offline_queued:i.offline,source_refs:mine.map(e=>e.evidence_id+":"+e.revision),authority_effect:false};
 }
 export function pairBeforeAfter(before:EvidenceRef,after:EvidenceRef,company_id:string){
