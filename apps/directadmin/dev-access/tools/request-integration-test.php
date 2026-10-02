@@ -141,6 +141,23 @@ function integration_expect_successful_pwd(string $html,string $home):void{
  integration_expect(preg_match('~<div class="term">([^<]*)</div>~',$html,$matches)===1,'successful command output must render in the terminal');
  integration_expect(trim(htmlspecialchars_decode($matches[1],ENT_QUOTES))===$home,'pwd output must be limited to the selected account HOME');
 }
+function integration_init_git_repo(string $path,string $home):void{
+ integration_expect(mkdir($path,0700,true),'isolated Git repository directory must be created');
+ $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+ $environment=[
+  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+  'HOME'=>$home,
+  'GIT_CONFIG_NOSYSTEM'=>'1',
+  'GIT_CONFIG_GLOBAL'=>'/dev/null'
+ ];
+ $process=@proc_open(['git','init','--quiet',$path],$descriptors,$pipes,$home,$environment,['bypass_shell'=>true]);
+ integration_expect(is_resource($process),'synthetic Git repository must initialize');
+ fclose($pipes[0]);
+ $stdout=(string)stream_get_contents($pipes[1]);
+ $stderr=(string)stream_get_contents($pipes[2]);
+ fclose($pipes[1]); fclose($pipes[2]);
+ integration_expect(proc_close($process)===0&&$stdout===''&&$stderr==='','synthetic Git setup must be quiet and successful');
+}
 
 function integration_ssh_wire_string(string $value):string{
  return pack('N',strlen($value)).$value;
@@ -284,6 +301,42 @@ $rawPostEnvironment=$common+[
 [$html]=integration_run_role($root,'admin',$rawPostEnvironment);
 integration_expect_successful_pwd($html,$homeA);
 
+$gitRepo=$homeA.'/git-remote-policy';
+integration_init_git_repo($gitRepo,$homeA);
+$remoteUrl='https://synthetic-user:synthetic-token@example.invalid/repo.git';
+$gitConfig=$gitRepo.'/.git/config';
+$gitConfigBefore=hash_file('sha256',$gitConfig);
+foreach([
+ 'remote-add'=>'git remote add origin '.$remoteUrl,
+ 'remote-set-url'=>'git remote set-url origin '.$remoteUrl,
+ 'remote-display'=>'git remote -v'
+] as $caseName=>$command){
+ $gitFields=['csrf'=>$token,'cwd'=>$gitRepo,'command'=>$command,'run'=>'1'];
+ $gitBody=http_build_query($gitFields,'','&',PHP_QUERY_RFC1738);
+ $gitEnvironment=$common+[
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+  'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($gitBody)
+ ];
+ [$gitHtml]=integration_run_role($root,'admin',$gitEnvironment,$gitBody);
+ integration_expect(strpos($gitHtml,'Exit code: 126')!==false,$caseName.' must be blocked by the actual admin role executable');
+ integration_expect(strpos($gitHtml,'synthetic-user')===false&&strpos($gitHtml,'synthetic-token')===false,$caseName.' must not disclose URL userinfo');
+}
+integration_expect(hash_file('sha256',$gitConfig)===$gitConfigBefore,'actual role endpoint must leave repository config unchanged after blocked remote commands');
+
+$externalGit=$fixture.'/outside-git';
+integration_init_git_repo($externalGit,$fixture);
+$escapedWorktree=$homeA.'/linked-gitdir-escape';
+integration_expect(mkdir($escapedWorktree,0700,true),'linked-worktree containment fixture must be created');
+integration_expect(file_put_contents($escapedWorktree.'/.git',"gitdir: ".$externalGit.'/.git'."\n")!==false,'external linked-worktree pointer must be created');
+$escapeFields=['csrf'=>$token,'cwd'=>$escapedWorktree,'command'=>'git status --short','run'=>'1'];
+$escapeBody=http_build_query($escapeFields,'','&',PHP_QUERY_RFC1738);
+$escapeEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($escapeBody)
+];
+[$escapeHtml]=integration_run_role($root,'admin',$escapeEnvironment,$escapeBody);
+integration_expect(strpos($escapeHtml,'Exit code: 126')!==false,'actual role command path must reject a gitdir outside HOME before Git runs');
+integration_expect(strpos($escapeHtml,$externalGit)===false,'external Git path must not appear in terminal output');
 
 $keyTransportCases=[
  'raw-post-terminal-lf-rsa'=>[
