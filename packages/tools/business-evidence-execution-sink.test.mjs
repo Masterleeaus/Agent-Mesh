@@ -127,6 +127,23 @@ test("real SQLite store reconstructs company-scoped job reality after reopen", a
     assert.deepEqual(foldJobReality("company-a", "job-1", after), projection);
     assert.equal((await reopened.acceptedForSubject("company-b", "job", "job-1")).length, 0);
 
+    const originalJobFact = after.find(row => row.event_type === "job.status.verified");
+    assert.ok(originalJobFact);
+    const correction = {
+      ...originalJobFact,
+      evidence_id: "job-1:corrected",
+      event_type: "job.status.corrected",
+      supersedes_evidence_id: originalJobFact.evidence_id,
+      causation_id: originalJobFact.evidence_id,
+      accepted_at: new Date(Date.parse(originalJobFact.accepted_at) + 1000).toISOString(),
+      payload: { status: "in_progress" },
+    };
+    await reopened.append(correction);
+    const correctedHistory = await reopened.acceptedForSubject("company-a", "job", "job-1");
+    const correctedProjection = foldJobReality("company-a", "job-1", correctedHistory);
+    assert.equal(correctedProjection.status, "in_progress");
+    assert.deepEqual(correctedProjection.source_evidence_ids, [originalJobFact.evidence_id, correction.evidence_id]);
+
     const count = (await storage.query("SELECT id FROM evidence")).rowCount;
     await createBusinessEvidenceExecutionSink({ store: reopened })(result.evidence);
     assert.equal((await storage.query("SELECT id FROM evidence")).rowCount, count);
