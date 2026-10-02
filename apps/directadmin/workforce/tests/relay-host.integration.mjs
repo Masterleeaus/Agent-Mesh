@@ -27,6 +27,7 @@ const browserPackage = join(scratch, 'workforce-extracted');
 const workforceArchiveRoot = join(scratch, 'workforce-package');
 const certPath = join(scratch, 'panel.crt');
 const keyPath = join(scratch, 'panel.key');
+const lifecycleCallbacks = [];
 let host;
 let panel;
 let browser;
@@ -238,7 +239,6 @@ try {
   }
   await seedStorage.close();
 
-  const lifecycleCallbacks = [];
   const bridgeFixture = await import(pathToFileURL(bridgeFixturePath).href);
   const auth = await bridgeFixture.fixture({ after: cleanupFn => lifecycleCallbacks.push(cleanupFn) }, {
     origin: panelOrigin, provider: `directadmin:${panelOrigin}`,
@@ -304,8 +304,8 @@ try {
   await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
   assert.equal(relayObservations.length, 1, `real relay received the initial context request; panel=${JSON.stringify(panelObservations)} page=${JSON.stringify(pageErrors)}`);
   assert.equal(relayObservations[0].status, 503, 'the extracted relay production default fails closed without configuration');
-  assert.ok(['relay_not_configured', 'cookie_boundary_unverified'].includes(relayObservations[0].code),
-    'the current-main and #812 draft defaults both expose a sanitized unavailable response');
+  assert.equal(relayObservations[0].code, 'cookie_boundary_unverified',
+    'the current production loader reports the unverified-cookie boundary explicitly');
   assert.equal(hostedObservations.length, 0, 'missing relay config refuses before calling the hosted owner');
   assert.equal(await page.getByRole('navigation').count(), 0, 'missing config exposes no company views');
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'missing config exposes no controls');
@@ -451,5 +451,6 @@ try {
   await host?.close().catch(() => {});
   if (panel) { panel.closeAllConnections(); await new Promise(resolve => panel.close(resolve)).catch(() => {}); }
   for (const close of cleanup) await Promise.resolve(close()).catch(() => {});
+  for (const close of lifecycleCallbacks) await Promise.resolve(close()).catch(() => {});
   await rm(scratch, { recursive: true, force: true });
 }
