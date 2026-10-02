@@ -217,7 +217,7 @@ expect_true($commonPointerReadable,'linked worktree common directory pointer fil
 expect_true($commonPointerCandidate!==false&&path_within($commonPointerCandidate,$home),'linked worktree common pointer target must resolve within HOME');
 $linkedCommonDir=directadmin_git_read_pointer($commonPointerFile,'commondir',$linkedGitDir,$home,true);
 expect_true($linkedCommonDir!==null,'linked worktree common directory pointer parser must accept its safe pointer');
-$linkedBackPointer=directadmin_git_read_pointer($linkedGitDir.'/gitdir','gitdir',$linkedGitDir,$home,false);
+$linkedBackPointer=directadmin_git_read_pointer($linkedGitDir.'/gitdir','worktree-gitdir',$linkedGitDir,$home,false);
 expect_true($linkedBackPointer!==null&&$linkedBackPointer===realpath($linkedWorktree.'/.git'),'linked worktree reverse pointer must identify its .git file');
 expect_true(directadmin_git_metadata_tree_safe($linkedGitDir,$home),'linked worktree private metadata must be safe');
 expect_true(directadmin_git_metadata_tree_safe($linkedCommonDir,$home),'linked worktree common metadata must be safe');
