@@ -4,7 +4,6 @@ import { APP_ACCESS_AVAILABLE } from './config'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Features from './pages/Features'
-import Pricing from './pages/Pricing'
 import Industries from './pages/Industries'
 import About from './pages/About'
 import FAQ from './pages/FAQ'
@@ -89,7 +88,7 @@ export default function App() {
         <Route path="/security-recovery" element={<><PageMeta title="Security, Evidence & Recovery" description="Explore Titan Zero Shield, evidence provenance, protected intelligence and Rewind recovery principles." /><SecurityRecovery /></>} />
         <Route path="/measured-outcomes" element={<><PageMeta title="Measured Outcomes" description="Measure personal experience and shared business outcomes without collapsing them into one memory, so Titan Zero can learn from real results." /><MeasuredOutcomes /></>} />
         <Route path="/features" element={<><PageMeta title="Cleaning SaaS Features" description="Explore Titan Zero capabilities for cleaning workflows, the AI workforce, connected systems, privacy and governed operations." /><Features /></>} />
-        <Route path="/investment" element={siteContext.kind === 'preview' ? <><PageMeta title="Investment" description="Illustrative Titan Zero Field Services investment examples and the launch offer for managed implementation and ongoing system management." /><Pricing /></> : <Navigate to="/pricing" replace />} />
+        <Route path="/investment" element={<Navigate to="/pricing" replace />} />
         <Route path="/pricing" element={siteContext.kind === 'preview' ? <Navigate to="/investment" replace /> : <PlatformPricing />} />
         <Route path="/works-everywhere" element={<WorksEverywhere />} />
         <Route path="/resources" element={<Resources />} />
