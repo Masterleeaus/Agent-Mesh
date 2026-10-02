@@ -44,7 +44,7 @@ test('canonical SDK accepts authority-neutral Workforce contribution for all rol
   }
 });
 
-test('canonical SDK/gateway reassign integration consumes child context, CAS, evidence, scope denial and unknown outcomes', async t => {
+test('canonical SDK/gateway reassign integration consumes child context, CAS, evidence, typed denial and scope denial', async t => {
   // This exercises the published shared SDK/gateway. The bridge context,
   // projection and owner below are controlled contract
   // fixtures, never production identity, authority or business data.
@@ -157,15 +157,15 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
     workforce_context_revision: 'fixture-workforce-context' }, 'the owner fixture binds accepted evidence to the bridged child lineage');
 
   // A child token for a different company is rejected before effect. The
-  // current gateway sanitizes this typed authority denial to 503, so the UI
-  // reports unknown and clears company state until revalidation.
+  // current SDK maps the exact typed authority denial to sanitized HTTP 403;
+  // the consumer keeps only freshly revalidated data for the same company.
   mismatchNextChildCompany = true;
   await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
     target_worker_id: 'fixture-worker-old', reason: 'Fixture child company mismatch' });
-  assert.equal(controller.state.phase, 'unavailable');
-  assert.equal(controller.state.context, null);
+  assert.equal(controller.state.phase, 'ready');
+  assert.equal(controller.state.context.company_id, companyId);
   assert.equal(controller.state.receipt, null);
-  assert.match(controller.state.error, /outcome is unknown/i);
+  assert.match(controller.state.error, /host denied that request/i);
   assert.equal(ownerIntents.length, 1, 'mismatched child context is denied before entering the owner effect');
   assert.equal(work.assignee, 'fixture-worker-target');
   assert.deepEqual(work.evidence_refs, ['fixture-accepted-reassignment-evidence']);
@@ -174,15 +174,15 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
   assert.equal(controller.state.phase, 'ready', controller.state.error);
 
   // A concurrent assignee change makes the expected-assignee CAS stale. The
-  // owner denies before effect, while the current gateway maps its typed denial
-  // to a sanitized 503; the consumer must report unknown and clear its view.
+  // owner denies before effect; its typed denial remains distinct from an
+  // unavailable/unknown outcome through the current shared SDK.
   raceNextIntent = true;
   await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
     target_worker_id: 'fixture-worker-old', reason: 'Fixture stale compare-and-set' });
-  assert.equal(controller.state.phase, 'unavailable');
-  assert.equal(controller.state.context, null);
+  assert.equal(controller.state.phase, 'ready');
+  assert.equal(controller.state.context.company_id, companyId);
   assert.equal(controller.state.receipt, null);
-  assert.match(controller.state.error, /outcome is unknown/i);
+  assert.match(controller.state.error, /host denied that request/i);
   assert.equal(work.assignee, 'fixture-concurrent-worker', 'stale owner rejection causes no reassignment effect');
   assert.deepEqual(work.evidence_refs, ['fixture-accepted-reassignment-evidence']);
 
