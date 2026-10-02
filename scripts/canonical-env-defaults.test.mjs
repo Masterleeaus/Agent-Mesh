@@ -27,6 +27,34 @@ test("shared env templates do not activate company-specific AI or SMTP credentia
   }
 });
 
+test("legacy OpenAI and SMS gateway consumers are disclosed as inactive compatibility inputs", () => {
+  for (const file of [".env.example", "infra/vps.env.example"]) {
+    const env = read(file);
+    for (const variable of ["OPENAI_API_KEY", "SMS_GATEWAY_URL", "SMS_GATEWAY_USERNAME", "SMS_GATEWAY_PASSWORD"]) {
+      assert.equal(activeValue(env, variable), false, `${file}: ${variable} must not be a node-wide default`);
+      assert.match(env, new RegExp(`^# ${variable}=`, "m"), `${file}: disclose ${variable} as compatibility-only`);
+    }
+  }
+});
+
+test("VPS template declares the Workforce commissioning values and trusted key paths required by Compose", () => {
+  const env = read("infra/vps.env.example");
+  for (const variable of [
+    "WORKFORCE_DIRECTADMIN_NODE_ID",
+    "WORKFORCE_SESSION_ISSUER",
+    "WORKFORCE_SESSION_KEY_ID",
+    "WORKFORCE_SESSION_ALGORITHM",
+    "WORKFORCE_UPSTREAM_SESSION_ISSUER",
+    "WORKFORCE_UPSTREAM_SESSION_AUDIENCE",
+    "WORKFORCE_UPSTREAM_SESSION_KEY_ID",
+    "WORKFORCE_UPSTREAM_SESSION_ALGORITHM",
+    "WORKFORCE_COMPANY_STORE_HOST_ROOT",
+    "WORKFORCE_IDENTITY_SQLITE_HOST_PATH",
+    "WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH",
+    "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH",
+  ]) assert.equal(activeValue(env, variable), true, `${variable} must be declared`);
+});
+
 test("VPS template keeps canonical company storage root and marks legacy booking selector inactive", () => {
   const env = read("infra/vps.env.example");
   assert.match(env, /^DATABASE_DIALECT=sqlite$/m);
@@ -39,4 +67,9 @@ test("VPS installer never invents an account selector or hardcodes legacy AI/Pos
   assert.doesNotMatch(installer, /setenv\s+BOOKING_ACCOUNT_ID/);
   assert.doesNotMatch(installer, /kernel\/random\/uuid/);
   assert.doesNotMatch(installer, /ANTHROPIC_API_KEY|POSTGRES_DB|ai_fsm/);
+  assert.doesNotMatch(installer, /initialize-workforce-identity\.ts/);
+  assert.match(installer, /WORKFORCE_IDENTITY_SQLITE_HOST_PATH/);
+  assert.match(installer, /WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH/);
+  assert.match(installer, /\/health/);
+  assert.match(installer, /\/ready/);
 });

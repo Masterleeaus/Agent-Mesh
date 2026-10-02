@@ -5,16 +5,30 @@ on:
     paths:
       - '.env.example'
       - 'infra/vps.env.example'
-      - 'scripts/vps/install-sqlite-vps.sh'
+      - 'infra/compose.vps.yml'
+      - 'apps/**'
+      - 'services/**'
+      - 'packages/**'
+      - 'scripts/vps/**'
+      - 'scripts/environment-inventory.mjs'
       - 'scripts/canonical-env-defaults.test.mjs'
+      - 'docs/working/issue-1236/environment-inventory.json'
+      - 'docs/deployment/README-VPS.md'
       - '.github/workflows/canonical-environment.yml'
   push:
     branches: [main]
     paths:
       - '.env.example'
       - 'infra/vps.env.example'
-      - 'scripts/vps/install-sqlite-vps.sh'
+      - 'infra/compose.vps.yml'
+      - 'apps/**'
+      - 'services/**'
+      - 'packages/**'
+      - 'scripts/vps/**'
+      - 'scripts/environment-inventory.mjs'
       - 'scripts/canonical-env-defaults.test.mjs'
+      - 'docs/working/issue-1236/environment-inventory.json'
+      - 'docs/deployment/README-VPS.md'
       - '.github/workflows/canonical-environment.yml'
 
 permissions:
@@ -29,4 +43,6 @@ jobs:
         with:
           node-version: 22
       - name: Validate canonical defaults and bootstrap
-        run: node --test scripts/canonical-env-defaults.test.mjs
+        run: |
+          node scripts/environment-inventory.mjs --check
+          node --test scripts/canonical-env-defaults.test.mjs
