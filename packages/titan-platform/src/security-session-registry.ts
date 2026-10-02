@@ -1,5 +1,5 @@
 import type { StorageClient, StorageTransactionOptions } from '@titan-zero/storage';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import {
   createSessionBinding, requireSecurityId, requireSecurityRevision, securityTimestamp,
   validateSession, type SessionBinding,
@@ -44,6 +44,17 @@ export type IssueSessionInput = ExternalIdentity & Readonly<{
   session_id: string; device_id: string; company_id: string; audience: string;
   issued_at: string; expires_at: string;
 }>;
+export type DirectAdminBootstrapNonceIssue = Readonly<{
+  origin: string; subject: string; real_subject: string; da_role: 'admin' | 'reseller' | 'user';
+  impersonating: boolean; company_id: string; device_id: string;
+  lifetime_seconds?: number;
+}>;
+export type DirectAdminBootstrapNonceIssued = Readonly<{ csrf_nonce: string; expires_at: string }>;
+export type DirectAdminBootstrapNonceConsume = Readonly<{
+  origin: string; issuer: string; subject: string; real_subject: string;
+  da_role: 'admin' | 'reseller' | 'user'; impersonating: boolean; csrf_nonce: string;
+}>;
+export type DirectAdminBootstrapNonceSelection = Readonly<{ company_id: string; device_id: string }>;
 type SessionRow = Omit<SessionBinding, 'revoked'> & {
   revoked: number; binding_id: string; audience: string; context_generation: string;
 };
@@ -54,6 +65,7 @@ type CurrentIdentity = {
 };
 
 const workforceZeroFenceTimeoutMs = 500;
+const bootstrapNonceAcquireTimeoutMs = 500;
 const registryAvailabilityMarker = Symbol.for('titan.identity-session-registry.availability.v1');
 const registryAvailabilityKindMarker = Symbol.for('titan.identity-session-registry.availability-kind.v1');
 
@@ -208,6 +220,73 @@ const schemaV1 = [
     audience TEXT NOT NULL, context_generation TEXT NOT NULL)`,
 ];
 
+const bootstrapNonceMigrationTable = 'titan_security_directadmin_nonce_migrations';
+const bootstrapNonceTable = 'titan_security_directadmin_bootstrap_nonces';
+const bootstrapNonceSchemaVersion = 2;
+const bootstrapNonceDefaultLifetimeSeconds = 120;
+const bootstrapNonceMaxLifetimeSeconds = 300;
+const bootstrapNonceSchemaV2 = [
+  `CREATE TABLE ${bootstrapNonceTable} (
+    nonce_hash TEXT PRIMARY KEY NOT NULL CHECK (length(nonce_hash) = 64),
+    issuer TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    real_subject TEXT NOT NULL,
+    da_role TEXT NOT NULL CHECK (da_role IN ('admin','reseller','user')),
+    impersonating INTEGER NOT NULL CHECK (impersonating IN (0,1)),
+    origin TEXT NOT NULL,
+    actor_id TEXT NOT NULL REFERENCES titan_security_actors(actor_id),
+    company_id TEXT NOT NULL REFERENCES titan_security_companies(company_id),
+    device_id TEXT NOT NULL REFERENCES titan_security_devices(device_id),
+    context_generation TEXT NOT NULL,
+    issued_at TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    consumed_at TEXT,
+    CHECK (impersonating = CASE WHEN real_subject <> subject THEN 1 ELSE 0 END),
+    CHECK (expires_at > issued_at)
+  )`,
+  `CREATE INDEX titan_security_directadmin_bootstrap_nonces_expiry
+    ON ${bootstrapNonceTable}(expires_at)`,
+];
+
+function canonicalDirectAdminOrigin(value: string): string {
+  if (typeof value !== 'string' || !value || value !== value.trim()) throw new Error('directadmin-origin-invalid');
+  let url: URL;
+  try { url = new URL(value); } catch { throw new Error('directadmin-origin-invalid'); }
+  if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
+    throw new Error('directadmin-origin-invalid');
+  }
+  return url.origin;
+}
+
+function directAdminProviderForOrigin(origin: string): string {
+  return `directadmin:${canonicalDirectAdminOrigin(origin)}`;
+}
+
+function validateDirectAdminNonceIdentity(input: Pick<DirectAdminBootstrapNonceIssue,
+  'subject' | 'real_subject' | 'da_role' | 'impersonating'>): void {
+  requireSecurityId(input.subject, 'subject');
+  requireSecurityId(input.real_subject, 'real_subject');
+  if (!['admin', 'reseller', 'user'].includes(input.da_role) || typeof input.impersonating !== 'boolean'
+    || input.impersonating !== (input.real_subject !== input.subject)) {
+    throw new Error('directadmin-bootstrap-identity-invalid');
+  }
+}
+
+function directAdminNonceHash(nonce: string): string {
+  if (typeof nonce !== 'string' || !/^[A-Za-z0-9_-]{43,128}$/.test(nonce)) {
+    throw new Error('directadmin-bootstrap-nonce-invalid');
+  }
+  return createHash('sha256').update(nonce, 'utf8').digest('hex');
+}
+
+function trustedClock(clock: () => Date): Date {
+  const value = clock();
+  if (!(value instanceof Date) || !Number.isFinite(value.getTime())) {
+    throw registryUnavailable(new Error('identity-clock-invalid'));
+  }
+  return new Date(value.getTime());
+}
+
 /** Explicit, additive identity/control-plane migration. Never examines or backfills
  * company business tables. Unsupported schema versions fail closed for rollback. */
 async function migrate(storage: StorageClient): Promise<void> {
@@ -218,6 +297,46 @@ async function migrate(storage: StorageClient): Promise<void> {
     if (versions.length === 1) return;
     for (const sql of schemaV1) await tx.query(sql);
     await tx.query('INSERT INTO titan_security_migrations (version) VALUES (1)');
+  });
+}
+
+/** Explicit, versioned add-on for short-lived DirectAdmin bootstrap nonces.
+ * It is intentionally not called by createIdentitySessionRegistry or host
+ * startup; commissioning must explicitly initialize this additive store. */
+export async function initializeDirectAdminBootstrapNonceStore(input: {
+  storage: StorageClient; storage_role: 'GLOBAL_REGISTRY';
+}): Promise<void> {
+  if (!input || input.storage_role !== 'GLOBAL_REGISTRY') throw new Error('identity-storage-role-required');
+  if (input.storage?.dialect !== 'sqlite') throw new Error('identity-storage-dialect-unsupported');
+  await registryTransaction(input.storage, async tx => {
+    const identityVersions = (await tx.query<{ version: number }>(
+      'SELECT version FROM titan_security_migrations ORDER BY version',
+    )).rows;
+    if (identityVersions.length !== 1 || identityVersions[0].version !== 1) {
+      throw new Error('identity-schema-version-unsupported');
+    }
+    await tx.query('SELECT actor_id,status,revision FROM titan_security_actors LIMIT 0');
+    await tx.query('SELECT company_id,status,revision FROM titan_security_companies LIMIT 0');
+    await tx.query('SELECT actor_id,company_id,role,status,revision FROM titan_security_memberships LIMIT 0');
+    await tx.query('SELECT device_id,actor_id,status,revision FROM titan_security_devices LIMIT 0');
+    await tx.query('SELECT binding_id,provider,subject,actor_id,company_id,status,revision FROM titan_security_external_bindings LIMIT 0');
+    await tx.query(`CREATE TABLE IF NOT EXISTS ${bootstrapNonceMigrationTable} (version INTEGER PRIMARY KEY)`);
+    const versions = (await tx.query<{ version: number }>(
+      `SELECT version FROM ${bootstrapNonceMigrationTable} ORDER BY version`,
+    )).rows;
+    if (versions.length === 1 && versions[0].version === bootstrapNonceSchemaVersion) {
+      await tx.query(`SELECT nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+        context_generation,issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} LIMIT 0`);
+      return;
+    }
+    if (versions.length !== 0) throw new Error('identity-bootstrap-nonce-schema-unsupported');
+    const existing = await tx.query<{ name: string }>(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name=$1",
+      [bootstrapNonceTable],
+    );
+    if (existing.rows.length !== 0) throw new Error('identity-bootstrap-nonce-schema-version-missing');
+    for (const sql of bootstrapNonceSchemaV2) await tx.query(sql);
+    await tx.query(`INSERT INTO ${bootstrapNonceMigrationTable} (version) VALUES ($1)`, [bootstrapNonceSchemaVersion]);
   });
 }
 
@@ -265,6 +384,21 @@ export class IdentitySessionRegistry {
     return registryTransaction(this.storage, operation, options);
   }
 
+  private bootstrapNonceTransaction<T>(operation: (tx: StorageClient) => Promise<T>): Promise<T> {
+    return this.transaction(operation, { acquireDeadlineMs: performance.now() + bootstrapNonceAcquireTimeoutMs });
+  }
+
+  private async requireDirectAdminBootstrapNonceStore(tx: StorageClient): Promise<void> {
+    const versions = (await tx.query<{ version: number }>(
+      `SELECT version FROM ${bootstrapNonceMigrationTable} ORDER BY version`,
+    )).rows;
+    if (versions.length !== 1 || versions[0].version !== bootstrapNonceSchemaVersion) {
+      throw registryUnavailable(new Error('identity-bootstrap-nonce-store-unavailable'));
+    }
+    await tx.query(`SELECT nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+      context_generation,issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} LIMIT 0`);
+  }
+
   private async put(table: string, values: Record<string, string>, keys: readonly string[], immutable: readonly string[], expected: number | null): Promise<number> {
     for (const [key, value] of Object.entries(values)) requireSecurityId(value, key);
     if (!['active', 'suspended', 'revoked', 'deleted'].includes(values.status)) throw new Error('identity-status-invalid');
@@ -304,6 +438,101 @@ export class IdentitySessionRegistry {
   }
   putExternalBinding(value: ExternalBinding, expected: number | null): Promise<number> {
     return this.put('titan_security_external_bindings', { binding_id: value.binding_id, provider: value.provider, subject: value.subject, actor_id: value.actor_id, company_id: value.company_id, status: value.status }, ['binding_id'], ['provider', 'subject', 'actor_id', 'company_id'], expected);
+  }
+
+  /**
+   * Issue an opaque, short-lived pre-auth challenge for a server-rendered or
+   * server-routed DirectAdmin bootstrap flow. Call only after the host has
+   * authenticated the current DirectAdmin session and selected one company and
+   * device. Supply the identity tuple returned by the authenticated DirectAdmin
+   * `/api/session` projection; the registry independently verifies the
+   * effective subject mapping before storing a SHA-256 nonce digest and the
+   * real/effective-user, role and impersonation provenance. It never stores
+   * the nonce or exposes company choices.
+   */
+  async issueDirectAdminBootstrapNonce(input: DirectAdminBootstrapNonceIssue): Promise<DirectAdminBootstrapNonceIssued> {
+    const origin = canonicalDirectAdminOrigin(input.origin);
+    const issuer = directAdminProviderForOrigin(origin);
+    validateDirectAdminNonceIdentity(input);
+    requireSecurityId(input.company_id, 'company_id');
+    requireSecurityId(input.device_id, 'device_id');
+    const lifetime = input.lifetime_seconds ?? bootstrapNonceDefaultLifetimeSeconds;
+    if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > bootstrapNonceMaxLifetimeSeconds) {
+      throw new Error('directadmin-bootstrap-nonce-lifetime-invalid');
+    }
+    const nonce = randomBytes(32).toString('base64url');
+    const nonceHash = directAdminNonceHash(nonce);
+    const expiresAt = await this.bootstrapNonceTransaction(async tx => {
+      await this.requireDirectAdminBootstrapNonceStore(tx);
+      const now = trustedClock(this.clock);
+      const issuedAt = now.toISOString();
+      const expiry = new Date(now.getTime() + lifetime * 1000).toISOString();
+      const current = await this.identity(tx, { provider: issuer, subject: input.subject }, input.company_id, input.device_id);
+      await tx.query(`DELETE FROM ${bootstrapNonceTable} WHERE expires_at <= $1`, [issuedAt]);
+      await tx.query(`INSERT INTO ${bootstrapNonceTable}
+        (nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,
+          context_generation,issued_at,expires_at,consumed_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,NULL)`,
+        [nonceHash,issuer,input.subject,input.real_subject,input.da_role,input.impersonating ? 1 : 0,origin,
+          current.binding.actor_id,input.company_id,input.device_id,current.generation,issuedAt,expiry]);
+      return expiry;
+    });
+    return Object.freeze({ csrf_nonce: nonce, expires_at: expiresAt });
+  }
+
+  /**
+   * Atomically consume a pre-auth nonce after the DirectAdmin `/api/session`
+   * proof has established issuer, effective subject, real operator, role and
+   * impersonation state. The full DirectAdmin identity tuple must match the
+   * issue-time values. Company/device and actor/context generation are loaded
+   * from the stored server-side binding, revalidated against current registry
+   * state, and returned as one selection.
+   * Wrong bindings do not burn a legitimate challenge; expiry or a stale
+   * current identity does burn it. The nonce digest is the only token material
+   * persisted.
+   */
+  async consumeDirectAdminBootstrapNonce(input: DirectAdminBootstrapNonceConsume): Promise<DirectAdminBootstrapNonceSelection | null> {
+    const origin = canonicalDirectAdminOrigin(input.origin);
+    const issuer = directAdminProviderForOrigin(origin);
+    validateDirectAdminNonceIdentity(input);
+    const nonceHash = directAdminNonceHash(input.csrf_nonce);
+    if (input.issuer !== issuer) return null;
+    return this.bootstrapNonceTransaction(async tx => {
+      await this.requireDirectAdminBootstrapNonceStore(tx);
+      const now = trustedClock(this.clock).toISOString();
+      const row = (await tx.query<{
+        nonce_hash: string; issuer: string; subject: string; real_subject: string;
+        da_role: 'admin' | 'reseller' | 'user'; impersonating: number; origin: string; actor_id: string;
+        company_id: string; device_id: string; context_generation: string; issued_at: string;
+        expires_at: string; consumed_at: string | null;
+      }>(`SELECT nonce_hash,issuer,subject,real_subject,da_role,impersonating,origin,actor_id,company_id,device_id,context_generation,
+        issued_at,expires_at,consumed_at FROM ${bootstrapNonceTable} WHERE nonce_hash=$1`, [nonceHash])).rows[0];
+      if (!row || row.nonce_hash !== nonceHash || row.issuer !== issuer || row.subject !== input.subject
+        || row.real_subject !== input.real_subject || row.da_role !== input.da_role
+        || row.impersonating !== (input.impersonating ? 1 : 0)
+        || row.origin !== origin || row.consumed_at !== null) return null;
+      requireSecurityId(row.actor_id, 'actor_id');
+      requireSecurityId(row.company_id, 'company_id');
+      requireSecurityId(row.device_id, 'device_id');
+      securityTimestamp(row.issued_at);
+      if (securityTimestamp(row.expires_at) <= securityTimestamp(now)) return null;
+
+      const burned = await tx.query(`UPDATE ${bootstrapNonceTable} SET consumed_at=$1
+        WHERE nonce_hash=$2 AND issuer=$3 AND subject=$4 AND real_subject=$5 AND da_role=$6 AND impersonating=$7
+          AND origin=$8 AND consumed_at IS NULL AND expires_at>$1`,
+        [now,nonceHash,issuer,input.subject,input.real_subject,input.da_role,input.impersonating ? 1 : 0,origin]);
+      if (burned.rowCount !== 1) return null;
+
+      let current: CurrentIdentity;
+      try {
+        current = await this.identity(tx, { provider: issuer, subject: input.subject }, row.company_id, row.device_id);
+      } catch (error) {
+        if (isIdentityRegistryUnavailableError(error)) throw error;
+        return null;
+      }
+      if (current.binding.actor_id !== row.actor_id || current.generation !== row.context_generation) return null;
+      return Object.freeze({ company_id: row.company_id, device_id: row.device_id });
+    });
   }
 
   private async identity(tx: StorageClient, external: ExternalIdentity, companyId: string, deviceId: string): Promise<CurrentIdentity> {
