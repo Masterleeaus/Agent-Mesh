@@ -149,7 +149,7 @@ function integration_expect_successful_key(string $html,string $expectedKey,stri
  $path=$directory.'/authorized_keys';
  integration_expect(is_file($path),'accepted public key must be written only into the selected test HOME');
  $contents=file_get_contents($path);
- integration_expect(is_string($contents)&&$contents===$expectedKey."\\n",'accepted key must be stored as exactly one normalized public-key line');
+ integration_expect(is_string($contents)&&$contents===$expectedKey."\n",'accepted key must be stored as exactly one normalized public-key line');
  integration_expect((fileperms($directory)&0777)===0700,'SSH key directory must retain mode 0700');
  integration_expect((fileperms($path)&0777)===0600,'authorized_keys must retain mode 0600');
 }
@@ -276,7 +276,7 @@ $keyTransportCases=[
  ],
  'stdin-crlf-ed25519'=>[
   'key'=>'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+Synthetic/PublicKey== synthetic+fixture&marker=literal%25',
-  'line_ending'=>"\\r\\n",
+  'line_ending'=>"\r\n",
   'pipe'=>true
  ]
 ];
