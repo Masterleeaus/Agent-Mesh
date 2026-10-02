@@ -82,14 +82,27 @@ function bridgeFailure(error: unknown): Response {
   if (kind === 'session-rejected') {
     return json(401, { error: 'directadmin-session-rejected', read_only: true }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
   }
+  if (kind === 'session-rejected-clear-cookie') {
+    return json(401, { error: 'directadmin-session-rejected', read_only: true }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
+  }
+  if (kind === 'session-binding-mismatch') {
+    return json(409, { error: 'directadmin-session-binding-mismatch', read_only: true });
+  }
   return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
 }
 function bootstrapFailure(error: unknown): Response {
   const kind = directAdminBridgeFailureKind(error);
   if (kind === 'request-rejected' || kind === 'session-rejected') {
-    // Bootstrap never clears a Titan cookie: it is only entered before one
-    // exists, and the bridge rejects requests carrying an existing one.
     return json(401, { error: 'directadmin-session-rejected', read_only: true });
+  }
+  if (kind === 'session-rejected-clear-cookie') {
+    return json(401, { error: 'directadmin-session-rejected', read_only: true }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
+  }
+  if (kind === 'unavailable-clear-cookie') {
+    return json(503, { error: 'directadmin-bootstrap-unavailable', read_only: true }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
+  }
+  if (kind === 'session-binding-mismatch') {
+    return json(409, { error: 'directadmin-session-binding-mismatch', read_only: true });
   }
   return json(503, { error: 'directadmin-bootstrap-unavailable', read_only: true });
 }

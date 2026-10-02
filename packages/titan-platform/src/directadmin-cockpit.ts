@@ -95,29 +95,15 @@ export class DirectAdminCockpitSession {
     finally { if (this.#connecting === operation) this.#connecting = null; }
   }
   private async connectCurrentSession(): Promise<DirectAdminBridgeContext> {
-    // A newly loaded page has no in-memory CSRF token. First try the trusted
-    // host nonce as a read-only context proof so an existing browser session
-    // can resume; a rejected/stale cookie is cleared by the canonical gateway.
-    // This read cannot submit business work or consume the bootstrap nonce.
+    // A document reload loses the session CSRF token held only in memory.
+    // Reauthenticate the DirectAdmin cookie through the one-time bootstrap
+    // contract, which renews a current Titan session or starts a new one. The
+    // HTML nonce is never sent as X-Titan-CSRF.
     if (!this.#csrfToken) {
       let nonce: string;
       try { nonce = this.bootstrapNonce(); } catch { throw new Error('directadmin-bootstrap-nonce-unavailable'); }
       if (typeof nonce !== 'string' || !/^[A-Za-z0-9_-]{43,128}$/.test(nonce)) {
         throw new Error('directadmin-bootstrap-nonce-unavailable');
-      }
-      this.#csrfToken = nonce;
-      try {
-        const resumedEpoch = this.#epoch;
-        const resumed = await this.send('/v1/directadmin/context') as DirectAdminBridgeContext;
-        if (this.#disposed || resumedEpoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
-        return this.accept(resumed, true);
-      } catch (error) {
-        if (this.#disposed) {
-          if (error instanceof Error && error.message === 'directadmin-context-invalidated') throw error;
-          throw new Error('directadmin-session-disposed');
-        }
-        if (!error || typeof error !== 'object' ||
-            !['directadmin-http-401', 'directadmin-http-409'].includes(String((error as Error).message))) throw error;
       }
       return this.bootstrapAndConnect(nonce);
     }
@@ -158,7 +144,9 @@ export class DirectAdminCockpitSession {
     }
     if (this.#disposed || epoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
     if (!response.ok) {
-      if ([401, 403, 409].includes(response.status)) throw new Error('directadmin-bootstrap-denied');
+      if (response.status === 401) throw new Error('directadmin-session-rejected');
+      if (response.status === 409) throw new Error('directadmin-session-binding-mismatch');
+      if ([403].includes(response.status)) throw new Error('directadmin-bootstrap-rejected');
       throw new Error('directadmin-bootstrap-unavailable');
     }
     let value: unknown;

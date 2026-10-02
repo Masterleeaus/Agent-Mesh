@@ -20,11 +20,11 @@ export const proof = { ...external, session_id: sessionId, device_id: 'device-1'
 export const expected = { company_id: 'company-a', audience: 'titan-directadmin:node-1' };
 export const csrf = b64(crypto.getRandomValues(new Uint8Array(32)));
 
-export async function fixture(t, { origin = ORIGIN, provider = external.provider, sessionOverrides = {} } = {}) {
+export async function fixture(t, { origin = ORIGIN, provider = external.provider, sessionOverrides = {}, storagePath = ':memory:' } = {}) {
   const externalIdentity = { provider, subject: external.subject };
   const now = Math.floor(Date.now() / 1000) * 1000;
   let clock = now;
-  const storage = createSqliteStorage(':memory:');
+  const storage = createSqliteStorage(storagePath);
   t.after(() => storage.close());
   const registry = await createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY' });
   await registry.putActor({ actor_id: 'actor-1', status: 'active' }, null);

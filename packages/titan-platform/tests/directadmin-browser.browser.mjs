@@ -72,6 +72,8 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
   gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async proof => {
     bootstrapCalls++;
     assert.equal(proof.origin, origin);
+    assert.equal(proof.cookie, 'da_session=fixture-authenticated');
+    assert.equal(proof.authorization, null);
     assert.ok(/^[A-Za-z0-9_-]{43,128}$/.test(proof.csrf_nonce));
     if (bootstrapCalls === 1) throw new Error('authentication-denied');
     return { login_assertion: await f.loginFor(f.policy.upstream.issuer, `browser-bootstrap-${bootstrapCalls}`),
@@ -80,15 +82,17 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
   const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
     ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) }); t.after(() => browser.close());
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
+  await context.addCookies([{ name: 'da_session', value: 'fixture-authenticated', domain: '127.0.0.1', path: '/',
+    secure: true, sameSite: 'Strict' }]);
   const page = await context.newPage();
   const errors = []; const consoleErrors = []; const failedRequests = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
   page.on('requestfailed', request => failedRequests.push(`${request.url()}: ${request.failure()?.errorText ?? 'failed'}`));
   await page.goto(`${origin}/test/cockpit`);
-  try { await page.waitForFunction(() => window.bootstrapError === 'directadmin-bootstrap-denied', undefined, { timeout: 10_000 }); }
+  try { await page.waitForFunction(() => window.bootstrapError === 'directadmin-session-rejected', undefined, { timeout: 10_000 }); }
   catch { throw new Error(`Browser denial transition failed: page=${errors.join('; ')}; console=${consoleErrors.join('; ')}; requests=${failedRequests.join('; ')}; server=${serverErrors.join('; ')}; gateway=${observed.map(r => r.path).join(', ')}`); }
-  assert.equal(await page.evaluate(() => window.bootstrapError), 'directadmin-bootstrap-denied');
+  assert.equal(await page.evaluate(() => window.bootstrapError), 'directadmin-session-rejected');
   assert.equal(await page.evaluate(() => window.ready ?? false), false);
   await page.evaluate(async () => {
     document.querySelector('meta[name="titan-directadmin-csrf"]').setAttribute('content', 'R'.repeat(43));

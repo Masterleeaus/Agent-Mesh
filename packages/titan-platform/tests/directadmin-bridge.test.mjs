@@ -17,6 +17,28 @@ const bootstrapNonce = 'N'.repeat(43);
 const bootstrapRequest = (f, headers = {}, body) => f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: {
   cookie: null, 'x-titan-csrf': null, 'x-titan-da-bootstrap-csrf': bootstrapNonce, ...headers,
 }, ...(body === undefined ? {} : { body }) });
+const bootstrapProviderFor = (f, label, { company_id = 'company-a', device_id = 'device-1', csrf_token = csrf } = {}) => {
+  let sequence = 0;
+  const scope = label.replace(/[^A-Za-z0-9_-]/g, '-').slice(0, 64);
+  return { provide: async () => ({
+    login_assertion: await f.loginFor(external.provider, `browser-${scope}-${++sequence}`, {
+      company_id, device_id, csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(csrf_token))),
+    }), company_id, device_id, csrf_token,
+  }) };
+};
+const directBrowserFetch = (f, gateway) => {
+  let cookie = `da_session=authenticated; __Host-titan-da-session=${f.token}`;
+  const fetcher = async (path, init) => {
+    const response = await gateway(f.request(path, { method: init.method, headers: { ...init.headers, cookie,
+      'x-titan-csrf': init.headers['X-Titan-CSRF'] ?? null,
+      'x-titan-da-bootstrap-csrf': init.headers['X-Titan-DA-Bootstrap-CSRF'] ?? null,
+    }, ...(init.body === undefined ? {} : { body: init.body }) }));
+    const next = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]*)/)?.[1];
+    if (next !== undefined) cookie = `da_session=authenticated${next ? `; __Host-titan-da-session=${next}` : ''}`;
+    return response;
+  };
+  return { fetcher, cookie: () => cookie };
+};
 const trustedBootstrapInput = input => async proof => {
   assert.equal(proof.csrf_nonce, bootstrapNonce);
   assert.equal(proof.origin, ORIGIN);
@@ -253,27 +275,148 @@ test('gateway bootstrap invokes only the trusted provider and returns a selected
   assert.equal((await context.json()).company_id, 'company-a');
 });
 
-test('bootstrap gateway fails closed without a provider and never authenticates an existing Titan cookie', async t => {
+test('bootstrap gateway can replace an expired Titan cookie only after DirectAdmin reauthentication', async t => {
   const f = await fixture(t);
-  let authenticateCalls = 0;
-  f.bridge.authenticate = async () => { authenticateCalls++; throw new Error('should-not-authenticate'); };
   const absent = await createDirectAdminGateway(f.bridge, f.owners)(bootstrapRequest(f));
   assert.equal(absent.status, 503);
   assert.equal(absent.headers.has('set-cookie'), false);
   assert.deepEqual(await absent.json(), { error: 'directadmin-bootstrap-unavailable', read_only: true });
-  assert.equal(authenticateCalls, 0);
+
+  f.setClock((f.claims.exp) * 1000); // At exp the old canonical cookie is expired.
+  const newCsrf = 'Z'.repeat(43);
+  let providerCalls = 0;
+  let providerCookie;
+  let providerAuthorization;
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async input => {
+    providerCalls++;
+    providerCookie = input.cookie;
+    providerAuthorization = input.authorization;
+    return { login_assertion: await f.loginFor(external.provider, 'expired-cookie-restored', {
+      iat: f.claims.exp, exp: f.claims.exp + 120,
+      csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(newCsrf))),
+    }), company_id: 'company-a', device_id: 'device-1', csrf_token: newCsrf };
+  } });
+  const restored = await gateway(bootstrapRequest(f, {
+    cookie: `__Host-titan-da-session=${f.token}; da_session=authenticated`,
+    authorization: 'Bearer browser-must-not-reach-provider',
+  }));
+  assert.equal(restored.status, 200);
+  assert.equal(providerCalls, 1);
+  assert.equal(providerCookie, 'da_session=authenticated');
+  assert.equal(providerAuthorization, null);
+  assert.match(restored.headers.get('set-cookie'), /^__Host-titan-da-session=/);
+  assert.equal((await restored.json()).csrf_token, newCsrf);
+  await assert.rejects(f.sessions.authenticate(f.token), /authentication-denied/);
+  const renewed = restored.headers.get('set-cookie').split(';', 1)[0];
+  const authenticated = await f.sessions.authenticate(renewed.split('=', 2)[1]);
+  assert.equal(authenticated.context.company_id, 'company-a');
+  assert.equal(authenticated.subject, external.subject);
+  assert.equal(authenticated.context.session_id === f.claims.session_id, false);
+});
+
+test('bootstrap without a provider fails closed without authenticating or clearing an absent session', async t => {
+  const f = await fixture(t);
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const absent = await gateway(bootstrapRequest(f));
+  assert.equal(absent.status, 503);
+  assert.equal(absent.headers.has('set-cookie'), false);
+  assert.deepEqual(await absent.json(), { error: 'directadmin-bootstrap-unavailable', read_only: true });
 
   let providerCalls = 0;
-  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+  const staleGateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async input => {
     providerCalls++;
+    assert.equal(input.cookie, 'da_session=authenticated');
+    assert.equal(input.authorization, null);
     return { login_assertion: await f.loginFor(external.provider, 'existing-cookie-bootstrap'),
       company_id: 'company-a', device_id: 'device-1', csrf_token: csrf };
   } });
-  const existingCookie = await gateway(bootstrapRequest(f, { cookie: '__Host-titan-da-session=stale' }));
-  assert.equal(existingCookie.status, 401);
-  assert.equal(existingCookie.headers.has('set-cookie'), false);
+  const existingCookie = await staleGateway(bootstrapRequest(f, {
+    cookie: '__Host-titan-da-session=expired; da_session=authenticated', authorization: 'Bearer must-not-forward',
+  }));
+  assert.equal(existingCookie.status, 200);
+  assert.equal(existingCookie.headers.has('set-cookie'), true);
+  assert.equal(providerCalls, 1);
+});
+
+test('expired canonical cookie is cleared on provider outage while the outage remains a 503', async t => {
+  const f = await fixture(t);
+  f.setClock(f.claims.exp * 1000);
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+    throw new Error('identity-registry-unavailable: details stay private');
+  } });
+  const response = await gateway(bootstrapRequest(f, {
+    cookie: `__Host-titan-da-session=${f.token}; da_session=authenticated`,
+  }));
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get('set-cookie'), '__Host-titan-da-session=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0');
+  assert.deepEqual(await response.json(), { error: 'directadmin-bootstrap-unavailable', read_only: true });
+});
+
+test('expired canonical cookie is cleared after the trusted DirectAdmin session is rejected', async t => {
+  const f = await fixture(t);
+  f.setClock(f.claims.exp * 1000);
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+    throw new Error('authentication-denied');
+  } });
+  const response = await gateway(bootstrapRequest(f, {
+    cookie: `__Host-titan-da-session=${f.token}; da_session=expired`,
+  }));
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get('set-cookie'), '__Host-titan-da-session=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0');
+  assert.deepEqual(await response.json(), { error: 'directadmin-session-rejected', read_only: true });
+});
+
+test('canonical registry outage does not clear or forward a still-current session cookie', async t => {
+  const f = await fixture(t);
+  f.bridgeSessions.authenticate = async () => { throw new Error('identity-registry-unavailable'); };
+  let providerCalls = 0;
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+    providerCalls++;
+    throw new Error('must-not-run-without-canonical-session-check');
+  } });
+  const response = await gateway(bootstrapRequest(f, {
+    cookie: `da_session=authenticated; __Host-titan-da-session=${f.token}`,
+  }));
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.has('set-cookie'), false);
   assert.equal(providerCalls, 0);
-  assert.equal(authenticateCalls, 0);
+  assert.deepEqual(await response.json(), { error: 'directadmin-bootstrap-unavailable', read_only: true });
+});
+
+test('authenticated cookie with an incompatible DirectAdmin binding is preserved and blocks renewal', async t => {
+  const f = await fixture(t);
+  const authenticate = f.bridgeSessions.authenticate;
+  f.bridgeSessions.authenticate = async (...args) => {
+    const current = await authenticate(...args);
+    return { ...current, directadmin: { ...current.directadmin, node_id: 'another-node' } };
+  };
+  let providerCalls = 0;
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+    providerCalls++;
+    throw new Error('identity-registry-unavailable');
+  } });
+  const response = await gateway(bootstrapRequest(f, {
+    cookie: `da_session=authenticated; __Host-titan-da-session=${f.token}`,
+  }));
+  assert.equal(response.status, 409);
+  assert.equal(response.headers.has('set-cookie'), false);
+  assert.equal(providerCalls, 0);
+  assert.deepEqual(await response.json(), { error: 'directadmin-session-binding-mismatch', read_only: true });
+});
+
+test('bootstrap rejects duplicate Titan session cookies before provider invocation', async t => {
+  const f = await fixture(t);
+  let providerCalls = 0;
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+    providerCalls++;
+    throw new Error('must-not-run');
+  } });
+  const response = await gateway(bootstrapRequest(f, {
+    cookie: `__Host-titan-da-session=${f.token}; __Host-titan-da-session=${f.token}; da_session=authenticated`,
+  }));
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.has('set-cookie'), false);
+  assert.equal(providerCalls, 0);
 });
 
 test('bootstrap route validates same-origin and one-time CSRF nonce before the trusted provider', async t => {
@@ -300,7 +443,7 @@ test('bootstrap route validates same-origin and one-time CSRF nonce before the t
   assert.equal(providerCalls, 0);
 });
 
-test('bootstrap gateway denies pre-auth nonce replay and sanitizes provider failure', async t => {
+test('bootstrap gateway denies pre-auth nonce replay without clearing a valid Titan session', async t => {
   const f = await fixture(t);
   const used = new Set();
   const assertion = await f.loginFor(external.provider, 'gateway-bootstrap-replay-once');
@@ -311,7 +454,8 @@ test('bootstrap gateway denies pre-auth nonce replay and sanitizes provider fail
   } });
   const first = await gateway(bootstrapRequest(f));
   assert.equal(first.status, 200);
-  const replay = await gateway(bootstrapRequest(f));
+  const firstCookie = first.headers.get('set-cookie').split(';', 1)[0];
+  const replay = await gateway(bootstrapRequest(f, { cookie: firstCookie }));
   assert.equal(replay.status, 401);
   assert.equal(replay.headers.has('set-cookie'), false);
   const text = await replay.text();
@@ -327,6 +471,31 @@ test('bootstrap gateway denies pre-auth nonce replay and sanitizes provider fail
   const unavailableBody = await unavailable.text();
   assert.equal(unavailableBody.includes('private database details'), false);
   assert.deepEqual(JSON.parse(unavailableBody), { error: 'directadmin-bootstrap-unavailable', read_only: true });
+});
+
+test('bootstrap renewal rejects a mismatched verified issuer subject and preserves the prior session', async t => {
+  const f = await fixture(t);
+  await f.registry.putExternalBinding({ provider: external.provider, subject: 'different-human',
+    binding_id: 'mapping-different-human-company-a', company_id: 'company-a', actor_id: 'actor-1', status: 'active' }, null);
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => {
+    const mismatchCsrf = 'Y'.repeat(43);
+    return {
+      login_assertion: await f.loginFor(external.provider, 'different-human-renewal', { sub: 'different-human',
+        csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(mismatchCsrf))) }),
+      company_id: 'company-a', device_id: 'device-1', csrf_token: mismatchCsrf,
+    };
+  } });
+  const result = await gateway(bootstrapRequest(f, {
+    cookie: `da_session=authenticated; __Host-titan-da-session=${f.token}`,
+  }));
+  assert.equal(result.status, 409);
+  assert.equal(result.headers.has('set-cookie'), false);
+  assert.deepEqual(await result.json(), { error: 'directadmin-session-binding-mismatch', read_only: true });
+  assert.equal((await f.sessions.authenticate(f.token)).subject, external.subject);
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', Buffer.from(JSON.stringify([external.provider, 'different-human-renewal']))));
+  const sessionId = `auth-${[...digest].map(byte => byte.toString(16).padStart(2, '0')).join('')}`;
+  const orphan = (await f.storage.query('SELECT revoked FROM titan_security_sessions WHERE session_id=$1', [sessionId])).rows[0];
+  assert.equal(orphan?.revoked, 1, 'the mismatched replacement is revoked before any cookie is returned');
 });
 
 test('gateway preserves canonical intent correlation and only reports REQUESTED', async t => {
@@ -392,7 +561,11 @@ test('gateway forwards in-flight cancellation to the canonical owner without inv
 });
 
 test('shared browser session consumes Workforce and encodes opaque canonical revisions for the fixed relay contract', async t => {
-  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async () => ({
+    login_assertion: await f.loginFor(external.provider, 'shared-browser-session-reload', {
+      csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(csrf))),
+    }), company_id: 'company-a', device_id: 'device-1', csrf_token: csrf,
+  }) });
   const requests = []; const seen = [];
   f.owners.projection = async (plugin, context) => {
     seen.push({ kind: 'projection', plugin, company_id: context.company_id });
@@ -406,13 +579,28 @@ test('shared browser session consumes Workforce and encodes opaque canonical rev
     assert.equal((await revalidate()).context_revision, f.claims.context_revision);
     return { receipt_id: 'workforce-receipt-1' };
   };
-  const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => {
+  const htmlNonce = 'H'.repeat(43);
+  let browserCookie = `da_session=authenticated; __Host-titan-da-session=${f.token}`;
+  let providerNonce;
+  const session = new DirectAdminCockpitSession(() => htmlNonce, async (path, init) => {
     requests.push({ path, method: init.method, body: init.body });
-    return gateway(f.request(path, { method: init.method, headers: init.headers,
+    const response = await gateway(f.request(path, { method: init.method, headers: { ...init.headers,
+      cookie: browserCookie,
+      'x-titan-csrf': init.headers['X-Titan-CSRF'] ?? null,
+      'x-titan-da-bootstrap-csrf': init.headers['X-Titan-DA-Bootstrap-CSRF'] ?? null,
+    },
       ...(init.body === undefined ? {} : { body: init.body }) }));
+    const nextCookie = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]*)/)?.[1];
+    if (nextCookie !== undefined) browserCookie = `da_session=authenticated; __Host-titan-da-session=${nextCookie}`;
+    if (path === '/v1/directadmin/bootstrap') providerNonce = init.headers['X-Titan-DA-Bootstrap-CSRF'];
+    return response;
   });
   t.after(() => session.dispose());
   await session.connect();
+  assert.equal(providerNonce, htmlNonce);
+  assert.notEqual(providerNonce, csrf);
+  const initialContextRequest = requests.find(request => request.path === '/v1/directadmin/context');
+  assert.ok(initialContextRequest);
   const projection = await session.projection('titan_workforce');
   assert.equal(projection.data.schema, 'titan.workforce-cockpit.v1');
   const receipt = await session.intent('titan_workforce', { company_id: 'company-a', actor_id: 'actor-1',
@@ -426,8 +614,10 @@ test('shared browser session consumes Workforce and encodes opaque canonical rev
   const wire = JSON.parse(requests.at(-1).body);
   assert.match(wire.context_revision, /^ctx1_[A-Za-z0-9_-]{43}$/);
   assert.notEqual(wire.context_revision, f.claims.context_revision);
-  const mismatch = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post({ ...intentBody(f),
-    context_revision: `ctx1_${'A'.repeat(43)}` })));
+  const mismatch = await gateway(f.request('/v1/directadmin/titan_workforce/intents', {
+    ...post({ ...intentBody(f), context_revision: `ctx1_${'A'.repeat(43)}` }),
+    headers: { 'content-type': 'application/json', cookie: browserCookie, 'x-titan-csrf': csrf },
+  }));
   assert.equal(mismatch.status, 409);
 });
 
@@ -502,6 +692,69 @@ test('browser initialization uses a trusted nonce, keeps the returned CSRF token
   assert.equal(credential !== activeCredential, true);
   const refreshedContextRequest = seen.filter(request => request.path === '/v1/directadmin/context').at(-1);
   assert.equal(refreshedContextRequest.headers['X-Titan-CSRF'], 'D'.repeat(43));
+});
+
+test('valid Titan session survives page reload when the DirectAdmin restore provider is temporarily unavailable', async t => {
+  const f = await fixture(t);
+  const existing = await f.sessions.authenticate(f.token, { company_id: 'company-a', device_id: 'device-1' });
+  assert.equal(existing.context.actor_id, 'actor-1');
+  const nonce = 'R'.repeat(43);
+  let browserCookie = `da_session=authenticated; __Host-titan-da-session=${f.token}`;
+  let providerCalls = 0;
+  let providerProof;
+  const seen = [];
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async proof => {
+    providerCalls++;
+    providerProof = proof;
+    throw new Error('identity-registry-unavailable');
+  } });
+  const session = new DirectAdminCockpitSession(() => nonce, async (path, init) => {
+    const response = await gateway(f.request(path, {
+      method: init.method,
+      headers: { ...init.headers, cookie: browserCookie, 'sec-fetch-site': 'same-origin' },
+      ...(init.body === undefined ? {} : { body: init.body }),
+      ...(init.signal === undefined ? {} : { signal: init.signal }),
+    }));
+    seen.push({ path, status: response.status, csrf: init.headers?.['X-Titan-CSRF'] ?? null,
+      bootstrapNonce: init.headers?.['X-Titan-DA-Bootstrap-CSRF'] ?? null });
+    const setCookie = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]*)/)?.[1];
+    if (setCookie !== undefined) browserCookie = setCookie ? `__Host-titan-da-session=${setCookie}` : '';
+    return response;
+  });
+  t.after(() => session.dispose());
+
+  await assert.rejects(session.connect(), /directadmin-bootstrap-unavailable/);
+  assert.equal(providerCalls, 1);
+  assert.equal(browserCookie, `da_session=authenticated; __Host-titan-da-session=${f.token}`,
+    'provider outage must not clear a still-valid canonical session cookie');
+  assert.equal(providerProof.cookie, 'da_session=authenticated', 'the Titan bearer is excluded from the DirectAdmin proof');
+  assert.equal(providerProof.authorization, null, 'browser Authorization is not forwarded to the host identity provider');
+  assert.ok(seen.every(request => request.csrf !== nonce), 'a page bootstrap nonce is never sent as the session CSRF token');
+});
+
+test('valid session reload can follow only the authenticated current company and projects that company alone', async t => {
+  const f = await fixture(t);
+  const nonce = 'Q'.repeat(43);
+  const nextCsrf = 'P'.repeat(43);
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, { provide: async proof => {
+    assert.equal(proof.cookie, 'da_session=authenticated');
+    assert.equal(proof.authorization, null);
+    return { login_assertion: await f.loginFor(external.provider, 'reload-selected-company', {
+      company_id: 'company-b', csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(nextCsrf))),
+    }), company_id: 'company-b', device_id: 'device-1', csrf_token: nextCsrf };
+  } });
+  const renewed = await gateway(bootstrapRequest(f, {
+    cookie: `__Host-titan-da-session=${f.token}; da_session=authenticated`,
+    'x-titan-da-bootstrap-csrf': nonce,
+  }));
+  assert.equal(renewed.status, 200);
+  const newCookie = renewed.headers.get('set-cookie').split(';', 1)[0];
+  const context = await gateway(f.request('/v1/directadmin/context', { headers: {
+    cookie: newCookie, 'x-titan-csrf': nextCsrf,
+  } }));
+  assert.equal(context.status, 200);
+  assert.deepEqual((await context.json()).company_ids, ['company-b']);
+  await assert.rejects(f.sessions.authenticate(f.token), /authentication-denied/);
 });
 
 test('SDK exchanges the authenticated DA session for a fixed selected-company Workforce child inside the owner callback', async t => {
@@ -596,16 +849,14 @@ test('Workforce intent route keeps the owner typed denial while the DirectAdmin 
 });
 
 test('typed Workforce 403 keeps the shared browser context and sibling subscribers valid', async t => {
-  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, 'typed-403'));
   class DirectAdminWorkforceActionDenied extends Error {
     code = 'directadmin-workforce-action-unsupported';
     status = 403;
     constructor() { super('private unsupported-action details'); this.name = 'DirectAdminWorkforceActionDenied'; }
   }
   f.owners.requestIntent = async () => { throw new DirectAdminWorkforceActionDenied(); };
-  const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => gateway(f.request(path, {
-    method: init.method, headers: init.headers, ...(init.body === undefined ? {} : { body: init.body }),
-  })));
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, directBrowserFetch(f, gateway).fetcher);
   t.after(() => session.dispose());
   await session.connect();
   let invalidations = 0;
@@ -800,7 +1051,7 @@ function root() {
 }
 
 test('three real consumer modules share signed-session gateway over disposable HTTP and purge together', async t => {
-  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, 'three-consumers'));
   const server = createServer(async (incoming, outgoing) => {
     const chunks = []; for await (const chunk of incoming) chunks.push(chunk);
     const headers = { ...incoming.headers }; delete headers.host; delete headers['content-length'];
@@ -810,9 +1061,15 @@ test('three real consumer modules share signed-session gateway over disposable H
     outgoing.writeHead(response.status, Object.fromEntries(response.headers)); outgoing.end(await response.text());
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening'); t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
-  const fetcher = (path, init) => fetch(`http://127.0.0.1:${server.address().port}${path}`, { ...init,
-    headers: { ...init.headers, cookie: `__Host-titan-da-session=${f.token}`, origin: ORIGIN, 'sec-fetch-site': 'same-origin' } });
-  const session = new DirectAdminCockpitSession(() => csrf, fetcher); t.after(() => session.dispose());
+  let browserCookie = `da_session=authenticated; __Host-titan-da-session=${f.token}`;
+  const fetcher = async (path, init) => {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}${path}`, { ...init,
+      headers: { ...init.headers, cookie: browserCookie, origin: ORIGIN, 'sec-fetch-site': 'same-origin' } });
+    const next = response.headers.get('set-cookie')?.match(/^__Host-titan-da-session=([^;]*)/)?.[1];
+    if (next !== undefined) browserCookie = `da_session=authenticated${next ? `; __Host-titan-da-session=${next}` : ''}`;
+    return response;
+  };
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, fetcher); t.after(() => session.dispose());
   await session.connect();
   const roots = [root(), root(), root()];
   const mounts = [mountZeroCore(session, roots[0]), mountOperationsHub(session, roots[1]), mountBrandStudio(session, roots[2])];
@@ -824,16 +1081,17 @@ test('three real consumer modules share signed-session gateway over disposable H
   await session.switchCompany('company-b');
   assert.ok(roots.every(r => r.children[1].textContent.startsWith('Read-only') && r.children[2].textContent === ''));
   for (const mount of mounts) await mount.refresh();
-  assert.ok(roots.every(r => !r.children[2].textContent));
+  assert.ok(roots.every(r => r.children[2].textContent.includes('Source: titan_')));
   for (const mount of mounts) mount.dispose();
 });
 
 test('in-flight browser projections cannot repopulate after invalidation', async t => {
-  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, 'in-flight'));
   let release; const waiting = new Promise(resolve => { release = resolve; });
   let holdProjection = false;
-  const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => {
-    const response = await gateway(f.request(path, { headers: init.headers }));
+  const browser = directBrowserFetch(f, gateway);
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, async (path, init) => {
+    const response = await browser.fetcher(path, init);
     if (holdProjection) await waiting;
     return response;
   }); t.after(() => session.dispose());
@@ -847,21 +1105,21 @@ for (const action of ['connect', 'projection']) for (const invalidate of ['inval
     const f = await fixture(t); const auth = await f.bridge.authenticate(f.request());
     let calls = 0;
     let session;
-    session = new DirectAdminCockpitSession(() => csrf, async () => {
+    session = new DirectAdminCockpitSession(() => bootstrapNonce, async path => {
       calls++;
+      if (path === '/v1/directadmin/bootstrap') return { ok: true, json: async () => ({ csrf_token: csrf }) };
       return { ok: true, json: async () => {
-        const initialProjectionConnection = action === 'projection' && calls === 1;
-        if (action === 'connect' ? calls === 1 : calls === 2) {
+        if (action === 'connect' ? path === '/v1/directadmin/context' : path === '/v1/directadmin/titan_zero/projection') {
           queueMicrotask(() => queueMicrotask(() => session[invalidate]()));
         }
-        return action === 'connect' || initialProjectionConnection
+        return path === '/v1/directadmin/context'
           ? auth.context : { context: auth.context, projection: await f.owners.projection('titan_zero', auth.context) };
       } };
     }); t.after(() => session.dispose());
     if (action === 'projection') await session.connect();
     await assert.rejects(action === 'connect' ? session.connect() : session.projection('titan_zero'), /context-invalidated/);
     await assert.rejects(session.intent('titan_zero', intentBody(f)), /context-mismatch/);
-    assert.equal(calls, action === 'connect' ? 1 : 2);
+    assert.equal(calls, action === 'connect' ? 2 : 3);
   });
 }
 
@@ -870,8 +1128,9 @@ test('one unavailable plugin degrades locally without clearing healthy sibling w
   f.owners.projection = async (plugin, context) => {
     if (plugin === 'titan_operations') throw new Error('backend offline'); return original(plugin, context);
   };
-  const gateway = createDirectAdminGateway(f.bridge, f.owners);
-  const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => gateway(f.request(path, { headers: init.headers })));
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, 'one-unavailable'));
+  const browser = directBrowserFetch(f, gateway);
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, browser.fetcher);
   t.after(() => session.dispose()); await session.connect();
   const zero = root(), ops = root(), brand = root();
   const mounts = [mountZeroCore(session, zero), mountOperationsHub(session, ops), mountBrandStudio(session, brand)];
@@ -1031,9 +1290,10 @@ for (const [operation, sessionMethod, path] of [
 });
 
 test('cross-tab invalidation clears every mounted consumer without accepting a supplied company', async t => {
-  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, 'cross-tab'));
   const channel = { onmessage: null, postMessage() {}, close() {} };
-  const session = new DirectAdminCockpitSession(() => csrf, (path, init) => gateway(f.request(path, { headers: init.headers })), channel);
+  const browser = directBrowserFetch(f, gateway);
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, browser.fetcher, channel);
   t.after(() => session.dispose()); await session.connect(); const r = root(); const mount = mountZeroCore(session, r); await mount.refresh();
   channel.onmessage({ data: { company_id: 'company-b', authority: 'allowed' } });
   assert.equal(r.children[2].textContent, ''); await assert.rejects(session.intent('titan_zero', intentBody(f)), /context-mismatch/);
@@ -1049,12 +1309,13 @@ for (const [label, mutate] of [
 ]) test(`projection boundary rejects ${label} at gateway and browser`, async t => {
   const f = await fixture(t); const original = f.owners.projection;
   f.owners.projection = async (...args) => mutate(await original(...args));
-  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, `projection-${label}`));
   assert.equal((await gateway(f.request('/v1/directadmin/titan_zero/projection'))).status, 503);
   const auth = await f.bridge.authenticate(f.request());
-  const session = new DirectAdminCockpitSession(() => csrf, async path => new Response(JSON.stringify(path === '/v1/directadmin/context'
-    ? auth.context : { context: auth.context, projection: mutate(await original('titan_zero', auth.context)) }),
-    { headers: { 'content-type': 'application/json' } }));
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, async path => new Response(JSON.stringify(
+    path === '/v1/directadmin/bootstrap' ? { csrf_token: csrf } : path === '/v1/directadmin/context'
+      ? auth.context : { context: auth.context, projection: mutate(await original('titan_zero', auth.context)) }),
+  { headers: { 'content-type': 'application/json' } }));
   t.after(() => session.dispose()); await session.connect();
   await assert.rejects(session.projection('titan_zero'), /invalid-projection/);
 });
@@ -1067,8 +1328,9 @@ for (const [label, modify, expected] of [
 ]) test(`renderer exposes ${label} as read-only without a fresh data summary`, async t => {
   const f = await fixture(t); const original = f.owners.projection;
   f.owners.projection = async (...args) => modify(await original(...args));
-  const gateway = createDirectAdminGateway(f.bridge, f.owners);
-  const session = new DirectAdminCockpitSession(() => csrf, (path, init) => gateway(f.request(path, { headers: init.headers })));
+  const gateway = createDirectAdminGateway(f.bridge, f.owners, bootstrapProviderFor(f, `renderer-${label}`));
+  const browser = directBrowserFetch(f, gateway);
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, browser.fetcher);
   t.after(() => session.dispose()); await session.connect(); const r = root(); await mountZeroCore(session, r).refresh();
   assert.equal(r.attrs['data-state'], expected); assert.match(r.children[1].textContent, /^Read-only/);
   assert.doesNotMatch(r.children[1].textContent, /attention items/);
@@ -1077,15 +1339,16 @@ for (const [label, modify, expected] of [
 test('a projection response cannot silently replace the selected company or restore an intent context', async t => {
   const f = await fixture(t); const auth = await f.bridge.authenticate(f.request());
   let replace = false, requests = 0;
-  const session = new DirectAdminCockpitSession(() => csrf, async () => {
+  const session = new DirectAdminCockpitSession(() => bootstrapNonce, async path => {
     requests++;
+    if (path === '/v1/directadmin/bootstrap') return new Response(JSON.stringify({ csrf_token: csrf }));
     if (!replace) return new Response(JSON.stringify(auth.context));
     const context = { ...auth.context, company_id: 'company-b', company_ids: ['company-b'], context_revision: 'new' };
     return new Response(JSON.stringify({ context, projection: await f.owners.projection('titan_zero', context) }));
   }); t.after(() => session.dispose()); await session.connect(); replace = true;
   await assert.rejects(session.projection('titan_zero'), /context-invalidated/);
   await assert.rejects(session.intent('titan_zero', { ...intentBody(f), company_id: 'company-b' }), /context-mismatch/);
-  assert.equal(requests, 2);
+  assert.equal(requests, 3);
 });
 
 test('DA browser bridge accepts only canonical session credentials, not login assertions or the removed provisional format', async t => {
