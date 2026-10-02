@@ -82,12 +82,14 @@ function directadmin_validate_post_fields($fields){
  return $fields;
 }
 function directadmin_parse_form_body($body){
- if(!is_string($body)||strlen($body)>16384) throw new RuntimeException('Form data exceeds the limit.');
+ if(!is_string($body)||strlen($body)>16386) throw new RuntimeException('Form data exceeds the limit.');
  if($body!==''){
   if(substr($body,-2)==="\r\n") $body=substr($body,0,-2);
   elseif(substr($body,-1)==="\n") $body=substr($body,0,-1);
   if($body==='') throw new RuntimeException('Malformed form terminator.');
  }
+ if(strlen($body)>16384) throw new RuntimeException('Form data exceeds the limit.');
+ if(strpbrk($body,"\r\n")!==false) throw new RuntimeException('Malformed form terminator.');
  if($body==='') return [];
  $pairs=explode('&',$body);
  if(count($pairs)>count(directadmin_post_field_names())) throw new RuntimeException('Too many form fields.');
@@ -118,22 +120,97 @@ function directadmin_validate_form_content_type(){
   throw new RuntimeException('Unsupported form content type.');
  }
 }
+function directadmin_request_error_code($exception){
+ $message=$exception instanceof Throwable?$exception->getMessage():'';
+ $codes=[
+  'Invalid content length.'=>'content_length_invalid',
+  'Form data exceeds the limit.'=>'body_oversized',
+  'Unsupported form content type.'=>'content_type_invalid',
+  'Query data exceeds the limit.'=>'query_oversized',
+  'Malformed query encoding.'=>'query_malformed',
+  'Form fields cannot be supplied in the query string.'=>'query_form_fields',
+  'Unable to read request body.'=>'stdin_unavailable',
+  'Request body length mismatch.'=>'body_length_mismatch',
+  'Malformed form terminator.'=>'malformed_terminator',
+  'Too many form fields.'=>'too_many_fields',
+  'Malformed form encoding.'=>'form_malformed',
+  'Malformed form field.'=>'form_malformed',
+  'Duplicate form field.'=>'duplicate_field',
+  'Array form fields are not allowed.'=>'array_field',
+  'Invalid form fields.'=>'field_count_invalid',
+  'Invalid form field.'=>'field_invalid',
+  'Invalid form value.'=>'field_value_invalid',
+  'Ambiguous form action.'=>'action_ambiguous',
+  'Invalid form action.'=>'action_invalid',
+  'Invalid DirectAdmin POST marker.'=>'post_marker_invalid',
+  'Raw DirectAdmin POST body is unavailable.'=>'raw_post_missing'
+ ];
+ return is_string($message)&&isset($codes[$message])?$codes[$message]:'request_rejected';
+}
+function directadmin_request_declared_length_hint(){
+ $raw=getenv('CONTENT_LENGTH');
+ if(!is_string($raw)||preg_match('/^[0-9]{1,5}$/D',$raw)!==1) return null;
+ $length=(int)$raw;
+ return $length<=16384?$length:null;
+}
+function directadmin_request_diagnostic($exception){
+ $transport=$_SERVER['TDA_REQUEST_TRANSPORT']??'unknown';
+ if(!in_array($transport,['stdin','environment','query','marker','unavailable','unknown'],true)) $transport='unknown';
+ $observed=$_SERVER['TDA_REQUEST_BODY_BYTES_READ']??null;
+ if(!is_int($observed)||$observed<0||$observed>16387) $observed=null;
+ return [
+  'code'=>directadmin_request_error_code($exception),
+  'transport'=>$transport,
+  'declared_bytes'=>directadmin_request_declared_length_hint(),
+  'body_bytes_read'=>$observed
+ ];
+}
+function directadmin_request_diagnostic_summary(){
+ $diagnostic=$_SERVER['TDA_REQUEST_DIAGNOSTIC']??null;
+ if(!is_array($diagnostic)) return 'code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown';
+ $codes=['content_length_invalid','body_oversized','content_type_invalid','query_oversized','query_malformed','query_form_fields','stdin_unavailable','body_length_mismatch','malformed_terminator','too_many_fields','form_malformed','duplicate_field','array_field','field_count_invalid','field_invalid','field_value_invalid','action_ambiguous','action_invalid','post_marker_invalid','raw_post_missing','request_rejected'];
+ $code=$diagnostic['code']??'request_rejected';
+ if(!in_array($code,$codes,true)) $code='request_rejected';
+ $transport=$diagnostic['transport']??'unknown';
+ if(!in_array($transport,['stdin','environment','query','marker','unavailable','unknown'],true)) $transport='unknown';
+ $declared=$diagnostic['declared_bytes']??null;
+ if(!is_int($declared)||$declared<0||$declared>16384) $declared='unknown';
+ $observed=$diagnostic['body_bytes_read']??null;
+ if(!is_int($observed)||$observed<0||$observed>16387) $observed='unknown';
+ return 'code='.$code.' transport='.$transport.' declared_bytes='.$declared.' body_bytes_read='.$observed;
+}
+function directadmin_request_body_length_matches($body,$expectedLength){
+ if(!is_string($body)||($expectedLength!==null&&(!is_int($expectedLength)||$expectedLength<0))) return false;
+ if($expectedLength===null||strlen($body)===$expectedLength) return true;
+ if(strlen($body)===$expectedLength+1&&substr($body,-1)==="\n") return true;
+ if(strlen($body)===$expectedLength+2&&substr($body,-2)==="\r\n") return true;
+ return false;
+}
 function directadmin_fields_from_stdin($expectedLength){
  directadmin_validate_form_content_type();
  $stream=@fopen('php://stdin','rb');
  if(!$stream) throw new RuntimeException('Unable to read request body.');
- $body=stream_get_contents($stream,16385);
+ $body=stream_get_contents($stream,16387);
  fclose($stream);
- if(!is_string($body)||strlen($body)>16384) throw new RuntimeException('Form data exceeds the limit.');
- if($expectedLength!==null&&$expectedLength!==strlen($body)) throw new RuntimeException('Request body length mismatch.');
+ if(!is_string($body)) throw new RuntimeException('Unable to read request body.');
+ $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=strlen($body);
+ if(strlen($body)>16386) throw new RuntimeException('Form data exceeds the limit.');
+ if(!directadmin_request_body_length_matches($body,$expectedLength)) throw new RuntimeException('Request body length mismatch.');
  return directadmin_parse_form_body($body);
 }
 function directadmin_fields_from_request(){
+ $marker=getenv('POST');
+ $_SERVER['TDA_REQUEST_TRANSPORT']=$marker==='stdin=true'?'stdin':(($marker!==false&&$marker!=='')?'environment':'unknown');
+ $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=null;
  $length=directadmin_form_content_length();
  directadmin_validate_form_content_type();
  $query=(string)(getenv('QUERY_STRING')?:'');
- if(strlen($query)>16384) throw new RuntimeException('Query data exceeds the limit.');
+ if(strlen($query)>16384){
+  $_SERVER['TDA_REQUEST_TRANSPORT']='query';
+  throw new RuntimeException('Query data exceeds the limit.');
+ }
  if($query!==''){
+  $_SERVER['TDA_REQUEST_TRANSPORT']='query';
   foreach(explode('&',$query) as $pair){
    $rawName=explode('=',$pair,2)[0];
    if(preg_match('/%(?![a-f0-9]{2})/i',$rawName)) throw new RuntimeException('Malformed query encoding.');
@@ -143,14 +220,22 @@ function directadmin_fields_from_request(){
    }
   }
  }
- $marker=getenv('POST');
- if($marker==='stdin=true') return directadmin_fields_from_stdin($length);
+ if($marker==='stdin=true'){
+  $_SERVER['TDA_REQUEST_TRANSPORT']='stdin';
+  return directadmin_fields_from_stdin($length);
+ }
  if($marker!==false&&$marker!==''){
-  directadmin_validate_form_content_type();
-  if(strlen($marker)>16384) throw new RuntimeException('Form data exceeds the limit.');
-  if($length!==null&&$length!==strlen($marker)) throw new RuntimeException('Request body length mismatch.');
+  if(strncmp($marker,'stdin=',6)===0){
+   $_SERVER['TDA_REQUEST_TRANSPORT']='marker';
+   throw new RuntimeException('Invalid DirectAdmin POST marker.');
+  }
+  $_SERVER['TDA_REQUEST_TRANSPORT']='environment';
+  $_SERVER['TDA_REQUEST_BODY_BYTES_READ']=strlen($marker);
+  if(strlen($marker)>16386) throw new RuntimeException('Form data exceeds the limit.');
+  if(!directadmin_request_body_length_matches($marker,$length)) throw new RuntimeException('Request body length mismatch.');
   return directadmin_parse_form_body($marker);
  }
+ $_SERVER['TDA_REQUEST_TRANSPORT']='unavailable';
  throw new RuntimeException('Raw DirectAdmin POST body is unavailable.');
 }
 function bootstrap_directadmin_request($role='admin'){
@@ -159,7 +244,7 @@ function bootstrap_directadmin_request($role='admin'){
  if(PHP_SAPI!=='cli') return;
  $method=strtoupper(trim((string)(getenv('REQUEST_METHOD')?:'GET')));
  $_POST=[]; $_SERVER['REQUEST_METHOD']=$method;
- unset($_SERVER['TDA_REQUEST_REJECTED']);
+ unset($_SERVER['TDA_REQUEST_REJECTED'],$_SERVER['TDA_REQUEST_DIAGNOSTIC'],$_SERVER['TDA_REQUEST_TRANSPORT'],$_SERVER['TDA_REQUEST_BODY_BYTES_READ']);
  if(!in_array($method,['GET','POST'],true)){
   $_SERVER['REQUEST_METHOD']='POST'; $_SERVER['TDA_REQUEST_REJECTED']='input'; return;
  }
@@ -171,7 +256,7 @@ function bootstrap_directadmin_request($role='admin'){
   $_SERVER['TDA_REQUEST_REJECTED']='role'; return;
  }
  try{$_POST=directadmin_fields_from_request();}
- catch(Throwable $e){$_POST=[];$_SERVER['TDA_REQUEST_REJECTED']='input';}
+ catch(Throwable $e){$_POST=[];$_SERVER['TDA_REQUEST_DIAGNOSTIC']=directadmin_request_diagnostic($e);$_SERVER['TDA_REQUEST_REJECTED']='input';}
 }
 function key_dir(){return home_dir().'/.ssh';}
 function key_file(){return key_dir().'/authorized_keys';}
@@ -258,7 +343,8 @@ function directadmin_git_metadata_path_safe($path,$home,$expectDirectory){
  * Git follows nested paths under refs and objects. Fail closed on every
  * metadata symlink and bound the scan so a large repository cannot stall a request.
  */
-function directadmin_git_metadata_tree_safe($directory,$home){
+function directadmin_git_metadata_tree_safe($directory,$home,$entryLimit=65536){
+ if(!is_int($entryLimit)||$entryLimit<1||$entryLimit>65536) return false;
  $resolvedRoot=realpath($directory);
  $rootStat=@lstat($directory);
  if($resolvedRoot===false||!path_within($resolvedRoot,$home)||$rootStat===false||(($rootStat['mode']&0170000)!==0040000)) return false;
@@ -266,23 +352,27 @@ function directadmin_git_metadata_tree_safe($directory,$home){
  $visited=0;
  while($pending){
   $current=array_pop($pending);
-  $entries=@scandir($current,SCANDIR_SORT_NONE);
-  if(!is_array($entries)) return false;
-  foreach($entries as $entry){
-   if($entry==='.'||$entry==='..') continue;
-   if(++$visited>65536) return false;
-   $child=$current.'/'.$entry;
-   $stat=@lstat($child);
-   if($stat===false) return false;
-   $type=$stat['mode']&0170000;
-   if($type===0120000) return false;
-   if($type===0040000){
-    $resolved=realpath($child);
-    if($resolved===false||!path_within($resolved,$home)) return false;
-    $pending[]=$resolved;
-    continue;
+  $handle=@opendir($current);
+  if($handle===false) return false;
+  try{
+   while(($entry=@readdir($handle))!==false){
+    if($entry==='.'||$entry==='..') continue;
+    if(++$visited>$entryLimit) return false;
+    $child=$current.'/'.$entry;
+    $stat=@lstat($child);
+    if($stat===false) return false;
+    $type=$stat['mode']&0170000;
+    if($type===0120000) return false;
+    if($type===0040000){
+     $resolved=realpath($child);
+     if($resolved===false||!path_within($resolved,$home)) return false;
+     $pending[]=$resolved;
+     continue;
+    }
+    if($type!==0100000) return false;
    }
-   if($type!==0100000) return false;
+  }finally{
+   @closedir($handle);
   }
  }
  return true;
@@ -301,7 +391,12 @@ function directadmin_git_read_pointer($file,$label,$base,$home,$expectDirectory)
  if($resolvedFile===false||!is_file($resolvedFile)||!path_within($resolvedFile,$home)) return null;
  $raw=@file_get_contents($resolvedFile,false,null,0,4097);
  if(!is_string($raw)||strlen($raw)>4096||strpos($raw,"\0")!==false) return null;
- $pattern='/\A'.preg_quote($label,'/').': ([^\r\n]+)(?:\r?\n)?\z/D';
+ if(in_array($label,['commondir','worktree-gitdir'],true)){
+  // Git stores linked worktree commondir and reverse gitdir pointers as bare paths.
+  $pattern='/\\A([^\\r\\n]+)(?:\\r?\\n)?\\z/D';
+ }else{
+  $pattern='/\\A'.preg_quote($label,'/').': ([^\\r\\n]+)(?:\\r?\\n)?\\z/D';
+ }
  if(preg_match($pattern,$raw,$matches)!==1) return null;
  return directadmin_git_resolve_path($matches[1],$base,$home,$expectDirectory);
 }
@@ -359,7 +454,7 @@ function directadmin_git_repository_context($requested){
    }
    $worktreePointer=$gitDirectory.'/gitdir';
    if(@lstat($worktreePointer)!==false){
-    $backPointer=directadmin_git_read_pointer($worktreePointer,'gitdir',$gitDirectory,$home,false);
+    $backPointer=directadmin_git_read_pointer($worktreePointer,'worktree-gitdir',$gitDirectory,$home,false);
     $expectedEntry=realpath($gitEntry);
     if($backPointer===null||$expectedEntry===false||$backPointer!==$expectedEntry) return null;
    }
@@ -626,7 +721,7 @@ function render(){
   return;
  }
  if($rejected==='input'){
-  echo '<div class="notice">Request rejected: malformed or ambiguous form data.</div>';
+  echo '<div class="notice">Request rejected: malformed or ambiguous form data. <small>Diagnostic: '.h(directadmin_request_diagnostic_summary()).'</small></div>';
   return;
  }
  if($rejected==='role'){
@@ -689,3 +784,4 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
  echo '<div class="card"><h3>Safety boundary</h3><p class="footer-note">Developer Portal does not grant Titan business authority, root or sudo. Working directories are restricted to HOME and real descendants. Unknown or mutating commands fail closed and must use canonical governed execution elsewhere.</p></div></div>';
 }
 ?>
+
