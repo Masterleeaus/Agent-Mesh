@@ -52,8 +52,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          root="apps/directadmin/dev-access"
+          for directory in "$root" admin reseller user hooks lib scripts; do
+            if [[ "$directory" == "$root" ]]; then
+              chmod 0700 "$root"
+            else
+              chmod 0700 "$root/$directory"
+            fi
+          done
+          umask 077
           TDA_PACKAGE_DIST="$RUNNER_TEMP/developer-portal-package" \
-            bash apps/directadmin/dev-access/tools/package.sh
+            bash "$root/tools/package.sh"
 
       - name: Lint every PHP source and executable role page
         shell: bash

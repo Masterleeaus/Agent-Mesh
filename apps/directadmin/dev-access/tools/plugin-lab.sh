@@ -52,6 +52,7 @@ done
 if printf '%s\n' "${entries[@]}" | grep -Eq '^[^/]+/(plugin\.conf|admin/index\.html)$'; then fail "archive contains an enclosing package directory"; fi
 if printf '%s\n' "${entries[@]}" | grep -Eq '(^|/)\.\.?(/|$)'; then fail "archive contains unsafe path entry"; fi
 if tar -tvzf "$ARCHIVE" | awk 'substr($0, 1, 1) != "-" && substr($0, 1, 1) != "d" { found = 1 } END { exit !found }'; then fail "archive contains a link or special file"; fi
+if ! tar -tvzf "$ARCHIVE" | awk 'substr($0, 1, 1) == "d" { seen = 1; if (substr($0, 2, 9) != "rwxr-xr-x") { bad = 1; print } } END { exit !(seen && !bad) }'; then fail "archive root and directories must be mode 0755"; fi
 
 VERIFY="$(mktemp -d)"
 trap 'rm -rf "$VERIFY"' EXIT

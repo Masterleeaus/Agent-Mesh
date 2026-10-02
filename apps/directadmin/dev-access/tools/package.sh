@@ -33,6 +33,7 @@ chmod 0755 \
 
 chmod 0644 "$TMP/plugin.conf"
 find "$TMP/hooks" "$TMP/lib" -type f -exec chmod 0644 {} +
+find "$TMP" -type d -exec chmod 0755 {} +
 
 ARCHIVE="$DIST/titan_dev_access.tar.gz"
 rm -f "$ARCHIVE"
