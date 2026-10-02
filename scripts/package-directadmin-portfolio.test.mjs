@@ -4,7 +4,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { packagePortfolio } from "./package-directadmin-portfolio.mjs";
+import { fileURLToPath } from "node:url";
+import { ENABLED_PLUGINS, packagePortfolio } from "./package-directadmin-portfolio.mjs";
+import { EXECUTABLE_FILES as SERVER_NODE_EXECUTABLE_FILES, PACKAGE_FILES as SERVER_NODE_PACKAGE_FILES, packagePlugin } from "./package-directadmin-plugin.mjs";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function fixture(run) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-portfolio-test-"));
@@ -20,12 +24,14 @@ function fixture(run) {
 }
 
 function developerPortal(source, files = ["plugin.conf", "admin", "scripts/update.sh"]) {
+  const executableFiles = ["admin/index.html", "scripts/update.sh"].filter((entry) => files.includes(entry) || files.includes(path.dirname(entry)));
   return {
     id: "titan_dev_access",
     displayName: "Developer Portal",
     legacyDisplayNames: { "1.2.0": "Titan Dev Access" },
     source: path.relative(path.resolve("scripts/.."), source),
     files,
+    executableFiles,
   };
 }
 
@@ -85,3 +91,22 @@ test("portfolio packaging rejects the historical display name on the current ver
   fs.writeFileSync(path.join(source, "plugin.conf"), "name=Titan Dev Access\nversion=1.3.3\n");
   assert.throws(() => packagePortfolio({ outputDir: output, plugins: [plugin] }), /manifest display name mismatch/);
 }));
+
+test("portfolio Server Node archive matches its canonical package owner byte-for-byte", (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-server-node-portfolio-test-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const descriptor = ENABLED_PLUGINS.find((plugin) => plugin.id === "titan-server-node");
+  assert.ok(descriptor, "portfolio must include the canonical Server Node package");
+  assert.deepEqual(descriptor.files, SERVER_NODE_PACKAGE_FILES, "portfolio file allowlist must come from the Server Node packager");
+  assert.ok(SERVER_NODE_EXECUTABLE_FILES.includes("user/directadmin-gateway.raw"), "canonical RAW endpoint must remain executable");
+
+  const portfolio = packagePortfolio({ outputDir: path.join(root, "portfolio"), plugins: [descriptor] });
+  const canonical = packagePlugin({
+    sourceDir: path.join(ROOT, descriptor.source),
+    outputDir: path.join(root, "canonical"),
+  });
+  assert.equal(portfolio.artifacts[0].plugin_id, canonical.plugin_id);
+  assert.equal(portfolio.artifacts[0].version, canonical.version);
+  assert.equal(portfolio.artifacts[0].sha256, canonical.sha256);
+  assert.deepEqual(fs.readFileSync(portfolio.artifacts[0].archive), fs.readFileSync(canonical.archive));
+});
