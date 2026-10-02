@@ -454,30 +454,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-, body)
-    if len(link) != 1 or int(link[0]) != issue_number:
-        fail('mission-closing PR must link exactly the issue it closes')
-    issue = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
-    if 'pull_request' in issue or issue.get('state') != 'open':
-        fail('linked mission must be an open issue, not a pull request')
-    validate_completion_evidence(body, issue, issue_number, 'Closes')
-    issue_now = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
-    if issue_now.get('body') != issue.get('body') or issue_now.get('state') != 'open':
-        fail('issue changed during validation; refresh the closure evidence and retry')
-    print(f'Mission closure evidence is structurally complete for #{issue_number}; human semantic review remains required.')
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--self-test", action="store_true")
-    args = parser.parse_args()
-
-    if args.self_test:
-        validate_roadmap_integrity()
-        result = subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s',
-                                 str(ROOT / '.github/scripts/tests'), '-v'], check=False)
-        raise SystemExit(result.returncode)
-    validate_pull_request()
-
-
-if __name__ == "__main__":
-    main()
