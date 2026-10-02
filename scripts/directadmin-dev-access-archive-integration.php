@@ -9,6 +9,20 @@ function integration_expect(bool $condition, string $message): void
     }
 }
 
+function integration_rejection_kind(string $html): string
+{
+    foreach ([
+        'Request rejected: malformed or ambiguous form data.' => 'malformed-or-ambiguous',
+        'Request rejected: invalid CSRF token.' => 'invalid-csrf',
+        'Request rejected: this DirectAdmin role is read-only in Developer Portal.' => 'read-only-role',
+    ] as $message => $kind) {
+        if (strpos($html, $message) !== false) {
+            return $kind;
+        }
+    }
+    return 'no-known-rejection-message';
+}
+
 function integration_remove_tree(string $path): void
 {
     if (is_link($path) || is_file($path)) {
@@ -161,7 +175,7 @@ $trailingByteEnvironment = array_replace($baseEnvironment, [
     'CONTENT_LENGTH' => (string)strlen($trailingByteBody),
 ]);
 [$rejected] = integration_run_role($entrypoint, $pluginRoot, $trailingByteEnvironment, $trailingByteBody);
-integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'a trailing byte after the serialized form must fail closed with the reported diagnostic');
+integration_expect(strpos($rejected, 'Request rejected: malformed or ambiguous form data.') !== false, 'a trailing byte after the serialized form must fail closed with the reported diagnostic (observed=' . integration_rejection_kind($rejected) . ')');
 integration_expect((file_get_contents($authorizedKeys) ?: '') === $syntheticKey . "\n", 'rejected trailing-byte form must not change authorized_keys');
 
 echo "Synthetic public-key form submission passed against the extracted archive; no real key or account data was used.\n";
