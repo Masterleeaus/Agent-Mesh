@@ -41,7 +41,7 @@ test('current SDK, canonical issued session and company-switch cookie scope the 
       const company_id = context.company_id;
       return { company_id, source: 'fixture-hosted-workforce-owner', freshness: new Date().toISOString(), evidence_refs: [],
         data: { schema: 'titan.workforce-cockpit.v1', company_id,
-          discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', capabilities: ['work.pause', 'work.cancel'] }],
+          discovery: { company_id, workers: [{ company_id, worker_id: `${company_id}-worker`, kind: 'digital', active: true, capabilities: ['work.pause', 'work.cancel'] }],
             controls: [{ action: 'pause', capability_id: 'fixture.pause' }, { action: 'cancel', capability_id: 'fixture.cancel' }] },
           status: { company_id, work: [{ company_id, work_id: `${company_id}-work`, state: 'COMPLETED', evidence_refs: ['fixture-run-ack'] }] } } };
     },

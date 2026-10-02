@@ -1,6 +1,6 @@
 import { assertDirectAdminWorkforceSkillsProjection, type DirectAdminWorkforceSkillsProjection, type WorkforceEvidenceBackedSkillProof } from "../../../packages/titan-platform/src/directadmin-workforce-skills.js";
 // @ts-expect-error Canonical capability projection is JavaScript.
-import { buildEvidenceBackedSkillProof } from "../../../packages/workforce/capability/evidence-backed-skill-proof.mjs";
+import { buildEvidenceBackedSkillProof } from "../../../packages/titan-platform/src/ported/titan-workforce/capability/evidence-backed-skill-proof.mjs";
 
 export type CanonicalWorkforceSkillInputs = Readonly<{
   registry: unknown;

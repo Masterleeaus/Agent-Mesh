@@ -1,5 +1,5 @@
 /** Typed, authority-neutral projection contract for canonical Workforce skills.
- * The canonical registry and proof remain owned by packages/workforce/capability. */
+ * Proof construction lives beside the production Titan Workforce capability owner. */
 export type DirectAdminWorkforceSkillProof = Readonly<{
   worker_id: string;
   capability_id: string;
