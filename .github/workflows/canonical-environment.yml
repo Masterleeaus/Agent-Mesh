@@ -46,5 +46,5 @@ jobs:
       - name: Validate canonical defaults and bootstrap
         run: node --test scripts/canonical-env-defaults.test.mjs
       - name: Check whole-tree environment inventory at subproduct gate
-        if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}
+        if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
         run: node scripts/environment-inventory.mjs --check
