@@ -70,7 +70,9 @@
     "src/workforce-manager/manager-contract.ts",
     "src/business-engine-mapping.ts",
     "src/field-service-lifecycle.ts",
+    "src/directadmin-plugin.ts",
     "src/counterfactual-branch.ts",
-    "src/maps-intelligence/runtime.ts"
+    "src/maps-intelligence/runtime.ts",
+    "src/signal/runtime.ts"
   ]
 }
