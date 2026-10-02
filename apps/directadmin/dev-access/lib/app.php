@@ -57,6 +57,7 @@ function post_string($name,$default=''){
  $v=$_POST[$name]??$default;
  return is_string($v)?$v:$default;
 }
+function directadmin_role_can_mutate($role){return $role==='admin';}
 function directadmin_post_field_names(){return ['csrf','cwd','command','run','public_key','add_key','remove_key'];}
 function directadmin_validate_post_fields($fields){
  if(!is_array($fields)||count($fields)>count(directadmin_post_field_names())) throw new RuntimeException('Invalid form fields.');
@@ -164,7 +165,9 @@ function directadmin_fields_from_request(){
  }
  return directadmin_fields_from_environment();
 }
-function bootstrap_directadmin_request(){
+function bootstrap_directadmin_request($role='admin'){
+ if(!in_array($role,['admin','reseller','user'],true)) $role='user';
+ $_SERVER['TDA_ROLE']=$role;
  if(PHP_SAPI!=='cli') return;
  $method=strtoupper(trim((string)(getenv('REQUEST_METHOD')?:'GET')));
  $_POST=[]; $_SERVER['REQUEST_METHOD']=$method;
@@ -176,6 +179,9 @@ function bootstrap_directadmin_request(){
   $_SERVER['TDA_REQUEST_REJECTED']='context'; return;
  }
  if($method!=='POST') return;
+ if(!directadmin_role_can_mutate($role)){
+  $_SERVER['TDA_REQUEST_REJECTED']='role'; return;
+ }
  try{$_POST=directadmin_fields_from_request();}
  catch(Throwable $e){$_POST=[];$_SERVER['TDA_REQUEST_REJECTED']='input';}
 }
@@ -383,6 +389,12 @@ function render(){
   echo '<div class="notice">Request rejected: malformed or ambiguous form data.</div>';
   return;
  }
+ if($rejected==='role'){
+  echo '<div class="notice">Request rejected: this DirectAdmin role is read-only in Developer Portal.</div>';
+  return;
+ }
+ $role=$_SERVER['TDA_ROLE']??'user';
+ $canMutate=directadmin_role_can_mutate($role);
  $msg='';$output='';$rc=null;$commandClass=null;$cwd=safe_cwd(post_string('cwd',''));
  if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   if(!check_csrf()){$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
@@ -396,7 +408,7 @@ function render(){
 @media (prefers-color-scheme:dark){:root{--tda-panel:#18212f;--tda-text:#eef2f7;--tda-muted:#9ca3af;--tda-border:#334155;--tda-input:#0f172a}}
 html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0}.tda-wrap{max-width:1180px;margin:0 auto;padding:18px}.tda-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.tda-title{margin:0;font-size:26px;font-weight:700}.tda-sub{color:var(--tda-muted);margin:6px 0 0}.card{background:var(--tda-panel);border:1px solid var(--tda-border);border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.08);margin:0 0 14px}.card h3{margin:0 0 12px;font-size:17px}.diag{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}.oktxt{color:var(--tda-safe)}.badtxt{color:var(--tda-danger)}.term{background:#0b1020;color:#e5edf7;border:1px solid #263247;padding:12px;white-space:pre-wrap;min-height:180px;border-radius:8px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}label{display:block;font-size:13px;font-weight:600;margin-top:8px}input,textarea{width:100%;box-sizing:border-box;padding:9px 10px;margin:5px 0 8px;border:1px solid var(--tda-border);border-radius:7px;background:var(--tda-input);color:var(--tda-text)}button{padding:8px 12px;margin:4px 4px 4px 0;border:0;border-radius:7px;background:var(--tda-primary);color:#fff;font-weight:600;cursor:pointer}button[name=remove_key]{background:var(--tda-danger)}.notice{padding:10px 12px;border:1px solid var(--tda-border);border-left:4px solid var(--tda-safe);background:var(--tda-panel);border-radius:7px;margin-bottom:12px}.muted{color:var(--tda-muted)}code{word-break:break-all}.keyrow{border-top:1px solid var(--tda-border);padding:10px 0}.footer-note{font-size:13px;color:var(--tda-muted)}.diagbox{min-height:320px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre}.copyrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.copy-status{font-size:13px;color:var(--tda-safe)}@media(max-width:640px){.tda-wrap{padding:10px}.tda-title{font-size:22px}}
 </style><div class="tda-wrap">';
- echo '<div class="tda-head"><div><h2 class="tda-title">Developer Portal</h2><p class="tda-sub">Scoped diagnostics, safe verification commands and SSH public-key access for the current DirectAdmin UNIX account.</p></div></div>';
+ echo '<div class="tda-head"><div><h2 class="tda-title">Developer Portal</h2><p class="tda-sub">Scoped diagnostics for the current DirectAdmin UNIX account. Role: '.h($role).($canMutate?' · operator actions enabled':' · read-only').'</p></div></div>';
  if($msg) echo '<div class="notice">'.h($msg).'</div>';
  echo '<div class="card"><h3>Diagnostics</h3><div class="diag"><div><b>User</b><br>'.h($user).'</div><div><b>UID</b><br>'.h($uid).'</div><div><b>HOME</b><br>'.h($home).'</div></div><hr style="border:0;border-top:1px solid var(--tda-border);margin:14px 0"><div class="diag">';
  foreach($diag as $b=>$p) echo '<div><b>'.h($b).'</b><br>'.($p?'<span class="oktxt">✓ '.h($p).'</span>':'<span class="muted">—</span>').'</div>'; echo '</div></div>';
@@ -421,10 +433,14 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
   echo '</div>';
  }
  echo '</div>';
+ if($canMutate) {
  echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
  if($rc!==null) echo '<p>Class: '.h($commandClass).' · Exit code: '.h($rc).'</p><div class="term">'.h($output).'</div>'; echo '</div>';
  echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
  if(!$keys) echo '<p>No public keys installed.</p>'; foreach($keys as [$i,$fp]){echo '<div class="keyrow"><b>'.h($fp).'</b><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>'; } echo '</div>';
+ } else {
+  echo '<div class="card"><h3>Operator actions</h3><p class="muted">Terminal and SSH key mutation are available only on the DirectAdmin admin route. This role is intentionally read-only.</p></div>';
+ }
  echo '<div class="card"><h3>Plugin Diagnostics</h3><p class="muted">Read-only support report. Tokens, secrets, passwords, cookies and private-key blocks are redacted.</p><div class="copyrow"><button type="button" onclick="tdaCopyDiagnostics()">Copy Full Diagnostics</button><span id="tda-copy-status" class="copy-status"></span></div><textarea id="tda-full-diagnostics" class="diagbox" readonly>'.h($fullDiag).'</textarea></div>';
  echo '<script>function tdaCopyDiagnostics(){var el=document.getElementById("tda-full-diagnostics"),status=document.getElementById("tda-copy-status"),text=el.value;if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(function(){status.textContent="Copied";}).catch(function(){el.focus();el.select();document.execCommand("copy");status.textContent="Copied";});}else{el.focus();el.select();try{document.execCommand("copy");status.textContent="Copied";}catch(e){status.textContent="Select all and copy manually";}}}</script>';
  echo '<div class="card"><h3>Safety boundary</h3><p class="footer-note">Developer Portal does not grant Titan business authority, root or sudo. Working directories are restricted to HOME and real descendants. Unknown or mutating commands fail closed and must use canonical governed execution elsewhere.</p></div></div>';
