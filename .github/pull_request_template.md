@@ -40,8 +40,8 @@ Results:
 - [ ] Targeted tests passed
 - [ ] Relevant lint/typecheck/build passed
 - [ ] Integration checks passed when cross-boundary
-- [ ] `pnpm gate:fast` passed when required/supported
-- [ ] `pnpm gate` passed when Tier 3 and supported
+- [ ] Focused checks for changed behavior passed
+- [ ] Broad product/release checks are tracked for the completed sub-product milestone
 - [ ] Failure/negative paths were tested where relevant
 - [ ] Any unrun required check is documented below with exact blocker and residual risk
 
@@ -63,9 +63,10 @@ Unrun/blocked checks and residual risk:
 - [ ] Verification invalidated by conflict resolution was rerun
 
 ### Completion evidence
-Start non-closing. Keep `Refs` while any mission requirement or required check is
-unproven. For a complete mission candidate, change the linked relationship to
-`Closes`, set `mode` to `complete`, and map every current issue requirement. If a
+A bounded slice may merge with `Refs` before its parent mission is complete. Map the
+slice to focused checks and list product-level checks under follow-ups. Use `Closes`
+and `mode: complete` only when closing the entire linked issue; map every current
+issue requirement then. If a
 small separate blocker remains, keep this PR at `Refs`/`partial`, link the successor
 issue preserving every unmet criterion, and follow the post-merge handoff sequence
 in root `AGENTS.md`; do not represent it as full mission completion.
