@@ -151,9 +151,12 @@ export function parseDirectAdminHeaders(encoded) {
   let decoded;
   try { decoded = decodeURIComponent(encoded.replace(/\+/g, " ")); }
   catch { throw invalidRequest("headers_encoding_invalid"); }
-  if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(decoded) || /\r(?!\n)/.test(decoded) ||
-      /(^|[^\r])\n/.test(decoded.replace(/\r\n/g, ""))) throw invalidRequest("headers_encoding_invalid");
-  const separator = decoded.includes("\r\n") ? "\r\n" : "\n";
+  if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(decoded)) throw invalidRequest("headers_encoding_invalid");
+  const usesCrLf = decoded.includes("\r\n");
+  if ((usesCrLf && /[\r\n]/.test(decoded.replace(/\r\n/g, ""))) || (!usesCrLf && decoded.includes("\r"))) {
+    throw invalidRequest("headers_encoding_invalid");
+  }
+  const separator = usesCrLf ? "\r\n" : "\n";
   const lines = decoded.split(separator);
   if (lines.at(-1) === "") lines.pop();
   if (!lines.length) throw invalidRequest("headers_empty");
@@ -298,8 +301,9 @@ function parseConfig(raw) {
   let value;
   try { value = parseStrictJson(raw); } catch { throw relayError(503, "relay_not_configured"); }
   if (!value || typeof value !== "object" || Array.isArray(value) ||
-      Object.keys(value).sort().join(",") !== "public_origin,schema,workforce_origin" ||
-      value.schema !== "titan.server-node.directadmin-relay.v1" ||
+      Object.keys(value).sort().join(",") !== "cookie_boundary,public_origin,schema,workforce_origin" ||
+      value.schema !== "titan.server-node.directadmin-relay.v2" ||
+      value.cookie_boundary !== "apache-443-strip-titan-cookie-v1" ||
       typeof value.public_origin !== "string" || typeof value.workforce_origin !== "string") {
     throw relayError(503, "relay_not_configured");
   }

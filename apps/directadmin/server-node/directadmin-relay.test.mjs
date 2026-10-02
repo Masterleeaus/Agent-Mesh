@@ -54,14 +54,20 @@ function parseRaw(bytes) {
   return { status, headers: values, body };
 }
 
-async function spawnRaw(rawPath, env, input, { keepInputOpen = false } = {}) {
+async function spawnRaw(rawPath, env, input, { keepInputOpen = false, inputChunks } = {}) {
   const child = spawn(rawPath, [], { env, stdio: ["pipe", "pipe", "pipe"] });
   const out = [];
   const err = [];
   child.stdin.on("error", () => {});
   child.stdout.on("data", (part) => out.push(part));
   child.stderr.on("data", (part) => err.push(part));
-  if (!keepInputOpen) child.stdin.end(input ?? Buffer.alloc(0));
+  if (inputChunks) {
+    for (const chunk of inputChunks) {
+      if (!child.stdin.write(chunk)) await once(child.stdin, "drain");
+      await new Promise((resolve) => setTimeout(resolve, 3));
+    }
+    child.stdin.end();
+  } else if (!keepInputOpen) child.stdin.end(input ?? Buffer.alloc(0));
   const [code, signal] = await once(child, "close");
   return { code, signal, stdout: Buffer.concat(out), stderr: Buffer.concat(err) };
 }
@@ -125,7 +131,8 @@ async function fixture(t, responseMode = "normal") {
   const configPath = path.join(dir, "directadmin-relay.json");
   const writeConfig = (workforceOrigin = "http://127.0.0.1:" + address.port, publicOrigin = controlOrigin) => {
     fs.writeFileSync(configPath, JSON.stringify({
-      schema: "titan.server-node.directadmin-relay.v1",
+      schema: "titan.server-node.directadmin-relay.v2",
+      cookie_boundary: "apache-443-strip-titan-cookie-v1",
       public_origin: publicOrigin,
       workforce_origin: workforceOrigin,
     }), { mode: 0o644 });
@@ -146,13 +153,28 @@ async function fixture(t, responseMode = "normal") {
   return { dir, rawPath: path.join(extracted, "user/directadmin-gateway.raw"), configPath, writeConfig, env, requests, upstream };
 }
 
-function cgi(f, { route = "context", method = "GET", headerLines = [], body = "", extraEnv = {}, queryExtras = "" } = {}) {
+function cgi(f, {
+  route = "context", method = "GET", headerLines = [], body = "", extraEnv = {}, queryExtras = "",
+  headerEncoding = "percent-crlf",
+} = {}) {
   const flags = "route=" + route + "&headers_to_env=yes" + (method === "POST" ? "&pipe_post=yes" : "") + queryExtras;
   const browserHeaders = [...headerLines];
   if (method === "GET" && !browserHeaders.some((line) => /^(?:origin|referer):/i.test(line))) {
     browserHeaders.push("Referer: " + controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html");
   }
-  const headers = headerBlock(browserHeaders);
+  let headers = headerBlock(browserHeaders);
+  if (headerEncoding === "form-crlf") {
+    headers = headers.replace(/%20/g, "+");
+  } else if (headerEncoding === "percent-lf") {
+    headers = encodeURIComponent([
+      "Host: panel.example.test:2222",
+      "Cookie: DAID=unrelated-cookie; " + DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+      "Sec-Fetch-Site: same-origin",
+      "X-Titan-CSRF: " + csrf,
+      "Accept: application/json",
+      ...browserHeaders,
+    ].join("\n"));
+  }
   const input = Buffer.from(body, "utf8");
   return {
     env: {
@@ -239,6 +261,67 @@ test("POST intent uses pipe_post stdin and preserves only approved SDK headers/b
   assert.equal(request.body.toString(), body);
 });
 
+test("DA-like URL-encoded HEADERS variants and fragmented pipe_post stdin reach the fixed gateway", async (t) => {
+  const f = await fixture(t);
+  const formEncoded = cgi(f, {
+    route: "workforce-projection",
+    headerEncoding: "form-crlf",
+    headerLines: ["Referer: " + controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html"],
+  });
+  const formResult = await spawnRaw(f.rawPath, formEncoded.env, formEncoded.input);
+  assert.equal(parseRaw(formResult.stdout).status, 200);
+  assert.equal(f.requests[0].path, "/v1/directadmin/titan_workforce/projection");
+  assert.equal(f.requests[0].headers.cookie, DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret");
+  assert.equal(f.requests[0].headers.referer, controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html");
+
+  const lfEncoded = cgi(f, {
+    route: "workforce-projection",
+    headerEncoding: "percent-lf",
+    headerLines: ["Referer: " + controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html"],
+  });
+  const lfResult = await spawnRaw(f.rawPath, lfEncoded.env, lfEncoded.input);
+  assert.equal(parseRaw(lfResult.stdout).status, 200);
+  assert.equal(f.requests.length, 2);
+
+  const body = JSON.stringify({
+    company_id: "company-a", actor_id: "actor-a", context_revision: "revision-a",
+    capability_id: "capability-a", operation_id: "operation-a", correlation_id: "correlation-a", input: {},
+  });
+  const post = cgi(f, {
+    route: "workforce-intents", method: "POST", body,
+    headerEncoding: "form-crlf",
+    headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json", "Content-Length: " + Buffer.byteLength(body)],
+  });
+  const pieces = [Buffer.from(body.slice(0, 7)), Buffer.from(body.slice(7, 29)), Buffer.from(body.slice(29))];
+  const postResult = await spawnRaw(f.rawPath, post.env, undefined, { inputChunks: pieces });
+  assert.equal(parseRaw(postResult.stdout).status, 200);
+  assert.equal(f.requests.length, 3);
+  assert.equal(f.requests[2].path, "/v1/directadmin/titan_workforce/intents");
+  assert.deepEqual(f.requests[2].body, Buffer.from(body));
+});
+
+test("Apache 443 cookie boundary strips the whole Cookie header only on matching requests", () => {
+  const boundaryPath = path.join(sourceRoot, "operator-config/apache-443-cookie-boundary.conf");
+  const directive = fs.readFileSync(boundaryPath, "utf8").split(/\r?\n/).find((line) => line.startsWith("RequestHeader "));
+  assert.equal(
+    directive,
+    'RequestHeader unset Cookie "expr=%{req:Cookie} =~ m#(^|;[[:blank:]]*)__Host-titan-da-session=#"',
+  );
+  const titanCookie = new RegExp("(^|;[ \\t]*)__Host-titan-da-session=");
+  const before443Application = (cookie) => titanCookie.test(cookie) ? undefined : cookie;
+  for (const header of [
+    DIRECTADMIN_SESSION_COOKIE + "=fixture; marketing=ok",
+    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=fixture; preference=dark",
+    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=one; " + DIRECTADMIN_SESSION_COOKIE + "=two",
+    DIRECTADMIN_SESSION_COOKIE + "=fixture",
+  ]) {
+    assert.equal(before443Application(header), undefined);
+  }
+  assert.equal(before443Application("marketing=ok; __Host-titan-da-session-extra=lookalike"),
+    "marketing=ok; __Host-titan-da-session-extra=lookalike");
+  assert.equal(before443Application("marketing=ok; preference=dark"), "marketing=ok; preference=dark");
+});
+
 test("shared browser fetch helper maps fixed SDK routes and refuses arbitrary URLs, methods, and identity headers", async () => {
   const calls = [];
   const fetcher = createDirectAdminRelayFetch(async (input, init) => {
@@ -308,6 +391,17 @@ test("invalid and uncommissioned configuration fails closed without logging requ
   const nonPrivateHttps = await spawnRaw(f.rawPath, request.env, request.input);
   assert.equal(parseRaw(nonPrivateHttps.stdout).status, 503);
   assert.equal(f.requests.length, 1);
+
+  for (const config of [
+    { schema: "titan.server-node.directadmin-relay.v1", public_origin: controlOrigin, workforce_origin: "http://127.0.0.1:3010" },
+    { schema: "titan.server-node.directadmin-relay.v2", public_origin: controlOrigin, workforce_origin: "http://127.0.0.1:3010" },
+    { schema: "titan.server-node.directadmin-relay.v2", cookie_boundary: "unverified", public_origin: controlOrigin, workforce_origin: "http://127.0.0.1:3010" },
+  ]) {
+    fs.writeFileSync(f.configPath, JSON.stringify(config), { mode: 0o644 });
+    const missingBoundary = await spawnRaw(f.rawPath, request.env, request.input);
+    assert.equal(parseRaw(missingBoundary.stdout).status, 503);
+    assert.equal(f.requests.length, 1);
+  }
 
   const symlinkPath = path.join(f.dir, "relay-config-link.json");
   fs.symlinkSync(f.configPath, symlinkPath);
