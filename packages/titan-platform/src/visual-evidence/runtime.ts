@@ -27,7 +27,7 @@ export type CaptureQualityAssessment=Readonly<{company_id:string;evidence_ref:st
 export function assessCaptureQuality(i:{company_id:string;evidence:EvidenceRef;width:number;height:number;sharpness:number;exposure:number;subject_coverage:number;duplicate_of?:string|null;policy:CaptureQualityPolicy}):CaptureQualityAssessment{
  if(i.company_id!==i.evidence.company_id)throw Error("visual_cross_company_evidence");
  if(!i.evidence.accepted)throw Error("visual_evidence_not_accepted");
- if(!Number.isInteger(i.policy.revision)||i.policy.revision<1||i.policy.min_width<1||i.policy.min_height<1||![i.policy.min_sharpness,i.policy.min_exposure,i.policy.min_subject_coverage].every(n=>Number.isFinite(n)&&n>=0&&n<=1))throw Error("visual_quality_policy_invalid");
+ if(!Number.isInteger(i.policy.revision)||i.policy.revision<1||!Number.isInteger(i.policy.min_width)||i.policy.min_width<1||!Number.isInteger(i.policy.min_height)||i.policy.min_height<1||![i.policy.min_sharpness,i.policy.min_exposure,i.policy.min_subject_coverage].every(n=>Number.isFinite(n)&&n>=0&&n<=1))throw Error("visual_quality_policy_invalid");
  for(const n of [i.width,i.height])if(!Number.isFinite(n)||n<0)throw Error("visual_quality_dimensions_invalid");
  for(const n of [i.sharpness,i.exposure,i.subject_coverage])if(!Number.isFinite(n)||n<0||n>1)throw Error("visual_quality_metric_invalid");
  const reasons:string[]=[];const guidance:string[]=[];
