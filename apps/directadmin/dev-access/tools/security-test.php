@@ -35,6 +35,23 @@ putenv('HOME='.$home);
 
 require dirname(__DIR__).'/lib/app.php';
 
+function security_ssh_wire_string(string $value):string{
+ return pack('N',strlen($value)).$value;
+}
+function security_synthetic_public_key(string $algorithm):string{
+ if($algorithm==='ssh-ed25519'){
+  $public=hex2bin('d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a');
+  $blob=security_ssh_wire_string('ssh-ed25519').security_ssh_wire_string($public);
+ }elseif($algorithm==='ssh-rsa'){
+  $exponent="\x01\x00\x01";
+  $modulus="\x7f".str_repeat("\xfb",254);
+  $blob=security_ssh_wire_string('ssh-rsa').security_ssh_wire_string($exponent).security_ssh_wire_string($modulus);
+ }else{
+  throw new RuntimeException('Unsupported security-test fixture algorithm.');
+ }
+ return $algorithm.' '.base64_encode($blob).' synthetic+fixture&marker=literal%25';
+}
+
 expect_true(directadmin_identity_context()!==null,'same-account HOME descendant must be accepted');
 expect_true(directadmin_identity_uid_allowed(posix_geteuid()),'non-root effective UID must pass the DirectAdmin identity policy');
 expect_true(!directadmin_identity_uid_allowed(0),'root execution must fail closed before SSH key management or command diagnostics');
@@ -44,6 +61,27 @@ putenv('USER=root');
 putenv('HOME='.$home);
 expect_true(directadmin_identity_context()!==null,'documented USERNAME must remain authoritative when inherited USER differs');
 putenv('USER='.$account['name']);
+$syntheticEd25519=security_synthetic_public_key('ssh-ed25519');
+$syntheticRsa=security_synthetic_public_key('ssh-rsa');
+$edParts=explode(' ',$syntheticEd25519,3);
+$rsaParts=explode(' ',$syntheticRsa,3);
+expect_true(strpos($edParts[1],'+')!==false,'synthetic Ed25519 fixture must exercise an encoded plus sign');
+expect_true(strpos($rsaParts[1],'+')!==false&&strpos($rsaParts[1],'/')!==false&&substr($rsaParts[1],-2)==='==','synthetic RSA fixture must exercise plus, slash and padding');
+expect_true(valid_pubkey($syntheticEd25519),'valid synthetic Ed25519 public blob must pass');
+expect_true(valid_pubkey($syntheticEd25519."\r\n"),'one conventional trailing CRLF must be normalized');
+expect_true(valid_pubkey($syntheticRsa),'valid synthetic RSA public blob must pass');
+$spaceCorruptedEd25519='ssh-ed25519 '.str_replace('+',' ',$edParts[1]).' synthetic+fixture&marker=literal%25';
+expect_true(!valid_pubkey($spaceCorruptedEd25519),'form-decoded plus inside the public blob must not accept a shortened base64 prefix');
+$splitEd25519='ssh-ed25519'."\n".$edParts[1].' synthetic+fixture';
+expect_true(!valid_pubkey($splitEd25519),'line breaks between the key algorithm and blob must be rejected');
+$wrongEmbeddedType='ssh-ed25519 '.$rsaParts[1].' synthetic+fixture';
+expect_true(!valid_pubkey($wrongEmbeddedType),'declared algorithm must match the SSH blob algorithm');
+expect_true(add_key($splitEd25519)==='Invalid public key format.','malformed key must be rejected before key-directory setup');
+expect_true(!is_dir($home.'/.ssh'),'invalid public key must not create or alter the SSH directory');
+$terminalFields='csrf='.str_repeat('a',64).'&add_key=1';
+expect_true((directadmin_parse_form_body($terminalFields."\n")['add_key']??null)==='1','one DirectAdmin transport LF must be normalized after the complete form');
+expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??null)==='1','one DirectAdmin transport CRLF must be normalized after the complete form');
+expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\n\n");},'multiple form terminators must remain rejected');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&csrf=second');},'duplicate form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf%5B%5D=valid');},'array form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=%ZZ');},'malformed percent encoding must fail closed');
