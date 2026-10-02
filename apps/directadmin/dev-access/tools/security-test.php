@@ -134,10 +134,102 @@ expect_true($allowed===false && $class==='UNKNOWN','arbitrary PHP execution must
 [$class,, $allowed]=command_policy('echo $(id)');
 expect_true($allowed===false && $class==='UNKNOWN','shell expansion must fail closed');
 
-$redacted=redact_text("token=abc123\nAuthorization: Bearer super-secret\npassword=hunter2");
+$redacted=redact_text("token=abc123\nAuthorization: Bearer super-secret\npassword=hunter2\nremote=https://synthetic-user:synthetic-token@example.invalid/repo.git");
 expect_true(strpos($redacted,'abc123')===false,'token value must be redacted');
 expect_true(strpos($redacted,'super-secret')===false,'bearer token must be redacted');
 expect_true(strpos($redacted,'hunter2')===false,'password must be redacted');
+expect_true(strpos($redacted,'synthetic-user')===false&&strpos($redacted,'synthetic-token')===false,'URL userinfo must be redacted from command output');
+expect_true(strpos($redacted,'example.invalid/repo.git')!==false,'URL redaction should preserve non-secret destination context');
+
+$gitRepo=$home.'/git-repo';
+expect_true(mkdir($gitRepo,0700,true),'isolated Git repository fixture must be created');
+$gitDescriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+$gitInit=@proc_open(['git','init','--quiet',$gitRepo],$gitDescriptors,$gitPipes,$home,[
+ 'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+ 'HOME'=>$home,
+ 'GIT_CONFIG_NOSYSTEM'=>'1',
+ 'GIT_CONFIG_GLOBAL'=>'/dev/null'
+],['bypass_shell'=>true]);
+expect_true(is_resource($gitInit),'synthetic local Git repository must initialize');
+fclose($gitPipes[0]);
+$gitInitOut=(string)stream_get_contents($gitPipes[1]);
+$gitInitErr=(string)stream_get_contents($gitPipes[2]);
+fclose($gitPipes[1]); fclose($gitPipes[2]);
+expect_true(proc_close($gitInit)===0&&$gitInitOut===''&&$gitInitErr==='','synthetic Git fixture must initialize without errors');
+$gitContext=directadmin_git_repository_context($gitRepo);
+expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME-contained Git root and gitdir must be accepted');
+[$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
+expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
+
+$outsideRepo=$root.'/outside-git';
+expect_true(mkdir($outsideRepo,0700,true),'external Git fixture must be created');
+$outsideInit=@proc_open(['git','init','--quiet',$outsideRepo],$gitDescriptors,$outsidePipes,$root,[
+ 'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+ 'HOME'=>$root,
+ 'GIT_CONFIG_NOSYSTEM'=>'1',
+ 'GIT_CONFIG_GLOBAL'=>'/dev/null'
+],['bypass_shell'=>true]);
+expect_true(is_resource($outsideInit),'external synthetic Git repository must initialize');
+fclose($outsidePipes[0]);
+$outsideInitOut=(string)stream_get_contents($outsidePipes[1]);
+$outsideInitErr=(string)stream_get_contents($outsidePipes[2]);
+fclose($outsidePipes[1]); fclose($outsidePipes[2]);
+expect_true(proc_close($outsideInit)===0&&$outsideInitOut===''&&$outsideInitErr==='','external synthetic Git fixture must initialize without errors');
+
+$linkedEscape=$home.'/linked-gitdir-escape';
+expect_true(mkdir($linkedEscape,0700,true),'linked Git escape fixture must be created');
+expect_true(file_put_contents($linkedEscape.'/.git',"gitdir: ".$outsideRepo.'/.git'."\n")!==false,'synthetic linked-worktree pointer must be written');
+expect_true(directadmin_git_repository_context($linkedEscape)===null,'linked-worktree gitdir outside selected HOME must be rejected before Git runs');
+$escapedReadiness=codex_readiness($linkedEscape,[],['git'=>'/usr/bin/git']);
+expect_true($escapedReadiness['git_repository']===false&&$escapedReadiness['git_branch']===null,'Codex readiness must not follow an external gitdir');
+
+$commondirEscape=$home.'/linked-commondir-escape';
+expect_true(mkdir($commondirEscape.'/.git',0700,true),'commondir escape fixture must be created');
+expect_true(file_put_contents($commondirEscape.'/.git/commondir',$outsideRepo.'/.git'."\n")!==false,'synthetic commondir pointer must be written');
+expect_true(directadmin_git_repository_context($commondirEscape)===null,'commondir outside selected HOME must be rejected');
+
+$alternatesFile=$gitRepo.'/.git/objects/info/alternates';
+if(!is_dir(dirname($alternatesFile))) expect_true(mkdir(dirname($alternatesFile),0700,true),'Git object metadata fixture path must be created');
+expect_true(file_put_contents($alternatesFile,$outsideRepo.'/.git/objects'."\n")!==false,'synthetic external object alternate must be written');
+expect_true(directadmin_git_repository_context($gitRepo)===null,'external Git object alternates must be rejected');
+expect_true(unlink($alternatesFile),'synthetic external object alternate must be removed');
+expect_true(directadmin_git_repository_context($gitRepo)!==null,'contained Git repository must recover after removing the external alternate');
+
+$readOnlyGitCommands=[
+ 'git status',
+ 'git status --short',
+ 'git diff --stat',
+ 'git diff --name-only',
+ 'git log --oneline -5',
+ 'git branch --show-current',
+ 'git rev-parse --short HEAD',
+ 'git ls-files',
+ 'git describe --always --dirty'
+];
+foreach($readOnlyGitCommands as $command){
+ [$class,, $allowed]=command_policy($command);
+ expect_true($allowed===true&&$class==='READ',$command.' must be explicitly allowlisted as read-only Git inspection');
+}
+$remoteConfigBefore=hash_file('sha256',$gitRepo.'/.git/config');
+$blockedGitCommands=[
+ 'git remote add origin https://synthetic-user:synthetic-token@example.invalid/repo.git',
+ 'git remote remove origin',
+ 'git remote rename origin backup',
+ 'git remote set-url origin https://synthetic-user:synthetic-token@example.invalid/new.git',
+ 'git remote update',
+ 'git remote -v',
+ 'git status --git-dir=/tmp/external/.git',
+ 'git -C /tmp/external status'
+];
+foreach($blockedGitCommands as $command){
+ [$output,$exitCode]=run_cmd($command,$gitRepo);
+ expect_true($exitCode===126,$command.' must fail closed without running');
+ expect_true(strpos($output,'synthetic-user')===false&&strpos($output,'synthetic-token')===false,$command.' must not disclose URL userinfo');
+}
+expect_true(hash_file('sha256',$gitRepo.'/.git/config')===$remoteConfigBefore,'blocked remote add/remove/rename/set-url/update commands must not mutate local Git config');
+[$class,, $allowed]=command_policy('git show --stat');
+expect_true($allowed===false&&$class==='UNKNOWN','unlisted Git read commands must fail closed');
+
 
 
 
