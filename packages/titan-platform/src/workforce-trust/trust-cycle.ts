@@ -1,5 +1,6 @@
 export type TrustCycleInput = {
   company_id: string; agent_id: string; capability: string;
+  variant?: string | null; workflow?: string | null; context_ref?: string | null;
   outcome_success: boolean; outcome_verified?: boolean; policy_compliant: boolean;
   human_correction: boolean; reversed: boolean;
   evidence_refs?: string[];
@@ -20,6 +21,7 @@ export function evaluateTrustCycle(input:TrustCycleInput):TrustCycleEvidence{
   return Object.freeze({...input,company_id,agent_id,capability,evidence_refs,verified_outcome,successful,
     schema:"titan.workforce.trust-cycle.v1",authority_effect:false as const,grants_authority:false as const});
 }
-export function trustScopeKey(v:{company_id:string;agent_id:string;capability:string}){
-  return `${required(v.company_id,"company_id")}::${required(v.agent_id,"agent_id")}::${required(v.capability,"capability")}`;
+export function trustScopeKey(v:{company_id:string;agent_id:string;capability:string;variant?:string|null;workflow?:string|null;context_ref?:string|null}){
+  const part=(x:unknown)=>String(x??"").trim()||"*";
+  return `${required(v.company_id,"company_id")}::${required(v.agent_id,"agent_id")}::${required(v.capability,"capability")}::${part(v.variant)}::${part(v.workflow)}::${part(v.context_ref)}`;
 }
