@@ -253,7 +253,7 @@ test("restored source-derived identity fails closed when its persisted source re
     assert.equal(f.nativeInvocations, 1);
     const run = (await f.run())[0];
     assert.ok(run.authenticated_identity.source_session);
-    run.authenticated_identity.source_session_required = true;
+    assert.equal(run.authenticated_identity.source_session_required, true);
     delete run.authenticated_identity.source_session;
     await f.control.query("UPDATE agent_runs SET payload=$1 WHERE company_id='a' AND run_id=$2", [JSON.stringify(run), run.run_id]);
     await f.restart();
