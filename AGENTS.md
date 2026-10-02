@@ -135,6 +135,17 @@ Merge is a delivery decision for the code in the PR. Mission closure and product
 - Keep slice evidence proportional: identify changed paths, focused commands/results, known gaps, and linked parent/child issues. The full parent acceptance map is required only to close the parent issue.
 - Do not disable organization/repository protection rules or falsify results. GitHub-enforced settings remain authoritative.
 
+### Merge-state triage
+
+When a PR is not mergeable, identify the state and take the matching next step:
+
+- **Conflicting or stale head:** compare changed files with current `main`; bring current changes into the existing work or a linked recovery branch, resolve only overlapping files, then rerun focused checks.
+- **Draft:** mark ready when the bounded slice and its focused evidence are reviewable.
+- **Changed-scope check failed:** fix the failure and rerun that check. For unrelated/flaky/baseline failures, record the exact run and affected scope; do not hold unrelated slices.
+- **Pending required check:** wait for that check to finish. If it is required by GitHub protection, satisfy it or report the exact protection rule; do not bypass it.
+- **Review or unresolved thread required:** request the missing review or resolve the concrete thread. Keep working on independent slices while review is pending.
+- **Evidence/linkage issue:** partial delivery uses `Refs` and concise slice evidence. Full closure uses `Closes` with the complete current mission-evidence record.
+
 If an environment prevents a focused check, record:
 - exact command not run,
 - exact blocker,
