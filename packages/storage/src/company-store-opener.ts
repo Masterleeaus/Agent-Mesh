@@ -1,7 +1,8 @@
 import { lstatSync, realpathSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { openExistingSqliteStorage } from "./sqlite-client.js";
-import type { StorageClient } from "./index.js";
+import type { StorageClient, StorageTransactionOptions } from "./index.js";
+import { createCompanyPlacementOperationGate } from "./company-placement-operation-gate.js";
 import {
   CompanyStorageResolutionError,
   type CompanyDatabasePlacementDescriptor,
@@ -110,10 +111,11 @@ export function createSqliteCompanyStoreOpener(
     ): Promise<CompanyStoreOpenResult<StorageClient>> {
       throwIfAborted(openOptions?.signal);
       assertDescriptor(placement);
-
-      const beforeOpen = inspectPlacementFile(root, placement.placement_id);
+      const operationGate = createCompanyPlacementOperationGate(root, placement.placement_id);
+      const releaseOperation = await operationGate.acquire({ signal: openOptions?.signal });
       let client: StorageClient | undefined;
       try {
+        const beforeOpen = inspectPlacementFile(root, placement.placement_id);
         client = openExistingSqliteStorage(beforeOpen.path);
         throwIfAborted(openOptions?.signal);
 
@@ -138,20 +140,36 @@ export function createSqliteCompanyStoreOpener(
           }
         };
 
+        const guardedClient: StorageClient = Object.freeze({
+          dialect: client.dialect,
+          query: <T>(sql: string, params: readonly unknown[] = []) => operationGate.run(async () => {
+            await openOptions?.assertCurrent?.();
+            await assertPlacementBound();
+            return client!.query<T>(sql, params);
+          }, { signal: openOptions?.signal }),
+          transaction: <T>(fn: (tx: StorageClient) => Promise<T>, transactionOptions?: StorageTransactionOptions): Promise<T> =>
+            operationGate.run(async () => {
+              await openOptions?.assertCurrent?.();
+              await assertPlacementBound();
+              return client!.transaction(fn, transactionOptions);
+            }, { signal: openOptions?.signal }),
+          close: () => operationGate.run(() => client!.close()),
+        });
+
         return Object.freeze({
           company_id: placement.company_id,
           placement_id: placement.placement_id,
           placement_revision: placement.placement_revision,
           provider: "sqlite",
           schema_version: placement.schema_version,
-          client,
+          client: guardedClient,
           assertPlacementBound,
         });
       } catch (error) {
         if (client) await client.close().catch(() => undefined);
         if (error instanceof CompanyStorageResolutionError) throw error;
         throw invalidStore();
-      }
+      } finally { await releaseOperation(); }
     },
   });
 }
