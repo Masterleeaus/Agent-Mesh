@@ -4,7 +4,7 @@ The repository has no root `LICENSE`, `COPYING`, or `NOTICE`, and active package
 
 Until the owner records a licensing decision, source and artifact distribution is blocked wherever rights are unknown. This does not classify Titan as proprietary or open source. Do not copy donor/archive material into a distributable because it is present in the repository, and do not infer redistribution permission from document ingestion or RAG retrieval rights.
 
-`distribution-provenance.json` is the current machine-readable status. `package-license-audit.json` records exact active `package.json` paths, license fields, npm-private flags, and content hashes. Refresh it only after reviewing the changed manifests:
+`distribution-provenance.json` is the current machine-readable status. `package-license-audit.json` records exact active `package.json` paths, license fields, npm-private flags, and content hashes. It also hashes the 86 compressed archives under `archive/` as uninspected donor inputs and records license/notice files as evidence requiring review; neither archive presence nor an embedded license string implies redistribution rights. Refresh it only after reviewing the changed inputs:
 
 ```sh
 python3 .github/scripts/check-distribution-provenance.py --write-package-audit

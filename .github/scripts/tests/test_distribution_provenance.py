@@ -53,6 +53,16 @@ class DistributionProvenanceTests(unittest.TestCase):
         self.assertTrue(root['private'])
         self.assertGreater(len(rows), 10)
 
+    def test_archive_hashes_and_license_text_are_evidence_not_redistribution_approval(self):
+        archives = MODULE.archive_inputs(ROOT)
+        self.assertGreater(len(archives), 50)
+        self.assertTrue(all(row['spdx'] == 'NOASSERTION'
+                            and row['redistribution_state'] == 'uninspected_archive_content'
+                            for row in archives))
+        evidence = MODULE.license_evidence_files(ROOT)
+        self.assertTrue(evidence)
+        self.assertTrue(all(row['rights_review'] == 'required' for row in evidence))
+
 
 if __name__ == '__main__':
     unittest.main()

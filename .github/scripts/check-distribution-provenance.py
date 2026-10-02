@@ -50,6 +50,56 @@ def package_manifests(root: Path) -> list[dict]:
     return rows
 
 
+def archive_inputs(root: Path) -> list[dict]:
+    archive_root = root / "archive"
+    rows = []
+    if not archive_root.is_dir():
+        return rows
+    suffixes = {".zip", ".tar", ".gz", ".tgz", ".7z", ".rar"}
+    for path in sorted(item for item in archive_root.rglob("*") if item.is_file()):
+        if path.suffix.lower() not in suffixes:
+            continue
+        rows.append({
+            "path": path.relative_to(root).as_posix(),
+            "bytes": path.stat().st_size,
+            "sha256": sha256(path),
+            "spdx": "NOASSERTION",
+            "redistribution_state": "uninspected_archive_content",
+        })
+    return rows
+
+
+def license_evidence_files(root: Path) -> list[dict]:
+    search_roots = [root / name for name in ("apps", "packages", "services", "archive")]
+    root_evidence = [path for path in root.iterdir() if path.is_file()
+                     and (path.name.lower().startswith(("license", "licence", "copying"))
+                          or "notice" in path.name.lower())
+                     and path.suffix.lower() in {"", ".txt", ".md"}]
+    excluded = {"node_modules", ".next", "dist", "build", "coverage", ".git"}
+    rows = []
+    candidates = list(root_evidence)
+    for base in search_roots:
+        if base.is_dir():
+            candidates.extend(item for item in base.rglob("*") if item.is_file())
+    for path in sorted(set(candidates)):
+        if any(part in excluded for part in path.parts):
+            continue
+        name = path.name.lower()
+        if not (name.startswith(("license", "licence", "copying"))
+                or "notice" in name) or path.suffix.lower() not in {"", ".txt", ".md"}:
+            continue
+        text = path.read_text(errors="replace")[:2048]
+        observed = "MIT" if "MIT License" in text else "NOASSERTION"
+        rows.append({
+            "path": path.relative_to(root).as_posix(),
+            "bytes": path.stat().st_size,
+            "sha256": sha256(path),
+            "observed_spdx": observed,
+            "rights_review": "required",
+        })
+    return sorted({row["path"]: row for row in rows}.values(), key=lambda row: row["path"])
+
+
 def validate(root: Path, inventory: dict) -> list[str]:
     errors: list[str] = []
     if inventory.get("schema") != "titan-distribution-provenance/v1":
@@ -200,7 +250,12 @@ def main() -> int:
     try:
         inventory = json.loads(INVENTORY.read_text())
         if args.write_package_audit:
-            report = {"schema": "titan-package-license-audit/v1", "manifests": package_manifests(ROOT)}
+            report = {
+                "schema": "titan-repository-license-audit/v2",
+                "manifests": package_manifests(ROOT),
+                "archive_inputs": archive_inputs(ROOT),
+                "license_evidence": license_evidence_files(ROOT),
+            }
             AUDIT.write_text(json.dumps(report, indent=2) + "\n")
             print(f"wrote {AUDIT.relative_to(ROOT)} ({len(report['manifests'])} manifests)")
         errors = validate(ROOT, inventory)
@@ -210,7 +265,12 @@ def main() -> int:
                 return 1
             return 0
         if args.check:
-            expected = {"schema": "titan-package-license-audit/v1", "manifests": package_manifests(ROOT)}
+            expected = {
+                "schema": "titan-repository-license-audit/v2",
+                "manifests": package_manifests(ROOT),
+                "archive_inputs": archive_inputs(ROOT),
+                "license_evidence": license_evidence_files(ROOT),
+            }
             if not AUDIT.is_file() or json.loads(AUDIT.read_text()) != expected:
                 errors.append("package-license-audit.json is missing or stale; refresh it after reviewing package metadata")
             if errors:
