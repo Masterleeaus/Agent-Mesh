@@ -47,7 +47,7 @@ test("execution revalidates current authority and carries the superseding decisi
  assert.equal(evaluationInput.supersedes_authority_decision_id,"auth-1");
  assert.equal(evaluationInput.execution_input.amount,25);
  assert.equal(request.company_id,"co-1");
- assert.equal(request.decision_id,"auth-1:execute:tool-1");
+ assert.match(request.decision_id,/^authority:run-1:tool-1:execute:/);
  assert.equal(request.supersedes_decision_id,"auth-1");
  assert.equal(request.authority.revalidated,true);
  assert.equal(request.risk.level,"medium");
@@ -94,6 +94,6 @@ test("current authority decision is persisted as a superseding decision before e
  const planned={status:"approved",decision_id:"auth-1",canonical:canonical("ALLOW")};
  await gateway.execute({decision:planned,capability:{name:"booking.create"},input:{},idempotency_key:"tool-persist",company_id:"co-1",work_id:"work-1",agent_id:"worker-1",run_id:"run-1"});
  assert.equal(appended.length,1);
- assert.equal(appended[0].authority_decision_id,"auth-1:execute:tool-persist");
+ assert.match(appended[0].authority_decision_id,/^authority:run-1:tool-persist:execute:/);
  assert.equal(appended[0].supersedes_authority_decision_id,"auth-1");
 });
