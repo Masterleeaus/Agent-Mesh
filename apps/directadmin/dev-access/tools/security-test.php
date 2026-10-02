@@ -17,6 +17,23 @@ function expect_rejected(callable $action,string $message):void{
  try{$action();}catch(Throwable $e){return;}
  expect_true(false,$message);
 }
+function run_security_git_fixture(array $arguments,string $cwd,string $home):bool{
+ $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+ $environment=[
+  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+  'HOME'=>$home,
+  'GIT_CONFIG_NOSYSTEM'=>'1',
+  'GIT_CONFIG_GLOBAL'=>'/dev/null',
+  'GIT_TERMINAL_PROMPT'=>'0'
+ ];
+ $process=@proc_open(array_merge(['git'],$arguments),$descriptors,$pipes,$cwd,$environment,['bypass_shell'=>true]);
+ if(!is_resource($process)) return false;
+ fclose($pipes[0]);
+ $stdout=(string)stream_get_contents($pipes[1]);
+ $stderr=(string)stream_get_contents($pipes[2]);
+ fclose($pipes[1]);fclose($pipes[2]);
+ return proc_close($process)===0&&$stdout===''&&$stderr==='';
+}
 
 expect_true(function_exists('posix_geteuid')&&function_exists('posix_getpwuid')&&function_exists('posix_getpwnam'),'POSIX account context is required for DirectAdmin CLI verification');
 $account=posix_getpwuid(posix_geteuid());
@@ -186,6 +203,16 @@ $gitContext=directadmin_git_repository_context($gitRepo);
 expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME-contained Git root and gitdir must be accepted');
 [$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
+$linkedWorktree=$home.'/linked-contained';
+expect_true(run_security_git_fixture(['-C',$gitRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--allow-empty','--quiet','--message','linked worktree fixture'],$home),'synthetic repository must have a commit for linked-worktree coverage');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'worktree','add','--detach','--quiet',$linkedWorktree,'HEAD'],$home),'HOME-contained linked worktree must be created for the positive regression');
+expect_true(is_file($linkedWorktree.'/.git'),'linked worktree must use DirectAdmin Git pointer-file layout');
+$linkedContext=directadmin_git_repository_context($linkedWorktree);
+expect_true(is_array($linkedContext)&&$linkedContext['root']===$linkedWorktree,'HOME-contained linked worktree must not be falsely rejected');
+expect_true(path_within($linkedContext['git_dir'],$home)&&path_within($linkedContext['common_dir'],$home),'linked worktree and common metadata must both remain inside HOME');
+[$linkedLog,$linkedLogExit,$linkedLogClass]=run_cmd('git log --oneline -1',$linkedWorktree);
+expect_true($linkedLogExit===0&&$linkedLogClass==='READ'&&$linkedLog!=='','read-only Git inspection must work in a validated contained linked worktree');
+expect_true(run_security_git_fixture(['-C',$gitRepo,'worktree','remove','--force','--quiet',$linkedWorktree],$home),'contained linked-worktree fixture must clean up through Git');
 
 $outsideRepo=$root.'/outside-git';
 expect_true(mkdir($outsideRepo,0700,true),'external Git fixture must be created');
@@ -302,4 +329,3 @@ expect_true(directadmin_role_can_mutate('unknown')===false,'unknown roles must f
 
 
 echo "Developer Portal security regression tests passed".PHP_EOL;
-
