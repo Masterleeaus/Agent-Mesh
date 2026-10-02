@@ -21,14 +21,32 @@ let registry: Awaited<ReturnType<typeof createIdentitySessionRegistry>>;
 let web: ReturnType<typeof createCurrentWebSessionAdapter>;
 let signingKey: Uint8Array;
 let upstreamKey: Uint8Array;
+let approvedAccounts: Map<string, string>;
+let service: ReturnType<typeof createSessionCredentialService>;
 
-function compose() {
-  return createCurrentWebSessionAdapter(createSessionCredentialService({
+function compose(resolveLegacyAccountId = async (companyId: string): Promise<string | null> => approvedAccounts.get(companyId) ?? null) {
+  service = createSessionCredentialService({
     registry, issuer, audience: "titan-web", key_id: "test-access-key",
     signing_key: signingKey, verification_key: signingKey, algorithm: "HS256",
     upstream: { issuer: upstreamIssuer, audience: "titan-session-exchange", key_id: "test-upstream-key", algorithm: "HS256", verification_key: upstreamKey },
     now: () => now, lifetime_seconds: 300,
-  }));
+  });
+  return createCurrentWebSessionAdapter(service, { resolveLegacyAccountId });
+}
+
+function delayedMapper() {
+  let enter!: () => void;
+  let release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const released = new Promise<void>(resolve => { release = resolve; });
+  return {
+    entered, release: () => release(),
+    resolve: async (companyId: string) => {
+      enter();
+      await released;
+      return approvedAccounts.get(companyId) ?? null;
+    },
+  };
 }
 
 async function upstream(patch: Record<string, unknown> = {}) {
@@ -43,6 +61,7 @@ beforeEach(async () => {
   directory = await mkdtemp(join(tmpdir(), "titan-web-credentials-"));
   signingKey = randomBytes(32);
   upstreamKey = randomBytes(32);
+  approvedAccounts = new Map([["company-a", "company-a"], ["company-b", "company-b"]]);
   storage = createSqliteStorage(join(directory, "identity.sqlite"));
   registry = await createIdentitySessionRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
   await registry.putActor({ actor_id: "stable-user-17", status: "active" }, null);
@@ -60,6 +79,83 @@ afterEach(async () => {
 });
 
 describe("opt-in web durable session migration", () => {
+  it.each(["resolve", "issue", "switchCompany", "getSession"] as const)("sanitizes mapper failures through %s", async method => {
+    const issued = await web.issue(await upstream(), expected);
+    const failing = compose(async () => { throw new Error("database-password=must-not-leak"); });
+    if (method === "getSession") {
+      expect(await failing.getSession(issued.credential, expected)).toBeNull();
+    } else {
+      const result = method === "issue" ? failing.issue(await upstream(), expected)
+        : method === "switchCompany" ? failing.switchCompany(issued.credential, expected, "company-b")
+        : failing.resolve(issued.credential, expected);
+      await expect(result).rejects.toThrow(/^web-session-account-mapping-unavailable$/);
+    }
+  });
+
+  it.each([
+    ["resolve", "revoke"], ["resolve", "switch"],
+    ["getSession", "revoke"], ["getSession", "switch"],
+  ] as const)("denies stale %s projection when %s happens while mapping awaits", async (method, change) => {
+    const issued = await web.issue(await upstream(), expected);
+    const gate = delayedMapper();
+    const delayed = compose(gate.resolve);
+    const pending = delayed[method](issued.credential, expected);
+    await gate.entered;
+    if (change === "revoke") await service.revoke(issued.credential, expected);
+    else await service.switchCompany(issued.credential, expected, "company-b");
+    gate.release();
+    if (method === "getSession") expect(await pending).toBeNull();
+    else await expect(pending).rejects.toThrow("authentication-denied");
+  });
+
+  it.each(["issue", "switchCompany"] as const)("denies %s projection revoked after mutation while mapping awaits", async method => {
+    const issued = method === "switchCompany" ? await web.issue(await upstream(), expected) : null;
+    const gate = delayedMapper();
+    const delayed = compose(gate.resolve);
+    const pending = method === "issue" ? delayed.issue(await upstream(), expected)
+      : delayed.switchCompany(issued!.credential, expected, "company-b");
+    await gate.entered;
+    const row = (await storage.query<{ session_id: string; revision: number }>("SELECT session_id,revision FROM titan_security_sessions WHERE revoked=0")).rows[0];
+    await registry.revokeSession(row.session_id, row.revision);
+    gate.release();
+    await expect(pending).rejects.toThrow("authentication-denied");
+  });
+
+  it("uses the approved distinct legacy account mapping while retaining canonical operation scope", async () => {
+    approvedAccounts.set("company-a", "account-17");
+    const issued = await web.issue(await upstream({ accountId: "attacker-account" }), expected);
+    expect(issued.session.accountId).toBe("account-17");
+    expect(issued.context.company_id).toBe("company-a");
+    expect(issued.operationCompanyIds).toEqual(["company-a"]);
+    expect((await web.resolve(issued.credential, expected)).session.accountId).toBe("account-17");
+    expect((await web.getSession(issued.credential, expected))?.accountId).toBe("account-17");
+  });
+
+  it("denies an unknown mapping without inferring equality or creating a mapping", async () => {
+    const issued = await web.issue(await upstream(), expected);
+    approvedAccounts.delete("company-a");
+    expect(await web.getSession(issued.credential, expected)).toBeNull();
+    await expect(web.resolve(issued.credential, expected)).rejects.toThrow("web-session-account-mapping-unavailable");
+    await expect(web.issue(await upstream(), expected)).rejects.toThrow("web-session-account-mapping-unavailable");
+    expect(approvedAccounts.has("company-a")).toBe(false);
+  });
+
+  it.each(["", "  ", " account-17", "account-17\n", "account\u0000-17"])("denies invalid approved account mapping %j", async (accountId) => {
+    const issued = await web.issue(await upstream(), expected);
+    approvedAccounts.set("company-a", accountId);
+    expect(await web.getSession(issued.credential, expected)).toBeNull();
+    await expect(web.resolve(issued.credential, expected)).rejects.toThrow("web-session-account-mapping-unavailable");
+  });
+
+  it("projects the switched company's approved mapping with canonical scope", async () => {
+    approvedAccounts.set("company-b", "account-29");
+    const issued = await web.issue(await upstream(), expected);
+    const switched = await web.switchCompany(issued.credential, expected, "company-b");
+    expect(switched.session.accountId).toBe("account-29");
+    expect(switched.context.company_id).toBe("company-b");
+    expect(switched.operationCompanyIds).toEqual(["company-b"]);
+  });
+
   it("projects stable current identity and scopes operations only to the selected company", async () => {
     const issued = await web.issue(await upstream({ userId: "imposter", accountId: "company-b", role: "admin" }), expected);
     expect(issued.session).toEqual({ userId: "stable-user-17", accountId: "company-a", role: "owner" });
