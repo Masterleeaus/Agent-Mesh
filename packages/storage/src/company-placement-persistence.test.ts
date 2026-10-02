@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   createSqliteCompanyPlacementRegistry,
+  createSqliteCompanyFilePlacementRegistry,
   createSqliteCompanyPlacementRegistryWriter,
   initializeSqliteCompanyPlacementRegistry,
 } from "./company-placement-registry.js";
@@ -104,7 +105,11 @@ describe("persistent SQLite company placements", () => {
     const tables = (await storage.query<{ name: string }>(
       "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name",
     )).rows.map(row => row.name);
-    expect(tables).toEqual(["titan_company_storage_migrations", "titan_company_storage_placements"]);
+    expect(tables).toEqual([
+      "titan_company_file_placements",
+      "titan_company_storage_migrations",
+      "titan_company_storage_placements",
+    ]);
     await expect(createSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" }))
       .resolves.toBeDefined();
   });
@@ -158,21 +163,47 @@ describe("persistent SQLite company placements", () => {
     const reader = await createSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
 
     const reserved = await writer.beginProvisioning({ company_id: "company-a", schema_version: "native-fsm/1" });
-    expect(reserved).toMatchObject({ company_id: "company-a", status: "PROVISIONING", provider: "sqlite", placement_revision: 1 });
-    expect(reserved.placement_id).toMatch(/^[0-9a-f-]{36}$/i);
-    expect(await reader.findByCompanyId("company-a")).toEqual(reserved);
+    expect(reserved.database).toMatchObject({ company_id: "company-a", status: "PROVISIONING", provider: "sqlite", placement_revision: 1 });
+    expect(reserved.database.placement_id).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(reserved.files).toMatchObject({ company_id: "company-a", status: "PROVISIONING", provider: "localfs", file_placement_revision: 1 });
+    expect(reserved.files.file_placement_id).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(await reader.findByCompanyId("company-a")).toEqual(reserved.database);
+    const fileRegistry = await createSqliteCompanyFilePlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+    expect(await fileRegistry.findFileByCompanyId("company-a")).toEqual(reserved.files);
     await expect(writer.beginProvisioning({ company_id: "company-a", schema_version: "native-fsm/1" }))
       .rejects.toThrow();
 
     await expect(writer.setUnavailable({
-      company_id: "company-a", placement_id: reserved.placement_id,
-      placement_revision: reserved.placement_revision, expected_status: "PROVISIONING", status: "FAILED",
-    })).resolves.toMatchObject({ status: "FAILED" });
+      company_id: "company-a", placement_id: reserved.database.placement_id,
+      placement_revision: reserved.database.placement_revision, expected_status: "PROVISIONING", status: "FAILED",
+    })).resolves.toMatchObject({ database: { status: "FAILED" }, files: { status: "FAILED" } });
     await expect(writer.setUnavailable({
-      company_id: "company-a", placement_id: reserved.placement_id,
-      placement_revision: reserved.placement_revision, expected_status: "PROVISIONING", status: "DISABLED",
+      company_id: "company-a", placement_id: reserved.database.placement_id,
+      placement_revision: reserved.database.placement_revision, expected_status: "PROVISIONING", status: "DISABLED",
     })).rejects.toMatchObject({ code: "placement-stale" });
     expect(Object.keys(writer).sort()).toEqual(["beginProvisioning", "setUnavailable"]);
+  });
+
+  it("upgrades the existing v1 database registry without inventing a ready file mapping", async () => {
+    const directory = tempDirectory();
+    const storage = trackStorage(join(directory, "global-registry.sqlite"));
+    await storage.query("CREATE TABLE titan_company_storage_migrations (version INTEGER PRIMARY KEY)");
+    await storage.query("INSERT INTO titan_company_storage_migrations (version) VALUES (1)");
+    await storage.query(`CREATE TABLE titan_company_storage_placements (
+      company_id TEXT PRIMARY KEY NOT NULL,
+      placement_id TEXT NOT NULL UNIQUE,
+      placement_revision INTEGER NOT NULL,
+      provider TEXT NOT NULL,
+      schema_version TEXT NOT NULL,
+      status TEXT NOT NULL
+    )`);
+    await insertPlacement(storage, placementRow({ companyId: "legacy-company", placementId: "legacy-db" }));
+
+    await initializeSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+    const databaseRegistry = await createSqliteCompanyPlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+    const fileRegistry = await createSqliteCompanyFilePlacementRegistry({ storage, storage_role: "GLOBAL_REGISTRY" });
+    expect(await databaseRegistry.findByCompanyId("legacy-company")).toMatchObject({ placement_id: "legacy-db", status: "READY" });
+    expect(await fileRegistry.findFileByCompanyId("legacy-company")).toBeNull();
   });
 
   it("fails closed for missing, unready, and revision-changed persistent placements", async () => {

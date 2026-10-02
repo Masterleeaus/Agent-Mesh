@@ -10,7 +10,8 @@ import {
 
 const migrationTable = "titan_company_storage_migrations";
 const placementTable = "titan_company_storage_placements";
-const schemaVersion = 1;
+const filePlacementTable = "titan_company_file_placements";
+const schemaVersion = 2;
 const placementStatuses = ["READY", "PROVISIONING", "MIGRATING", "FAILED", "DISABLED"] as const;
 
 export interface GlobalRegistryStorageInput {
@@ -19,8 +20,11 @@ export interface GlobalRegistryStorageInput {
 }
 
 export interface CompanyPlacementRegistryWriter {
-  /** Reserve an opaque placement before any company database is created. */
-  beginProvisioning(input: { company_id: string; schema_version: string }): Promise<CompanyPlacementRecord>;
+  /** Atomically reserve database and file placements before provisioning. */
+  beginProvisioning(input: { company_id: string; schema_version: string }): Promise<{
+    database: CompanyPlacementRecord;
+    files: CompanyFilePlacementRecord;
+  }>;
   /** Record a failed or disabled placement without changing its physical identity. */
   setUnavailable(input: {
     company_id: string;
@@ -28,7 +32,20 @@ export interface CompanyPlacementRegistryWriter {
     placement_revision: number;
     expected_status: "PROVISIONING" | "MIGRATING" | "READY";
     status: "FAILED" | "DISABLED";
-  }): Promise<CompanyPlacementRecord>;
+  }): Promise<{ database: CompanyPlacementRecord; files: CompanyFilePlacementRecord | null }>;
+}
+
+export interface CompanyFilePlacementRecord {
+  readonly company_id: string;
+  readonly file_placement_id: string;
+  readonly file_placement_revision: number;
+  readonly provider: "localfs";
+  readonly schema_version: string;
+  readonly status: CompanyPlacementStatus;
+}
+
+export interface CompanyFilePlacementRegistry {
+  findFileByCompanyId(companyId: string, options?: CompanyStorageResolverOptions): Promise<CompanyFilePlacementRecord | null>;
 }
 
 function requireGlobalRegistry(input: GlobalRegistryStorageInput): StorageClient {
@@ -64,26 +81,44 @@ export async function initializeSqliteCompanyPlacementRegistry(
     const versions = (await tx.query<{ version: number }>(
       `SELECT version FROM ${migrationTable} ORDER BY version`,
     )).rows;
-    if (versions.length === 1 && versions[0].version === schemaVersion) {
+    if (versions.length === 0) {
+      const existing = await tx.query<{ name: string }>(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name = $1",
+        [placementTable],
+      );
+      if (existing.rows.length !== 0) throw new Error("company-placement-registry-schema-version-missing");
+      await tx.query(`CREATE TABLE ${placementTable} (
+        company_id TEXT PRIMARY KEY NOT NULL CHECK (length(trim(company_id)) > 0),
+        placement_id TEXT NOT NULL UNIQUE CHECK (length(placement_id) BETWEEN 1 AND 128),
+        placement_revision INTEGER NOT NULL CHECK (placement_revision > 0),
+        provider TEXT NOT NULL CHECK (provider = 'sqlite'),
+        schema_version TEXT NOT NULL CHECK (length(trim(schema_version)) > 0),
+        status TEXT NOT NULL CHECK (status IN ('READY', 'PROVISIONING', 'MIGRATING', 'FAILED', 'DISABLED'))
+      )`);
+      await tx.query(`INSERT INTO ${migrationTable} (version) VALUES (1)`);
+    } else if (!(versions.length === 1 && versions[0].version === 1)
+      && !(versions.length === 2 && versions[0].version === 1 && versions[1].version === 2)) {
+      throw new Error("company-placement-registry-schema-unsupported");
+    }
+    if (versions.length === 2 && versions[1].version === schemaVersion) {
       await tx.query(`SELECT company_id, placement_id, placement_revision, provider, schema_version, status FROM ${placementTable} LIMIT 0`);
+      await tx.query(`SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status FROM ${filePlacementTable} LIMIT 0`);
       return;
     }
-    if (versions.length !== 0) throw new Error("company-placement-registry-schema-unsupported");
-
-    const existing = await tx.query<{ name: string }>(
-      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = $1",
-      [placementTable],
+    const existingFileTable = await tx.query<{ name: string }>(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = $1", [filePlacementTable],
     );
-    if (existing.rows.length !== 0) throw new Error("company-placement-registry-schema-version-missing");
-
-    await tx.query(`CREATE TABLE ${placementTable} (
+    if (existingFileTable.rows.length !== 0) throw new Error("company-file-placement-schema-version-missing");
+    await tx.query(`CREATE TABLE ${filePlacementTable} (
       company_id TEXT PRIMARY KEY NOT NULL CHECK (length(trim(company_id)) > 0),
-      placement_id TEXT NOT NULL UNIQUE CHECK (length(placement_id) BETWEEN 1 AND 128),
-      placement_revision INTEGER NOT NULL CHECK (placement_revision > 0),
-      provider TEXT NOT NULL CHECK (provider = 'sqlite'),
+      file_placement_id TEXT NOT NULL UNIQUE CHECK (length(file_placement_id) BETWEEN 1 AND 128),
+      file_placement_revision INTEGER NOT NULL CHECK (file_placement_revision > 0),
+      provider TEXT NOT NULL CHECK (provider = 'localfs'),
       schema_version TEXT NOT NULL CHECK (length(trim(schema_version)) > 0),
       status TEXT NOT NULL CHECK (status IN ('READY', 'PROVISIONING', 'MIGRATING', 'FAILED', 'DISABLED'))
     )`);
+    // Existing database placements deliberately receive no READY file mapping.
+    // A provisioning owner must create and verify the file namespace first.
     await tx.query(`INSERT INTO ${migrationTable} (version) VALUES ($1)`, [schemaVersion]);
   });
 }
@@ -92,6 +127,15 @@ type PlacementRow = {
   company_id: unknown;
   placement_id: unknown;
   placement_revision: unknown;
+  provider: unknown;
+  schema_version: unknown;
+  status: unknown;
+};
+
+type FilePlacementRow = {
+  company_id: unknown;
+  file_placement_id: unknown;
+  file_placement_revision: unknown;
   provider: unknown;
   schema_version: unknown;
   status: unknown;
@@ -114,6 +158,23 @@ function placementFromRow(row: PlacementRow): CompanyPlacementRecord {
   });
 }
 
+function filePlacementFromRow(row: FilePlacementRow): CompanyFilePlacementRecord {
+  if (!validId(row.company_id) || !validPlacementId(row.file_placement_id)
+    || !Number.isSafeInteger(row.file_placement_revision) || Number(row.file_placement_revision) < 1
+    || row.provider !== "localfs" || !validId(row.schema_version)
+    || typeof row.status !== "string" || !placementStatuses.includes(row.status as CompanyPlacementStatus)) {
+    throw new CompanyStorageResolutionError("placement-invalid");
+  }
+  return Object.freeze({
+    company_id: row.company_id,
+    file_placement_id: row.file_placement_id,
+    file_placement_revision: row.file_placement_revision as number,
+    provider: "localfs",
+    schema_version: row.schema_version,
+    status: row.status as CompanyPlacementStatus,
+  });
+}
+
 /** Create a read-only adapter over the existing, separately supplied registry. */
 export async function createSqliteCompanyPlacementRegistry(
   input: GlobalRegistryStorageInput,
@@ -127,12 +188,16 @@ export async function createSqliteCompanyPlacementRegistry(
   } catch {
     throw new Error("company-placement-registry-schema-unavailable");
   }
-  if (versions.length !== 1 || versions[0].version !== schemaVersion) {
+  if (!(versions.length === 1 && versions[0].version === 1)
+    && !(versions.length === 2 && versions[0].version === 1 && versions[1].version === schemaVersion)) {
     throw new Error("company-placement-registry-schema-unavailable");
   }
   // Verify the expected table/columns now so missing or incompatible schema
   // fails during trusted composition rather than on the first business request.
   await storage.query(`SELECT company_id, placement_id, placement_revision, provider, schema_version, status FROM ${placementTable} LIMIT 0`);
+  if (versions.length === 2) {
+    await storage.query(`SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status FROM ${filePlacementTable} LIMIT 0`);
+  }
 
   return Object.freeze({
     async findByCompanyId(companyId: string, options?: CompanyStorageResolverOptions) {
@@ -152,6 +217,33 @@ export async function createSqliteCompanyPlacementRegistry(
   });
 }
 
+export async function createSqliteCompanyFilePlacementRegistry(
+  input: GlobalRegistryStorageInput,
+): Promise<CompanyFilePlacementRegistry> {
+  const storage = requireGlobalRegistry(input);
+  const versions = (await storage.query<{ version: number }>(
+    `SELECT version FROM ${migrationTable} ORDER BY version`,
+  )).rows;
+  if (versions.length !== 2 || versions[0].version !== 1 || versions[1].version !== schemaVersion) {
+    throw new Error("company-file-placement-registry-schema-unavailable");
+  }
+  await storage.query(`SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status FROM ${filePlacementTable} LIMIT 0`);
+  return Object.freeze({
+    async findFileByCompanyId(companyId: string, options?: CompanyStorageResolverOptions) {
+      if (options?.signal?.aborted) throw new CompanyStorageResolutionError("resolution-aborted");
+      if (!validId(companyId)) throw new CompanyStorageResolutionError("placement-invalid");
+      const rows = (await storage.query<FilePlacementRow>(
+        `SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status
+           FROM ${filePlacementTable} WHERE company_id = $1`, [companyId],
+      )).rows;
+      if (options?.signal?.aborted) throw new CompanyStorageResolutionError("resolution-aborted");
+      if (rows.length === 0) return null;
+      if (rows.length !== 1) throw new CompanyStorageResolutionError("placement-invalid");
+      return filePlacementFromRow(rows[0]);
+    },
+  });
+}
+
 /**
  * Create the narrowly scoped GLOBAL_REGISTRY mutation port used by a trusted
  * provisioning owner. It can reserve placements and fail/disable them, but it
@@ -164,6 +256,7 @@ export async function createSqliteCompanyPlacementRegistryWriter(
   const storage = requireGlobalRegistry(input);
   // Reuse the reader's schema validation before exposing any mutation API.
   await createSqliteCompanyPlacementRegistry(input);
+  await createSqliteCompanyFilePlacementRegistry(input);
   return Object.freeze({
     async beginProvisioning({ company_id, schema_version }: { company_id: string; schema_version: string }) {
       if (!validId(company_id) || !validId(schema_version)) {
@@ -175,6 +268,14 @@ export async function createSqliteCompanyPlacementRegistryWriter(
         placement_revision: 1,
         provider: "sqlite" as const,
         schema_version,
+        status: "PROVISIONING" as const,
+      });
+      const files = Object.freeze({
+        company_id,
+        file_placement_id: randomUUID(),
+        file_placement_revision: 1,
+        provider: "localfs" as const,
+        schema_version: "localfs/1",
         status: "PROVISIONING" as const,
       });
       await storage.transaction(async tx => {
@@ -189,8 +290,15 @@ export async function createSqliteCompanyPlacementRegistryWriter(
           [record.company_id, record.placement_id, record.placement_revision, record.provider,
             record.schema_version, record.status],
         );
+        await tx.query(
+          `INSERT INTO ${filePlacementTable}
+            (company_id, file_placement_id, file_placement_revision, provider, schema_version, status)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [files.company_id, files.file_placement_id, files.file_placement_revision, files.provider,
+            files.schema_version, files.status],
+        );
       });
-      return record;
+      return Object.freeze({ database: record, files });
     },
     async setUnavailable(input: Parameters<CompanyPlacementRegistryWriter["setUnavailable"]>[0]) {
       if (!validId(input.company_id) || !validPlacementId(input.placement_id)
@@ -199,18 +307,31 @@ export async function createSqliteCompanyPlacementRegistryWriter(
         || !["FAILED", "DISABLED"].includes(input.status)) {
         throw new CompanyStorageResolutionError("placement-invalid");
       }
-      const changed = await storage.query(
-        `UPDATE ${placementTable} SET status = $1
-          WHERE company_id = $2 AND placement_id = $3 AND placement_revision = $4 AND status = $5`,
-        [input.status, input.company_id, input.placement_id, input.placement_revision, input.expected_status],
-      );
-      if (changed.rowCount !== 1) throw new CompanyStorageResolutionError("placement-stale");
-      const record = await storage.query<PlacementRow>(
-        `SELECT company_id, placement_id, placement_revision, provider, schema_version, status
-           FROM ${placementTable} WHERE company_id = $1`, [input.company_id],
-      );
-      if (record.rows.length !== 1) throw new CompanyStorageResolutionError("placement-missing");
-      return placementFromRow(record.rows[0]);
+      return storage.transaction(async tx => {
+        const changed = await tx.query(
+          `UPDATE ${placementTable} SET status = $1
+            WHERE company_id = $2 AND placement_id = $3 AND placement_revision = $4 AND status = $5`,
+          [input.status, input.company_id, input.placement_id, input.placement_revision, input.expected_status],
+        );
+        if (changed.rowCount !== 1) throw new CompanyStorageResolutionError("placement-stale");
+        await tx.query(
+          `UPDATE ${filePlacementTable} SET status = $1 WHERE company_id = $2 AND status = $3`,
+          [input.status, input.company_id, input.expected_status],
+        );
+        const database = await tx.query<PlacementRow>(
+          `SELECT company_id, placement_id, placement_revision, provider, schema_version, status
+             FROM ${placementTable} WHERE company_id = $1`, [input.company_id],
+        );
+        const file = await tx.query<FilePlacementRow>(
+          `SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status
+             FROM ${filePlacementTable} WHERE company_id = $1`, [input.company_id],
+        );
+        if (database.rows.length !== 1) throw new CompanyStorageResolutionError("placement-missing");
+        return Object.freeze({
+          database: placementFromRow(database.rows[0]),
+          files: file.rows.length === 1 ? filePlacementFromRow(file.rows[0]) : null,
+        });
+      });
     },
   });
 }
