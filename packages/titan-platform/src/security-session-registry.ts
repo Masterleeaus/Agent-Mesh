@@ -447,6 +447,11 @@ export class IdentitySessionRegistry {
         void running.catch(() => undefined);
         return await Promise.race([running, aborted, timedOut]);
       }, { acquireDeadlineMs });
+    } catch (error) {
+      if (error instanceof Error && error.message === 'storage-transaction-acquire-timeout') {
+        throw new Error('session-fence-timeout', { cause: error });
+      }
+      throw error;
     } finally {
       if (timer !== undefined) clearTimeout(timer);
       removeAbortListener();
