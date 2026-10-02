@@ -427,7 +427,7 @@ def validate_pull_request():
     missing = missing_agent_pr_structure(body)
     if missing:
         fail('mission-closing PR body is missing evidence structure: ' + ', '.join(missing))
-    link = re.findall(r'(?m)^\*\*Linked issue:\*\*[ \t]*Closes #([1-9][0-9]*)[ \t]*, body)
+    link = re.findall(r'(?m)^\*\*Linked issue:\*\*[ \t]*Closes #([1-9][0-9]*)[ \t]*$', body)
     if len(link) != 1 or int(link[0]) != issue_number:
         fail('mission-closing PR must link exactly the issue it closes')
     issue = run_json(['gh', 'api', f'repos/{repo}/issues/{issue_number}'])
