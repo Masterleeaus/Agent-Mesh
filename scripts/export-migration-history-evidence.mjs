@@ -52,7 +52,7 @@ if (tableExists) {
 
 const expected = new Map(manifest.entries.map((entry) => [entry.filename, entry.sha256]));
 const recorded = new Map(ledger.map((row) => [row.filename, row.checksum]));
-const history = ledger.map(({ filename, checksum }) => {
+const history = ledger.map(({ filename, checksum, applied_order }) => {
   const expectedChecksum = expected.get(filename);
   const status = expectedChecksum === undefined
     ? "unknown-to-manifest"
@@ -61,7 +61,7 @@ const history = ledger.map(({ filename, checksum }) => {
       : checksum === expectedChecksum
         ? "checksum-matched"
         : "checksum-mismatch";
-  return { filename, checksum, status };
+  return { filename, checksum, status, applied_order };
 });
 const missingManifestFiles = manifest.entries
   .filter((entry) => !recorded.has(entry.filename))
