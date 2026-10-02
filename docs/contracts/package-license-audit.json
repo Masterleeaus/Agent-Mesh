@@ -20,7 +20,7 @@
       "name": "@titan-zero/server-node",
       "private": true,
       "license": "NOASSERTION",
-      "sha256": "0b2dc9d3556c30dbbbe309defb31f9c91e2be135ac1ec9a0fc096824e54c31d7"
+      "sha256": "9706f8bdcbae5c2bbd84fe5c64ed16b776ae1175c2589cc1adc8a659ed619689"
     },
     {
       "path": "apps/llm-plugin/package.json",
@@ -76,7 +76,7 @@
       "name": "@titan-zero/web",
       "private": true,
       "license": "NOASSERTION",
-      "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+      "sha256": "6dd964d78684e6732cb61d52191cedc7eb41fc7a4615c633662588171e8a0f60"
     },
     {
       "path": "package.json",
@@ -132,7 +132,7 @@
       "name": "@titan-zero/titan-platform",
       "private": true,
       "license": "NOASSERTION",
-      "sha256": "becf3dce9c92f95a78c7083176d0935156d3351927485d2546601775e6cc6238"
+      "sha256": "3a53ec068f514120a944118ce4d4578155f20c3610d188be91a3e6e5dd539f47"
     },
     {
       "path": "packages/workforce/package.json",
@@ -146,7 +146,7 @@
       "name": "@titan-zero/worker",
       "private": true,
       "license": "NOASSERTION",
-      "sha256": "3c7221765b70ddf0a100df35487eba207ff5b782fcdf928997b48988dc537ea3"
+      "sha256": "9a8eb8edc3e166d3eb408f360cc0e1474077ade16a841c0095353601efbf5529"
     },
     {
       "path": "services/workforce/package.json",
