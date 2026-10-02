@@ -34,6 +34,16 @@ idempotent. A failed migration rolls back atomically; partial pre-existing table
 or unknown versions fail closed rather than being overwritten. It never queries
 or backfills `users`, `accounts`, worker profiles, or company business records.
 
+
+## Authenticated credential entry
+
+The canonical [authenticated session credential service](authenticated-session-credentials.md)
+now implements signature verification, bounded issuance, replay-resistant exchange,
+current-state resolution, company switching and revocation over this registry.
+Request-facing consumers must use that service rather than constructing raw proofs.
+The low-level trusted registry primitives below remain commissioning/internal APIs.
+Production issuer/host commissioning and historical migration remain unconfigured.
+
 ## Authentication and provisioning trust boundary
 
 Registry lookup is not credential verification. Before issuing, resolving or
