@@ -17,7 +17,7 @@ const bootstrapProviderFor = (auth, label, { csrf_token = csrf } = {}) => {
   return { provide: async proof => {
     assert.equal(proof.origin, 'https://panel.example.test');
     assert.equal(proof.csrf_nonce, bootstrapNonce);
-    assert.equal(proof.cookie, 'fixture-authenticated');
+    assert.equal(proof.cookie, 'da_session=fixture-authenticated');
     return { login_assertion: await auth.loginFor('directadmin:https://panel.example.test', `browser-${label}-${++sequence}`),
       company_id: 'company-a', device_id: 'device-1', csrf_token };
   } };
