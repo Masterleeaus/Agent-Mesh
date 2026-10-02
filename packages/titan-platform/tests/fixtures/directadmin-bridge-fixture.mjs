@@ -8,7 +8,7 @@ const { createIdentitySessionRegistry, createSessionCredentialService, createSes
 const { DirectAdminSessionBridge } = bridgeApi;
 const { projectZeroCockpit } = zeroCockpit;
 const { createOperationsHealth } = operationsHealth;
-const { createBrandPublication } = brandPublication;
+const { createBrandPublication, createBrandStudioProjection } = brandPublication;
 const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 export const ORIGIN = 'https://panel.example.test';
 export const b64 = value => Buffer.from(value).toString('base64url');
@@ -86,8 +86,10 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
       const time = new Date(clock).toISOString();
       const data = plugin === 'titan_zero' ? projectZeroCockpit({ company_id, generated_at: time, attention: [] })
         : plugin === 'titan_operations' ? createOperationsHealth({ company_id, observed_at: time, nodes: [] })
-        : createBrandPublication({ company_id, publication_id: 'publication-1', site_id: 'site-1', version: 1,
-          source_snapshot_hash: 'hash-1', route_manifest: ['/'], created_at: time });
+        : createBrandStudioProjection({ company_id, generated_at: time, surfaces: [], publications: [
+          createBrandPublication({ company_id, publication_id: 'publication-1', site_id: 'site-1', version: 1,
+            source_snapshot_hash: 'hash-1', route_manifest: ['/'], created_at: time }),
+        ] });
       return { company_id, source: plugin, freshness: time, evidence_refs: [], data };
     },
     requestIntent: async (_plugin, intent, context, revalidate) => {
