@@ -1,5 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { createSqliteStorage } from "../storage/src/index.js";
+import { SqliteBusinessEvidenceStore } from "../runtime/evidence/sqlite-business-evidence-store.mjs";
+import { foldJobReality } from "../titan-platform/src/business-evidence.ts";
 import { EXECUTION_CLASSES } from "./execution-gateway.mjs";
 import { createBusinessEvidenceExecutionGateway, createBusinessEvidenceExecutionSink } from "./business-evidence-execution-sink.mjs";
 
@@ -82,4 +88,50 @@ test("stable evidence identities repair a partial append and make sink replay id
   await sink(source);
   assert.equal(store.rows.size, 2);
   assert.equal((await store.get("company-a", "event-1:job-reality")).payload.status, "completed");
+});
+
+test("real SQLite store reconstructs company-scoped job reality after reopen", async () => {
+  const root = await mkdtemp(join(tmpdir(), "titan-business-evidence-"));
+  const filename = join(root, "evidence.sqlite");
+  let storage = createSqliteStorage(filename);
+  try {
+    await storage.query(`CREATE TABLE evidence (
+      id TEXT PRIMARY KEY, company_id TEXT NOT NULL, subject_type TEXT NOT NULL, subject_id TEXT NOT NULL,
+      evidence_type TEXT NOT NULL, provenance TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL,
+      evidence_version INTEGER NOT NULL, classification TEXT NOT NULL, acceptance_state TEXT NOT NULL,
+      event_type TEXT NOT NULL, source_type TEXT NOT NULL, source_id TEXT NOT NULL, actor_id TEXT, agent_id TEXT,
+      correlation_id TEXT NOT NULL, causation_id TEXT, decision_id TEXT, authority_decision_id TEXT, execution_id TEXT,
+      verification_id TEXT, projection_version TEXT NOT NULL, supersedes_evidence_id TEXT, occurred_at TEXT NOT NULL,
+      accepted_at TEXT NOT NULL
+    )`);
+    const store = new SqliteBusinessEvidenceStore(storage);
+    const gateway = createBusinessEvidenceExecutionGateway({
+      store,
+      providers: [{
+        id: "native-field-service", executionClass: EXECUTION_CLASSES.NATIVE, capabilities: ["job.complete"],
+        execute: async () => ({ external_ref: "work-order-1", result: { status: "completed" } }),
+        verify: async () => ({ verified: true, verification_id: "verify-durable-1" }),
+      }],
+    });
+    const result = await gateway.execute(request);
+    assert.equal(result.state, "VERIFIED");
+    const before = await store.acceptedForSubject("company-a", "job", "job-1");
+    const projection = foldJobReality("company-a", "job-1", before);
+    assert.equal(projection.status, "completed");
+    assert.deepEqual(projection.source_evidence_ids, [`${result.evidence.evidence_id}:job-reality`]);
+
+    await storage.close();
+    storage = createSqliteStorage(filename);
+    const reopened = new SqliteBusinessEvidenceStore(storage);
+    const after = await reopened.acceptedForSubject("company-a", "job", "job-1");
+    assert.deepEqual(foldJobReality("company-a", "job-1", after), projection);
+    assert.equal((await reopened.acceptedForSubject("company-b", "job", "job-1")).length, 0);
+
+    const count = (await storage.query("SELECT id FROM evidence")).rowCount;
+    await createBusinessEvidenceExecutionSink({ store: reopened })(result.evidence);
+    assert.equal((await storage.query("SELECT id FROM evidence")).rowCount, count);
+  } finally {
+    await storage.close();
+    await rm(root, { recursive: true, force: true });
+  }
 });
