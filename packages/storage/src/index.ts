@@ -38,6 +38,7 @@ export function forCompany(storage: StorageClient, rawCompanyId: string): Compan
 
 export * from "./company-storage-resolver.js";
 export * from "./company-placement-registry.js";
+export * from "./company-placement-provisioner.js";
 export * from "./company-store-opener.js";
 export * from "./company-file-store-opener.js";
 export * from "./company-file-storage-resolver.js";

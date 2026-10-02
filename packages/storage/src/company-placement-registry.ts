@@ -292,27 +292,64 @@ export async function createSqliteCompanyPlacementRegistryWriter(
         schema_version: "localfs/1",
         status: "PROVISIONING" as const,
       });
-      await storage.transaction(async tx => {
-        const existing = await tx.query<{ company_id: string }>(
-          `SELECT company_id FROM ${placementTable} WHERE company_id = $1`, [company_id],
+      return storage.transaction(async tx => {
+        const existing = await tx.query<PlacementRow>(
+          `SELECT company_id, placement_id, placement_revision, provider, schema_version, status
+             FROM ${placementTable} WHERE company_id = $1`, [company_id],
         );
-        if (existing.rowCount !== 0) throw new Error("company-placement-already-registered");
-        await tx.query(
-          `INSERT INTO ${placementTable}
-            (company_id, placement_id, placement_revision, provider, schema_version, status)
-           VALUES ($1, $2, $3, $4, $5, $6)`,
-          [record.company_id, record.placement_id, record.placement_revision, record.provider,
-            record.schema_version, record.status],
+        const existingFiles = await tx.query<FilePlacementRow>(
+          `SELECT company_id, file_placement_id, file_placement_revision, provider, schema_version, status
+             FROM ${filePlacementTable} WHERE company_id = $1`, [company_id],
         );
-        await tx.query(
-          `INSERT INTO ${filePlacementTable}
-            (company_id, file_placement_id, file_placement_revision, provider, schema_version, status)
-           VALUES ($1, $2, $3, $4, $5, $6)`,
-          [files.company_id, files.file_placement_id, files.file_placement_revision, files.provider,
-            files.schema_version, files.status],
+        if (existing.rowCount === 0 && existingFiles.rowCount === 0) {
+          await tx.query(
+            `INSERT INTO ${placementTable}
+              (company_id, placement_id, placement_revision, provider, schema_version, status)
+             VALUES ($1, $2, $3, $4, $5, $6)`,
+            [record.company_id, record.placement_id, record.placement_revision, record.provider,
+              record.schema_version, record.status],
+          );
+          await tx.query(
+            `INSERT INTO ${filePlacementTable}
+              (company_id, file_placement_id, file_placement_revision, provider, schema_version, status)
+             VALUES ($1, $2, $3, $4, $5, $6)`,
+            [files.company_id, files.file_placement_id, files.file_placement_revision, files.provider,
+              files.schema_version, files.status],
+          );
+          return Object.freeze({ database: record, files });
+        }
+        if (existing.rowCount !== 1 || existingFiles.rowCount !== 1
+          || existing.rows[0].status !== "FAILED" || existingFiles.rows[0].status !== "FAILED"
+          || !Number.isSafeInteger(existing.rows[0].placement_revision)
+          || !Number.isSafeInteger(existingFiles.rows[0].file_placement_revision)) {
+          throw new Error("company-placement-already-registered");
+        }
+        const dbRevision = Number(existing.rows[0].placement_revision) + 1;
+        const fileRevision = Number(existingFiles.rows[0].file_placement_revision) + 1;
+        if (!Number.isSafeInteger(dbRevision) || !Number.isSafeInteger(fileRevision)) {
+          throw new Error("company-placement-revision-exhausted");
+        }
+        const nextDatabase = Object.freeze({ ...record, placement_revision: dbRevision });
+        const nextFiles = Object.freeze({ ...files, file_placement_revision: fileRevision });
+        const dbChanged = await tx.query(
+          `UPDATE ${placementTable} SET placement_id=$1, placement_revision=$2,
+              schema_version=$3, status='PROVISIONING'
+            WHERE company_id=$4 AND placement_revision=$5 AND status='FAILED'`,
+          [nextDatabase.placement_id, dbRevision, nextDatabase.schema_version, company_id,
+            existing.rows[0].placement_revision],
         );
+        const filesChanged = await tx.query(
+          `UPDATE ${filePlacementTable} SET file_placement_id=$1, file_placement_revision=$2,
+              schema_version=$3, status='PROVISIONING'
+            WHERE company_id=$4 AND file_placement_revision=$5 AND status='FAILED'`,
+          [nextFiles.file_placement_id, fileRevision, nextFiles.schema_version, company_id,
+            existingFiles.rows[0].file_placement_revision],
+        );
+        if (dbChanged.rowCount !== 1 || filesChanged.rowCount !== 1) {
+          throw new CompanyStorageResolutionError("placement-stale");
+        }
+        return Object.freeze({ database: nextDatabase, files: nextFiles });
       });
-      return Object.freeze({ database: record, files });
     },
     async setUnavailable(input: Parameters<CompanyPlacementRegistryWriter["setUnavailable"]>[0]) {
       if (!validId(input.company_id) || !validPlacementId(input.placement_id)
