@@ -8,8 +8,8 @@ import { packagePlugin, PACKAGE_FILES, EXECUTABLE_FILES } from "./package-direct
 
 const files = Object.fromEntries(PACKAGE_FILES.map((name) => [
   name,
-  name === "plugin.conf" ? "name=titan-server-node\\nversion=0.1.0\\ndescription=Server Node\\n"
-    : EXECUTABLE_FILES.includes(name) ? "#!/usr/bin/env bash\\nexit 0\\n" : `fixture ${name}\\n`,
+  name === "plugin.conf" ? "name=titan-server-node\nversion=0.1.0\ndescription=Server Node\n"
+    : EXECUTABLE_FILES.includes(name) ? "#!/usr/bin/env bash\nexit 0\n" : `fixture ${name}\n`,
 ]));
 
 function fixture(run) {
