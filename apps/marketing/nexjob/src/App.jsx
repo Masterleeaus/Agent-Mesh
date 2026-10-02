@@ -30,10 +30,9 @@ import SecurityRecovery from './pages/SecurityRecovery'
 import MeasuredOutcomes from './pages/MeasuredOutcomes'
 import PlatformHubHome from './pages/PlatformHubHome'
 import WorksEverywhere from './pages/WorksEverywhere'
-import ManagedSiteHome from './pages/ManagedSiteHome'
 import PlatformPricing from './pages/PlatformPricing'
 import Resources from './pages/Resources'
-import { getCurrentSiteContext, getLegacyIndustryRedirect, getManagedSiteUrl, getVerticalSiteForLegacyPath } from './config/siteContext'
+import { getCurrentSiteContext, getLegacyIndustryRedirect, getVerticalSiteForLegacyPath } from './config/siteContext'
 
 function ExternalRedirect({ href }) {
   useEffect(() => {
@@ -49,9 +48,8 @@ function IndustryHostLanding({ site }) {
 function SiteRoot({ context }) {
   if (context.kind === 'preview') return <><PageMeta /><Home /></>
   if (context.kind === 'hub') return <PlatformHubHome />
-  if (context.kind === 'managed') return <ManagedSiteHome />
   if (context.kind === 'industry') return <IndustryHostLanding site={context.site} />
-  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title="Site not found" description="This Titan Zero site host is not configured." /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">This site is not configured.</h1><p className="text-nx-muted">Use the Titan Zero platform or managed-services site.</p><div className="flex justify-center gap-5 mt-6"><a href="https://titanzero.io/" className="text-sm text-nx-purple-light">Titan Zero platform</a><a href="https://titanzero.pro/" className="text-sm text-nx-purple-light">Titan Zero Managed Services</a></div></div></main>
+  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title="Site not found" description="This Titan Zero site host is not configured." /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">This site is not configured.</h1><p className="text-nx-muted">Use the Titan Zero platform site.</p><div className="flex justify-center gap-5 mt-6"><a href="https://titanzero.io/" className="text-sm text-nx-purple-light">Titan Zero platform</a></div></div></main>
 }
 
 function LegacyIndustryPath({ context }) {
@@ -69,12 +67,6 @@ function IndustryPath({ context }) {
   const site = getVerticalSiteForLegacyPath(industry)
   if (site) return <IndustryHostLanding site={site} />
   return <Navigate to="/industries" replace />
-}
-
-function ManagedContentRoute({ context, fallback }) {
-  if (context.kind === 'preview') return fallback
-  if (context.kind === 'managed') return <ManagedSiteHome />
-  return <ExternalRedirect href={getManagedSiteUrl()} />
 }
 
 export default function App() {
@@ -100,22 +92,19 @@ export default function App() {
         <Route path="/security-recovery" element={<><PageMeta title="Security, Evidence & Recovery" description="Explore Titan Zero Shield, evidence provenance, protected intelligence and Rewind recovery principles." /><SecurityRecovery /></>} />
         <Route path="/measured-outcomes" element={<><PageMeta title="Measured Outcomes" description="Measure personal experience and shared business outcomes without collapsing them into one memory, so Titan Zero can learn from real results." /><MeasuredOutcomes /></>} />
         <Route path="/features" element={<><PageMeta title="Capabilities" description="Explore personal Zeros, managed workforce, field operations, integration, private intelligence and software gap-filling capabilities of Titan Zero Field Services." /><Features /></>} />
-        <Route path="/investment" element={siteContext.kind === 'preview' ? <><PageMeta title="Investment" description="Illustrative Titan Zero Field Services investment examples and the launch offer for managed implementation and ongoing system management." /><Pricing /></> : siteContext.kind === 'managed' ? <ManagedSiteHome /> : <ExternalRedirect href={getManagedSiteUrl('/pricing')} />} />
-        <Route path="/pricing" element={siteContext.kind === 'preview' ? <Navigate to="/investment" replace /> : siteContext.kind === 'managed' ? <ManagedSiteHome /> : <PlatformPricing />} />
+        <Route path="/investment" element={siteContext.kind === 'preview' ? <><PageMeta title="Investment" description="Illustrative Titan Zero Field Services investment examples and the launch offer for managed implementation and ongoing system management." /><Pricing /></> : <Navigate to="/pricing" replace />} />
+        <Route path="/pricing" element={siteContext.kind === 'preview' ? <Navigate to="/investment" replace /> : <PlatformPricing />} />
         <Route path="/works-everywhere" element={<WorksEverywhere />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/industries" element={<><PageMeta title="Industries" description="Explore Titan Zero Field Services for cleaning, landscaping, pools, pressure washing, pest control, window cleaning, property maintenance, mobile services, handyman, plumbing, electrical, HVAC, construction, roofing, tiling, concreting, painting, plastering and renovations." /><Industries /></>} />
         <Route path="/industries/:industry" element={<IndustryPath context={siteContext} />} />
-        <Route path="/fully-managed" element={<ManagedContentRoute context={siteContext} fallback={<><PageMeta title="Fully Managed" description="See how Titan Zero configures personal Zeros and continuously manages the governed Advanced Intelligence workforce and systems behind them." /><ManagedSystem /></>} />} />
-        <Route path="/what-we-manage" element={<ManagedContentRoute context={siteContext} fallback={<><PageMeta title="Fully Managed" /><ManagedSystem /></>} />} />
-        <Route path="/assessment" element={<ManagedContentRoute context={siteContext} fallback={<><PageMeta title="Assessment" /><ManagedSystem /></>} />} />
-        <Route path="/case-studies" element={<ManagedContentRoute context={siteContext} fallback={<><PageMeta title="Case studies" /><ManagedSystem /></>} />} />
+        <Route path="/fully-managed" element={<><PageMeta title="Fully Managed" description="See how Titan Zero configures personal Zeros and continuously manages the governed Advanced Intelligence workforce and systems behind them." /><ManagedSystem /></>} />
         <Route path="/privacy-architecture" element={<><PageMeta title="Privacy & Architecture" description="Explore Titan Zero privacy, local intelligence, customer-controlled edge nodes, governed access and company-scoped architecture." /><Architecture /></>} />
         <Route path="/cost-sovereignty" element={<><PageMeta title="Cost Sovereignty" description="Use customer-owned providers, API keys, local models and compute where suitable, with Titan-managed services available when useful." /><CostSovereignty /></>} />
         <Route path="/environmental-systems" element={<><PageMeta title="Environmental Systems" description="Connect environmental assessment, auditing, evidence, compliance, resource improvement and qualified professional review to business operations." /><EnvironmentalSystems /></>} />
         <Route path="/compare" element={<><PageMeta title="Compare" description="Compare Titan Zero’s managed operating model, trust progression, privacy architecture and software gap filling with conventional field-service SaaS." /><Compare /></>} />
         <Route path="/about" element={<><PageMeta title="About" description="Learn the principles behind Titan Zero Field Services: keep useful systems, fill gaps, govern intelligence, preserve choice and measure operational value." /><About /></>} />
-        <Route path="/faq" element={siteContext.kind === 'preview' ? <><PageMeta title="FAQ" description="Answers about personal Zeros, the managed workforce, integrations, private and local intelligence, authority controls, environmental systems and the commercial model." /><FAQ /></> : siteContext.kind === 'managed' ? <ManagedSiteHome /> : <ExternalRedirect href={getManagedSiteUrl('/faq')} />} />
+        <Route path="/faq" element={<><PageMeta title="FAQ" description="Answers about personal Zeros, the managed workforce, integrations, private and local intelligence, authority controls, environmental systems and the commercial model." /><FAQ /></>} />
         <Route path="/changelog" element={<><PageMeta title="System Evolution" description="Follow the evolution of Titan Zero Field Services and the managed operating-system capabilities available across customer deployments." /><Changelog /></>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -19,9 +19,8 @@ export default function PageMeta({ title, description = defaultDescription }) {
   const siteContext = getCurrentSiteContext()
   const siteName = siteContext.kind === 'industry'
     ? `Titan Zero ${siteContext.site.name}`
-    : siteContext.kind === 'managed' ? 'Titan Zero Managed Services'
-      : siteContext.kind === 'hub' ? 'Titan Zero'
-        : 'Titan Zero Field Services'
+    : siteContext.kind === 'hub' ? 'Titan Zero'
+      : 'Titan Zero Field Services'
 
   useEffect(() => {
     const pageTitle = title ? `${title} | ${siteName}` : `${siteName} — Managed Advanced Intelligence`

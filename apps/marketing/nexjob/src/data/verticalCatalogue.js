@@ -12,8 +12,6 @@ export const catalogueRevision = 'marketing.vertical-catalogue.v1'
 
 export const marketingSiteRoles = Object.freeze({
   productHubHost: 'titanzero.io',
-  managedServiceHost: 'titanzero.pro',
-  managedServiceLinkPolicy: 'contextual-link-only',
 })
 
 export const availabilityEvidence = Object.freeze({

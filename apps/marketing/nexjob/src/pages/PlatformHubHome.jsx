@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import PageMeta from '../components/PageMeta'
 import SectionLabel from '../components/SectionLabel'
 import { APP_ACCESS_AVAILABLE, appRoutes } from '../config'
-import { getManagedSiteUrl } from '../config/siteContext'
 
 const pillars = [
   ['One', 'A person with a role, relationships and authority in the work they do.'],
@@ -57,10 +56,6 @@ export default function PlatformHubHome() {
           <div className="mt-8 flex flex-wrap gap-2" aria-label="Personal Services industry examples">
             {personalServiceIndustries.map((industry) => <span key={industry} className="rounded-full border border-nx-border bg-nx-bg px-3 py-1.5 text-xs text-nx-muted">{industry}</span>)}
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-nx-border bg-nx-bg p-6">
-            <p className="text-sm text-nx-muted">Implementation and ongoing management are covered on the separate service site.</p>
-            <a href="https://titanzero.pro/" className="text-sm font-semibold text-nx-purple-light hover:text-white">Titan Zero Managed Services →</a>
-          </div>
         </div>
       </section>
 
@@ -72,10 +67,10 @@ export default function PlatformHubHome() {
             <div className="flex flex-wrap gap-3"><Link to="/features" className="text-sm text-nx-purple-light hover:text-white">Features →</Link><Link to="/ai-workforce" className="text-sm text-nx-purple-light hover:text-white">AI workforce →</Link><Link to="/industries" className="text-sm text-nx-purple-light hover:text-white">Industries →</Link><Link to="/resources" className="text-sm text-nx-purple-light hover:text-white">Resources →</Link></div>
           </article>
           <article className="bg-nx-surface border border-nx-border rounded-2xl p-8">
-            <SectionLabel>Implementation service</SectionLabel>
-            <h2 className="text-2xl font-bold mb-3">Managed implementation and ongoing service</h2>
-            <p className="text-sm text-nx-muted leading-relaxed mb-5">Assessment, implementation and ongoing management are presented separately from the platform product.</p>
-            <a href={getManagedSiteUrl()} className="text-sm font-semibold text-nx-purple-light hover:text-white">Visit Titan Zero Managed Services →</a>
+            <SectionLabel>Availability</SectionLabel>
+            <h2 className="text-2xl font-bold mb-3">See the current work surfaces</h2>
+            <p className="text-sm text-nx-muted leading-relaxed mb-5">Review each surface and its current release state. This preview does not claim an unverified install or live connection.</p>
+            <Link to="/works-everywhere" className="text-sm font-semibold text-nx-purple-light hover:text-white">Explore availability →</Link>
           </article>
         </div>
       </section>

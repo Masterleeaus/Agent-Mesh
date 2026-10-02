@@ -7,7 +7,6 @@ import {
   getCanonicalUrl,
   getIndustryDirectoryLinks,
   getLegacyIndustryRedirect,
-  getManagedSiteUrl,
   getSiteNavigation,
   resolveSiteContext,
 } from './siteContext.js'
@@ -43,11 +42,17 @@ test('the public host registry contains the approved twenty verticals exactly on
   assert.ok(VERTICAL_SITES.every(({ canonicalUrl, hostname }) => canonicalUrl === `https://${hostname}/`))
 })
 
-test('host resolution keeps the product hub, managed site, app and vertical sites distinct', () => {
+test('host resolution keeps the product hub, app and vertical sites distinct and does not render .pro', () => {
   assert.equal(resolveSiteContext('www.titanzero.io').kind, 'hub')
-  assert.equal(resolveSiteContext('titanzero.pro').kind, 'managed')
   assert.equal(resolveSiteContext('app.titanzero.io').kind, 'reserved')
   assert.equal(resolveSiteContext('pwa.titanzero.io').kind, 'reserved')
+  for (const hostname of ['titanzero.pro', 'www.titanzero.pro', 'personal.titanzero.pro']) {
+    const context = resolveSiteContext(hostname)
+    assert.equal(context.kind, 'unknown')
+    assert.deepEqual(getSiteNavigation(context), [])
+    assert.equal(getCanonicalUrl(context), null)
+  }
+  assert.equal(existsSync(new URL('../pages/ManagedSiteHome.jsx', import.meta.url)), false)
 
   const context = resolveSiteContext('cleaning.titanzero.io')
   assert.equal(context.kind, 'industry')
@@ -56,7 +61,7 @@ test('host resolution keeps the product hub, managed site, app and vertical site
   assert.equal(resolveSiteContext('unknown.titanzero.io').kind, 'unknown')
 })
 
-test('hub navigation has the approved labels and keeps managed service off its main navigation', () => {
+test('hub navigation has approved labels and no managed-service sales links', () => {
   const nav = getSiteNavigation(resolveSiteContext('titanzero.io'))
   assert.deepEqual(nav.map(({ label }) => label), [
     'How it works',
@@ -71,26 +76,14 @@ test('hub navigation has the approved labels and keeps managed service off its m
   assert.equal(MARKETING_DOMAINS.app, 'app.titanzero.io')
 })
 
-test('managed and vertical navigation stays contextual and the directory links to one canonical host per vertical', () => {
-  const managed = getSiteNavigation(resolveSiteContext('titanzero.pro'))
-  assert.deepEqual(managed.map(({ label }) => label), [
-    'Overview',
-    'What .pro manages',
-    'Assessment & implementation',
-    'Service packages & pricing',
-    'Case studies',
-    'FAQs',
-    'Assessment request',
-  ])
-  assert.equal(managed.find(({ label }) => label === 'Service packages & pricing').href, '/#pricing')
-
+test('vertical navigation stays contextual and the directory links to one canonical host per vertical', () => {
   const vertical = getSiteNavigation(resolveSiteContext('plumbing.titanzero.io'))
   assert.ok(vertical.some(({ label }) => label === 'WordPress'))
   assert.ok(vertical.some(({ label }) => label === 'Chrome'))
   assert.ok(vertical.some(({ label }) => label === 'Channels'))
   assert.equal(vertical.find(({ label }) => label === 'WordPress').href, '/#wordpress')
   assert.equal(vertical.find(({ label }) => label === 'Chrome').href, '/#chrome')
-  assert.equal(vertical.find(({ label }) => label === 'Pricing').href, 'https://titanzero.pro/pricing')
+  assert.equal(vertical.find(({ label }) => label === 'Pricing').href, '/pricing')
   assert.equal(vertical.find(({ label }) => label === 'Start').disabled, true)
 
   const links = getIndustryDirectoryLinks()
@@ -110,8 +103,9 @@ test('canonical and legacy URL helpers redirect old industry paths without shari
   assert.equal(getLegacyIndustryRedirect(hub, '/industries/property-maintenance'), 'https://handyman-property-maintenance.titanzero.io/')
   assert.equal(getLegacyIndustryRedirect(cleaning, '/industries/cleaning'), '/')
   assert.equal(getLegacyIndustryRedirect(hub, '/industries/not-a-vertical'), null)
-  assert.equal(getManagedSiteUrl('/assessment'), 'https://titanzero.pro/assessment')
   assert.ok(VERTICAL_SITES.every(({ host }) => `https://${host}.titanzero.io/`.includes('token=') === false))
+  const appSource = readFileSync(new URL('../App.jsx', import.meta.url), 'utf8')
+  assert.doesNotMatch(appSource, /titanzero\.pro|ManagedSiteHome|\/what-we-manage|\/case-studies/)
 })
 
 test('Apache redirects cover each legacy path on the .io apex before SPA fallback', () => {
@@ -128,10 +122,11 @@ test('Apache redirects cover each legacy path on the .io apex before SPA fallbac
     assert.equal(rule.hostCondition, '  RewriteCond %{HTTP_HOST} ^(www\\.)?titanzero\\.io$ [NC]')
     for (const alias of site.legacyPaths) assert.ok(rule.line.includes(alias), `missing old path ${alias}`)
   }
-  assert.match(rules, /RewriteRule \^ https:\/\/titanzero\.%1%\{REQUEST_URI\} \[R=301,L,NE\]/)
-  const wwwRedirectIndex = lines.findIndex((line) => line.trim() === 'RewriteCond %{HTTP_HOST} ^www\\.titanzero\\.(io|pro)$ [NC]')
+  assert.doesNotMatch(rules, /titanzero\.pro|\(io\|pro\)/)
+  assert.match(rules, /RewriteRule \^ https:\/\/titanzero\.io%\{REQUEST_URI\} \[R=301,L,NE\]/)
+  const wwwRedirectIndex = lines.findIndex((line) => line.trim() === 'RewriteCond %{HTTP_HOST} ^www\\.titanzero\\.io$ [NC]')
   assert.ok(wwwRedirectIndex >= 0)
-  assert.equal(lines[wwwRedirectIndex + 1].trim(), 'RewriteRule ^ https://titanzero.%1%{REQUEST_URI} [R=301,L,NE]')
+  assert.equal(lines[wwwRedirectIndex + 1].trim(), 'RewriteRule ^ https://titanzero.io%{REQUEST_URI} [R=301,L,NE]')
 })
 
 test('review preview has no stale sitemap and blocks indexing', () => {

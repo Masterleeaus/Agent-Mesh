@@ -8,10 +8,10 @@ Options -MultiViews -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP_HOST} ^(www\.)?([a-z0-9-]+\.)?titanzero\.(io|pro)$ [NC]
+  RewriteCond %{HTTP_HOST} ^(www\.)?([a-z0-9-]+\.)?titanzero\.io$ [NC]
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
-  RewriteCond %{HTTP_HOST} ^www\.titanzero\.(io|pro)$ [NC]
-  RewriteRule ^ https://titanzero.%1%{REQUEST_URI} [R=301,L,NE]
+  RewriteCond %{HTTP_HOST} ^www\.titanzero\.io$ [NC]
+  RewriteRule ^ https://titanzero.io%{REQUEST_URI} [R=301,L,NE]
   RewriteCond %{HTTP_HOST} ^(www\.)?titanzero\.io$ [NC]
   RewriteRule ^industries/cleaning/?$ https://cleaning.titanzero.io/ [R=301,L,NE]
   RewriteCond %{HTTP_HOST} ^(www\.)?titanzero\.io$ [NC]

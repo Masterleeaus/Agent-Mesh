@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { getCurrentSiteContext, getIndustryDirectoryLinks, getManagedSiteUrl } from '../config/siteContext'
+import { getCurrentSiteContext, getIndustryDirectoryLinks } from '../config/siteContext'
 
 const footerLinks = {
   Product: [
@@ -93,22 +93,17 @@ function LegacyFooter() {
 }
 
 function ConfiguredFooter({ context }) {
-  const brand = context.kind === 'industry' ? `Titan Zero ${context.site.name}` : context.kind === 'managed' ? 'Titan Zero Managed Services' : 'Titan Zero'
-  const columns = context.kind === 'managed'
-    ? {
-        Services: [['Overview', '/'], ['What .pro manages', '/what-we-manage'], ['Assessment & implementation', '/assessment'], ['Packages & pricing', '/pricing'], ['Case studies', '/case-studies'], ['FAQs', '/faq']],
-        Platform: [['Titan Zero platform', 'https://titanzero.io/'], ['Works Everywhere', 'https://titanzero.io/works-everywhere'], ['Industries', 'https://titanzero.io/industries']],
-      }
-    : context.kind === 'industry'
+  const brand = context.kind === 'industry' ? `Titan Zero ${context.site.name}` : 'Titan Zero'
+  const columns = context.kind === 'industry'
       ? {
-          Industry: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features & workforce', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', getManagedSiteUrl('/pricing')]],
+          Industry: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features & workforce', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', '/pricing']],
           OtherIndustries: getIndustryDirectoryLinks().filter(({ host }) => host !== context.site.host).map(({ label, href }) => [label, href]),
           Platform: [['Titan Zero platform', 'https://titanzero.io/']],
         }
       : {
           Product: [['How it works', '/#how-it-works'], ['Features', '/features'], ['AI workforce', '/ai-workforce'], ['Works Everywhere', '/works-everywhere'], ['Industries', '/industries'], ['Pricing', '/pricing']],
           Resources: [['Privacy & architecture', '/privacy-architecture'], ['Cost sovereignty', '/cost-sovereignty'], ['Security & recovery', '/security-recovery'], ['Resources', '/resources']],
-          Company: [['Managed implementation & service', 'https://titanzero.pro/']],
+          Company: [['About', '/about'], ['System evolution', '/changelog']],
         }
 
   return <footer className="border-t border-nx-border mt-16">
@@ -116,7 +111,7 @@ function ConfiguredFooter({ context }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
         <div>
           <Link to="/" className="flex items-center gap-2 font-extrabold text-lg"><span className="w-2 h-2 bg-nx-purple rounded-full" />{brand}</Link>
-          <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">{context.kind === 'managed' ? 'Assessment, implementation and ongoing management under an agreed scope.' : context.kind === 'industry' ? `${context.site.name} product information, workflows and work surfaces.` : 'The Titan Zero platform, its capabilities and the work surfaces in development.'}</p>
+          <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">{context.kind === 'industry' ? `${context.site.name} product information, workflows and work surfaces.` : 'The Titan Zero platform, its capabilities and the work surfaces in development.'}</p>
         </div>
         {Object.entries(columns).map(([heading, links]) => <div key={heading}>
           <h4 className="text-xs font-semibold text-nx-muted uppercase tracking-wider mb-4">{heading === 'OtherIndustries' ? 'Other industries' : heading}</h4>
@@ -135,8 +130,8 @@ function ConfiguredFooter({ context }) {
 
 export default function Footer() {
   const context = getCurrentSiteContext()
-  if (context.kind === 'hub' || context.kind === 'managed' || context.kind === 'industry') {
+  if (context.kind === 'hub' || context.kind === 'industry') {
     return <ConfiguredFooter context={context} />
   }
-  return <LegacyFooter />
+  return context.kind === 'preview' ? <LegacyFooter /> : null
 }

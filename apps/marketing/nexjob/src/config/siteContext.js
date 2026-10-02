@@ -6,7 +6,6 @@ import {
 
 export const MARKETING_DOMAINS = Object.freeze({
   hub: 'titanzero.io',
-  managed: 'titanzero.pro',
   app: 'app.titanzero.io',
 })
 
@@ -41,23 +40,13 @@ const hubNavigation = Object.freeze([
   { label: 'Resources', href: '/resources' },
 ])
 
-const managedNavigation = Object.freeze([
-  { label: 'Overview', href: '/' },
-  { label: 'What .pro manages', href: '/#what-we-manage' },
-  { label: 'Assessment & implementation', href: '/#assessment' },
-  { label: 'Service packages & pricing', href: '/#pricing' },
-  { label: 'Case studies', href: '/#case-studies' },
-  { label: 'FAQs', href: '/#faq' },
-  { label: 'Assessment request', href: '/#assessment-request', action: true },
-])
-
 const verticalNavigation = Object.freeze([
   { label: 'Workflows', href: '/#workflows' },
   { label: 'Features', href: '/#features' },
   { label: 'WordPress', href: '/#wordpress' },
   { label: 'Chrome', href: '/#chrome' },
   { label: 'Channels', href: '/#channels' },
-  { label: 'Pricing', href: `https://${MARKETING_DOMAINS.managed}/pricing`, external: true },
+  { label: 'Pricing', href: '/pricing' },
   { label: 'Start', href: undefined, external: true, action: true, disabled: true },
 ])
 
@@ -84,10 +73,6 @@ export function resolveSiteContext(hostname) {
     return { kind: 'hub', hostname: normalized, origin: `https://${MARKETING_DOMAINS.hub}` }
   }
 
-  if (normalized === MARKETING_DOMAINS.managed) {
-    return { kind: 'managed', hostname: normalized, origin: `https://${MARKETING_DOMAINS.managed}` }
-  }
-
   if (normalized === MARKETING_DOMAINS.app || normalized === 'pwa.titanzero.io') {
     return { kind: 'reserved', hostname: normalized }
   }
@@ -105,7 +90,6 @@ export function resolveSiteContext(hostname) {
 
 export function getSiteNavigation(context) {
   if (context?.kind === 'hub') return hubNavigation
-  if (context?.kind === 'managed') return managedNavigation
   if (context?.kind === 'industry') return verticalNavigation
   return Object.freeze([])
 }
@@ -131,7 +115,7 @@ export function getVerticalSiteForLegacyPath(routeSlug) {
 
 export function getCanonicalUrl(context, pathname = '/') {
   if (context?.kind === 'industry') return `${context.origin}/`
-  if (context?.kind === 'hub' || context?.kind === 'managed') {
+  if (context?.kind === 'hub') {
     const path = pathname === '/' ? '/' : `/${pathname.replace(/^\/+|\/+$/g, '')}`
     return `${context.origin}${path}`
   }
@@ -148,11 +132,6 @@ export function getLegacyIndustryRedirect(context, pathname = '/') {
   const targetUrl = `${verticalOrigin(target)}/`
   if (context?.kind === 'industry' && context.site?.host === target.host) return '/'
   return targetUrl
-}
-
-export function getManagedSiteUrl(path = '/') {
-  const normalizedPath = path === '/' ? '/' : `/${String(path).replace(/^\/+|\/+$/g, '')}`
-  return `https://${MARKETING_DOMAINS.managed}${normalizedPath}`
 }
 
 export function getCurrentSiteContext() {

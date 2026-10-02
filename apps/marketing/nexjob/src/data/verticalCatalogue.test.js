@@ -157,8 +157,6 @@ test('each vertical resolves all shared product-surface statuses without claimin
     for (const ref of refs) assert.ok(availabilityOffers[ref], `${vertical.id} missing offer ${ref}`)
   }
   assert.equal(marketingSiteRoles.productHubHost, 'titanzero.io')
-  assert.equal(marketingSiteRoles.managedServiceHost, 'titanzero.pro')
-  assert.equal(marketingSiteRoles.managedServiceLinkPolicy, 'contextual-link-only')
   assert.equal(getVerticalById('cleaning').runtimeAvailabilityRef, 'runtimeCleaning')
   for (const id of ['plumbing', 'electrical', 'hvac']) {
     assert.equal(getVerticalById(id).runtimeAvailabilityRef, 'runtimeLicensedTrades')
