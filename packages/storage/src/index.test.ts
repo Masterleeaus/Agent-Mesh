@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
