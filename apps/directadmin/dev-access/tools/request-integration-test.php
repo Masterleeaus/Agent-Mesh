@@ -141,6 +141,19 @@ function integration_expect_successful_pwd(string $html,string $home):void{
  integration_expect(preg_match('~<div class="term">([^<]*)</div>~',$html,$matches)===1,'successful command output must render in the terminal');
  integration_expect(trim(htmlspecialchars_decode($matches[1],ENT_QUOTES))===$home,'pwd output must be limited to the selected account HOME');
 }
+
+function integration_expect_successful_key(string $html,string $expectedKey,string $home):void{
+ integration_expect(strpos($html,'Request rejected:')===false,'valid SSH public-key form must not be rejected');
+ integration_expect(strpos($html,'Public key installed.')!==false,'valid synthetic SSH public key must be accepted');
+ $directory=$home.'/.ssh';
+ $path=$directory.'/authorized_keys';
+ integration_expect(is_file($path),'accepted public key must be written only into the selected test HOME');
+ $contents=file_get_contents($path);
+ integration_expect(is_string($contents)&&$contents===$expectedKey."\\n",'accepted key must be stored as exactly one normalized public-key line');
+ integration_expect((fileperms($directory)&0777)===0700,'SSH key directory must retain mode 0700');
+ integration_expect((fileperms($path)&0777)===0600,'authorized_keys must retain mode 0600');
+}
+
 function integration_expect_transport_rejected(string $html,string $case='invalid transport'):void{
  integration_expect(strpos($html,'Request rejected: malformed or ambiguous form data.')!==false,$case.' must fail closed');
  integration_expect(strpos($html,'Exit code:')===false,$case.' must not execute a command');
@@ -254,6 +267,42 @@ $rawPostEnvironment=$common+[
 [$html]=integration_run_role($root,'admin',$rawPostEnvironment);
 integration_expect_successful_pwd($html,$homeA);
 
+
+$keyTransportCases=[
+ 'raw-post-plus-slash-padding'=>[
+  'key'=>'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+Synthetic/PublicKey== synthetic+fixture&marker=literal%25',
+  'line_ending'=>'',
+  'pipe'=>false
+ ],
+ 'stdin-crlf-ed25519'=>[
+  'key'=>'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+Synthetic/PublicKey== synthetic+fixture&marker=literal%25',
+  'line_ending'=>"\\r\\n",
+  'pipe'=>true
+ ]
+];
+foreach($keyTransportCases as $caseName=>$case){
+ $keyHome=$fixture.'/key-'.preg_replace('/[^a-z0-9-]/','-',strtolower($caseName));
+ integration_expect(mkdir($keyHome,0700,true),'isolated synthetic-key HOME must be created');
+ $keyGet=array_replace($common,[
+  'REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','HOME'=>$keyHome
+ ]);
+ [$keyPage]=integration_run_role($root,'admin',$keyGet);
+ $keyToken=integration_token($keyPage);
+ $postedKey=$case['key'].$case['line_ending'];
+ $keyFields=['csrf'=>$keyToken,'public_key'=>$postedKey,'add_key'=>'1'];
+ $keyBody=http_build_query($keyFields,'','&',PHP_QUERY_RFC1738);
+ $keyEnvironment=array_replace($common,[
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,
+  'QUERY_STRING'=>$case['pipe']?'pipe_post=yes':'',
+  'POST'=>$case['pipe']?'stdin=true':$keyBody,
+  'CONTENT_LENGTH'=>(string)strlen($keyBody),
+  'HOME'=>$keyHome
+ ]);
+ $stdinBody=$case['pipe']?$keyBody:null;
+ [$keyResult]=integration_run_role($root,'admin',$keyEnvironment,$stdinBody);
+ integration_expect_successful_key($keyResult,$case['key'],$keyHome);
+}
+
 $missingCsrfBody=http_build_query(['cwd'=>$homeA,'command'=>'pwd','run'=>'1']);
 $missingCsrfEnvironment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
@@ -266,6 +315,7 @@ integration_expect(strpos($result,'Exit code:')===false,'missing CSRF token must
 $negativeBodies=[
  'array-field'=>'csrf%5B%5D='.rawurlencode($token).'&cwd='.rawurlencode($homeA).'&command=pwd&run=1',
  'duplicate-field'=>'csrf='.rawurlencode($token).'&csrf='.rawurlencode($token).'&cwd='.rawurlencode($homeA).'&command=pwd&run=1',
+ 'duplicate-public-key'=>'csrf='.rawurlencode($token).'&public_key='.rawurlencode('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+Synthetic/PublicKey== test').'&public_key='.rawurlencode('ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA+Synthetic/PublicKey== test').'&add_key=1',
  'malformed-encoding'=>'csrf=%ZZ&cwd='.rawurlencode($homeA).'&command=pwd&run=1',
  'case-variant-field'=>http_build_query($valid).'&CSRF='.rawurlencode($token),
  'ambiguous-action'=>http_build_query(['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1','add_key'=>'1'])
