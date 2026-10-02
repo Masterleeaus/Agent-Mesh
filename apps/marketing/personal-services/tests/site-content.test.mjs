@@ -13,7 +13,7 @@ const routes = [
   ['/faqs/', 'faqs/index.html', 'FAQs'],
   ['/request-assessment/', 'request-assessment/index.html', 'Request assessment'],
 ]
-const canonicalOrigin = 'https://personal.titanzero.pro'
+const canonicalOrigin = 'https://titanzero.pro'
 const readRoute = (file) => readFile(path.join(root, file), 'utf8')
 
 test('all six pages have canonical metadata and one H1', async () => {
