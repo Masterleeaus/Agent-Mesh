@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildCleaningOnboardingSetup, toRetainedCleaningServiceSetupPayload } from '../.cleaning-test-dist/verticals/cleaning/onboarding.js';
+import { createCleaningServiceSetupAuthority } from '../../onboarding/runtime/cleaning-service-setup.mjs';
+import { readFileSync } from 'node:fs';
+
+const cleaningBundle=JSON.parse(readFileSync(new URL('../../modules/bundles/cleaning-workforce.bundle.json',import.meta.url),'utf8'));
 
 const base=()=>({
   company_id:'company-a',offered_service_ids:['regular_clean','airbnb_turnover','commercial_clean'],service_areas:[{id:'north',label:'Northern suburbs',postcodes:['3071','3072'],travel_radius_km:20}],enabled_pricing_modes:['hourly','fixed','quote_required'],team_capacity:{default_crew_size:1,max_parallel_crews:4,max_workers_per_crew:3},operating_hours:[{day:'monday',start:'08:00',end:'17:00'},{day:'saturday',start:'09:00',end:'14:00'}],equipment_defaults:['vacuum','mop'],supply_defaults:['microfibre','general cleaner'],recurring:{enabled:true,supported_frequencies:['weekly','fortnightly'],default_frequency:'fortnightly'}
@@ -31,6 +35,12 @@ test('service areas, hours and team capacity are validated',()=>{
 test('recurring setup requires selected recurring-capable service and valid default',()=>{
   assert.throws(()=>buildCleaningOnboardingSetup({...base(),offered_service_ids:['custom_cleaning_service'],recurring:{enabled:true,supported_frequencies:['weekly'],default_frequency:'weekly'}}),/no selected service supports recurrence/);
   assert.throws(()=>buildCleaningOnboardingSetup({...base(),recurring:{enabled:true,supported_frequencies:['weekly'],default_frequency:'fortnightly'}}),/default recurring frequency/);
+  assert.throws(()=>buildCleaningOnboardingSetup({...base(),recurring:{enabled:true,supported_frequencies:[],default_frequency:null}}),/no supported recurring frequencies/);
+  assert.throws(()=>buildCleaningOnboardingSetup({...base(),recurring:{enabled:true,supported_frequencies:['yearly'],default_frequency:null}}),/unsupported recurring frequency/);
+  assert.throws(()=>buildCleaningOnboardingSetup({...base(),recurring:{enabled:'false',supported_frequencies:[],default_frequency:null}}),/recurring.enabled must be a boolean/);
+  const custom=buildCleaningOnboardingSetup({...base(),offered_service_ids:['regular_clean'],configured_pricing:[{service_id:'regular_clean',mode:'hourly',hourly_rate:62.5}],recurring:{enabled:true,supported_frequencies:['custom'],default_frequency:'custom'}});
+  assert.deepEqual(toRetainedCleaningServiceSetupPayload(custom).recurrence.supported_frequencies,['custom_recurring']);
+  assert.equal(toRetainedCleaningServiceSetupPayload(custom).recurrence.default_frequency,'custom_recurring');
 });
 
 test('legacy tenant aliases and cross-boundary substitutes fail closed',()=>{
@@ -42,11 +52,70 @@ test('retained onboarding authority remains the persistence owner',()=>{
   const setup=buildCleaningOnboardingSetup(base());
   assert.equal(setup.retained_onboarding_authority,'titan.onboarding.cleaning-service-setup-authority.v1');
   assert.equal(setup.retained_catalogue_copy_permitted,false);
-  const payload=toRetainedCleaningServiceSetupPayload(setup);
+  assert.throws(()=>toRetainedCleaningServiceSetupPayload(setup),/hourly_rate is required/);
+  const configured=buildCleaningOnboardingSetup({...base(),configured_pricing:[
+    {service_id:'regular_clean',mode:'hourly',hourly_rate:62.5},
+    {service_id:'airbnb_turnover',mode:'fixed',fixed_price:185},
+    {service_id:'commercial_clean',mode:'quote_required'}
+  ]});
+  const payload=toRetainedCleaningServiceSetupPayload(configured);
+  assert.deepEqual(payload.selections.map(selection=>selection.job_type_id),['domestic_recurring','airbnb_turnover','commercial']);
+  assert.deepEqual(payload.recurrence,{enabled:true,supported_frequencies:['weekly','fortnightly'],default_frequency:'fortnightly',supported_job_type_ids:['domestic_recurring','airbnb_turnover','commercial']});
+  assert.equal(payload.selections[0].pricing.hourly_rate,62.5);
+  assert.equal(payload.selections[1].pricing.fixed_price,185);
+  assert.equal(payload.selections[2].pricing.mode,'quote_required');
   assert.equal(payload.requires_retained_onboarding_authority,true);
   assert.equal(payload.projection_only,true);
   assert.equal(payload.grants_authority,false);
   assert.equal(payload.execution_permitted,false);
+});
+
+test('configured pricing rejects missing required amounts and unmapped job types',()=>{
+  assert.throws(()=>buildCleaningOnboardingSetup({...base(),configured_pricing:[{service_id:'regular_clean',mode:'fixed'}]}),/fixed_price is required/);
+  assert.throws(()=>buildCleaningOnboardingSetup({...base(),configured_pricing:[{service_id:'regular_clean',mode:'per_area'}]}),/must be fixed, hourly, or quote_required/);
+  assert.throws(()=>toRetainedCleaningServiceSetupPayload(buildCleaningOnboardingSetup({...base(),offered_service_ids:['carpet_cleaning']})),/no retained job type mapping/);
+  const colliding=buildCleaningOnboardingSetup({...base(),offered_service_ids:['regular_clean','one_off_clean'],configured_pricing:[
+    {service_id:'regular_clean',mode:'fixed',fixed_price:100},
+    {service_id:'one_off_clean',mode:'hourly',hourly_rate:60}
+  ]});
+  assert.throws(()=>toRetainedCleaningServiceSetupPayload(colliding),/collide on retained job type domestic_recurring/);
+});
+
+test('adapter uses the real cleaning bundle and retained runtime contract',async()=>{
+  const configured=buildCleaningOnboardingSetup({...base(),offered_service_ids:['regular_clean','deep_clean','bond_end_of_lease','airbnb_turnover','commercial_clean','move_in_out_clean','office_clean'],configured_pricing:[
+    {service_id:'regular_clean',mode:'hourly',hourly_rate:62.5},
+    {service_id:'deep_clean',mode:'fixed',fixed_price:310},
+    {service_id:'bond_end_of_lease',mode:'quote_required'},
+    {service_id:'airbnb_turnover',mode:'fixed',fixed_price:185},
+    {service_id:'commercial_clean',mode:'quote_required'},
+    {service_id:'move_in_out_clean',mode:'fixed',fixed_price:220},
+    {service_id:'office_clean',mode:'fixed',fixed_price:140}
+  ]});
+  const payload=toRetainedCleaningServiceSetupPayload(configured);
+  const expectedBundleIds=['domestic_recurring','deep_clean','bond_end_of_lease','airbnb_turnover','commercial','move_in','office'];
+  const bundleIds=cleaningBundle.modules.find(module=>module.id==='titan.workforce.cleaning').contributes.projections.find(projection=>projection.id==='job-types').value.map(jobType=>jobType.id);
+  assert.deepEqual(bundleIds,expectedBundleIds);
+  assert.ok(payload.selections.every(selection=>bundleIds.includes(selection.job_type_id)));
+
+  let stored=null;
+  const database={
+    async getRecord(){return stored;},
+    async putRecord(_context,record){stored={...record,version:Number(stored?.version||0)+1};return stored;}
+  };
+  const authority=createCleaningServiceSetupAuthority({database,cleaningBundle});
+  await assert.rejects(authority.save({company_id:'company-a'},{...structuredClone(payload),recurrence:{...payload.recurrence,supported_frequencies:['yearly']}}),/unsupported cleaning recurrence frequency/);
+  const saved=await authority.save({company_id:'company-a'},payload);
+  assert.deepEqual(saved.selected_job_types,expectedBundleIds);
+  const view=await authority.read({company_id:'company-a'});
+  assert.equal(view.company_id,'company-a');
+  assert.equal(view.selections[0].pricing.hourly_rate,62.5);
+  assert.equal(view.selections[1].pricing.fixed_price,310);
+  assert.equal(view.selections[2].pricing.mode,'quote_required');
+  assert.equal(view.selections[3].pricing.fixed_price,185);
+  assert.equal(view.selections[4].pricing.mode,'quote_required');
+  assert.equal(view.selections[5].pricing.fixed_price,220);
+  assert.equal(view.selections[6].pricing.fixed_price,140);
+  assert.deepEqual(view.recurrence,{enabled:true,supported_frequencies:['weekly','fortnightly'],default_frequency:'fortnightly',supported_job_type_ids:['domestic_recurring','deep_clean','airbnb_turnover','commercial','office']});
 });
 
 test('equipment and supply defaults are cleaning configuration, not implicit capabilities',()=>{

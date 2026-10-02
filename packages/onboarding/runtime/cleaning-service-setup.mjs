@@ -71,6 +71,28 @@ function normalizeSelection(input, byId) {
   });
 }
 
+function normalizeRecurrence(input, byId, selectedJobTypeIds) {
+  if (input == null) return Object.freeze({ enabled:false, supported_frequencies:Object.freeze([]), default_frequency:null, supported_job_type_ids:Object.freeze([]) });
+  if (typeof input.enabled !== 'boolean') throw new Error('cleaning recurrence enabled must be a boolean');
+  const allowedFrequencies = new Set(['weekly','fortnightly','monthly','custom_recurring']);
+  if (input.supported_frequencies != null && !Array.isArray(input.supported_frequencies)) throw new Error('supported cleaning recurrence frequencies must be an array');
+  const rawFrequencies = Array.isArray(input.supported_frequencies) ? input.supported_frequencies : [];
+  const supported_frequencies = [...new Set(rawFrequencies.map(clean))];
+  for (const frequency of supported_frequencies) if (!allowedFrequencies.has(frequency)) throw new Error(`unsupported cleaning recurrence frequency: ${frequency || '<empty>'}`);
+  const default_frequency = input.default_frequency == null || clean(input.default_frequency) === '' ? null : clean(input.default_frequency);
+  if (default_frequency && !supported_frequencies.includes(default_frequency)) throw new Error('default recurring frequency must be enabled');
+  if (input.supported_job_type_ids != null && !Array.isArray(input.supported_job_type_ids)) throw new Error('recurring cleaning job type ids must be an array');
+  const rawJobTypeIds = Array.isArray(input.supported_job_type_ids) ? input.supported_job_type_ids : [];
+  const supported_job_type_ids = [...new Set(rawJobTypeIds.map(clean))];
+  for (const id of supported_job_type_ids) {
+    if (!byId.has(id)) throw new Error(`unknown recurring cleaning job type: ${id || '<empty>'}`);
+    if (!selectedJobTypeIds.has(id)) throw new Error(`recurring cleaning job type ${id} is not selected`);
+  }
+  if (input.enabled && !supported_frequencies.length) throw new Error('recurring enabled but no supported recurring frequencies are configured');
+  if (input.enabled && !supported_job_type_ids.length) throw new Error('recurring enabled but no selected job type supports recurrence');
+  return Object.freeze({ enabled:input.enabled, supported_frequencies:Object.freeze(supported_frequencies), default_frequency, supported_job_type_ids:Object.freeze(supported_job_type_ids) });
+}
+
 export function createCleaningServiceSetupAuthority({ database, cleaningBundle, clock = () => Date.now() } = {}) {
   if (!database?.getRecord || !database?.putRecord) throw new Error('business database is required');
   const jobTypes = resolveCanonicalCleaningJobTypes(cleaningBundle);
@@ -88,6 +110,7 @@ export function createCleaningServiceSetupAuthority({ database, cleaningBundle, 
       revision:Number(prior?.version || 0),
       canonical_job_types:jobTypes,
       selections:Object.freeze(clone(data.selections || [])),
+      recurrence:Object.freeze(clone(data.recurrence || { enabled:false, supported_frequencies:[], default_frequency:null, supported_job_type_ids:[] })),
       grants_authority:false,
       authority_granted:false,
       execution_permitted:false,
@@ -102,13 +125,14 @@ export function createCleaningServiceSetupAuthority({ database, cleaningBundle, 
     if (!raw.length) throw new Error('at least one cleaning service selection is required');
     const normalized = raw.map(item => normalizeSelection(item, byId));
     if (new Set(normalized.map(item=>item.job_type_id)).size !== normalized.length) throw new Error('duplicate cleaning job type selection');
+    const recurrence = normalizeRecurrence(input.recurrence, byId, new Set(normalized.map(item=>item.job_type_id)));
     const prior = await database.getRecord(context, locator());
     const priorVersion = Number(prior?.version || 0);
     if (input.expected_revision != null && Number(input.expected_revision) !== priorVersion) throw new Error('cleaning setup revision mismatch');
     const updated_at = Number(clock());
     const stored = await database.putRecord(context, {
       ...locator(), updated_at,
-      data:{ schema:'titan.onboarding.cleaning-service-setup-record.v1', company_id:context.company_id, selections:normalized, source_module:'titan.workforce.cleaning', source_projection:'job-types', grants_authority:false, authority_granted:false, execution_permitted:false, updated_at },
+      data:{ schema:'titan.onboarding.cleaning-service-setup-record.v1', company_id:context.company_id, selections:normalized, recurrence, source_module:'titan.workforce.cleaning', source_projection:'job-types', grants_authority:false, authority_granted:false, execution_permitted:false, updated_at },
       provenance:{ source:'titan-onboarding-cleaning-service-setup', canonical_module:'titan.workforce.cleaning', copied_catalogue:false }
     });
     return Object.freeze({ ok:true, company_id:context.company_id, revision:Number(stored.version || priorVersion+1), selected_job_types:Object.freeze(normalized.map(x=>x.job_type_id)), grants_authority:false, authority_granted:false, execution_permitted:false });
