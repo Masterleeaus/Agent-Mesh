@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { appRoutes, APP_ACCESS_AVAILABLE, APP_SIGNUP_AVAILABLE } from '../config'
@@ -199,6 +199,9 @@ function SiteLink({ item, closeMenu = () => {} }) {
 
 function ConfiguredNavbar({ context }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [industriesOpen, setIndustriesOpen] = useState(false)
+  const mobileToggleRef = useRef(null)
+  const industriesToggleRef = useRef(null)
   const nav = getSiteNavigation(context)
   const industries = context.kind === 'industry' ? getIndustryDirectoryLinks() : []
   const brand = context.kind === 'industry'
@@ -209,8 +212,29 @@ function ConfiguredNavbar({ context }) {
     ? [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }, { label: 'Get started', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE }]
     : [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
 
+  useEffect(() => {
+    if (!mobileOpen && !industriesOpen) return undefined
+
+    function handleEscape(event) {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+
+      if (mobileOpen) {
+        setMobileOpen(false)
+        mobileToggleRef.current?.focus()
+        return
+      }
+
+      setIndustriesOpen(false)
+      industriesToggleRef.current?.focus()
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [mobileOpen, industriesOpen])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-nx-border/60">
+    <nav aria-label="Primary" className="fixed top-0 left-0 right-0 z-50 glass border-b border-nx-border/60">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16 gap-4">
         <Link to="/" aria-label={`${brand} home`} className="flex min-w-0 items-center gap-2 font-extrabold text-lg tracking-tight whitespace-nowrap">
           <span className="w-2 h-2 shrink-0 bg-nx-purple rounded-full" /><span className="min-w-0 truncate">{brand}</span>
@@ -218,20 +242,36 @@ function ConfiguredNavbar({ context }) {
         <div className="hidden xl:flex items-center gap-1">
           {nav.map((item) => <SiteLink key={item.label} item={item} />)}
           {context.kind !== 'hub' && <a href="https://titanzero.io/" className="block whitespace-nowrap px-3 py-2 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">Platform</a>}
-          {industries.length > 0 && <div className="relative group">
-            <button type="button" className="text-sm text-nx-muted hover:text-nx-text px-3 py-2 inline-flex items-center gap-1">Other industries <ChevronDown size={14} /></button>
-            <div className="absolute right-0 top-full mt-1 w-72 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+          {industries.length > 0 && <div
+            className="relative"
+            onMouseEnter={() => setIndustriesOpen(true)}
+            onMouseLeave={(event) => {
+              if (!event.currentTarget.contains(document.activeElement)) setIndustriesOpen(false)
+            }}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setIndustriesOpen(false)
+            }}
+          >
+            <button
+              ref={industriesToggleRef}
+              type="button"
+              aria-expanded={industriesOpen}
+              aria-controls="site-desktop-industries-menu"
+              onClick={(event) => setIndustriesOpen((open) => event.detail > 0 ? true : !open)}
+              className="text-sm text-nx-muted hover:text-nx-text px-3 py-2 inline-flex items-center gap-1"
+            >Other industries <ChevronDown size={14} aria-hidden="true" /></button>
+            <div id="site-desktop-industries-menu" role="group" aria-label="Other industries" aria-hidden={!industriesOpen} className={`absolute right-0 top-full mt-1 w-72 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl transition-opacity ${industriesOpen ? 'opacity-100' : 'invisible opacity-0 pointer-events-none'}`}>
               {industries.filter(({ host }) => host !== context.site.host).map((item) => <a key={item.host} href={item.href} className="block px-3 py-2.5 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">{item.label}</a>)}
               <a href="https://titanzero.io/industries" className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-nx-purple-light hover:bg-white/5">All industries</a>
             </div>
           </div>}
           {accountActions.map((item) => <SiteLink key={item.label} item={item} />)}
         </div>
-        <button type="button" className="xl:hidden shrink-0 text-nx-text p-2 -mr-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-purple" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} aria-controls="site-mobile-navigation">
+        <button ref={mobileToggleRef} type="button" className="xl:hidden shrink-0 text-nx-text p-2 -mr-2 rounded-lg" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} aria-controls="site-mobile-navigation">
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-      {mobileOpen && <div id="site-mobile-navigation" aria-label="Mobile navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-4 pb-4 pt-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
+      {mobileOpen && <div id="site-mobile-navigation" role="region" aria-label="Mobile navigation" className="xl:hidden border-t border-nx-border bg-nx-bg px-4 pb-4 pt-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
         {nav.map((item) => <SiteLink key={item.label} item={item} closeMenu={() => setMobileOpen(false)} />)}
         {industries.length > 0 && <div className="mt-3 border-t border-nx-border pt-3">
           <p className="px-3 py-2 text-xs uppercase tracking-widest text-nx-muted2">Other industries</p>

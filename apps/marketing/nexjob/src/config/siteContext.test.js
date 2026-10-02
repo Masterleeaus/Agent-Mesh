@@ -7,6 +7,7 @@ import {
   getCanonicalUrl,
   getIndustryDirectoryLinks,
   getLegacyIndustryRedirect,
+  normalizeHostname,
   getSiteNavigation,
   resolveSiteContext,
 } from './siteContext.js'
@@ -58,7 +59,16 @@ test('host resolution keeps the product hub, app and vertical sites distinct and
   assert.equal(context.kind, 'industry')
   assert.equal(context.site.moduleId, 'cleaning')
   assert.equal(context.origin, 'https://cleaning.titanzero.io')
+  for (const hostname of [
+    'WWW.CLEANING.TITANZERO.IO',
+    'cleaning.titanzero.io:443',
+    'www.cleaning.titanzero.io.:443',
+  ]) {
+    assert.equal(resolveSiteContext(hostname).site?.moduleId, 'cleaning', hostname)
+  }
+  assert.equal(normalizeHostname(' TITANZERO.IO.:443 '), 'titanzero.io')
   assert.equal(resolveSiteContext('unknown.titanzero.io').kind, 'unknown')
+  assert.equal(getCanonicalUrl(resolveSiteContext('unknown.titanzero.io')), null)
 })
 
 test('hub navigation has approved labels and no managed-service sales links', () => {
