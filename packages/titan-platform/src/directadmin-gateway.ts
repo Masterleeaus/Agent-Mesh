@@ -32,7 +32,8 @@ export type DirectAdminGatewayOwners = Readonly<{
   projection: (plugin: DirectAdminPluginId, context: DirectAdminBridgeContext) => Promise<DirectAdminProjection>;
   requestIntent: (plugin: DirectAdminPluginId, intent: GovernedIntentRequest,
     context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>,
-    withWorkforceZeroSession: WithWorkforceZeroSession) => Promise<{ receipt_id: string }>;
+    withWorkforceZeroSession: WithWorkforceZeroSession,
+    control?: Readonly<{ signal?: AbortSignal }>) => Promise<{ receipt_id: string }>;
 }>;
 /** Server-only #302 adapter port. It must authenticate DirectAdmin's actual
  * session proof, validate and consume the one-time bootstrap CSRF nonce, map
@@ -191,7 +192,11 @@ export function createDirectAdminGateway(
         const withWorkforceZeroSession: WithWorkforceZeroSession = plugin === 'titan_zero' || plugin === 'titan_workforce'
           ? session.withWorkforceZeroSession
           : async () => { throw new Error('directadmin-workforce-zero-unavailable'); };
-        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, withWorkforceZeroSession);
+        // Forward the browser/server transport cancellation signal into the
+        // canonical owner. The owner decides whether it can stop safely; this
+        // gateway never fabricates a receipt or rewrites a completed outcome.
+        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, withWorkforceZeroSession,
+          { signal: request.signal });
         if (!receipt || typeof receipt.receipt_id !== 'string' || receipt.receipt_id.length > 200 ||
             !/^[A-Za-z0-9:._-]+$/.test(receipt.receipt_id) ||
             /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(receipt.receipt_id)) {

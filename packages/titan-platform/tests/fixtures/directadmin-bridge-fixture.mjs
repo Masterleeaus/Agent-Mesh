@@ -76,7 +76,8 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
       if (v === null) headers.delete(k); else headers.set(k, v);
     }
     return new Request(options.url ?? `${origin}${path}`, { method: options.method ?? 'GET', headers,
-      ...(options.body === undefined ? {} : { body: options.body }) });
+      ...(options.body === undefined ? {} : { body: options.body }),
+      ...(options.signal === undefined ? {} : { signal: options.signal }) });
   };
   const effects = [];
   const owners = {

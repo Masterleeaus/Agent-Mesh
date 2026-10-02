@@ -341,6 +341,56 @@ test('gateway preserves canonical intent correlation and only reports REQUESTED'
   assert.equal(f.effects.length, 1);
 });
 
+test('gateway forwards an already-aborted request signal and never reports an unaccepted intent', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const controller = new AbortController(); controller.abort(new DOMException('client disconnected', 'AbortError'));
+  const request = f.request('/v1/directadmin/titan_workforce/intents', {
+    ...post(intentBody(f)), signal: controller.signal,
+  });
+  let observedSignal;
+  f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, _withWorkforceZeroSession, control) => {
+    observedSignal = control?.signal;
+    control?.signal?.throwIfAborted();
+    f.effects.push('must-not-execute');
+    return { receipt_id: 'must-not-be-returned' };
+  };
+  const response = await gateway(request);
+  assert.equal(observedSignal, request.signal);
+  assert.equal(observedSignal.aborted, true);
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.deepEqual(f.effects, []);
+});
+
+test('gateway forwards in-flight cancellation to the canonical owner without inventing outcome or evidence', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const controller = new AbortController();
+  let enteredResolve;
+  const entered = new Promise(resolve => { enteredResolve = resolve; });
+  let observedSignal;
+  f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, _withWorkforceZeroSession, control) => {
+    observedSignal = control?.signal;
+    enteredResolve();
+    return new Promise((_resolve, reject) => {
+      if (!control?.signal) return reject(new Error('owner-signal-missing'));
+      const cancel = () => reject(control.signal.reason ?? new DOMException('cancelled', 'AbortError'));
+      if (control.signal.aborted) cancel();
+      else control.signal.addEventListener('abort', cancel, { once: true });
+    });
+  };
+  const request = f.request('/v1/directadmin/titan_workforce/intents', {
+    ...post(intentBody(f)), signal: controller.signal,
+  });
+  const responsePromise = gateway(request);
+  await entered;
+  assert.equal(observedSignal, request.signal);
+  controller.abort(new DOMException('client disconnected', 'AbortError'));
+  const response = await responsePromise;
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.deepEqual(f.effects, []);
+});
+
 test('shared browser session consumes Workforce and encodes opaque canonical revisions for the fixed relay contract', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const requests = []; const seen = [];
