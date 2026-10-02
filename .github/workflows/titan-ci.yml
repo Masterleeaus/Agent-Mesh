@@ -175,3 +175,28 @@ jobs:
         run: |
           echo "::notice::Full Next.js web build becomes a strict gate when the recorded web TypeScript baseline reaches zero."
 
+  mobile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout canonical repository
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: stable
+          cache: true
+          cache-key: flutter-${{ runner.os }}-${{ hashFiles('apps/mobile/pubspec.lock') }}
+      - name: Install mobile dependencies
+        working-directory: apps/mobile
+        run: flutter pub get
+      - name: Run mobile context and audience tests
+        working-directory: apps/mobile
+        run: >-
+          flutter test
+          test/titan/mobile_audience_guard_test.dart
+          test/titan/mobile_bootstrap_config_test.dart
+          test/titan/mobile_context_scope_test.dart
+          test/titan/mobile_session_context_test.dart
+          test/titan/scoped_offline_queue_test.dart
+          test/titan_conversation_gateway_test.dart
