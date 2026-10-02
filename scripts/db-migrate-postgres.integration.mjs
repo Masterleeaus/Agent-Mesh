@@ -71,6 +71,7 @@ function removeLedgerRejectTrigger(url) {
 
 const freshDb = "titan_migration_fresh_test";
 const seedDb = "titan_migration_seed_test";
+const enumRetryDb = "titan_migration_enum_retry_test";
 try {
   recreateDatabase(freshDb);
   const freshUrl = databaseUrl(freshDb);
@@ -104,8 +105,33 @@ try {
   assert.equal(scalar(seedUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount);
   assert.equal(scalar(seedUrl, "SELECT COUNT(*) FROM schema_migrations WHERE checksum IS NOT NULL"), "0");
 
-  console.log("postgres migration integration: PASS (fresh rollback/resume/replay and atomic legacy seed)");
+  recreateDatabase(enumRetryDb);
+  const enumRetryUrl = databaseUrl(enumRetryDb);
+  addLedgerRejectTrigger(enumRetryUrl, "089_flooring_catalog.sql");
+  runMigrator(enumRetryUrl, false);
+  assert.equal(
+    scalar(enumRetryUrl, "SELECT COUNT(*) FROM schema_migrations WHERE filename='089_flooring_catalog.sql'"),
+    "0",
+    "migration 089 must not record completion when its final transaction fails",
+  );
+  assert.equal(
+    scalar(enumRetryUrl, "SELECT COUNT(*) FROM pg_enum e JOIN pg_type t ON t.oid=e.enumtypid WHERE t.typname='price_book_category' AND e.enumlabel='flooring'"),
+    "1",
+    "migration 089 enum stage should already be committed before its dependent inserts",
+  );
+  assert.equal(
+    scalar(enumRetryUrl, "SELECT COUNT(*) FROM scope_templates WHERE category='flooring'"),
+    "1",
+    "the pre-enum stage should have committed and be safe to replay",
+  );
+  removeLedgerRejectTrigger(enumRetryUrl);
+  runMigrator(enumRetryUrl);
+  assert.equal(scalar(enumRetryUrl, "SELECT COUNT(*) FROM schema_migrations"), expectedCount);
+  assert.equal(scalar(enumRetryUrl, "SELECT COUNT(*) FROM price_book WHERE code IN ('9010','9011','9012','9013')"), "4");
+
+  console.log("postgres migration integration: PASS (fresh rollback/resume/replay, atomic legacy seed, and migration 089 enum-stage retry)");
 } finally {
   psql(adminUrl, `DROP DATABASE IF EXISTS ${freshDb} WITH (FORCE)`);
   psql(adminUrl, `DROP DATABASE IF EXISTS ${seedDb} WITH (FORCE)`);
+  psql(adminUrl, `DROP DATABASE IF EXISTS ${enumRetryDb} WITH (FORCE)`);
 }
