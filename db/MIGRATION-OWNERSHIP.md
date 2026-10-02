@@ -104,6 +104,14 @@ collect a sanitized per-company filename inventory and schema fingerprint, then 
 each pair as applied/not applied for that installation. Do not infer live
 history from the repository manifest.
 
+To collect sanitized evidence from a supported installation, set
+`MIGRATION_DATABASE_URL` through the host's protected environment and run
+`node scripts/export-migration-history-evidence.mjs`. It emits migration
+filenames, recorded checksums/status, duplicate-pair status, and a SHA-256 of a
+schema-only dump. It does not emit the connection URL, database name, applied
+timestamps, or company rows. Share only this JSON artifact; do not provide a
+full database dump for history classification.
+
 The manifest covers only `db/migrations/`, the legacy PostgreSQL compatibility
 stream. It does not certify the mixed `db/sqlite/` stream or supply the
 owner-classified `COMPANY_NATIVE_FSM` manifest required for per-company
