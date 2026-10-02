@@ -130,8 +130,9 @@ function ConfiguredFooter({ context }) {
 
 export default function Footer() {
   const context = getCurrentSiteContext()
-  if (context.kind === 'hub' || context.kind === 'industry') {
-    return <ConfiguredFooter context={context} />
+  const publicContext = context.kind === 'preview' ? { ...context, kind: 'hub' } : context
+  if (publicContext.kind === 'hub' || publicContext.kind === 'industry') {
+    return <ConfiguredFooter context={publicContext} />
   }
-  return context.kind === 'preview' ? <LegacyFooter /> : null
+  return null
 }
