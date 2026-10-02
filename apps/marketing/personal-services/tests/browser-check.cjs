@@ -141,17 +141,58 @@ async function main() {
     }
 
     await mobile.goto(base + '/', { waitUntil: 'networkidle' })
-    const mobileToggle = mobile.locator('[data-menu-toggle]')
-    await mobileToggle.click()
-    await mobile.locator('#primary-navigation a[href="/what-we-manage/"]').click()
-    assert.equal(new URL(mobile.url()).pathname, '/what-we-manage/', 'mobile navigation changes route')
-    assert.equal(await mobileToggle.getAttribute('aria-expanded'), 'false', 'mobile navigation closes after route selection')
+    await mobile.keyboard.press('Tab')
+    assert.equal(await mobile.locator(':focus').getAttribute('class'), 'skip-link', 'skip link is first keyboard stop')
+    await mobile.keyboard.press('Enter')
+    await mobile.waitForFunction(() => location.hash === '#main-content')
+    assert.equal(await mobile.locator('main').evaluate((element) => element === document.activeElement), true, 'skip link focuses the main content target')
+
     await mobile.goto(base + '/', { waitUntil: 'networkidle' })
-    await mobile.locator('[data-menu-toggle]').click()
-    await mobile.locator('#primary-navigation a[href="/request-assessment/"]').click()
-    assert.equal(new URL(mobile.url()).pathname, '/request-assessment/', 'mobile navigation opens the assessment path')
+    const mobileToggle = mobile.locator('[data-menu-toggle]')
+    await mobile.keyboard.press('Tab')
+    await mobile.keyboard.press('Tab')
+    await mobile.keyboard.press('Tab')
+    assert.equal(await mobileToggle.evaluate((element) => element === document.activeElement), true, 'keyboard reaches mobile menu toggle')
+    await mobile.keyboard.press('Space')
+    assert.equal(await mobileToggle.getAttribute('aria-expanded'), 'true', 'Space opens mobile menu')
+    assert.equal(await mobile.locator('#primary-navigation a').first().evaluate((element) => element === document.activeElement), true, 'opening menu moves focus to first link')
+    await mobile.keyboard.press('Escape')
+    assert.equal(await mobileToggle.getAttribute('aria-expanded'), 'false', 'Escape closes mobile menu')
+    assert.equal(await mobileToggle.evaluate((element) => element === document.activeElement), true, 'Escape restores focus to menu toggle')
+
+    await mobile.keyboard.press('Enter')
+    assert.equal(await mobileToggle.getAttribute('aria-expanded'), 'true', 'Enter opens mobile menu')
+    for (let index = 0; index < 5; index += 1) await mobile.keyboard.press('Tab')
+    assert.match(await mobile.locator(':focus').innerText(), /Request assessment/, 'keyboard reaches assessment route')
+    await mobile.keyboard.press('Enter')
+    await mobile.waitForURL('**/request-assessment/')
+    assert.equal(await mobile.locator('[data-menu-toggle]').getAttribute('aria-expanded'), 'false', 'menu starts closed on destination')
     assert.match(await mobile.locator('h1').innerText(), /assessment/i, 'assessment path heading')
     assert.match(await mobile.locator('main').innerText(), /cannot receive or submit that request/i, 'assessment path does not claim to accept requests')
+
+    await mobile.goBack({ waitUntil: 'networkidle' })
+    assert.equal(new URL(mobile.url()).pathname, '/', 'Back returns to overview')
+    assert.equal(await mobile.locator('[data-menu-toggle]').getAttribute('aria-expanded'), 'false', 'menu stays closed after Back')
+    assert.equal(await mobile.locator('#primary-navigation').evaluate((nav) => nav.contains(document.activeElement)), false, 'Back does not restore focus into hidden navigation')
+    await mobile.goForward({ waitUntil: 'networkidle' })
+    assert.equal(new URL(mobile.url()).pathname, '/request-assessment/', 'Forward returns to assessment route')
+    assert.equal(await mobile.locator('[data-menu-toggle]').getAttribute('aria-expanded'), 'false', 'menu stays closed after Forward')
+    assert.equal(await mobile.locator('#primary-navigation').evaluate((nav) => nav.contains(document.activeElement)), false, 'Forward does not restore focus into hidden navigation')
+
+    await mobile.emulateMedia({ reducedMotion: 'reduce' })
+    const reducedMotion = await mobile.evaluate(() => ({
+      matches: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
+      transitionDurations: getComputedStyle(document.querySelector('#primary-navigation a')).transitionDuration.split(',').map((duration) => duration.trim()),
+      animationDuration: getComputedStyle(document.querySelector('#primary-navigation a')).animationDuration,
+    }))
+    assert.equal(reducedMotion.matches, true, 'reduced-motion preference is active')
+    assert.equal(reducedMotion.scrollBehavior, 'auto', 'reduced-motion disables smooth scrolling')
+    const durationMilliseconds = (duration) => parseFloat(duration) * (duration.endsWith('ms') ? 1 : 1000)
+    assert.ok(reducedMotion.transitionDurations.every((duration) => durationMilliseconds(duration) <= 0.1), 'reduced-motion minimizes transition durations')
+    assert.ok(durationMilliseconds(reducedMotion.animationDuration) <= 0.1, 'reduced-motion minimizes animation duration')
+    await mobile.emulateMedia({ reducedMotion: 'no-preference' })
+    assert.equal(await mobile.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior), 'smooth', 'default motion preference restores normal page behavior')
     assert.deepEqual(consoleErrors, [], 'no browser console errors')
     assert.deepEqual(failedLocalRequests, [], 'no failed local assets or routes')
     assert.deepEqual(externalRequests, [], 'no remote scripts, fonts, trackers or assets')
@@ -160,7 +201,7 @@ async function main() {
     await browser.close()
     await new Promise((resolve) => server.close(resolve))
   }
-  process.stdout.write('Passed: six routes direct-load and refresh at desktop/mobile; metadata, headings and links; mobile menu pointer/keyboard behavior; no forms, overflow, external requests, console errors, failed local requests or submissions.\n')
+  process.stdout.write('Passed: six routes direct-load and refresh at desktop/mobile; metadata, headings and links; skip-link and menu keyboard focus; mobile menu state across Back/Forward; reduced-motion behavior; no forms, overflow, external requests, console errors, failed local requests or submissions.\n')
 }
 
 main().catch((error) => {

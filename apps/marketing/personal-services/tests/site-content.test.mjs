@@ -34,6 +34,7 @@ test('all six pages have canonical metadata and one H1', async () => {
     assert.equal([...html.matchAll(/<h1\b/g)].length, 1, file)
     assert.ok(html.includes('<html lang="en-AU">'), file)
     assert.ok(html.includes('<meta name="robots" content="noindex, nofollow, noarchive">'), file)
+    assert.ok(html.includes('<main id="main-content" tabindex="-1">'), file)
     assert.equal(canonical, canonicalOrigin + route, file)
     assert.deepEqual(activeNav, [[route, navName]], file)
     assert.ok(html.includes('id="main-content"'), file)
