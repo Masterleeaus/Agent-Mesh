@@ -62,7 +62,7 @@ export const availabilityEvidence = Object.freeze({
       'https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1057',
     ],
     sourceCommit: 'df52782d26e0387608351b254c785911f99a20e9',
-    result: 'A detailed cleaning prototype and pass tests exist. They do not prove a deployed company installation or completion of the current pack lifecycle mission.',
+    result: 'A substantial Cleaning implementation exists: 14 service variants plus onboarding, pricing, booking, scheduling, crew assignment, room/area execution, checklist evidence, QA/rework, invoice/payment readiness and rebooking references, with dedicated pass tests. The reference blueprint remains proposal-only and does not prove a deployed company installation or completed pack lifecycle.',
   },
   licensedTradesPrototype: {
     kind: 'repository-source',
@@ -158,7 +158,7 @@ export const availabilityOffers = Object.freeze({
     label: 'Content not published',
     state: 'planned',
     evidenceRefs: ['noVerticalHostRelease'],
-    explanation: 'All 20 canonical HTTPS hostnames respond, but their public roots currently return a generic server page rather than Titan Zero vertical content.',
+    explanation: 'The planned cleaning.titanzero.io hostname currently returns a generic server page, not Titan Zero Cleaning content; host routing and the Cleaning release remain pending.',
   },
   runtimeCleaning: {
     label: 'In development',
