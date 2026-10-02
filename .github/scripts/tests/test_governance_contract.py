@@ -21,6 +21,8 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('**Parent issue:** Refs #<parent, or none>', upper)
         self.assertIn('**Subproduct gate:** defer / run', upper)
         self.assertIn('Closes #child', upper)
+        self.assertIn('Smallest relevant test/smoke check passed', upper)
+        self.assertIn('Full parent integration/recovery/live-host checks are deferred', upper)
         blocks = re.findall(r'```mission-evidence\n(.*?)\n```', upper, re.S)
         self.assertEqual(len(blocks), 1)
         evidence = json.loads(blocks[0])
