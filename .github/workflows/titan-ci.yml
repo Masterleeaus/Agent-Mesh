@@ -88,7 +88,6 @@ jobs:
           pnpm --dir packages/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
           pnpm --dir packages/titan-platform exec node --test ./tests/signal-runtime.test.mjs
 
-
       - name: Focused Titan Visual Evidence compile and tests
         if: ${{ hashFiles('packages/titan-platform/src/visual-evidence/**', 'packages/titan-platform/tests/visual-evidence-runtime.test.mjs') != '' }}
         run: |
