@@ -3098,6 +3098,146 @@
       },
       "production_eligible": false,
       "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T11:35:23Z",
+      "workspace_head_after_main_merge": "adcfe75d4d75467f9a1c0acfca4a2e8dfc75b658",
+      "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh after #1199 merged a partial mobile fail-closed UI slice on top of #1196. Reviewed the new shell guards and tests on current main, checked current owner/PR and hosted CI state, and retained the prior parent-reported DirectAdmin observation with its original provenance. No product implementation, identity, SDK, Workforce, PWA, host or deployment files were edited.",
+      "refreshed_rows": [
+        "native-mobile",
+        "release-readiness"
+      ],
+      "github_state": {
+        "main_sha": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+        "claim_branch_sha_before_this_refresh": "0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc",
+        "claim_branch_remote_still_exists": true,
+        "pr_1178_read_only_check": {
+          "state": "OPEN",
+          "draft": true,
+          "merged": false,
+          "head_sha": "0e31be2157a6c3a6d80394dc7c3114eaa0c98bdc",
+          "base_ref": "main",
+          "merge_state": "CLEAN",
+          "mergeable": true,
+          "note": "GitHub CLI confirms open/draft and exact head. The PR merge candidate SHA remains 26599544e1a55a454440eb4866734d5fb3ff813e from the earlier base; main has since advanced. Recheck exact refs/status before push."
+        },
+        "pr_1199": {
+          "issue": 1170,
+          "issue_state": "OPEN",
+          "state": "MERGED",
+          "head_sha": "bcb04df32aaa48befd2053b882fb18942f29c2ad",
+          "merge_commit_sha": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "merged_at": "2026-10-02T11:29:07Z"
+        },
+        "pr_1199_hosted_ci": {
+          "source_index_run": 37000508945,
+          "source_index": "success",
+          "ci_run": 37000508934,
+          "mobile_job": 110817013972,
+          "mobile_job_result": "success",
+          "focused_transport_context_audience_step": "success",
+          "validate_job": 110817014337,
+          "validate_job_result": "success",
+          "legacy_full_mobile_diagnostic": "flutter analyze exited 1; flutter test exited 1 (32 passed, 28 failed); diagnostic command is continue-on-error so workflow success is not full-suite certification."
+        },
+        "related_open_missions": {
+          "pwa_1171": {
+            "state": "OPEN",
+            "partial_pr": 1176,
+            "pr_state": "MERGED"
+          },
+          "host_811": {
+            "state": "OPEN",
+            "partial_pr": 1201,
+            "pr_state": "MERGED"
+          },
+          "identity_302": {
+            "state": "OPEN",
+            "partial_pr": 1183,
+            "pr_state": "MERGED"
+          },
+          "sdk_1049": {
+            "state": "OPEN",
+            "partial_pr": 1204,
+            "pr_state": "MERGED_PARTIAL"
+          },
+          "mobile_continuity_1182": {
+            "state": "OPEN",
+            "partial_pr": 1188,
+            "pr_state": "MERGED_PARTIAL"
+          }
+        }
+      },
+      "source_hashes": [
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "sha256": "fdd02963449aedb60f6d34be9574c3219b02e36acbeae92e0a8f6158398d39a3"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "sha256": "14726c0f15991f3bae17e7d927f9eb355ed6d9789481e58b5a57fc4ad9bcd77f"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "docs/mobile/ISSUE-1170-WORKFLOW-MATRIX.md",
+          "source_commit": "9e6ab97e7b6b6d5f50ad691b48dcef63acedefed",
+          "sha256": "9858c1900c01b5af815f50ed451d200dd3b444d87d4d62a9660e7ecf16889f94"
+        }
+      ],
+      "source_claims_and_executed_evidence": [
+        "The #1199 main delta changes only TitanShellScreen, its conversation widget test, and a documentation workflow matrix; PWA, Workforce streaming, identity and SDK source did not change from 23300c7.",
+        "TitanShellScreen now presents inline unavailable messages for selected actions and controls, but uses message/action label heuristics; no hosted audience projection or capability authorization is added by these guards.",
+        "The source workflow matrix is a documentation index and not product execution evidence; its source claims were checked against current app code.",
+        "Hosted mobile focused tests including shell conversation cases pass. The full legacy mobile analyzer/test diagnostic still fails but is tolerated by CI; exact failure counts are recorded above.",
+        "The previous history entry records parent-authenticated DirectAdmin 1.711 observations, clearly attributed and not independently repeated here. No new host, SSH or physical-device test occurred."
+      ],
+      "commands": [
+        {
+          "command": "git fetch origin main; git merge-tree --write-tree HEAD origin/main",
+          "status": "PASS",
+          "detail": "Fetched main 9e6ab97e; merge preview returned 6b8ecfd340b2f7aa2187f056e2355919d218e75c with no conflicts."
+        },
+        {
+          "command": "git merge --no-edit origin/main",
+          "status": "PASS",
+          "detail": "Merged current main into the existing claim branch; no owner source edited by this evidence refresh."
+        },
+        {
+          "command": "Read-only current source inspection and SHA-256 for #1199 mobile UI/test/docs changes",
+          "status": "PASS",
+          "detail": "Reviewed the three changed files on main 9e6ab97e and updated the exact client assessment."
+        },
+        {
+          "command": "Read-only GitHub issue/PR and Actions metadata/logs for #1170/#1199 and #1178",
+          "status": "PASS",
+          "detail": "Confirmed #1170 remains open, #1199 merged, focused hosted mobile test step passes, legacy full check fails, and #1178 remains open at old exact head."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs; node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Refreshed the deterministic 28-row snapshot for main 9e6ab97e; --check passes and eligibility remains denied."
+        },
+        {
+          "command": "JSON parse and git diff --check",
+          "status": "PASS",
+          "detail": "Both input/evidence/generated JSON parsed; git diff --check passed."
+        }
+      ],
+      "environment_limits": {
+        "flutter_dart": "Not run locally in this refresh; hosted partial/failing results recorded above.",
+        "live_host": "No direct host contact; prior parent observation remains explicitly parent-reported.",
+        "ssh": "NOT_VERIFIED.",
+        "physical_devices": "NOT_VERIFIED.",
+        "library_upload": "HELD_PENDING_USER_PERMISSION."
+      },
+      "production_eligible": false,
+      "mission_complete": false
     }
   ]
 }
