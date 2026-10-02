@@ -198,6 +198,9 @@ importers:
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
+      lucide-react:
+        specifier: ^1.48.0
+        version: 1.49.0(@types/react@19.2.14)(react@19.0.8)
       mysql2:
         specifier: ^3.14.5
         version: 3.24.4(@types/node@22.19.11)
@@ -219,6 +222,12 @@ importers:
       react-dom:
         specifier: 19.0.8
         version: 19.0.8(react@19.0.8)
+      react-hook-form:
+        specifier: ^7.89.0
+        version: 7.89.0(@types/react@19.2.14)(react@19.0.8)
+      resend:
+        specifier: ^6.30.0
+        version: 6.32.0
       square:
         specifier: ^44.2.0
         version: 44.2.0
@@ -229,6 +238,9 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.13
+        version: 7.6.13
       '@types/leaflet':
         specifier: ^1.9.12
         version: 1.9.21
@@ -4516,6 +4528,24 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  lucide-react@1.49.0:
+    resolution: {integrity: sha512-ApfaNM4/7jBrVopqLJ84Jz8TMQ1Q1JeZ1PmKh25aeS3E1FTVcMkSh1bEQB7dfzdIrwXRP8p3z4AJjTIHHb5IIA==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  resend@6.32.0:
+    resolution: {integrity: sha512-bZZUeKlpKINFT+zGG2iIzfDewkyEHRaE7Xk1haseVz3Gfw6ekkizN6KdKgZSMjt5ywE8vMwr3wTdenlF8P475Q==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@react-email/render': '*'
+    peerDependenciesMeta:
+      '@react-email/render':
+        optional: true
 
 snapshots:
 
@@ -9093,3 +9123,19 @@ snapshots:
   zod@3.24.2: {}
 
   zod@3.25.76: {}
+  lucide-react@1.49.0(@types/react@19.2.14)(react@19.0.8):
+    dependencies:
+      react: 19.0.8
+    optionalDependencies:
+      '@types/react': 19.2.14
+
+  react-hook-form@7.89.0(@types/react@19.2.14)(react@19.0.8):
+    dependencies:
+      react: 19.0.8
+    optionalDependencies:
+      '@types/react': 19.2.14
+
+  resend@6.32.0:
+    dependencies:
+      postal-mime: 2.7.6
+      standardwebhooks: 1.1.1
