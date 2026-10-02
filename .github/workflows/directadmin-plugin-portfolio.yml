@@ -30,6 +30,13 @@ jobs:
         run: node --test scripts/package-directadmin-portfolio.test.mjs
       - name: Build all enabled plugin archives and provenance
         run: node scripts/package-directadmin-portfolio.mjs "$RUNNER_TEMP/directadmin-portfolio"
+      - name: Publish checksummed plugin artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: directadmin-plugin-portfolio-${{ github.sha }}
+          path: ${{ runner.temp }}/directadmin-portfolio
+          if-no-files-found: error
+          retention-days: 14
       - name: Validate Server Node package contract
         run: node scripts/validate-directadmin-plugin.mjs apps/directadmin/server-node
       - name: Check lifecycle script syntax
