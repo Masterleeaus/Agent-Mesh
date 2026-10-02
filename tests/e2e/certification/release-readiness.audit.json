@@ -21,7 +21,7 @@
   ],
   "delivery_board": {
     "schema": "titan.directadmin-plugin-delivery-board/v1",
-    "observed_at": "2026-10-02T14:19:05Z",
+    "observed_at": "2026-10-02T14:37:57Z",
     "source_of_truth": "GitHub issue/claim branch/PR/CI; parent-supplied observations are labeled. This snapshot is not a second task ledger.",
     "scope": "Only the three DirectAdmin plugins and immediate identity, runtime, authority, relay, and CI blockers.",
     "basis": {
@@ -58,7 +58,7 @@
           "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1048",
           "state": "OPEN",
           "opened_at": "2026-09-28T06:36:49Z",
-          "age_hours": 103.7,
+          "age_hours": 104.02,
           "github_assignees": []
         },
         "claim": {
@@ -81,30 +81,31 @@
           "apps/directadmin/dev-access/**",
           ".github/workflows/directadmin-dev-access-php.yml"
         ],
-        "dependency": "Library helper #401 delivered the existing archive; do not rebuild or re-upload.",
-        "next_action": "Parent supplies the ordinary provider-console login URL; Portal verifier then runs normal UI/Evolution-wrapper POST, session/CSRF and safe-command acceptance against the already verified archive. Do not install or deploy it.",
+        "dependency": "PARENT_REPORTED: Library helper #401 returned HTTP 401 and did not deliver the archive; parent uploaded the exact artifact.",
+        "next_action": "Await the user's ordinary provider-console login URL; then perform a safely backed-up replacement from the exact verified archive and complete real UI/Evolution-wrapper acceptance. Do not report live verification until that acceptance is executed.",
         "candidate": {
           "version": "1.3.5",
           "archive": "Library v11",
-          "checksum_scheme": "checksumv2",
+          "checksum_scheme": "SHA-256",
           "sha256": "42b3ee3e100ff619ff72f2150db34690747615dc350f07b61b643beadc4cacfd",
           "source_commit": "2998a3509a3f9cd427c41e0e3c560cbc6cc4c8b8",
-          "verification": "PARENT_REPORTED: exact archive verified; isolated PHP 8.3.35 extracted-package run 18/18 transport/security cases, 13 provenance hashes, safe packaging."
+          "verification": "PARENT_REPORTED: exact archive verified; isolated PHP 8.3.35 extracted-package run 18/18 transport/security cases, 13 provenance hashes, safe packaging.",
+          "checksum_library_file_version": "v2"
         },
         "acceptance_evidence": [
           "PR #1244 and #1247 merged as partial source slices.",
           "Parent reports installed DirectAdmin 1.3.3 POST broken (first observed 2026-10-02 10:33Z).",
           "Parent reports Windows UI lacks server-console/browser controls and private-key retry; DirectAdmin Update is disabled."
         ],
-        "still_required": "Ordinary provider-console URL and UI acceptance; safe update/rollback and complete redaction/SSH-key lifecycle evidence.",
-        "deployment_state": "1.3.3 installed with POST broken; exact 1.3.5 archive verified but NOT_DEPLOYED. No production update authorized.",
+        "still_required": "The user's ordinary provider-console login URL, safely backed-up replacement and real UI acceptance, safe update/rollback, and complete redaction/SSH-key lifecycle evidence.",
+        "deployment_state": "1.3.3 installed with POST broken (parent-reported); exact 1.3.5 Library v11 archive verified but NOT_DEPLOYED. Awaiting the provider-console URL and backed-up replacement/UI acceptance.",
         "blocker_age": {
           "specific_onset": "UNKNOWN",
           "last_observed_at": "2026-10-02T14:19:05Z",
-          "hours_since_last_observation": 0,
+          "hours_since_last_observation": 0.31,
           "live_1_3_3_post_observed_at": "2026-10-02T10:33:00Z",
-          "hours_since_live_post_observation": 3.77,
-          "mission_open_hours": 103.7
+          "hours_since_live_post_observation": 4.08,
+          "mission_open_hours": 104.02
         }
       },
       {
@@ -112,49 +113,53 @@
         "priority": 2,
         "owner_task_id": "01a0fac0-ec9f-767a-ba86-6836da88400b",
         "issue": {
-          "number": 1049,
-          "title": "[P1][CODEX] Business Node SDK — shared plugin shell, identity bridge, navigation, widgets & contracts",
-          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+          "number": 812,
+          "title": "[P0][CODEX] DirectAdmin Business Node control plane — meta-orchestration, Server Node & system estate",
+          "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/812",
           "state": "OPEN",
-          "opened_at": "2026-09-28T06:44:21Z",
-          "age_hours": 103.58,
+          "opened_at": "2026-09-27T09:41:03Z",
+          "age_hours": 124.95,
           "github_assignees": []
         },
         "claim": {
-          "branch": "agent/issue-1049",
-          "remote_head": "64561e4d077ec07a3cb40dfb43284b0e7dff4dbf",
-          "same_as_main": true,
-          "open_pr": null,
+          "branch": "agent/issue-812",
+          "remote_head": "1f5aee42281d0329fb360bf4714c371685c206b2",
+          "same_as_main": false,
+          "open_pr": {
+            "number": 1251,
+            "state": "OPEN_DRAFT",
+            "head_sha": "1f5aee42281d0329fb360bf4714c371685c206b2"
+          },
           "latest_pr": {
-            "number": 1243,
+            "number": 1245,
             "state": "MERGED",
-            "head_sha": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
-            "merge_sha": "d508a2695fccc36e039f18e60cb96adfbe318813"
+            "head_sha": "eb568f20ccc5403b968eaacbb97c3dbb3cab9b08",
+            "merge_sha": "faab3c5c9bdfd90179d5d3bfee21c479dceb3613"
           }
         },
         "file_ownership": [
-          "packages/titan-platform/src/directadmin-{cockpit,gateway,plugin,session-bridge}.ts",
-          "packages/titan-platform/tests/directadmin-*",
-          "apps/directadmin/*/cockpit.mjs",
-          "docs/contracts/directadmin-authenticated-session-bridge.md"
+          "apps/directadmin/server-node/**"
         ],
         "dependencies": [
-          "#302 canonical current-session/company identity",
-          "#812 verified private RAW relay; retain its current owner"
+          "#7 canonical capability IDs",
+          "#14 governed ExecutionGateway",
+          "#322 deployment/release primitives",
+          "#811 persistent Workforce runtime",
+          "#1049 shared DirectAdmin SDK/session bridge"
         ],
-        "next_action": "SDK owner completes the existing commissioning/provisioning source slice while preserving current-session and company binding; keep the relay at 503 and make no credential/network changes. After explicit host authorization, run one authenticated same-company private-gateway probe.",
+        "next_action": "Host operator runs PR #1251’s read-only external and panel verifier using the exact authorized #811 private target; preserve production RAW 503 until sanitized reports and existing #811/#302/#1049 contract confirmations are independently reviewed.",
         "acceptance_evidence": [
-          "PR #1204/#1243 are partial; explicit replacement-session rejection maps to 401, registry outage to redacted 503.",
-          "PR #1245 production RAW default returns sanitized 503 cookie_boundary_unverified before config/upstream.",
-          "Parent reports DirectAdmin 1.711 Server Node health unreachable; no production session commissioning."
+          "PR #1245 merged as a partial Server Node/RAW relay slice; issue #812 remains open.",
+          "Production RAW deliberately returns sanitized 503 before config/upstream; this is source/fixture evidence, not a commissioned live gateway.",
+          "Open draft PR #1251 adds a read-only host-boundary verifier; its PR body reports 12/12 verifier tests and 102/102 Server Node tests, but no live host or independent-network run was performed."
         ],
-        "still_required": "Approved private route, verified current identity/company exchange, actual DirectAdmin origin/cookie/CSRF behavior, and a live authenticated request without secret exposure.",
-        "deployment_state": "Production relay intentionally disabled (503); no commissioned private gateway or production proof. Credential/network changes are not authorized.",
+        "still_required": "Authorized direct-host and independent-network boundary evidence for PR #1251, followed by completion of the #812 mission: valid DirectAdmin install/update/uninstall lifecycle, persistent canonical Workforce supervision, governed and independently verified capability execution with evidence, restart/recovery and backup/restore, representative deployment, cross-company denial, and replacement-substrate proof.",
+        "deployment_state": "No commissioned Server Node or live host acceptance is evidenced. Production RAW intentionally returns sanitized 503 before config/upstream; no credential or network change is authorized.",
         "blocker_age": {
           "specific_onset": "UNKNOWN",
-          "last_observed_at": "2026-10-02T12:43:49Z",
-          "hours_since_last_observation": 1.59,
-          "mission_open_hours": 103.58
+          "last_observed_at": "2026-10-02T14:37:57Z",
+          "hours_since_last_observation": 0,
+          "mission_open_hours": 124.95
         }
       },
       {
@@ -167,16 +172,17 @@
           "url": "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
           "state": "OPEN",
           "opened_at": "2026-09-28T06:44:23Z",
-          "age_hours": 103.58,
+          "age_hours": 103.89,
           "github_assignees": []
         },
         "claim": {
           "branch": "agent/issue-1050",
-          "head": "054c3651e6ee8c849add75ad6d10516bcd91c919",
+          "head": "1a5455f56064a268ca8c35612ab9044fd601bb35",
           "open_pr": {
             "number": 1249,
             "state": "OPEN_DRAFT",
-            "head_sha": "054c3651e6ee8c849add75ad6d10516bcd91c919"
+            "head_sha": "1a5455f56064a268ca8c35612ab9044fd601bb35",
+            "review_status": "HUMAN_MERGE_REVIEW_PENDING"
           },
           "latest_pr": {
             "number": 1246,
@@ -192,30 +198,30 @@
         "dependencies": [
           "#811 runtime controls/durable receipts",
           "#640 bounded authority/effect/evidence glue",
-          "#1049 commissioning/provisioning SDK",
-          "#812 RAW relay",
-          "#1157/#1248 CI consuming #1249 fixture"
+          "#1049 shared SDK commissioning source",
+          "#812 Server Node RAW relay",
+          "#1157/#1248 CI fixture update after #1249 merges"
         ],
-        "next_action": "Wait for the runtime owner’s authorized bounded #640 work and SDK #1049 commissioning source; then use the existing #1249 fixture through #1248 to prove one positive company-scoped governed workflow with a durable, independently verified receipt. Do not add plugin-local authority/evidence or duplicate CI.",
+        "next_action": "Wait for the runtime owner’s authorized bounded #640 work and shared SDK #1049 commissioning source. After #1249 merges, update #1248 to consume the new fixture and rerun it; then prove one positive company-scoped governed workflow with a durable, independently verified receipt. Do not add plugin-local authority/evidence or duplicate CI.",
         "acceptance_evidence": [
-          "PR #1249 owner report: 39/39 consumer/browser/hosted/package tests, 83/83 shared-bridge tests, 3/3 package tests, and 14 RAW requests/15 hosted routes.",
-          "GitHub run 37016533940 job 110868659965 passed the fixture: controls empty, CSRF 401, governed-action denial with no DB/event effects, production RAW 503.",
-          "PR #1248 head 0391b65d has successful mission gate, Workforce, DirectAdmin Workforce Consumer, mobile and validate checks; cross-review pairing with #1249 is parent-reported."
+          "PR #1249 owner report at prior head 054c3651: 39/39 consumer/browser/hosted/package tests, 83/83 shared-bridge tests, 3/3 package tests, and 14 RAW requests/15 hosted routes; this does not attest current head 1a5455f5.",
+          "GitHub run 37016533940 job 110868659965 passed the prior #1248 fixture: controls empty, CSRF 401, governed-action denial with no DB/event effects, production RAW 503.",
+          "PR #1248 head 0391b65d has green checks only for its existing old fixture; it does not consume current PR #1249 until #1249 merges and the fixture is updated. Human merge review for #1249 is pending."
         ],
         "still_required": "One positive permitted host-owned control and durable receipt for the current company/session, independent outcome verification, idempotent recovery, and live-host commissioning. Current controls=[] and denial/no-write tests prove only fail-closed behavior.",
         "deployment_state": "Packaging candidate only, not live-install-ready; no commissioned host or positive workflow receipt. Hosted /ready intentionally remains 503.",
         "blocker_age": {
           "specific_onset": "UNKNOWN",
-          "last_observed_at": "2026-10-02T14:03:08Z",
-          "hours_since_last_observation": 0.27,
-          "mission_open_hours": 103.58
+          "last_observed_at": "2026-10-02T14:37:57Z",
+          "hours_since_last_observation": 0,
+          "mission_open_hours": 103.89
         }
       }
     ],
     "dependency_owners": [
       {
         "id": "shared-identity",
-        "owner_task_id": "01a0fa2b-6965-73e1-a96f-17b866d45036",
+        "owner_task_id": "01a0fa3e-ef62-706b-bebc-9c82453ec02b",
         "issue": 302,
         "state": "OPEN",
         "latest_partial_pr": {
@@ -231,10 +237,40 @@
           "packages/titan-platform/src/security-session-registry.ts"
         ],
         "used_by": [
+          "shared-sdk",
+          "workforce"
+        ],
+        "note": "Issue #302 current-session/company identity dependency. Owner evidence comment #5954574426; no production DirectAdmin commissioning evidenced.",
+        "evidence_comment_id": 5954574426
+      },
+      {
+        "id": "shared-sdk",
+        "owner_task_id": "01a0fa2b-6965-73e1-a96f-17b866d45036",
+        "issue": 1049,
+        "state": "OPEN",
+        "latest_partial_pr": {
+          "number": 1243,
+          "branch": "agent/issue-1049",
+          "head": "205fd94e44aa953c172ce9d419eb5e1dbbe1874b",
+          "merge_sha": "d508a2695fccc36e039f18e60cb96adfbe318813",
+          "state": "MERGED"
+        },
+        "active_branch": "NONE_OBSERVED",
+        "owned_paths": [
+          "packages/titan-platform/src/directadmin-{cockpit,gateway,plugin,session-bridge}.ts",
+          "packages/titan-platform/tests/directadmin-*",
+          "apps/directadmin/*/cockpit.mjs",
+          "docs/contracts/directadmin-authenticated-session-bridge.md"
+        ],
+        "used_by": [
+          "developer-portal",
           "business-node",
           "workforce"
         ],
-        "note": "Partial current-session/company primitives; no production DirectAdmin commissioning evidenced."
+        "note": "PR #1204/#1243 delivered partial shared DirectAdmin SDK/session-bridge source; #1049 remains open. This panel bridge is not the PWA/native mobile transport and grants no business authority.",
+        "dependencies": [
+          "#302 canonical current-session/company identity"
+        ]
       },
       {
         "id": "runtime",
@@ -278,26 +314,6 @@
         "next_action": "Runtime owner claims exact agent/issue-640 and implements only the bounded lifecycle authority/effect/evidence glue required by #1050; keep #640 canonical and do not move authority into the plugin."
       },
       {
-        "id": "server-node-relay",
-        "issue": 812,
-        "state": "OPEN",
-        "latest_partial_pr": {
-          "number": 1245,
-          "branch": "agent/issue-812",
-          "head": "eb568f20ccc5403b968eaacbb97c3dbb3cab9b08",
-          "state": "MERGED"
-        },
-        "active_branch": {
-          "branch": "agent/issue-812",
-          "head": "092e4d4688c249ef093f660dab142452f3ad000d"
-        },
-        "used_by": [
-          "business-node",
-          "workforce"
-        ],
-        "note": "Production RAW deliberately returns sanitized 503 before upstream. No credential or network change is authorized."
-      },
-      {
         "id": "hosted-ci",
         "owner_task_id": "01a0fa39-ea03-72de-87ef-d577685f0020",
         "issue": 1157,
@@ -315,10 +331,10 @@
         "fixture_pr": {
           "number": 1249,
           "branch": "agent/issue-1050",
-          "head": "054c3651e6ee8c849add75ad6d10516bcd91c919",
+          "head": "1a5455f56064a268ca8c35612ab9044fd601bb35",
           "state": "OPEN_DRAFT"
         },
-        "note": "Parent reports paired cross-review with #1249; no duplicate CI run is needed."
+        "note": "PR #1248 retains its prior fixture while #1249 is open. It does not consume the current #1249 head until #1249 merges and the fixture is updated; its green checks cover only the old fixture."
       }
     ],
     "paused_workstreams": [
