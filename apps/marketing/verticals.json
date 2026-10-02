@@ -12,14 +12,15 @@
   "sources": {
     "sharedHubAndIndustryBuild": "marketing/nexjob",
     "industryLayoutDonor": "marketing/tradepilot",
-    "managedServicesContentDonor": "marketing/trydrafted/index.html",
     "industryCatalogue": "marketing/nexjob/src/data/verticalCatalogue.js",
     "pwaOwner": "apps/pwa (issue #1171 / PR #1176)",
     "retiredPublicPreview": {
       "id": "fieldops",
       "source": "marketing/fieldops",
       "policy": "Not publicly routed or mapped to a host. Preserve repository history/source archive; server retirement is parent-owned."
-    }
+    },
+    "managedServicePage": "apps/marketing/nexjob/src/pages/ManagedSystem.jsx",
+    "cleaningFranchiseSite": "pending separate site source selection; .pro is not served by marketing/nexjob"
   },
   "verticalCatalogue": {
     "sourceOfTruth": "marketing/nexjob/src/data/verticalCatalogue.js",
