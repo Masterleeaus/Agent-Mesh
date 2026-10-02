@@ -146,7 +146,8 @@ test("portfolio delegates Workforce packaging and pins its exact Server Node dep
     sha256: serverNode.sha256,
   }]);
   assert.equal(workforceRecord.build_inputs.sdk.source, "packages/titan-platform/src/directadmin-plugin.ts");
-  assert.equal(workforceRecord.build_inputs.sdk.compiler, "esbuild@0.27.3");
+  const rootPackage = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+  assert.equal(workforceRecord.build_inputs.sdk.compiler, `esbuild@${rootPackage.devDependencies.esbuild}`);
   assert.deepEqual(workforceRecord.build_inputs.sdk.compiler_flags, ["--bundle", "--format=esm", "--platform=browser", "--target=es2022"]);
   assert.match(workforceRecord.build_inputs.sdk.source_sha256, /^[a-f0-9]{64}$/);
   assert.match(workforceRecord.build_inputs.sdk.compiled_sha256, /^[a-f0-9]{64}$/);
