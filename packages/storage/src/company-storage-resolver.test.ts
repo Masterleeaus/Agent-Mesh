@@ -168,6 +168,28 @@ describe("company storage resolver contract", () => {
     expect(f.opener.open).not.toHaveBeenCalled();
   });
 
+  it("does not call the store opener when scope expires during placement revalidation", async () => {
+    let currentTime = now();
+    let verifierCalls = 0;
+    const expiringScope: VerifiedCompanyScope = {
+      ...publicScope,
+      capability: { ...publicScope.capability, expires_at: "2026-10-02T12:00:00.500Z" },
+    };
+    const f = setup({
+      now: () => currentTime,
+      assertCurrent: async () => {
+        verifierCalls += 1;
+        if (verifierCalls === 2) currentTime += 1000;
+      },
+    });
+    const resolved = await f.resolver.resolve(expiringScope);
+
+    await expect(f.resolver.open(resolved)).rejects.toMatchObject({ code: "public-capability-expired" });
+    expect(f.registry.findByCompanyId).toHaveBeenCalledTimes(1);
+    expect(f.opener.open).not.toHaveBeenCalled();
+    expect(f.events).toEqual(["scope:public-capability", "registry:company-a", "scope:public-capability"]);
+  });
+
   it("fails closed for absent, mismatched, unready, or invalid placement records", async () => {
     const cases: Array<[CompanyPlacementRecord | null, string]> = [
       [null, "placement-missing"],

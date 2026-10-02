@@ -341,6 +341,10 @@ export function createCompanyStorageResolver<Client extends { close(): Promise<v
       throw new CompanyStorageResolutionError("scope-not-current");
     }
     throwIfAborted(signal);
+    // Revalidation can involve I/O. Re-check expiry before touching the
+    // registry or opening a company store so an expired scope cannot cause
+    // even a physical-store attestation attempt.
+    validateScope(checkedScope, now());
     const current = normalizePlacement(
       await options.registry.findByCompanyId(companyIdForScope(checkedScope), { signal }),
       companyIdForScope(checkedScope),
