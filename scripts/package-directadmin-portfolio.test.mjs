@@ -203,7 +203,9 @@ test("Titan Web role entrypoints load the authenticated read-only cockpit and re
     assert.match(html, /<script type=\\"importmap\\">/);
     assert.match(html, /titan-sdk/);
     assert.match(html, /mountDirectAdminProjection/);
-    assert.doesNotMatch(html, /<script[^>]+src=|https?:\\/\\//i);
+    assert.equal(/<script[^>]+src=/i.test(html), false);
+    assert.equal(html.includes("https://"), false);
+    assert.equal(html.includes("http://"), false);
   }
   assert.throws(() => renderBrandStudioEntry("root"), /unsupported DirectAdmin role/);
 });
