@@ -1,6 +1,6 @@
 # DirectAdmin authenticated session bridge — #1049
 
-Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / PR #1183 head `363d3f018e971d09309d95e87c56bd5209511b9f` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). Its shared dependency changes are merged with provenance, not copied or reimplemented here.
+Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / open draft PR #1183 head `363d3f018e971d09309d95e87c56bd5209511b9f` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). That owner commit is inherited through the claim branch for integration; #1183 has not merged to `main`. This SDK does not copy or reimplement its identity/credential logic.
 
 ## Canonical owner and API
 
@@ -44,7 +44,35 @@ The browser uses the canonical **persisted session** expiry supplied by #302. Ea
 
 `requestIntent` receives a revalidation function. The canonical execution owner **must call it again at authorization and immediately before effects**, and preserve the original authenticated company context for queued work. This per-request closure is not a durable queue credential. The SDK neither grants effective authority nor executes providers; 202 means `REQUESTED`, not authorized or verified. Canonical execution remains responsible for idempotency, replay protection and accepted evidence.
 
-Inspected #811/#1201 head `99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd`: `hosted-runtime.ts` requires a verified credential with audience `workforce` and an independently validated `zero`/`go`/`hub` surface, then rechecks durable identity at effects. A DirectAdmin-audience credential cannot be relabelled or forwarded there. #302's public-key verifier can support that owner, but a separately authenticated commissioned workforce audience/surface is still required. No cross-audience exchange is implemented here. Parent coordination owns the handoff; the SDK continuation does not edit server/bootstrap/conversation files.
+Inspected current #811/#1201 head `26be7b4a278dcfa27ea91af91a23a25f86802d0a`: its hosted verifier fixes audience to `workforce` and surface to `zero`, then rechecks durable identity at effects. A DirectAdmin-audience credential cannot be relabelled or forwarded there. #302's public-key verifier can support that owner, but the current service has no cross-audience exchange API.
+
+The bounded file-backed regression test in
+`packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs` uses
+ephemeral Ed25519 provider, DirectAdmin and Workforce keys with the real #302
+service and registry. It confirms that the canonical Workforce verifier rejects
+the DirectAdmin token. A fresh provider login assertion can issue a separate
+Workforce-audience session, but that session has a different session ID and stays
+on company A after the DirectAdmin session switches to B. This is not an exchange
+and cannot satisfy shared switch/revocation semantics. The test is deliberately
+not presented as a Workforce HTTP integration or effect-fence proof.
+
+Before connecting DirectAdmin intents to the hosted HTTP runtime, #302 must own
+an explicit server-side audience exchange in its existing credential/registry
+boundary. It must authenticate and revalidate the source DirectAdmin credential,
+allow only commissioned target audience/surface pairs (currently Workforce/Zero),
+issue a target credential no longer-lived than the source, preserve source
+session/company revision revocation and switch invalidation, and define safe
+duplicate/retry behavior. Do not accept a caller-selected audience/surface or
+make a second issuer/store. #811/#812 then own the server-side composition that
+maps the SDK's governed intent and current context to the existing authenticated
+`POST /v1/workforce/conversations` contract, propagates cancellation and
+idempotency, and never returns credentials to browser code. Their launched
+`HostedWorkforceDependencies.credentialVerifier` accepts Workforce Bearer
+credentials and independently revalidates identity; it has no DirectAdmin cookie
+or audience-exchange route today. A composed real-HTTP adversarial test must wait
+for those owner APIs and cover source switch/revocation at the effect fence,
+cancellation and duplicate requests with real canonical keys and temporary
+SQLite stores.
 
 ## Actual consumers and routes
 
@@ -73,7 +101,7 @@ One additional Chromium integration test passes over disposable loopback HTTPS. 
 
 The initial independent review found a microtask invalidation race; fixed and all four regression variants pass. Follow-up probes verified redacted exceptions, concurrency recovery and stalled-body cancellation. A fresh independent review of canonical delegation found the switch-delivery gap; it was fixed by delivering the canonical replacement only as an HttpOnly cookie. The reviewer reran the focused bridge/typecheck and Chromium switch/reconnect/logout checks successfully and found no remaining API mismatch. Required PR review remains independent of local test evidence.
 
-On published head `51b22e92569b2d76ce97078fe3975ce7be091590`, corrected template/linkage passed Claim Gate run `36952805244`. Workforce, Production Convergence, Personal Zero, Browser Node and Source Evidence passed. General CI failed the worker regression gate (35 failures vs baseline 24); VPS smoke failed compose `TZ_ENV_FILE` handling. Subsequent merged #302 prerequisites include the shared owners' worker/VPS fixes; those are not independent SDK edits.
+On published head `51b22e92569b2d76ce97078fe3975ce7be091590`, corrected template/linkage passed Claim Gate run `36952805244`. Workforce, Production Convergence, Personal Zero, Browser Node and Source Evidence passed. General CI failed the worker regression gate (35 failures vs baseline 24); VPS smoke failed compose `TZ_ENV_FILE` handling. Shared worker/VPS fixes later inherited from their owners are not independent SDK edits. #302/#1183 remains open draft and must be coordinated before merging this dependent slice.
 
 Local `pnpm gate:fast` / `pnpm gate` were attempted and retried with writable XDG/store paths. They remain blocked before execution by `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION` for locked `resend@6.32.0` (published `2026-10-01T20:28:20Z`). No safety policy, baseline or lockfile repair was invented by the SDK. Direct compilation/Node/Chromium commands above ran. Repository-wide lint/build/integration/E2E are not claimed passed.
 
