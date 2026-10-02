@@ -50,8 +50,12 @@ All NumericDates are safe integer Unix seconds. Future issuance, missing claims,
 expiry, fractional values and overlong lifetimes fail. Audience is exactly one
 configured string, not an array. Signature/key/issuer/algorithm/audience/type/time
 verification precedes any registry lookup. Caller roles and extra authority claims
-cannot create identity or business authority. Errors are `authentication-denied`
-without credential, cryptographic or database diagnostics.
+cannot create identity or business authority. Invalid credentials and stale or
+ineligible identity state fail as `authentication-denied`. A GLOBAL_REGISTRY
+storage/transaction failure is the distinct sanitized `identity-registry-unavailable`;
+it never returns an authenticated context or permits stale-cache fallback. Consumers
+may report service unavailable, then must reverify the credential and current
+registry state after recovery. Neither error includes credentials or backend details.
 
 | Credential | Protected header | Required signed claims |
 | --- | --- | --- |

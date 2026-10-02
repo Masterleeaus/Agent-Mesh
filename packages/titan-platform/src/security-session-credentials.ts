@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 import { requireSecurityId, requireSecurityRevision, securityTimestamp } from './security-boundary.js';
-import type { CurrentSessionContext, IdentitySessionRegistry, SessionSourceReference, VerifiedSessionIdentity } from './security-session-registry.js';
+import { isIdentityRegistryUnavailableError, type CurrentSessionContext, type IdentitySessionRegistry,
+  type SessionSourceReference, type VerifiedSessionIdentity } from './security-session-registry.js';
 
 type Algorithm = 'ES256' | 'RS256' | 'HS256' | 'EdDSA';
 type Key = CryptoKey | Uint8Array;
@@ -252,7 +253,10 @@ export function createSessionCredentialService(options: SessionCredentialOptions
 
   // Errors deliberately omit JWTs, crypto diagnostics, claim values and storage details.
   async function deny<T>(operation: () => Promise<T>): Promise<T> {
-    try { return await operation(); } catch { throw new Error('authentication-denied'); }
+    try { return await operation(); } catch (error) {
+      if (isIdentityRegistryUnavailableError(error)) throw new Error('identity-registry-unavailable');
+      throw new Error('authentication-denied');
+    }
   }
 
   return Object.freeze({

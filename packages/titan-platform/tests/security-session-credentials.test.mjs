@@ -48,6 +48,12 @@ async function fixture(t, config = {}) {
 }
 
 const denied = promise => assert.rejects(promise, { message: 'authentication-denied' });
+const registryUnavailable = promise => assert.rejects(promise, error => {
+  assert.equal(error.message, 'identity-registry-unavailable');
+  assert.equal(error.cause, undefined);
+  assert.equal(error.message.includes('private database path'), false);
+  return true;
+});
 
 test('real signed issuance binds current state and public consumers need no production credentials', async t => {
   const f = await fixture(t);
@@ -70,6 +76,50 @@ test('real signed issuance binds current state and public consumers need no prod
   assert.equal('role' in claims, false);
   const rows = await f.storage.query('SELECT * FROM titan_security_sessions');
   assert.equal(JSON.stringify(rows).includes(issued.credential), false);
+});
+
+test('registry availability is distinct from invalid credentials and service recovers without bypass', async t => {
+  const f = await fixture(t);
+  const issued = await f.service.issue(await f.login(), expectation);
+  const transaction = f.storage.transaction.bind(f.storage);
+  let unavailable = true;
+  let failureMode = 'transaction';
+  let transactions = 0;
+  f.storage.transaction = (callback, options) => {
+    transactions++;
+    if (unavailable && failureMode === 'transaction') return Promise.reject(new Error('private database path unavailable'));
+    if (unavailable) return transaction(tx => callback({ ...tx,
+      query: async () => { throw new Error('private database path unavailable'); },
+    }), options);
+    return transaction(callback, options);
+  };
+
+  const invalid = await f.access(issued.credential, {}, {}, f.wrongKeys.privateKey);
+  const beforeInvalid = transactions;
+  await denied(f.service.authenticate(invalid, expectation));
+  assert.equal(transactions, beforeInvalid, 'invalid signature is rejected before registry access');
+  await registryUnavailable(f.service.authenticate(issued.credential, expectation));
+  failureMode = 'query';
+  await registryUnavailable(f.service.authenticate(issued.credential, expectation));
+
+  unavailable = false;
+  assert.equal((await f.service.authenticate(issued.credential, expectation)).context.session_id, issued.context.session_id);
+  await f.service.revoke(issued.credential, expectation);
+  await denied(f.service.authenticate(issued.credential, expectation));
+});
+
+test('registry revoke-query outage is reported as unavailable and retry revokes after recovery', async t => {
+  const f = await fixture(t);
+  const issued = await f.service.issue(await f.login(), expectation);
+  const query = f.storage.query.bind(f.storage);
+  f.storage.query = async () => { throw new Error('private database path unavailable'); };
+
+  await registryUnavailable(f.service.revoke(issued.credential, expectation));
+  f.storage.query = query;
+  assert.equal((await f.service.authenticate(issued.credential, expectation)).context.session_id, issued.context.session_id,
+    'failed revoke does not claim revocation or mutate session state');
+  await f.service.revoke(issued.credential, expectation);
+  await denied(f.service.authenticate(issued.credential, expectation));
 });
 
 for (const [label, change, header, keyKind] of [
