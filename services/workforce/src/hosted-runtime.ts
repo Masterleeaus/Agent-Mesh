@@ -1,5 +1,5 @@
 import type { StorageClient } from "../../../packages/storage/src/index.js";
-import { IdentitySessionRegistry, type CurrentSessionContext, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
+import { IdentitySessionRegistry, type CurrentSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
 // Existing native composition owns authority, provider verification and evidence.
 // @ts-expect-error Native runtime owner is JavaScript.
 import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
@@ -7,7 +7,9 @@ import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
 import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mjs";
 import type { ConversationAuth, ConversationSurface } from "./conversation-api.js";
 import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
-import type { AuthenticatedWorkIdentity } from "./index.js";
+import { AUTHENTICATED_SESSION_PROOF_TYPE, type AuthenticatedWorkIdentity } from "./index.js";
+
+const derivedWorkforceSessionPrefix = "workforce-zero-";
 
 export type HostedWorkforceDependencies = {
   identityStoragePath: string;
@@ -56,6 +58,49 @@ function deepFreeze<T>(value: T): T {
   return value;
 }
 
+function isSessionSourceReference(value: unknown): value is SessionSourceReference {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const source = value as Record<string, unknown>;
+  const stringFields = ["provider", "subject", "issuer", "audience", "session_id", "context_revision", "company_id", "actor_id", "device_id", "expires_at", "node_id"] as const;
+  return source.schema === "titan.session-source/v1"
+    && stringFields.every(field => typeof source[field] === "string" && (source[field] as string).length > 0)
+    && Number.isSafeInteger(source.session_revision) && (source.session_revision as number) > 0
+    && Number.isFinite(Date.parse(source.expires_at as string))
+    && typeof source.csrf_sha256 === "string" && /^[A-Za-z0-9_-]{43}$/.test(source.csrf_sha256);
+}
+
+function requireConsistentSessionProof(identity: AuthenticatedWorkIdentity): boolean {
+  const hasSourceField = Object.prototype.hasOwnProperty.call(identity, "source_session");
+  const hasSource = isSessionSourceReference(identity.source_session);
+  const derivedId = identity.session_id.startsWith(derivedWorkforceSessionPrefix);
+  const required = identity.source_session_required;
+  const proofType = identity.session_proof_type;
+
+  if (required !== undefined && typeof required !== "boolean") throw new Error("runtime-authentication-required");
+  if (hasSourceField && !hasSource) throw new Error("runtime-authentication-required");
+  if (proofType !== undefined && proofType !== AUTHENTICATED_SESSION_PROOF_TYPE.direct
+    && proofType !== AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived) throw new Error("runtime-authentication-required");
+  if ((proofType === AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived && required === false)
+    || (proofType === AUTHENTICATED_SESSION_PROOF_TYPE.direct && required === true)) {
+    throw new Error("runtime-authentication-required");
+  }
+
+  const requiresSource = proofType === AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived || required === true;
+  if (requiresSource) {
+    if (!hasSource) throw new Error("runtime-authentication-required");
+    return true;
+  }
+  if (proofType === AUTHENTICATED_SESSION_PROOF_TYPE.direct && (hasSource || derivedId)) {
+    throw new Error("runtime-authentication-required");
+  }
+  // Legacy source-derived identities predate the explicit proof type. Retain
+  // their valid lineage, but never turn a deterministic child ID with missing
+  // lineage into an ordinary, unfenced session.
+  if (hasSource) return true;
+  if (derivedId) throw new Error("runtime-authentication-required");
+  return false;
+}
+
 export async function createHostedRuntime(storage: StorageClient, identityStorage: StorageClient, dependencies: HostedWorkforceDependencies, signal?: AbortSignal) {
   const timeoutMs = dependencies.adapterTimeoutMs ?? 30_000;
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120_000) throw new Error("workforce-adapter-timeout-invalid");
@@ -72,9 +117,10 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
       || !Number.isSafeInteger(stored.session_revision) || typeof stored.provider !== "string"
       || typeof stored.subject !== "string" || typeof stored.session_id !== "string"
       || typeof stored.device_id !== "string" || typeof stored.context_revision !== "string"
-      || (stored.source_session_required === true && stored.source_session === undefined)) {
+      ) {
       throw new Error("runtime-authentication-required");
     }
+    const sourceFenced = requireConsistentSessionProof(stored);
     if (typeof stored.credential_expires_at !== "string") {
       throw new Error("runtime-authentication-required");
     }
@@ -88,7 +134,7 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
       device_id: authenticated_identity.device_id,
       session_revision: authenticated_identity.session_revision,
       ...(authenticated_identity.credential_expires_at ? { credential_expires_at: authenticated_identity.credential_expires_at } : {}),
-      ...(authenticated_identity.source_session ? { source_session: structuredClone(authenticated_identity.source_session) } : {}),
+      ...(sourceFenced ? { source_session: structuredClone(authenticated_identity.source_session!) } : {}),
     });
     return { run, authenticated_identity, proof, now };
   }
@@ -118,11 +164,16 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
         // This native manager composition currently has only the Zero authority
         // contract. Do not silently translate Go/Hub credentials into Zero work.
         if (verified.surface !== "zero" || verified.audience !== "workforce") throw new Error("credential-audience-invalid");
+        const hasSourceField = Object.prototype.hasOwnProperty.call(verified, "source_session");
+        const hasSource = isSessionSourceReference(verified.source_session);
+        if (hasSourceField && !hasSource) throw new Error("credential-source-invalid");
+        if (typeof verified.session_id !== "string" || !verified.session_id
+          || (!hasSource && verified.session_id.startsWith(derivedWorkforceSessionPrefix))) throw new Error("credential-source-invalid");
         // Copy only verified identity fields, never credentials or arbitrary claims.
         const proof: VerifiedSessionIdentity = { provider: verified.provider, subject: verified.subject, session_id: verified.session_id,
           device_id: verified.device_id, session_revision: verified.session_revision,
           ...(verified.credential_expires_at ? { credential_expires_at: verified.credential_expires_at } : {}),
-          ...(verified.source_session ? { source_session: verified.source_session } : {}) };
+          ...(hasSource ? { source_session: verified.source_session } : {}) };
         const current = await registry.resolveCurrentSession(proof, {
           audience: "workforce", company_id: request.company_id!, actor_id: request.actor_id,
           context_revision: request.context_revision,
@@ -131,7 +182,8 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
           session_id: current.session_id, context_revision: current.context_revision, surface: verified.surface,
           authenticated_identity: { ...proof, audience: "workforce", company_id: current.company_id,
             actor_id: current.actor_id, context_revision: current.context_revision, surface: verified.surface,
-            ...(proof.source_session ? { source_session_required: true } : {}) } };
+            session_proof_type: hasSource ? AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived : AUTHENTICATED_SESSION_PROOF_TYPE.direct,
+            ...(hasSource ? { source_session_required: true } : {}) } };
       } catch { throw new Error("conversation-authentication-failed"); }
     },
   };

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { generateKeyPairSync, sign, verify } from "node:crypto";
+import { createHash, generateKeyPairSync, sign, verify } from "node:crypto";
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -245,35 +245,118 @@ test("canonical DA-derived Zero identity is persisted, fenced and replayed throu
   } finally { await f.close(); }
 });
 
-test("restored source-derived run missing source reference fails closed before recovery admission", { timeout: 5000 }, async () => {
-  const f = await fixture({ adapterTimeoutMs: 30 });
+async function startTimedOutSourceDerivedRun(f: Awaited<ReturnType<typeof fixture>>) {
   let enter!: () => void;
   let release!: () => void;
+  let leave!: () => void;
   const entered = new Promise<void>(resolve => { enter = resolve; });
   const blocked = new Promise<void>(resolve => { release = resolve; });
+  const exited = new Promise<void>(resolve => { leave = resolve; });
+  const identity = await f.workforceZero();
+  const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
+    session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+  f.beforeComplete(async signal => {
+    enter();
+    try { await blocked; } finally { leave(); }
+    signal?.throwIfAborted();
+  });
+  const response = await f.post(input, identity.authorization);
+  assert.equal(response.status, 200, JSON.stringify(response.body));
+  assert.ok(response.body.continuation_token);
+  await entered;
+  assert.equal(await f.executionStateCount("UNCERTAIN"), 1);
+  return { identity, input, response, release, exited };
+}
+
+for (const lineage of ["missing", "malformed", "null"] as const) test(`restored source-derived run with ${lineage} lineage fails closed before recovery admission`, { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 30 });
+  const pending = await startTimedOutSourceDerivedRun(f);
   try {
-    const identity = await f.workforceZero();
-    const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
-      session_id: identity.context.session_id, context_revision: identity.context.context_revision };
-    f.beforeComplete(async signal => { enter(); await blocked; signal?.throwIfAborted(); });
-    const first = await f.post(input, identity.authorization);
-    assert.equal(first.status, 200, JSON.stringify(first.body));
-    await entered;
-    release();
+    pending.release();
+    await pending.exited;
     await new Promise<void>(resolve => setTimeout(resolve, 25));
     assert.equal(f.nativeInvocations, 0);
     await f.restart();
-    const restored = await f.post(input, identity.authorization);
+    const restored = await f.post(pending.input, pending.identity.authorization);
     assert.ok(restored.body.continuation_token);
     const run = (await f.run())[0];
     assert.equal(run.authenticated_identity.source_session_required, true);
-    delete run.authenticated_identity.source_session;
+    assert.equal(run.authenticated_identity.session_proof_type, "titan.workforce.source-session/v1");
+    if (lineage === "missing") delete run.authenticated_identity.source_session;
+    else if (lineage === "null") run.authenticated_identity.source_session = null;
+    else run.authenticated_identity.source_session = { ...run.authenticated_identity.source_session, schema: "invalid-session-source/v1" };
     await f.control.query("UPDATE agent_runs SET payload=$1 WHERE company_id='a' AND run_id=$2", [JSON.stringify(run), run.run_id]);
-    const observed = await f.post({ ...input, action: "resume", continuation_token: restored.body.continuation_token }, identity.authorization);
+    const observed = await f.post({ ...pending.input, action: "resume", continuation_token: restored.body.continuation_token }, pending.identity.authorization);
     assert.notEqual(observed.status, 200, JSON.stringify(observed.body));
-    assert.equal(f.nativeInvocations, 0, "missing durable lineage is rejected before any recovery provider call");
+    assert.equal(f.nativeInvocations, 0, `${lineage} durable lineage is rejected before any recovery provider call`);
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
     assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
-  } finally { release(); await f.close(); }
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+    assert.equal(await f.executionStateCount("UNCERTAIN"), 1);
+  } finally { pending.release(); await f.close(); }
+});
+
+for (const change of ["source-revoke", "source-company-switch"] as const) test(`restored source-derived run rejects ${change} after restart before recovery`, { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 30 });
+  const pending = await startTimedOutSourceDerivedRun(f);
+  try {
+    pending.release();
+    await pending.exited;
+    await new Promise<void>(resolve => setImmediate(resolve));
+    await f.restart();
+    if (change === "source-revoke") {
+      await f.registry.revokeSession(pending.identity.da.context.session_id, pending.identity.da.context.session_revision);
+    } else {
+      await pending.identity.sourceService.switchCompany(pending.identity.da.credential, { company_id: "a", device_id: "device" }, "b");
+    }
+    const observed = await f.post({ ...pending.input, action: "resume", continuation_token: pending.response.body.continuation_token }, pending.identity.authorization);
+    assert.equal(observed.status, 401, JSON.stringify(observed.body));
+    assert.equal(f.nativeInvocations, 0);
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+    assert.equal(await f.executionStateCount("VERIFIED"), 0);
+    assert.equal(await f.executionStateCount("UNCERTAIN"), 1);
+    assert.equal(await f.status(), "in_progress");
+  } finally { pending.release(); await f.close(); }
+});
+
+test("legacy ordinary session replays and continues after proof-type upgrade and restart", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  try {
+    const originalInput = { ...f.input, text: "What should happen next?" };
+    const initial = await f.post({ text: originalInput.text });
+    assert.equal(initial.status, 200, JSON.stringify(initial.body));
+    assert.ok(initial.body.continuation_token);
+    const runRow = (await f.control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'")).rows[0]!;
+    const run = JSON.parse(runRow.payload);
+    assert.equal(run.authenticated_identity.session_proof_type, "titan.workforce.session/v1");
+    delete run.authenticated_identity.session_proof_type;
+    await f.control.query("UPDATE agent_runs SET payload=$1 WHERE company_id='a' AND run_id=$2", [JSON.stringify(run), run.run_id]);
+    const workRow = (await f.control.query<{ payload: string }>("SELECT payload FROM workforce_work_items WHERE company_id='a' AND work_id='zero:conversation:message'")).rows[0]!;
+    const work = JSON.parse(workRow.payload);
+    delete work.origin.authenticated_identity.session_proof_type;
+    const correlationKeys = ["request_id", "operation_id", "trace_id", "idempotency_key", "session_id", "context_revision", "authenticated_identity"] as const;
+    const legacyCorrelation = Object.fromEntries(correlationKeys
+      .filter(key => work.origin[key] !== undefined)
+      .map(key => [key, key === "authenticated_identity"
+        ? Object.fromEntries(Object.entries(work.origin.authenticated_identity).sort(([a], [b]) => a.localeCompare(b)))
+        : work.origin[key]]));
+    work.origin.dispatch_fingerprint = createHash("sha256").update(JSON.stringify({
+      text: work.objective, interaction_id: originalInput.interaction_id, correlation_id: work.origin.correlation_id,
+      requested_agent_id: null, ...legacyCorrelation,
+    })).digest("hex");
+    await f.control.query("UPDATE workforce_work_items SET payload=$1 WHERE company_id='a' AND work_id='zero:conversation:message'", [JSON.stringify(work)]);
+
+    await f.restart();
+    const replay = await f.post({ text: originalInput.text });
+    assert.equal(replay.status, 200, JSON.stringify(replay.body));
+    assert.ok(replay.body.continuation_token);
+    const resumed = await f.post({ action: "continue", continuation_token: replay.body.continuation_token,
+      client_message_id: "legacy-reply", interaction_id: "legacy-reply-interaction", text: "complete work order wo" });
+    assert.equal(resumed.status, 200, JSON.stringify(resumed.body));
+    assert.equal(await f.status(), "completed");
+    assert.equal(f.nativeInvocations, 1);
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
+  } finally { await f.close(); }
 });
 
 test("host rejects missing, forged, wrong-audience and caller-altered bound identity before creating work", async () => {
@@ -286,6 +369,7 @@ test("host rejects missing, forged, wrong-audience and caller-altered bound iden
     assert.deepEqual(rejection.body, { error: "conversation-authentication-failed" });
     assert.ok(!JSON.stringify(rejection.body).includes(original[1]));
     assert.equal((await f.post({}, f.credential({ audience: "other" }))).status, 401);
+    assert.equal((await f.post({}, f.credential({ source_session: null }))).status, 401, "malformed lineage cannot be normalized into an ordinary session");
     for (const field of ["company_id", "actor_id", "device_id", "session_id", "context_revision", "surface"]) {
       const response = await f.post({ [field]: field === "surface" ? "hub" : "foreign" }); assert.ok([401, 409].includes(response.status), `${field}: ${JSON.stringify(response)}`);
     }

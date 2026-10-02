@@ -5,10 +5,17 @@ export type WorkerId = string;
 export type WorkerKind = "digital" | "human";
 export type WorkState = "CREATED" | "READY" | "CLAIMED" | "IN_PROGRESS" | "BLOCKED" | "WAITING" | "WAITING_APPROVAL" | "WAITING_EXTERNAL" | "COMPLETED" | "FAILED" | "CANCELLED";
 import type { SessionSourceReference } from "../../../packages/titan-platform/src/security-boundary.js";
+export const AUTHENTICATED_SESSION_PROOF_TYPE = {
+ direct: "titan.workforce.session/v1",
+ sourceDerived: "titan.workforce.source-session/v1",
+} as const;
+export type AuthenticatedSessionProofType = typeof AUTHENTICATED_SESSION_PROOF_TYPE[keyof typeof AUTHENTICATED_SESSION_PROOF_TYPE];
 export interface AuthenticatedWorkIdentity {
  provider: string; subject: string; session_id: string; device_id: string; session_revision: number;
  audience: string; company_id: string; actor_id: string; context_revision: string; surface: string;
  credential_expires_at?: string; source_session?: SessionSourceReference; source_session_required?: boolean;
+ /** New identities persist the proof class; absence is legacy stored identity data. */
+ session_proof_type?: AuthenticatedSessionProofType;
 }
 export interface WorkCorrelation { authenticated_identity?: AuthenticatedWorkIdentity; request_id?: string; operation_id?: string; trace_id?: string; idempotency_key?: string; session_id?: string; context_revision?: string | number; }
 export interface WorkOrigin extends WorkCorrelation { actor_id: string; conversation_id: string; surface?: "zero" | "go" | "hub" | "system"; correlation_id?: string; dispatch_fingerprint?: string; }

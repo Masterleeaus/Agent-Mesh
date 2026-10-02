@@ -2,6 +2,7 @@ import { isDeepStrictEqual } from "node:util";
 import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
 import type {
+  AuthenticatedWorkIdentity as AuthenticatedDispatchIdentity,
   CompanyId,
   WorkId,
   WorkItem,
@@ -11,7 +12,7 @@ import type {
   WorkforceWorkerStore,
   WorkerId,
 } from "./index.js";
-import { WorkforceService } from "./index.js";
+import { AUTHENTICATED_SESSION_PROOF_TYPE, WorkforceService } from "./index.js";
 
 export type { AuthenticatedWorkIdentity as AuthenticatedDispatchIdentity } from "./index.js";
 
@@ -106,6 +107,28 @@ export type ZeroWorkforceDispatchResult = {
 type Continuation = { work_id: WorkId; run_id: string };
 const terminalRuntimeStates = new Set(["COMPLETED", "FAILED", "CANCELLED"]);
 const waitingWorkStates = new Set(["WAITING", "WAITING_APPROVAL", "WAITING_EXTERNAL"]);
+const derivedWorkforceSessionPrefix = "workforce-zero-";
+
+function stripProofMarkers(identity: AuthenticatedDispatchIdentity): AuthenticatedDispatchIdentity {
+  const { session_proof_type: _proofType, source_session_required: _sourceRequired, ...legacyIdentity } = identity;
+  return legacyIdentity;
+}
+
+function isLegacyProofUpgrade(persisted: AuthenticatedDispatchIdentity | undefined, incoming: AuthenticatedDispatchIdentity | undefined): boolean {
+  if (!persisted || !incoming || persisted.session_proof_type !== undefined) return false;
+  if (persisted.source_session_required !== undefined && typeof persisted.source_session_required !== "boolean") return false;
+  const hasSourceField = Object.prototype.hasOwnProperty.call(persisted, "source_session");
+  const hasSource = !!persisted.source_session && typeof persisted.source_session === "object" && !Array.isArray(persisted.source_session);
+  if (hasSourceField && !hasSource) return false;
+  if (persisted.source_session_required === true && !hasSource) return false;
+  if (persisted.source_session_required === false && hasSource) return false;
+  const sourceDerived = hasSource || persisted.source_session_required === true;
+  const derivedId = persisted.session_id.startsWith(derivedWorkforceSessionPrefix);
+  if (derivedId && !sourceDerived) return false;
+  const expectedType = sourceDerived ? AUTHENTICATED_SESSION_PROOF_TYPE.sourceDerived : AUTHENTICATED_SESSION_PROOF_TYPE.direct;
+  return incoming.session_proof_type === expectedType
+    && isDeepStrictEqual(stripProofMarkers(persisted), stripProofMarkers(incoming));
+}
 
 function required(value: unknown, code: string): string {
   const normalized = String(value ?? "").trim();
@@ -358,7 +381,8 @@ export class ZeroWorkforceRuntimeDispatcher {
     if (work.origin?.conversation_id !== input.conversation_id) throw new Error("zero-work-conversation-conflict");
     if (work.origin?.actor_id !== input.actor_id) throw new Error("zero-work-actor-conflict");
     if (work.origin?.surface !== "zero") throw new Error("zero-work-surface-conflict");
-    if (work.origin.authenticated_identity && !isDeepStrictEqual(work.origin.authenticated_identity, input.authenticated_identity)) {
+    if (work.origin.authenticated_identity && !isDeepStrictEqual(work.origin.authenticated_identity, input.authenticated_identity)
+      && !isLegacyProofUpgrade(work.origin.authenticated_identity, input.authenticated_identity)) {
       throw new Error("zero-work-authenticated-identity-conflict");
     }
     for (const key of ["session_id", "context_revision"] as const) {
@@ -378,8 +402,14 @@ export class ZeroWorkforceRuntimeDispatcher {
   }
 
   private assertReplay(work: WorkItem, input: ZeroWorkforceDispatchInput): void {
+    const persistedIdentity = work.origin?.authenticated_identity;
+    const fingerprint = this.fingerprint(input);
+    const legacyFingerprint = persistedIdentity && input.authenticated_identity
+      && isLegacyProofUpgrade(persistedIdentity, input.authenticated_identity)
+      ? this.fingerprint({ ...input, authenticated_identity: persistedIdentity })
+      : undefined;
     if (work.objective !== input.text || (work.origin?.dispatch_fingerprint
-      ? work.origin.dispatch_fingerprint !== this.fingerprint(input)
+      ? work.origin.dispatch_fingerprint !== fingerprint && work.origin.dispatch_fingerprint !== legacyFingerprint
       : work.origin?.correlation_id !== input.correlation_id)) throw new Error("zero-work-replay-conflict");
   }
 
