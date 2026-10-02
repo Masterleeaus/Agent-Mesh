@@ -1,49 +1,71 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import fs from "node:fs";
 import test from "node:test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkMigrationPrefixes, filenamesFromDir, GRANDFATHERED } from "./check-migration-prefixes.mjs";
+import { filenamesFromDir, validateMigrationManifest } from "./check-migration-prefixes.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const migrationDir = path.join(repoRoot, "db", "migrations");
+const manifest = JSON.parse(fs.readFileSync(path.join(migrationDir, "MANIFEST.json"), "utf8"));
+const filenames = filenamesFromDir(migrationDir);
+const readMigration = (filename) => fs.readFileSync(path.join(migrationDir, filename));
 
-test("current grandfathered sets pass", () => {
-  const files = Object.values(GRANDFATHERED).flat();
-  files.push("176_something.sql", "177_invoice_kind_progress.sql");
-  const result = checkMigrationPrefixes(files);
+test("the checked-in manifest freezes the full ordered file set and exact bytes", () => {
+  const result = validateMigrationManifest(manifest, filenames, readMigration);
   assert.equal(result.ok, true, result.errors.join("; "));
+  assert.equal(manifest.entries.length, 204);
+  assert.equal(result.unverifiedHistoryPrefixes.length, 16);
+  assert.ok(manifest.entries.every((entry, index) => entry.sequence === index + 1));
 });
 
-test("unreconciled migration collisions stay explicit until applied-history review", () => {
-  const files = filenamesFromDir(path.join(repoRoot, "db", "migrations"));
-  const result = checkMigrationPrefixes(files);
+test("existing duplicate prefixes resolve only through explicit filename identity and order", () => {
+  for (const collision of manifest.prefix_collisions) {
+    assert.equal(collision.resolution, "immutable-filename-identity-and-explicit-sequence");
+    assert.equal(collision.applied_history, "unverified-no-installation-ledger-snapshot-available");
+  }
+  assert.match(manifest.history_note, /deployed schema_migrations snapshots/);
+});
+
+test("an unregistered file, including a new prefix collision, fails closed", () => {
+  const result = validateMigrationManifest(
+    manifest,
+    [...filenames, "151_new_migration.sql"],
+    readMigration,
+  );
   assert.equal(result.ok, false);
-  assert.deepEqual(result.errors, [
-    "prefix 151 collides: 151_business_pricing_settings.sql, 151_field_completion_evidence.sql",
-    "prefix 152 collides: 152_booking_routing_book_work.sql, 152_field_service_report_acknowledgements.sql",
-    "prefix 177 collides: 177_invoice_kind_progress.sql, 177_workflow_events_reliable_outbox.sql",
-    "prefix 178 collides: 178_notification_delivery_reliability.sql, 178_runtime_login_boundary.sql",
-    "prefix 179 collides: 179_business_memberships.sql, 179_visit_closeout_kind.sql",
-    "prefix 180 collides: 180_complete_job_from_closeout.sql, 180_workforce_skills_availability.sql",
-    "prefix 181 collides: 181_expense_allocation_reviewed.sql, 181_field_job_templates.sql",
-    "prefix 182 collides: 182_field_service_report_deliveries.sql, 182_rls_estimate_change_order_backfill.sql",
-    "prefix 183 collides: 183_rls_subscription_portal_backfill.sql, 183_technician_vehicle_assignments.sql",
-  ]);
+  assert.ok(result.errors.some((error) => /exactly match/.test(error)));
 });
 
-test("a new file on a frozen prefix fails", () => {
-  const files = [...GRANDFATHERED[175], "175_new_thing.sql"];
-  const result = checkMigrationPrefixes(files);
+test("edited migration bytes fail checksum validation", () => {
+  const entry = manifest.entries[0];
+  const result = validateMigrationManifest(
+    manifest,
+    filenames,
+    (filename) => filename === entry.filename ? Buffer.from("changed") : readMigration(filename),
+  );
   assert.equal(result.ok, false);
-  assert.match(result.errors[0], /prefix 175 is frozen/);
+  assert.ok(result.errors.some((error) => error.includes(`content changed without a manifest update: ${entry.filename}`)));
 });
 
-test("a second file on a unique prefix fails", () => {
-  const result = checkMigrationPrefixes(["178_one.sql", "178_two.sql"]);
+test("reordering a collision group or changing its classification fails", () => {
+  const reordered = structuredClone(manifest);
+  const pair = reordered.prefix_collisions[0];
+  pair.files.reverse();
+  const result = validateMigrationManifest(reordered, filenames, readMigration);
   assert.equal(result.ok, false);
-  assert.match(result.errors[0], /prefix 178 collides/);
+  assert.ok(result.errors.some((error) => /classifications do not exactly match/.test(error)));
+
+  const falseHistory = structuredClone(manifest);
+  falseHistory.prefix_collisions[0].applied_history = "historically-applied-pair";
+  const falseResult = validateMigrationManifest(falseHistory, filenames, readMigration);
+  assert.equal(falseResult.ok, false);
+  assert.ok(falseResult.errors.some((error) => /unsupported applied-history claim/.test(error)));
 });
 
-test("seed files and unprefixed names are ignored", () => {
-  const result = checkMigrationPrefixes(["002_seed_dev.sql", "README.sql", "178_ok.sql"]);
-  assert.equal(result.ok, true, result.errors.join("; "));
+test("migration checksums are SHA-256 over the exact SQL bytes", () => {
+  const entry = manifest.entries[0];
+  const actual = createHash("sha256").update(readMigration(entry.filename)).digest("hex");
+  assert.equal(entry.sha256, actual);
 });
