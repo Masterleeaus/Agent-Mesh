@@ -38,4 +38,6 @@ entrypoints; the source tree intentionally does not ship a placeholder SDK.
 The repository's DirectAdmin portfolio builder produces that SDK from the
 shared canonical source using the root lockfile's pinned esbuild dependency,
 then delegates Titan Web assembly to this packager.
+That compiler pin is tracked in the repository package-license audit and
+distribution dependency provenance.
 
