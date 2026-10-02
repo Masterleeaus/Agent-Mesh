@@ -53,9 +53,9 @@ export const FOUNDATION_PRODUCT_SLOTS: readonly CanonicalInputSlot[] = Object.fr
 );
 
 export const FOUNDATION_TIER_SLOTS: readonly CanonicalInputSlot[] = Object.freeze([
-  { slot: 1, label: "Free / Assist", owner_issue: 1042, canonical_ref: null, input_revision: null, disposition: "REFERENCE_PENDING" },
-  { slot: 2, label: "Plus / Semi-autonomous", owner_issue: 1042, canonical_ref: null, input_revision: null, disposition: "REFERENCE_PENDING" },
-  { slot: 3, label: "Pro / Autonomous + predictive", owner_issue: 1042, canonical_ref: null, input_revision: null, disposition: "REFERENCE_PENDING" },
+  { slot: 1, label: "Free / Assist", owner_issue: 1042 as const, canonical_ref: null, input_revision: null, disposition: "REFERENCE_PENDING" as const },
+  { slot: 2, label: "Plus / Semi-autonomous", owner_issue: 1042 as const, canonical_ref: null, input_revision: null, disposition: "REFERENCE_PENDING" as const },
+  { slot: 3, label: "Pro / Autonomous + predictive", owner_issue: 1042 as const, canonical_ref: null, input_revision: null, disposition: "REFERENCE_PENDING" as const },
 ].map((slot) => Object.freeze(slot)));
 
 export const VERTICAL_PROFILE_SLOTS: readonly CanonicalInputSlot[] = Object.freeze(
@@ -69,7 +69,7 @@ export const VERTICAL_PROFILE_SLOTS: readonly CanonicalInputSlot[] = Object.free
   })),
 );
 
-export const DISTRIBUTION_FAMILIES: readonly DistributionFamily[] = Object.freeze([
+const distributionFamilies: DistributionFamily[] = [
   { family_id: "browser-chrome", label: "Google Chrome Web Store", conformance_profile: "BROWSER_EXTENSION", adapter_ids: ["chrome-web-store"] },
   { family_id: "browser-edge", label: "Microsoft Edge Add-ons", conformance_profile: "BROWSER_EXTENSION", adapter_ids: ["edge-add-ons"] },
   { family_id: "browser-firefox", label: "Mozilla Firefox Add-ons", conformance_profile: "BROWSER_EXTENSION", adapter_ids: ["firefox-add-ons"] },
@@ -90,7 +90,8 @@ export const DISTRIBUTION_FAMILIES: readonly DistributionFamily[] = Object.freez
   { family_id: "accounting-xero", label: "Xero", conformance_profile: "ACCOUNTING_DISTRIBUTION", adapter_ids: ["xero"] },
   { family_id: "accounting-quickbooks", label: "QuickBooks Online", conformance_profile: "ACCOUNTING_DISTRIBUTION", adapter_ids: ["quickbooks-online"] },
   { family_id: "ai-host-distribution", label: "AI-host distribution", conformance_profile: "AI_HOST", adapter_ids: ["chatgpt", "claude"] },
-].map((family) => Object.freeze({ ...family, adapter_ids: Object.freeze(family.adapter_ids) })));
+].map((family) => Object.freeze({ ...family, adapter_ids: Object.freeze(family.adapter_ids) }));
+export const DISTRIBUTION_FAMILIES: readonly DistributionFamily[] = Object.freeze(distributionFamilies);
 
 export type ConfigurationCoverageRow = Readonly<{
   configuration_id: string;
@@ -196,7 +197,7 @@ export function buildDistributionCoverageSnapshot(): DistributionCoverageSnapsho
       Object.freeze({ issue: 1068 as const, sha256: "dfcda6d835f92c4709685f6cd0796e0f51ad889f1063ae44f37d641e5370a82f" }),
     ]),
     schema: "titan.distribution-coverage/v1",
-    source_owners: Object.freeze([1042, 719, 1068]),
+    source_owners: Object.freeze([1042, 719, 1068] as const),
     foundation_configurations: Object.freeze(foundationConfigurations),
     adapter_projections: Object.freeze(adapterProjections),
   });
