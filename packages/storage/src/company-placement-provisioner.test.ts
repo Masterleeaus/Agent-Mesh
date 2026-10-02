@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { mkdtemp, mkdir, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createSqliteStorage } from "./sqlite-client.js";
@@ -54,4 +54,28 @@ describe("registered company placement lifecycle", () => {
     expect((await retriedDb.query("SELECT id FROM companies")).rowCount).toBe(1);
     await retriedDb.close();
   });
+  it("rejects replay of a completed provisioning request without duplicating company state", async () => {
+    const f = await fixture();
+    const created = await provisionSqliteCompanyPlacement({
+      registry: f.registry, company_id: "company-replay", company_name: "Replay Company",
+    });
+    await expect(provisionSqliteCompanyPlacement({
+      registry: f.registry, company_id: "company-replay", company_name: "Replay Company",
+    })).rejects.toThrow("company-placement-already-registered");
+
+    const databaseRows = await f.storage.query<{ placement_id: string; status: string }>(
+      "SELECT placement_id,status FROM titan_company_storage_placements WHERE company_id=$1", ["company-replay"],
+    );
+    expect(databaseRows.rows).toEqual([{ placement_id: created.placement_id, status: "READY" }]);
+    const fileRows = await f.storage.query<{ file_placement_id: string; status: string }>(
+      "SELECT file_placement_id,status FROM titan_company_file_placements WHERE company_id=$1", ["company-replay"],
+    );
+    expect(fileRows.rows).toEqual([{ file_placement_id: created.file_placement_id, status: "READY" }]);
+    expect((await readdir(f.registry.companyStoreRoot)).filter(name => name.endsWith(".sqlite"))).toHaveLength(1);
+    expect(await readdir(f.registry.companyFileStoreRoot)).toEqual([created.file_placement_id]);
+    const company = await createSqliteStorage(join(f.registry.companyStoreRoot, `${created.placement_id}.sqlite`));
+    expect((await company.query("SELECT id FROM companies")).rowCount).toBe(1);
+    await company.close();
+  });
+
 });
