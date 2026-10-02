@@ -10,8 +10,9 @@ assert(sw.includes('../workforce/deployment-console-store.js'));
 function load(file,ctx){vm.runInNewContext(fs.readFileSync(path.join(root,file),'utf8'),ctx,{filename:file});}
 const ctx={console,Date,Math,crypto:require('crypto').webcrypto,globalThis:null};ctx.globalThis=ctx;
 load('src/workforce/titan-workforce-gateway.js',ctx);
-assert(ctx.CodeeTitanWorkforceGateway,'gateway missing');
-assert.throws(()=>ctx.CodeeTitanWorkforceGateway.createRequest({company_id:'c1',actor_id:'a1',operation:'client.workforce.assign'}),/operation-denied/);
-const req=ctx.CodeeTitanWorkforceGateway.createRequest({company_id:'company-1',actor_id:'operator-1',operation:'deployment.mission.list',payload:{}});
-assert.equal(req.company_id,'company-1');assert.equal(req.source_surface,'titan_code');assert.equal(req.grants_authority,false);assert(req.idempotency_key);
-console.log('PASS Titan Code existing Workforce workspace expanded in place with deployment console gateway');
+assert(ctx.TitanBrowserNodeWorkforceGateway,'canonical gateway missing');
+assert.strictEqual(ctx.CodeeTitanWorkforceGateway,ctx.TitanBrowserNodeWorkforceGateway,'legacy gateway alias diverged');
+assert.throws(()=>ctx.TitanBrowserNodeWorkforceGateway.createRequest({company_id:'c1',actor_id:'a1',operation:'client.workforce.assign'}),/operation-denied/);
+const req=ctx.TitanBrowserNodeWorkforceGateway.createRequest({company_id:'company-1',actor_id:'operator-1',operation:'deployment.mission.list',payload:{}});
+assert.equal(req.company_id,'company-1');assert.equal(req.source_surface,'titan_browser_node');assert.equal(req.target_domain,'hosted_workforce');assert.equal(req.grants_authority,false);assert(req.idempotency_key);
+console.log('PASS Browser Node deployment console uses the canonical Workforce gateway identity');
