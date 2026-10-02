@@ -134,10 +134,17 @@ export function promoteBrandPublication(publication:BrandPublication,input:{comp
  if(publication.company_id!==req(input.company_id,"company_id"))throw new Error("publication-company-mismatch"); if(publication.status!=="approved")throw new Error("publication-approval-required"); if(publication.source_snapshot_hash!==req(input.approved_snapshot_hash,"approved_snapshot_hash"))throw new Error("publication-snapshot-mismatch");
  return Object.freeze({...publication,environment:"live",status:"published",created_at:input.now??publication.created_at});
 }
-export type BrandRollbackIntent=Readonly<{schema:"titan.brand-rollback-intent/v1";company_id:string;site_id:string;source_publication_id:string;source_version:number;target_publication_id:string;target_version:number;target_snapshot_hash:string;target_routes:readonly string[];surface_intent:SurfaceIntent;state:"proposed";authority_granted:false}>;
+export type BrandRollbackIntent=Readonly<{schema:"titan.brand-rollback-intent/v1";company_id:string;site_id:string;source_publication_id:string;source_version:number;target_publication_id:string;target_version:number;target_snapshot_hash:string;target_routes:readonly string[];idempotency_key:string;surface_intent:SurfaceIntent;state:"proposed";authority_granted:false}>;
+export async function computeBrandRollbackIdempotencyKey(input:{company_id:string;site_id:string;source_publication_id:string;source_version:number;target_publication_id:string;target_version:number;target_snapshot_hash:string}):Promise<string> {
+ const company_id=req(input.company_id,"company_id"),site_id=req(input.site_id,"site_id"),source_publication_id=req(input.source_publication_id,"source_publication_id"),target_publication_id=req(input.target_publication_id,"target_publication_id"),target_snapshot_hash=req(input.target_snapshot_hash,"target_snapshot_hash");
+ if(!Number.isInteger(input.source_version)||!Number.isInteger(input.target_version)||input.target_version<1||input.target_version>=input.source_version)throw new Error("rollback-version-invalid");
+ const identity=JSON.stringify(["titan.brand-rollback-intent/v1",company_id,site_id,source_publication_id,input.source_version,target_publication_id,input.target_version,target_snapshot_hash]);
+ const digest=new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256",new TextEncoder().encode(identity)));
+ return `sha256:${[...digest].map(byte=>byte.toString(16).padStart(2,"0")).join("")}`;
+}
 /** Describes a rollback request for the canonical deployment/execution owner.
  * This function does not mutate publication state or claim the provider changed. */
-export function createBrandRollbackIntent(currentValue:unknown,targetValue:unknown):BrandRollbackIntent {
+export async function createBrandRollbackIntent(currentValue:unknown,targetValue:unknown):Promise<BrandRollbackIntent> {
  if(!record(currentValue)||!record(targetValue))throw new Error("rollback-publication-invalid");
  const company_id=req(currentValue.company_id,"company_id");
  const current=normalizeBrandPublication(currentValue,company_id),target=normalizeBrandPublication(targetValue,company_id);
@@ -145,7 +152,8 @@ export function createBrandRollbackIntent(currentValue:unknown,targetValue:unkno
  if(current.status!=="published"||current.environment!=="live")throw new Error("published-publication-required");
  if(target.status!=="published"||target.environment!=="live")throw new Error("known-good-publication-required");
  if(target.version>=current.version)throw new Error("rollback-target-not-older");
- return Object.freeze({schema:"titan.brand-rollback-intent/v1",company_id,site_id:current.site_id,source_publication_id:current.publication_id,source_version:current.version,target_publication_id:target.publication_id,target_version:target.version,target_snapshot_hash:target.source_snapshot_hash,target_routes:target.route_manifest,surface_intent:createSurfaceIntent(company_id,current.site_id,"rollback"),state:"proposed",authority_granted:false});
+ const idempotency_key=await computeBrandRollbackIdempotencyKey({company_id,site_id:current.site_id,source_publication_id:current.publication_id,source_version:current.version,target_publication_id:target.publication_id,target_version:target.version,target_snapshot_hash:target.source_snapshot_hash});
+ return Object.freeze({schema:"titan.brand-rollback-intent/v1",company_id,site_id:current.site_id,source_publication_id:current.publication_id,source_version:current.version,target_publication_id:target.publication_id,target_version:target.version,target_snapshot_hash:target.source_snapshot_hash,target_routes:target.route_manifest,idempotency_key,surface_intent:createSurfaceIntent(company_id,current.site_id,"rollback"),state:"proposed",authority_granted:false});
 }
 
 export type BrandStudioProjection=Readonly<{schema:"titan.brand-studio.projection/v1";company_id:string;generated_at:string;surfaces:readonly SurfaceDescriptor[];publications:readonly BrandPublication[];authorityGranted:false}>;
@@ -410,15 +418,17 @@ export function reconcileBrandRendererObservation(publication:BrandPublication,p
 
 /** Verifies the known-good publication after a delegated rollback request.
  * An ACK alone remains pending; this never mutates publication or release state. */
-export function reconcileBrandRollbackObservation(intent:BrandRollbackIntent,providerAck:unknown,observation:unknown):BrandRendererReconciliation {
+export async function reconcileBrandRollbackObservation(intent:BrandRollbackIntent,providerAck:unknown,observation:unknown):Promise<BrandRendererReconciliation> {
  try {
   if(!record(intent))throw new Error("rollback-intent-invalid");
-  exactKeys(intent,["schema","company_id","site_id","source_publication_id","source_version","target_publication_id","target_version","target_snapshot_hash","target_routes","surface_intent","state","authority_granted"],["schema","company_id","site_id","source_publication_id","source_version","target_publication_id","target_version","target_snapshot_hash","target_routes","surface_intent","state","authority_granted"]);
+  exactKeys(intent,["schema","company_id","site_id","source_publication_id","source_version","target_publication_id","target_version","target_snapshot_hash","target_routes","idempotency_key","surface_intent","state","authority_granted"],["schema","company_id","site_id","source_publication_id","source_version","target_publication_id","target_version","target_snapshot_hash","target_routes","idempotency_key","surface_intent","state","authority_granted"]);
   if(intent.schema!=="titan.brand-rollback-intent/v1"||intent.state!=="proposed"||intent.authority_granted!==false||
      typeof intent.company_id!=="string"||!intent.company_id.trim()||typeof intent.site_id!=="string"||!intent.site_id.trim()||
      !Number.isInteger(intent.source_version)||!Number.isInteger(intent.target_version)||Number(intent.target_version)<1||Number(intent.target_version)>=Number(intent.source_version)||
      typeof intent.source_publication_id!=="string"||!intent.source_publication_id.trim()||typeof intent.target_publication_id!=="string"||!intent.target_publication_id.trim()||
-     typeof intent.target_snapshot_hash!=="string"||!intent.target_snapshot_hash.trim()||!Array.isArray(intent.target_routes)||intent.target_routes.length===0)throw new Error("rollback-intent-invalid");
+     typeof intent.target_snapshot_hash!=="string"||!intent.target_snapshot_hash.trim()||!Array.isArray(intent.target_routes)||intent.target_routes.length===0||typeof intent.idempotency_key!=="string")throw new Error("rollback-intent-invalid");
+  const expectedKey=await computeBrandRollbackIdempotencyKey({company_id:intent.company_id,site_id:intent.site_id,source_publication_id:intent.source_publication_id,source_version:Number(intent.source_version),target_publication_id:intent.target_publication_id,target_version:Number(intent.target_version),target_snapshot_hash:intent.target_snapshot_hash});
+  if(intent.idempotency_key!==expectedKey)throw new Error("rollback-idempotency-key-mismatch");
   const surface=intent.surface_intent;
   if(!record(surface))throw new Error("rollback-surface-intent-invalid");
   exactKeys(surface,["surface_id","company_id","intent","authorityGranted","delegated_to"],["surface_id","company_id","intent","authorityGranted","delegated_to"]);
@@ -431,3 +441,4 @@ export function reconcileBrandRollbackObservation(intent:BrandRollbackIntent,pro
   return Object.freeze({status:"degraded",reason:"observed-publication-mismatch"});
  }
 }
+
