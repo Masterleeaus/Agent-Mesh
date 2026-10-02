@@ -88,14 +88,14 @@ This file records candidates only. No repository was deleted, archived, renamed,
 
 ### README duplication and portfolio disposition
 
-- `cleanly` and `modules` had identical README content/blob before this pass, but their complete recursive trees differ substantially (11,260 vs 6,305 entries at the reviewed commits). This is a **README duplication**, not a proven repository duplicate. `modules` is documented as the Titan BOS application source. `cleanly` is private and still needs an accurate description of its actual code before any visibility or disposition decision. Neither is a deletion candidate based solely on this comparison.
+- `cleanly` and `modules` had identical README content/blob before this pass, but their complete recursive trees differ substantially (11,260 vs 6,305 entries at the reviewed commits). This is a **README duplication**, not a proven repository duplicate. `modules` is documented as the Titan BOS application source. `cleanly` is private and now has a repository-specific workspace README; its provenance, security, tests, and product boundary still need review before any visibility or disposition decision. Neither is a deletion candidate based solely on this comparison.
 - `Worksuite-Saas---Project-Management-System_Laravel` is a public, large imported third-party codebase. Its README now records vendor provenance and marks it for archive/deletion review. This is a **deletion-review candidate**, not an instruction to delete it. Preserve its vendor attribution and license until the owner decides.
 - `Delivery-Management-Platform` is a distinct, small Laravel application with upstream authorship evident in its README. Keep as a source/provenance archive or assess license and relevance before portfolio promotion. It is not a duplicate of the Titan BOS application.
-- `cleanly` is currently private, so it is not visible in the public portfolio. Decide its intended audience only after its repository-specific README is written.
+- `cleanly` remains private and is not visible in the public portfolio. Its repository-specific README is now in place; decide its intended audience after provenance, security, and product-boundary review.
 
 ### Pass status
 
-Current tree scans confirm the two cleaned Titan BOS source repositories retain an example env file and sanitized template; populated tracked local env files were removed in this pass. A full historical secret scan, credential rotation, complete test/build verification across all repositories, banner creation for every project, repository metadata normalization, and complete 33-repository tree/history comparison are still outstanding.
+Current tree scans confirm the two cleaned Titan BOS source repositories retain an example env file and sanitized template; populated tracked local env files were removed in this pass. A full historical secret scan, credential rotation, complete test/build verification across all repositories, repository metadata normalization, and complete 33-repository tree/history comparison are still outstanding. Banner coverage is 31 of 33; the two near-empty deletion candidates remain unbranded.
 
 
 ## Additional findings — portfolio visibility pass
@@ -103,7 +103,7 @@ Current tree scans confirm the two cleaned Titan BOS source repositories retain 
 ### README and banner inventory
 
 - Rechecked all 33 repositories: each default branch has a README, and no byte-for-byte duplicate README remains. This does not certify content accuracy or runtime completeness.
-- Wide project-specific banners remain inconsistent. Several READMEs use text-only headers; the Worksuite import had a placeholder-host image URL added during triage and it is not a finished banner. Replace it with a real, appropriately licensed, project-specific asset or remove it before presenting that repo.
+- Banner coverage is now complete for 31 of 33 repositories. `cleanhub` and `cleanhub2` remain intentionally unbranded while they are deletion-review candidates. Worksuite now has a checked-in portfolio banner; inherited product artwork within its README still requires provenance review.
 
 ### Explicit repository disposition shortlist
 
@@ -121,7 +121,7 @@ No repositories were deleted or archived. The table marks candidates for the own
 
 ### Banner quality correction
 
-The Worksuite README currently uses a placeholder external graphic, not a genuine project banner. It should not be counted as a completed banner. The portfolio requirement remains project-specific, accurate imagery with valid repository-relative or otherwise controlled asset hosting.
+Worksuite now uses a checked-in repository-relative portfolio banner. This resolves the earlier external-banner issue; review other inherited vendor artwork separately for provenance and license.
 
 
 ### Branch and release checks for placeholder candidates
