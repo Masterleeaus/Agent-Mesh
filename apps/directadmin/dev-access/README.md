@@ -12,7 +12,7 @@ Current implemented slice:
 - Read/verify/build-test terminal allowlist only; shell chaining, redirection, Git mutation, package installation, destructive and privileged commands are rejected.
 - 30-second command timeout and a true 512 KiB streaming output ceiling that terminates over-limit processes.
 - Copyable diagnostics with token/password/cookie/private-key redaction.
-- DirectAdmin CLI request handling for bounded environment POST fields and optional `pipe_post=yes` stdin bodies, with strict duplicate/array/malformed-input rejection and the installed `csrf` field name.
+- DirectAdmin CLI request handling for bounded raw POST bodies from the `POST` environment value or stdin selected by `pipe_post=yes`; exploded per-field environment values fail closed. The parser rejects duplicate/array/malformed input and uses the installed `csrf` field name.
 - Effective-user-bound HOME validation for DirectAdmin CLI requests, including account-scoped CSRF tokens.
 - PHP 7.4.0 minimum from the production argv-form `proc_open` call; the no-setup hosted PHP workflow currently verifies PHP 8.3.6, and the DirectAdmin-selected CLI version still needs host confirmation.
 - Read-only canonical Server Node health projection from the fixed loopback `/v1/status` endpoint; malformed, oversized or unavailable responses fail closed.

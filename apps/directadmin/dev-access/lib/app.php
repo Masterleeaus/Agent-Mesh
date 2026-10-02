@@ -113,26 +113,6 @@ function directadmin_validate_form_content_type(){
   throw new RuntimeException('Unsupported form content type.');
  }
 }
-function directadmin_fields_from_environment($expectedLength){
- $environment=getenv();
- if(!is_array($environment)) throw new RuntimeException('Unable to read request environment.');
- $allowed=directadmin_post_field_names(); $fields=[];
- foreach($environment as $name=>$value){
-  $lower=strtolower((string)$name);
-  foreach($allowed as $field){
-   if($lower===$field){
-    if($name!==$field||array_key_exists($field,$fields)||!is_string($value)) throw new RuntimeException('Ambiguous environment form field.');
-    $fields[$field]=$value;
-    break;
-   }
-   if(strncmp($lower,$field.'[',strlen($field)+1)===0) throw new RuntimeException('Array form fields are not allowed.');
-  }
- }
- $fields=directadmin_validate_post_fields($fields);
- if($expectedLength===null) throw new RuntimeException('Missing environment form length.');
- if(strlen(http_build_query($fields,'','&',PHP_QUERY_RFC1738))!==$expectedLength) throw new RuntimeException('Environment form length mismatch.');
- return $fields;
-}
 function directadmin_fields_from_stdin($expectedLength){
  directadmin_validate_form_content_type();
  $stream=@fopen('php://stdin','rb');
@@ -166,7 +146,7 @@ function directadmin_fields_from_request(){
   if($length!==null&&$length!==strlen($marker)) throw new RuntimeException('Request body length mismatch.');
   return directadmin_parse_form_body($marker);
  }
- return directadmin_fields_from_environment($length);
+ throw new RuntimeException('Raw DirectAdmin POST body is unavailable.');
 }
 function bootstrap_directadmin_request($role='admin'){
  if(!in_array($role,['admin','reseller','user'],true)) $role='user';
