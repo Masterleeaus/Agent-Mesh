@@ -69,15 +69,25 @@ Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-num
 
 ## Mission closure evidence
 
-If this PR completes the entire mission, use `Closes #<issue>` only after every issue acceptance criterion is satisfied. If it is a partial slice, use `Refs #<issue>` and leave the mission open.
+If this PR completes the entire mission, use `Closes #<issue>` only after every issue acceptance criterion is satisfied. A partial slice normally uses `Refs #<issue>` and leaves it open. For a small, independently executable remainder blocked outside this branch, use the bounded handoff procedure in root `AGENTS.md`: create a successor issue first that preserves all unmet criteria, keep this PR non-closing, merge the verified slice on the existing claim branch, then record the handoff and close the original issue after merge. This is an administrative handoff, never a claim of full completion.
 
-For a closing PR, map each criterion individually:
+Use the standard `mission-evidence` JSON record from either PR template and follow
+[Mission closure evidence](MISSION_CLOSURE_EVIDENCE.md). Enumerate the current issue's
+required outcomes, acceptance, Done condition and verification items individually;
+map each to implementation paths and executed check records. Bind evidence to the
+current issue body digest. Record every unrun/failed/blocked check, live-host status,
+remaining work and residual risk. Such gaps require non-closing `Refs`.
 
-| Issue acceptance criterion | Implementation path(s) | Verification command/evidence | Result |
-|---|---|---|---|
-| <copy criterion> | <files/PR section> | <exact command or observable evidence> | <pass / blocked> |
+Classify the issue's outcome as planning/specification, implementation, integration
+or certification. A specification or contract milestone cannot finish an
+implementation or certification mission. Green CI, a commit or provider
+acknowledgement alone is insufficient. The human reviewer must compare actual
+implementation and evidence with the full current issue and Done condition;
+mechanical format validation cannot determine semantic sufficiency.
 
-List every unrun required check, live-host check still needed, residual risk, and follow-up issue. A checklist or CI can verify that this table is present, but a reviewer must decide whether its evidence proves the full mission Done condition. See the root `AGENTS.md` mission closure gate.
+For premature closure, reopen when authorized and possible or link an implementation
+follow-up preserving all unmet original criteria. Use `SUPERSEDED` only for genuinely
+replaced work with its successor link, never as a shortcut around missing evidence.
 
 ## Completion report
 Return:

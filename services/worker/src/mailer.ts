@@ -24,16 +24,22 @@ export async function sendEmail(opts: {
   subject: string;
   html: string;
   text?: string;
-}): Promise<{ ok: boolean; error?: string }> {
+}): Promise<{ ok: boolean; error?: string; providerMessageId?: string; deliveryOutcome?: "not-sent" | "unknown" }> {
   if (!isEmailConfigured()) {
-    return { ok: false, error: "Email not configured" };
+    return { ok: false, error: "Email not configured", deliveryOutcome: "not-sent" };
   }
   try {
     const from = process.env.SMTP_FROM ?? process.env.SMTP_USER!;
-    await getTransporter().sendMail({ from, ...opts });
-    return { ok: true };
+    const info = await getTransporter().sendMail({ from, ...opts });
+    return { ok: true, providerMessageId: info.messageId };
   } catch (err) {
-    return { ok: false, error: (err as Error).message };
+    // A timeout/disconnect may occur after SMTP accepted DATA. Only an explicit
+    // rejection proves that another delivery attempt cannot duplicate a send.
+    const failure = err as { message?: string; code?: string; responseCode?: number; command?: string };
+    const rejected = failure.code === "EAUTH" || failure.code === "EENVELOPE" ||
+      (Number.isInteger(failure.responseCode) && failure.responseCode! >= 400 && failure.responseCode! <= 599 &&
+        /^(?:MAIL FROM|RCPT TO|DATA)(?:\s|$)/.test(failure.command ?? ""));
+    return { ok: false, error: failure.message ?? "SMTP delivery failed", deliveryOutcome: rejected ? "not-sent" : "unknown" };
   }
 }
 

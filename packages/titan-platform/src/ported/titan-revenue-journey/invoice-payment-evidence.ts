@@ -111,6 +111,9 @@ export function buildInvoicePaymentJourneyEvidence(input: Readonly<Record<string
   if (lifecycle.schema !== REVENUE_INVOICE_PAYMENT_LIFECYCLE_SCHEMA) throw new TypeError('revenue-invoice-payment-lifecycle-schema-invalid');
   if (lifecycle.company_id !== companyId) throw new TypeError('revenue-invoice-payment-cross-company-lifecycle');
 
+  const invoiceState = lifecycle.invoice_state;
+  if (!invoiceState) throw new TypeError('revenue-invoice-payment-invoice-state-required');
+
   const reconciliationVerified = input.reconciliation_verified === true;
   const paymentState = clean(lifecycle.payment_state);
   if (reconciliationVerified && paymentState !== 'settled') {
@@ -146,7 +149,7 @@ export function buildInvoicePaymentJourneyEvidence(input: Readonly<Record<string
     upstream_origin: upstreamOrigin,
     invoice: Object.freeze({
       invoice_id: lifecycle.invoice_id,
-      state: lifecycle.invoice_state,
+      state: invoiceState,
       source_domain: invoiceSourceDomain,
       source_ref: invoiceSourceRef,
       canonical_owner: invoiceOwner.canonicalOwner,

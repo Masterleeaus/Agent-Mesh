@@ -1,0 +1,15 @@
+{
+  "name": "@titan-zero/pwa",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Single Titan Zero/Go/Hub installable PWA shell and safe client boundaries",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "node --check src/scope.mjs && node --check src/api-client.mjs && node --check public/app.mjs && node --check public/sw.js && node --check scripts/build.mjs && node --check tests/browser-regression.test.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1"
+  }
+}

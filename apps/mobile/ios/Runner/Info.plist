@@ -45,5 +45,27 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Titan uses the camera for company-scoped field evidence.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Titan uses the microphone for optional voice interactions.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Titan uses location for authorized field navigation and job context.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Titan uses photos for company-scoped field evidence.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Titan saves captured field evidence when requested.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Titan discovers explicitly paired local Edge devices; discovery never establishes trust.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_titan-edge._tcp</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>
+

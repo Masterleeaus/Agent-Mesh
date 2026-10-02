@@ -39,7 +39,7 @@ test("creates an authority-neutral company-scoped surface projection", () => {
   const projection = commandProjection();
 
   assert.equal(projection.company_id, "company-01");
-  assert.equal(projection.surface, "command");
+  assert.equal(projection.surface, "zero");
   assert.equal(projection.authority_neutral, true);
   assert.equal(projection.capabilities.length, 2);
   assert.ok(Object.isFrozen(projection));
@@ -124,7 +124,7 @@ test("shared client reads a projection and submits only validated intents", asyn
   const projection = commandProjection();
   const transport = {
     async getProjection(request) {
-      assert.deepEqual(request, { company_id: "company-01", surface: "command" });
+      assert.deepEqual(request, { company_id: "company-01", surface: "zero" });
       return projection;
     },
     async submitCommand(intent) {
