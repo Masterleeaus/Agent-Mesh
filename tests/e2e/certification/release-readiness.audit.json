@@ -21,7 +21,7 @@
   ],
   "delivery_board": {
     "schema": "titan.directadmin-plugin-delivery-board/v1",
-    "observed_at": "2026-10-02T16:05:25Z",
+    "observed_at": "2026-10-02T16:26:04Z",
     "source_of_truth": "GitHub issue/claim branch/PR/CI; parent-supplied observations are labeled. This snapshot is not a second task ledger.",
     "scope": "Only the three DirectAdmin plugins and immediate identity, runtime, authority, relay, and CI blockers.",
     "basis": {
@@ -30,7 +30,7 @@
       "readiness_pr": 1178,
       "readiness_branch": "agent/issue-1172",
       "pr_state_before_update": "OPEN_DRAFT",
-      "head_before_update": "18f11ab8910f181e13a217502f2ed8c93b71ab93",
+      "head_before_update": "af3a7f8e49b5533dc329e54bfd7be8a51093d1ee",
       "issue_assignees": [],
       "claim_check": "Existing workspace branch; no competing #1172 branch observed.",
       "existing_28_area_audit_source_commit": "d508a2695fccc36e039f18e60cb96adfbe318813",
@@ -45,7 +45,8 @@
       "One owner per canonical GitHub issue; exact agent/issue-N branch and PR are the claim/status record. Do not duplicate issues or implementation work; do not invent completion percentages.",
       "Sequence: verify the existing Portal candidate and safe commands → establish the authenticated private Business Node gateway → prove one company-scoped governed Workforce action with a durable, independently verified receipt.",
       "Partial PRs, green fixtures, REQUESTED receipts, and fail-closed 503s do not close missions. Keep parent issues open until full acceptance/deployment proof; use Refs for partial work.",
-      "Keep the RAW relay fail-closed. No credential or network changes without explicit authorization. Refresh this snapshot on material owner/CI/deployment events, not routine polling."
+      "Keep the RAW relay fail-closed. No credential or network changes without explicit authorization. Refresh this snapshot on material owner/CI/deployment events, not routine polling.",
+      "PARENT_REPORTED: #1255/#1257 recovery-rules implementation is owned by external task 01a0fd2e-59f8-77c3-ae79-676547aec0bd. Task 01a0fd4d-0777-7635-bb4e-f6b47bda0018 is the independent reviewer only and has stopped duplicate edits; it is not the implementation owner or a DirectAdmin plugin owner."
     ],
     "plugins": [
       {
@@ -285,7 +286,7 @@
           "business-node",
           "workforce"
         ],
-        "note": "PR #1204/#1243 remain partial merged SDK/session-bridge source. GitHub confirms open draft PR #1252 at 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; its body reports 92 focused tests, and exact-head Mission Closure Evidence Gate, Titan Zero CI and Source Evidence Index checks pass. PARENT_REPORTED: independent route security review and Node 22 reviewer CI passed 92/92 at earlier head 19893cac161e2cbdd3c839b0f051072cc97d1031 with no blocking finding. That review/test evidence is for the earlier head; the GitHub review list is empty. The trusted #302 assertion producer and #811/#812 host/page composition remain absent; no host commissioning or deployment is evidenced.",
+        "note": "PR #1204/#1243 remain partial merged SDK/session-bridge source. GitHub confirms open draft PR #1252 at 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; its body reports 92 focused tests, and exact-head Mission Closure Evidence Gate, Titan Zero CI and Source Evidence Index checks pass. PARENT_REPORTED: independent source-blob comparison confirmed the gateway/bridge code is identical between 19893cac161e2cbdd3c839b0f051072cc97d1031 and 2006836d0ced2226f0d34585e1e3ba7b7e0b4d73; the non-blocking route security review and Node 22 reviewer CI 92/92 at the earlier head therefore carry over to the same code. This is source/test evidence, not host commissioning. The trusted #302 assertion producer and #811/#812 host/page composition remain absent.",
         "dependencies": [
           "#302 canonical current-session/company identity"
         ],
@@ -335,18 +336,18 @@
           "packages/titan-platform/src/mission-authority-policy.ts",
           "packages/titan-platform/src/workforce-trust/**"
         ],
-        "next_action": "PR #1253 has advanced to exact head 4000f2c9128efc609fbc2f24dfa34c3139863cae. GitHub currently shows its workforce, cleaning-convergence, mobile, source-index, SQLite-compose/build and validate checks in progress, while Mission Closure Evidence Gate has failed. The PR body still reports six focused SQLite tests at the earlier cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff head; the #640 owner must align evidence with the current head, resolve the gate failure, and wait for exact-head checks/review before merge. Keep #640 open and treat this as a bounded slice only.",
+        "next_action": "PR #1253 current head is 46e36435f620c3777450a8259a3c31208699c94e. PARENT_REPORTED and verified from run 37030700194/job 110916486687: at prior head 4000f2c9128efc609fbc2f24dfa34c3139863cae, hosted Workforce typecheck and full suite passed 52/52, including seven owner tests. The separate Mission Closure Evidence Gate failure at that head was for partial Refs wording, not the hosted test result. Current-head GitHub checks show Mission Closure Evidence Gate, workforce, cleaning-convergence, mobile and source-index passed; validate and sqlite-compose-and-build remain in progress. The PR body still names the prior exact head. Next: finish the two current-head checks, align the PR body/evidence to 46e36435, then obtain independent review; keep #640 open.",
         "active_branch": {
           "branch": "agent/issue-640",
-          "head": "4000f2c9128efc609fbc2f24dfa34c3139863cae"
+          "head": "46e36435f620c3777450a8259a3c31208699c94e"
         },
         "active_pr": {
           "number": 1253,
           "state": "OPEN_DRAFT",
           "branch": "agent/issue-640",
-          "head": "4000f2c9128efc609fbc2f24dfa34c3139863cae"
+          "head": "46e36435f620c3777450a8259a3c31208699c94e"
         },
-        "note": "GitHub confirms PR #1253 current head 4000f2c9128efc609fbc2f24dfa34c3139863cae with checks in progress and Mission Closure Evidence Gate failed. The PR body remains pinned to cd2d8f2ffe069fe1f7ccf911776702f90cbc01ff and reports six real SQLite tests plus broader suite failures caused by environment/build-path limitations; these counts are not current-head evidence. No GitHub review is posted. No production credentials, grants, or host commissioning are evidenced."
+        "note": "Issue #640 remains OPEN on agent/issue-640. At prior PR #1253 head 4000f2c9128efc609fbc2f24dfa34c3139863cae, hosted Workforce typecheck and the full suite passed 52/52, including seven owner tests (parent-reported; job 110916486687 in run 37030700194 completed successfully). A separate Mission Closure Evidence Gate failure at that head concerned partial Refs wording. PR #1253 has since advanced to 46e36435f620c3777450a8259a3c31208699c94e; current-head gate, workforce, cleaning-convergence, mobile and source-index checks pass, while validate and sqlite-compose-and-build are still running. The PR body still declares 4000f2 as exact head. No production credentials, grants, or host commissioning are evidenced."
       },
       {
         "id": "hosted-ci",
