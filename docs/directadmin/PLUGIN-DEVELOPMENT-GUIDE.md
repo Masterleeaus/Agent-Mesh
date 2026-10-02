@@ -213,8 +213,10 @@ and a contribution registry that degrades invalid plugins independently. Its
 diagnostic redactor removes credential-like fields and common bearer/private-key
 values before a support bundle is rendered or exported.
 
-The caller must inject the trusted identity resolver. DirectAdmin session/account
-and role are authentication/presentation inputs only; the SDK refuses missing,
+Hosted routes use `DirectAdminSessionBridge` and `createDirectAdminGateway`, which
+verify a commissioned issuer's signed credential before calling #302's durable
+current-session resolver. The older injected resolver is deprecated presentation
+compatibility, not authentication. DirectAdmin role is presentation only; the SDK refuses missing,
 expired, unresolved, or inconsistent company mappings. `company_id`, actor IDs,
 and revisions carried by the API client are assertions for the Server Node to
 re-resolve. They never authorize an action. Consequential work is submitted as a
@@ -229,11 +231,14 @@ path traversal, noncanonical role routes, mismatched archive identity/version,
 and missing executable modes. This is a reusable contract; it does not itself
 install or certify a plugin on a live DirectAdmin host.
 
-This export is an initial shared-contract foundation. Existing role entrypoints
-have not yet been migrated to consume it, and the repository currently has only
-the Dev Access role-based package. Track actual plugin adoption and cross-plugin
-host validation separately from the presence of this SDK module; do not mark the
-portfolio acceptance criteria complete based on these contracts alone.
+Three source consumers now share the authenticated SDK session/renderer:
+`apps/directadmin/{zero-core,operations-hub,brand-studio}/cockpit.mjs`.
+Their signed-session/SQLite integration tests pass; installed role entrypoints and
+real Evolution host integration are still unverified. See the
+[authenticated session bridge contract](../contracts/directadmin-authenticated-session-bridge.md)
+for credential delivery, CSRF/origin checks, canonical company rotation, execution
+revalidation, exact evidence and remaining prerequisites. Do not equate local
+adapter tests with a commissioned host or completed portfolio migration.
 
 ## 6. Plugin ID and archive naming
 
