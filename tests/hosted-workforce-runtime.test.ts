@@ -245,6 +245,24 @@ test("canonical DA-derived Zero identity is persisted, fenced and replayed throu
   } finally { await f.close(); }
 });
 
+test("restored source-derived identity fails closed when its persisted source reference is missing", async () => {
+  const f = await fixture(); try {
+    const identity = await f.workforceZero();
+    const first = await f.post(f.input, identity.authorization);
+    assert.equal(first.status, 200, JSON.stringify(first.body));
+    assert.equal(f.nativeInvocations, 1);
+    const run = (await f.run())[0];
+    assert.ok(run.authenticated_identity.source_session);
+    run.authenticated_identity.source_session_required = true;
+    delete run.authenticated_identity.source_session;
+    await f.control.query("UPDATE agent_runs SET payload=$1 WHERE company_id='a' AND run_id=$2", [JSON.stringify(run), run.run_id]);
+    await f.restart();
+    const restored = await f.post(f.input, identity.authorization);
+    assert.notEqual(restored.status, 200, JSON.stringify(restored.body));
+    assert.equal(f.nativeInvocations, 1, "missing durable lineage fails before provider invocation");
+  } finally { await f.close(); }
+});
+
 test("host rejects missing, forged, wrong-audience and caller-altered bound identity before creating work", async () => {
   const f = await fixture(); try {
     assert.equal((await f.post({}, null)).status, 401);
