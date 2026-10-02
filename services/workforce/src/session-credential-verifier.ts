@@ -36,8 +36,11 @@ export function createWorkforceSessionCredentialVerifier(
           audience: "workforce",
           surface: "zero" as const,
         });
-      } catch {
+      } catch (error) {
         // Keep tokens, claim values, crypto errors, and registry details private.
+        if (error instanceof Error && error.message === "identity-registry-unavailable") {
+          throw new Error("identity-registry-unavailable");
+        }
         throw new Error("authentication-denied");
       }
     },
