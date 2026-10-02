@@ -46,19 +46,21 @@ A disposable composed HTTP probe used the #812 browser helper and actual `.raw` 
 
 The Fetch gateway is not a listener, CLI or deployment. The launched #811/#812 host owns transport deadlines, rate limits and actual projection/intent owners. A successful SDK response reports `REQUESTED` only; the SDK does not authorize or execute business effects.
 
+The exported support-diagnostics sanitizer removes sensitive object fields and inline Bearer, Basic-authorization, `X-Titan-CSRF`/`csrf` values, JWT-shaped values and PEM private keys. Adversarial tests cover CSRF and Basic credentials embedded in free-form diagnostic messages.
+
 ## Current verification
 
 On the current continuation, after merging current main `14163faa`:
 
-- Package TypeScript test compilation followed by `node --test tests/directadmin-*.test.mjs` — 94/94 passed, including SDK package contracts, fixed DA-to-Workforce handoff invalidation, typed-403 retention, and injected raw/canonical service-failure cases.
-- `node --test tests/security-session-workforce-exchange.test.mjs tests/directadmin-*.test.mjs` after test compilation — 110/110 passed, including canonical child exchange and source switch/revocation coverage.
+- Package TypeScript test compilation followed by `node --test tests/directadmin-*.test.mjs` — 95/95 passed, including SDK package contracts, inline diagnostic-secret redaction, fixed DA-to-Workforce handoff invalidation, typed-403 retention, and injected raw/canonical service-failure cases.
+- `node --test tests/security-session-workforce-exchange.test.mjs tests/directadmin-*.test.mjs` after test compilation — 111/111 passed, including canonical child exchange and source switch/revocation coverage.
 - `PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers node --test packages/titan-platform/tests/directadmin-browser.browser.mjs` — 1/1 passed in system Chromium, including browser Web Crypto revision encoding.
 - `node ../../node_modules/typescript/bin/tsc -p tsconfig.json --noEmit` — passed.
 - A disposable end-to-end relay/SDK/#811 HTTP probe at merged main `14163faa` and relay PR head `9ffef58d` passed: Workforce projection returned for the selected company; the lifecycle owner returned 403; source revocation returned 401 before conversation input validation; work-order completion count stayed zero.
 - Disposable #1183/#1049 integration at #1183 candidate `1158e68f` plus the revised #1049 handoff fixture passed TypeScript and 172/172 focused credential, exchange, bridge and consumer tests; the browser test passed 1/1. Its full package run had 1,054 passed, 72 failed and 2 skipped out of 1,128. The #1049-only full run had 1,052 passed, 72 failed and 2 skipped out of 1,126; failed test names were unchanged in the combined run.
 - `git diff --check` — passed for the current source and documentation changes.
-- The full `node --test --test-reporter=tap ./tests/*.test.mjs` package suite on this branch was attempted after the handoff fix: 1,052 passed, 72 failed and 2 skipped. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
-- Exact-head hosted checks must rerun after publishing the handoff fix. The preceding head `6289e084` passed Mission Closure Evidence Gate, Personal Zero Verification, Titan Zero Source Evidence Index and Titan Zero CI `validate`.
+- The full `node --test --test-reporter=tap ./tests/*.test.mjs` package suite was rerun on this source update: 1,053 passed, 72 failed and 2 skipped out of 1,127. The DirectAdmin-focused suite above passes; no full package test pass is claimed.
+- Hosted checks are recorded per published head in this PR's mission-evidence block. Local results above do not imply hosted or live-host readiness.
 
 ## Remaining acceptance work
 

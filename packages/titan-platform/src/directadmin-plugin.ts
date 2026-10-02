@@ -208,7 +208,7 @@ export type PluginAvailability = Readonly<{
 }>;
 
 const SENSITIVE_KEY = /(?:authorization|token|cookie|csrf|session.?id|secret|password|credential|private.?key|api.?key)/i;
-const SENSITIVE_VALUE = /(?:\bBearer\s+)[A-Za-z0-9._~+/=-]+|-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g;
+const SENSITIVE_VALUE = /\bBearer\s+[A-Za-z0-9._~+/=-]+|\b(?:proxy-)?authorization\s*[:=]\s*Basic\s+[A-Za-z0-9._~+/=-]+|\b(?:x-titan-csrf|csrf(?:[-_]?token)?)\s*[:=]\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s,;]+)|-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/gi;
 export function redactDirectAdminDiagnostics(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(redactDirectAdminDiagnostics);
   if (value !== null && typeof value === "object") {
