@@ -1,6 +1,7 @@
 import { createPublicKey, webcrypto, type KeyObject } from "node:crypto";
 import { lstat, readFile, realpath, stat } from "node:fs/promises";
 import { isAbsolute, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import {
   createSqliteCompanyPlacementRegistry,
   createSqliteCompanyStoreOpener,
@@ -17,6 +18,7 @@ import type { HostedWorkforceDependencies } from "./hosted-runtime.js";
 import { createNativeWorkOrders } from "./native-work-orders.mjs";
 
 type WorkforceEnvironment = Readonly<Record<string, string | undefined>>;
+type DirectAdminDependencies = NonNullable<HostedWorkforceDependencies["directAdmin"]>;
 type PublicAlgorithm = "EdDSA" | "ES256" | "RS256";
 
 function required(environment: WorkforceEnvironment, name: string): string {
@@ -31,6 +33,45 @@ function absolutePath(environment: WorkforceEnvironment, name: string): string {
   const value = required(environment, name);
   if (!isAbsolute(value) || resolve(value) !== value) throw new Error("workforce-production-path-invalid:" + name);
   return value;
+}
+
+/**
+ * Load only the operator-owned #1049/#302 bridge composition. This runtime
+ * owns mounting its existing gateway factory, not issuing assertions, mapping
+ * DirectAdmin identities, or provisioning credentials. No module means the
+ * DirectAdmin route remains disabled; a configured but invalid module fails
+ * startup rather than silently dropping the mount. #302's published producer
+ * requires a host-supplied atomic pre-auth nonce consumer; never replace it with
+ * process-local replay state in this runtime.
+ */
+async function loadDirectAdminDependencies(environment: WorkforceEnvironment): Promise<DirectAdminDependencies | undefined> {
+  const name = "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE";
+  const modulePath = environment[name];
+  if (modulePath === undefined || modulePath === "") return undefined;
+  if (!isAbsolute(modulePath) || resolve(modulePath) !== modulePath) {
+    throw new Error("workforce-production-path-invalid:" + name);
+  }
+
+  let module: Record<string, unknown>;
+  try { module = await import(pathToFileURL(modulePath).href); }
+  catch { throw new Error("workforce-directadmin-dependencies-unavailable"); }
+  const create = module.createWorkforceDirectAdminDependencies;
+  if (typeof create !== "function") throw new Error("workforce-directadmin-dependencies-factory-required");
+
+  let value: unknown;
+  try { value = await create(); }
+  catch { throw new Error("workforce-directadmin-dependencies-unavailable"); }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("workforce-directadmin-dependencies-invalid");
+  }
+  const candidate = value as Record<string, unknown>;
+  if (typeof candidate.publicOrigin !== "string" || typeof candidate.createGateway !== "function") {
+    throw new Error("workforce-directadmin-dependencies-invalid");
+  }
+  return Object.freeze({
+    publicOrigin: candidate.publicOrigin,
+    createGateway: candidate.createGateway as DirectAdminDependencies["createGateway"],
+  });
 }
 
 function algorithm(environment: WorkforceEnvironment, name: string): PublicAlgorithm {
@@ -131,6 +172,7 @@ export async function createWorkforceDependencies(
   const upstreamAlgorithm = algorithm(environment, "WORKFORCE_UPSTREAM_SESSION_ALGORITHM");
   const workforceVerificationKey = await loadPublicKey(environment, "WORKFORCE_SESSION_PUBLIC_KEY_PATH", "WORKFORCE_SESSION_ALGORITHM");
   const upstreamVerificationKey = await loadPublicKey(environment, "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_PATH", "WORKFORCE_UPSTREAM_SESSION_ALGORITHM");
+  const directAdmin = await loadDirectAdminDependencies(environment);
 
   // These files and registry records are commissioned outside this module. The
   // placement owner reads an already migrated registry; it does not initialize it.
@@ -285,6 +327,7 @@ export async function createWorkforceDependencies(
 
     const dependencies: HostedWorkforceDependencies = {
       identityStoragePath,
+      ...(directAdmin ? { directAdmin } : {}),
       credentialVerifier,
       companyPlacementRegistry,
       companyStoreOpener,

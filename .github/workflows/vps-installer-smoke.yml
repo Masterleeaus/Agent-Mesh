@@ -159,7 +159,7 @@ jobs:
             docker compose --env-file .env.vps -f infra/compose.vps.yml \
             -f "$RUNNER_TEMP/workforce-smoke.compose.yml" up -d redis workforce; then
             docker compose --env-file .env.vps -f infra/compose.vps.yml \
-              -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=200 web workforce
+              -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=150 redis web workforce
             exit 1
           fi
           for attempt in $(seq 1 30); do
@@ -168,7 +168,7 @@ jobs:
             fi
             if [[ "$attempt" == 30 ]]; then
               docker compose --env-file .env.vps -f infra/compose.vps.yml \
-                -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=150 workforce
+                -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=150 redis web workforce
               exit 1
             fi
             sleep 2

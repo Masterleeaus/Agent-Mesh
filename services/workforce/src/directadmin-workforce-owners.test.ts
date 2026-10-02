@@ -367,7 +367,7 @@ test("cancellation at the provider boundary stops the transaction and leaves a d
       (error: unknown) => error instanceof DirectAdminWorkforceOutcomeUncertain && error.status === 503);
     assert.equal((await runtime.workforceStore.get("company-a", "work-a"))?.assignee, "worker-old");
     assert.equal((await storage.query("SELECT event_seq FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'", ["company-a", "work-a"])).rowCount, 0);
-    const uncertain = await storage.query<{ payload: string }>(
+    const uncertain = await storage.query(
       "SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'",
       ["company-a"]);
     assert.equal(uncertain.rowCount, 1);
@@ -401,7 +401,7 @@ test("cancellation after reassignment commit reports uncertainty without claimin
     const events = await storage.query("SELECT event_seq,type,payload FROM workforce_events WHERE company_id=$1 AND work_id=$2 AND type='work.reassigned'",
       ["company-a", "work-a"]);
     assert.equal(events.rowCount, 1, JSON.stringify(events.rows));
-    const uncertain = await storage.query<{ id: string; payload: string }>(
+    const uncertain = await storage.query(
       "SELECT id,payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2 AND json_extract(payload,'$.state')='UNCERTAIN'",
       ["company-a", `${REASSIGN_CAPABILITY}:${intent.operation_id}`]);
     assert.equal(uncertain.rowCount, 1);

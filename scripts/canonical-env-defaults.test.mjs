@@ -56,6 +56,12 @@ test("VPS template declares the Workforce commissioning values and trusted key p
   ]) assert.equal(activeValue(env, variable), true, `${variable} must be declared`);
 });
 
+test("optional DirectAdmin module remains inactive until commissioned", () => {
+  const env = read("infra/vps.env.example");
+  assert.equal(activeValue(env, "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE"), false);
+  assert.match(env, /^# WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE=/m);
+});
+
 test("VPS template keeps canonical company storage root and marks legacy booking selector inactive", () => {
   const env = read("infra/vps.env.example");
   assert.match(env, /^DATABASE_DIALECT=sqlite$/m);

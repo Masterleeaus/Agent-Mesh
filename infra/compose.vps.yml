@@ -76,6 +76,7 @@ services:
       WORKFORCE_SQLITE_PATH: /app/runtime/workforce.db
       WORKFORCE_WEB_SQLITE_PATH: /app/web-data/titan-zero.db
       WORKFORCE_DEPENDENCIES_MODULE: /app/services/workforce/src/production-dependencies.ts
+      WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE: ${WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE:-}
       WORKFORCE_IDENTITY_SQLITE_PATH: /app/runtime/identity.db
       WORKFORCE_COMPANY_STORE_ROOT: /app/company-stores
       WORKFORCE_DIRECTADMIN_NODE_ID: ${WORKFORCE_DIRECTADMIN_NODE_ID:?required}
