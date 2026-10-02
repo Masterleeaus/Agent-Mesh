@@ -302,16 +302,15 @@ function exactOrigin(value, expectedOrigin, code) {
   } catch { throw invalidRequest(code); }
 }
 
-function isPrivateAddress(address) {
+function isRemotePrivateAddress(address) {
   if (net.isIPv4(address)) {
     const octets = address.split(".").map(Number);
-    return octets[0] === 10 || octets[0] === 127 ||
+    return octets[0] === 10 ||
       (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
       (octets[0] === 192 && octets[1] === 168);
   }
   if (!net.isIPv6(address)) return false;
   const normalized = address.toLowerCase().split("%", 1)[0];
-  if (normalized === "::1") return true;
   const first = Number.parseInt(normalized.split(":", 1)[0] || "0", 16);
   return (first & 0xfe00) === 0xfc00;
 }
@@ -382,7 +381,7 @@ async function pinnedLookup(url, resolveAddresses = dns.lookup) {
     }
   }
   catch { throw relayError(502, "workforce_unreachable"); }
-  if (!addresses.length || addresses.some((entry) => !isPrivateAddress(entry.address))) {
+  if (!addresses.length || addresses.some((entry) => !isRemotePrivateAddress(entry.address))) {
     throw relayError(502, "workforce_target_not_private");
   }
   return (hostname, options, callback) => {

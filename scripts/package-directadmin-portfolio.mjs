@@ -6,10 +6,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PACKAGE_FILES as SERVER_NODE_PACKAGE_FILES, EXECUTABLE_FILES as SERVER_NODE_EXECUTABLE_FILES } from "./package-directadmin-plugin.mjs";
 import { packageFiles as WORKFORCE_PACKAGE_FILES } from "../apps/directadmin/workforce/tools/package.mjs";
+import { packageFiles as BRAND_STUDIO_PACKAGE_FILES } from "../apps/directadmin/brand-studio/tools/package.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const WORKFORCE_SDK_SOURCE = "packages/titan-platform/src/directadmin-plugin.ts";
-const WORKFORCE_SDK_COMPILER_VERSION = "0.27.3";
+const ROOT_PACKAGE = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+const WORKFORCE_SDK_COMPILER_VERSION = ROOT_PACKAGE.devDependencies?.esbuild;
 const DEVELOPER_PORTAL_EXECUTABLE_FILES = [
   "admin/index.html", "reseller/index.html", "user/index.html",
   "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh",
@@ -18,6 +20,7 @@ export const ENABLED_PLUGINS = [
   { id: "titan-server-node", displayName: "titan-server-node", source: "apps/directadmin/server-node", files: SERVER_NODE_PACKAGE_FILES, executableFiles: SERVER_NODE_EXECUTABLE_FILES },
   { id: "titan_dev_access", displayName: "Developer Portal", legacyDisplayNames: { "1.2.0": "Titan Dev Access" }, source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts"], executableFiles: DEVELOPER_PORTAL_EXECUTABLE_FILES },
   { id: "titan_workforce", displayName: "Titan Workforce", source: "apps/directadmin/workforce", files: WORKFORCE_PACKAGE_FILES, generatedFiles: ["images/sdk.mjs"], executableFiles: ["admin/index.html", "reseller/index.html", "user/index.html", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"], packager: "apps/directadmin/workforce/tools/package.mjs", dependencies: ["titan-server-node"] },
+  { id: "titan_web", displayName: "Titan Web", source: "apps/directadmin/brand-studio", files: BRAND_STUDIO_PACKAGE_FILES, generatedFiles: ["images/sdk.mjs"], executableFiles: ["admin/index.html", "reseller/index.html", "user/index.html", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"], packager: "apps/directadmin/brand-studio/tools/package.mjs", dependencies: ["titan-server-node"] },
 ];
 
 function sha256File(file) {
@@ -79,8 +82,8 @@ function buildCanonicalWorkforceSdk(temporaryDir) {
   };
 }
 
-function runCanonicalWorkforcePackager({ plugin, source, sdkModulePath, temporaryDir }) {
-  const packageOutput = path.join(temporaryDir, "workforce-package");
+function runCanonicalPluginPackager({ plugin, source, sdkModulePath, temporaryDir }) {
+  const packageOutput = path.join(temporaryDir, `${plugin.id}-package`);
   fs.mkdirSync(packageOutput);
   const packager = path.join(ROOT, plugin.packager);
   const result = spawnSync(process.execPath, [packager, "--source-dir", source, "--sdk-module", sdkModulePath, "--output-dir", packageOutput], { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
@@ -132,7 +135,7 @@ function validateArchive(archive, plugin) {
   if (listing.error || listing.status !== 0) throw listing.error ?? new Error(`${plugin.id}: archive cannot be listed`);
   const entries = listing.stdout.split(/\r?\n/).filter(Boolean).map((entry) => entry.replace(/^\.\//, ""));
   if (entries.some((entry) => entry.startsWith("/") || entry.split("/").includes(".."))) throw new Error(`${plugin.id}: archive contains unsafe path`);
-  for (const required of plugin.files) if (!entries.includes(required) && !entries.includes(`${required}/`)) throw new Error(`${plugin.id}: archive missing ${required}`);
+  for (const required of plugin.files) if (!entries.includes(required) && !entries.includes(`${required}/`) && !entries.some((entry) => entry.startsWith(`${required}/`))) throw new Error(`${plugin.id}: archive missing ${required}`);
   for (const executablePath of plugin.executableFiles) if (!entries.includes(executablePath)) throw new Error(`${plugin.id}: archive missing executable ${executablePath}`);
   const details = spawnSync("tar", ["-tvzf", archive], { encoding: "utf8" });
   if (details.error || details.status !== 0) throw details.error ?? new Error(`${plugin.id}: archive metadata cannot be read`);
@@ -148,8 +151,9 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
   const temporaryDir = fs.mkdtempSync(path.join(os.tmpdir(), "titan-da-portfolio-build-"));
   try {
     const workforcePlugin = plugins.find((plugin) => plugin.packager);
+    const sharedSdkRequired = plugins.some((plugin) => plugin.generatedFiles?.includes("images/sdk.mjs"));
     let workforceSdk;
-    if (workforcePlugin) {
+    if (workforcePlugin || sharedSdkRequired) {
       if (workforceSdkModulePath) {
         const sdkPath = path.resolve(workforceSdkModulePath);
         const stat = fs.lstatSync(sdkPath);
@@ -176,14 +180,21 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
       let candidate;
       let sha256;
       if (plugin.packager) {
-        if (plugin.id !== "titan_workforce") throw new Error(`${plugin.id}: unsupported canonical packager ${plugin.packager}`);
-        const packaged = runCanonicalWorkforcePackager({ plugin, source, sdkModulePath: workforceSdk.sdkModulePath, temporaryDir });
+        if (!["titan_workforce", "titan_web"].includes(plugin.id)) throw new Error(`${plugin.id}: unsupported canonical packager ${plugin.packager}`);
+        const packaged = runCanonicalPluginPackager({ plugin, source, sdkModulePath: workforceSdk.sdkModulePath, temporaryDir });
         candidate = packaged.archive;
         sha256 = packaged.sha256;
         validateArchive(candidate, plugin);
       } else {
         const staging = fs.mkdtempSync(path.join(temporaryDir, `${plugin.id}-stage-`));
-        for (const entry of plugin.files) copyValidated(source, staging, entry, new Set(plugin.executableFiles));
+        for (const entry of plugin.files) {
+          if (plugin.generatedFiles?.includes(entry)) {
+            if (entry !== "images/sdk.mjs" || !workforceSdk?.sdkModulePath) throw new Error(`${plugin.id}: unsupported generated package file ${entry}`);
+            const generated = path.join(staging, entry);
+            fs.mkdirSync(path.dirname(generated), { recursive: true });
+            fs.copyFileSync(workforceSdk.sdkModulePath, generated, fs.constants.COPYFILE_EXCL);
+          } else copyValidated(source, staging, entry, new Set(plugin.executableFiles));
+        }
         candidate = path.join(temporaryDir, `${plugin.id}.tar.gz`);
         const tar = spawnSync("tar", ["--sort=name", "--mtime=@0", "--owner=0", "--group=0", "--numeric-owner", "-czf", candidate, "-C", staging, ...plugin.files], { encoding: "utf8" });
         if (tar.error || tar.status !== 0) throw tar.error ?? new Error(tar.stderr || `tar failed for ${plugin.id}`);
@@ -203,7 +214,7 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
         sha256,
         source: plugin.source,
         dependencies,
-        ...(plugin.packager ? { build_inputs: workforceSdk.buildInputs } : {}),
+        ...(plugin.packager || plugin.generatedFiles?.includes("images/sdk.mjs") ? { build_inputs: workforceSdk.buildInputs } : {}),
       });
     }
   } finally {

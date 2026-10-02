@@ -54,7 +54,8 @@ export type SessionCredentialOptions = Trust & Readonly<{
 }>;
 export type IssuedSessionCredential = Readonly<{ credential: string; context: CurrentSessionContext; credential_expires_at: string }>;
 
-/** Allowlisted proof passed by the server-only DirectAdmin bridge. */
+/** Untrusted ambient proof envelope passed by the server-only DirectAdmin
+ * bridge. Runtime validation requires a non-null allowlisted Cookie header. */
 export type DirectAdminBootstrapProofEnvelope = Readonly<{
   origin: string; cookie: string | null; authorization: string | null; csrf_nonce: string;
 }>;
@@ -63,7 +64,8 @@ export type DirectAdminBootstrapContextRequest = DirectAdminExternalSessionIdent
 }>;
 export type DirectAdminBootstrapSelection = Readonly<{ company_id: string; device_id: string }>;
 /** Host supplied atomic one-time nonce consumer. It returns exactly one current
- * company/device context for the authenticated issuer + effective subject. */
+ * company/device context for the authenticated issuer, effective subject,
+ * real operator, role and impersonation provenance. */
 export type DirectAdminBootstrapNonceConsumer = (
   request: DirectAdminBootstrapContextRequest,
 ) => Promise<DirectAdminBootstrapSelection | null>;
@@ -179,15 +181,44 @@ function exactDataProperties(value: object, expectedKeys: readonly string[]): Re
   return result;
 }
 
+const DIRECTADMIN_COOKIE_NAME = /^(?:session|key)$/;
+const COOKIE_TOKEN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+const COOKIE_OCTET = /^[\x21\x23-\x2b\x2d-\x3a\x3c-\x5b\x5d-\x7e]+$/;
+
+/** Keep only the installed DirectAdmin auth cookies and rebuild their header.
+ * Unknown/duplicate cookies are denied so caller-provided ambient cookies do
+ * not reach the configured `/api/session` endpoint. */
+export function directAdminSessionCookieHeader(value: unknown): string {
+  if (typeof value !== 'string' || !value || value.length > 8192 || /[\u0000-\u001f\u007f]/.test(value)) {
+    throw new Error('authentication-denied');
+  }
+  const pairs = value.split(';');
+  if (pairs.length !== 2) throw new Error('authentication-denied');
+  const parsed = new Map<string, string>();
+  for (const pair of pairs) {
+    const part = pair.replace(/^ +| +$/g, '');
+    const separator = part.indexOf('=');
+    if (separator <= 0) throw new Error('authentication-denied');
+    const name = part.slice(0, separator);
+    const cookieValue = part.slice(separator + 1);
+    if (!COOKIE_TOKEN.test(name) || !DIRECTADMIN_COOKIE_NAME.test(name) || !COOKIE_OCTET.test(cookieValue) || parsed.has(name)) {
+      throw new Error('authentication-denied');
+    }
+    parsed.set(name, cookieValue);
+  }
+  const session = parsed.get('session');
+  const key = parsed.get('key');
+  if (parsed.size !== 2 || session === undefined || key === undefined) throw new Error('authentication-denied');
+  return `session=${session}; key=${key}`;
+}
+
 function directAdminBootstrapProof(value: unknown, configuredOrigin: string): DirectAdminBootstrapProofEnvelope {
   try {
     if (value === null || typeof value !== 'object' || Array.isArray(value)) throw new Error();
     const fields = exactDataProperties(value, ['origin', 'cookie', 'authorization', 'csrf_nonce']);
-    if (fields.origin !== configuredOrigin || typeof fields.cookie !== 'string' || !fields.cookie ||
-        fields.cookie.length > 8192 || /[\u0000-\u001f\u007f]/.test(fields.cookie) ||
-        fields.authorization !== null || typeof fields.csrf_nonce !== 'string' ||
+    if (fields.origin !== configuredOrigin || fields.authorization !== null || typeof fields.csrf_nonce !== 'string' ||
         !/^[A-Za-z0-9_-]{43,128}$/.test(fields.csrf_nonce)) throw new Error();
-    return Object.freeze({ origin: configuredOrigin, cookie: fields.cookie, authorization: null,
+    return Object.freeze({ origin: configuredOrigin, cookie: directAdminSessionCookieHeader(fields.cookie), authorization: null,
       csrf_nonce: fields.csrf_nonce });
   } catch {
     throw new Error('authentication-denied');

@@ -30,6 +30,7 @@ on:
       - 'docs/working/issue-1236/environment-inventory.json'
       - 'docs/deployment/README-VPS.md'
       - '.github/workflows/canonical-environment.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -43,6 +44,7 @@ jobs:
         with:
           node-version: 22
       - name: Validate canonical defaults and bootstrap
-        run: |
-          node scripts/environment-inventory.mjs --check
-          node --test scripts/canonical-env-defaults.test.mjs
+        run: node --test scripts/canonical-env-defaults.test.mjs
+      - name: Check whole-tree environment inventory at subproduct gate
+        if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
+        run: node scripts/environment-inventory.mjs --check

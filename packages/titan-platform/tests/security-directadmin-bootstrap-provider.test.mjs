@@ -119,12 +119,35 @@ test('an unauthenticated proof, Basic Authorization, or replayed pre-auth nonce 
   const valid = proof('pre-auth-nonce-for-this-test-000000000000000000000000');
 
   await assert.rejects(f.provider.provide({ ...valid, origin: 'https://attacker.example.test' }), { message: 'authentication-denied' });
+  await assert.rejects(f.provider.provide({ ...valid, cookie: null }), { message: 'authentication-denied' });
   await assert.rejects(f.provider.provide({ ...valid, authorization: 'Basic test-only' }), { message: 'authentication-denied' });
   assert.equal(f.fetchCalls, 0);
   const first = await f.provider.provide(valid);
   await assert.rejects(f.provider.provide(valid), { message: 'authentication-denied' });
   assert.equal(f.fetchCalls, 2);
   assert.notEqual(first.login_assertion, '');
+});
+
+test('bootstrap provider forwards only one canonical session/key cookie pair', async t => {
+  const f = await setupProvider(t);
+  const nonce = 'pre-auth-nonce-for-this-test-000000000000000000000000';
+  for (const cookie of [
+    'session=a; key=b; analytics=c',
+    'session=a; session=b; key=c',
+    'session=a; key=b; key=c',
+    'session=a',
+    'session="quoted"; key=b',
+    'session=a; key=b; __Host-titan-da-session=titan-value',
+    'session=a; key=b\r\nAuthorization: Basic test',
+    `session=${'a'.repeat(8192)}; key=b`,
+  ]) {
+    await assert.rejects(f.provider.provide({ ...proof(nonce), cookie }), { message: 'authentication-denied' });
+  }
+  assert.equal(f.fetchCalls, 0);
+
+  const accepted = { ...proof(nonce), cookie: ' key=test-only=key ; session=test-only-session ' };
+  await f.provider.provide(accepted);
+  assert.equal(f.optionsSeen.init.headers.cookie, 'session=test-only-session; key=test-only=key');
 });
 
 for (const [label, replacement, error] of [
