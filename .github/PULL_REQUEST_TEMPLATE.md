@@ -41,12 +41,12 @@ Exact commands executed:
 ```
 
 Results:
-- [ ] Targeted tests passed
-- [ ] Relevant lint/typecheck/build passed
-- [ ] Integration checks passed when cross-boundary
+- [ ] Smallest relevant test/smoke check passed, when available
+- [ ] Scope compile/build passed when applicable
+- [ ] Focused negative-path check passed when a protected boundary changed
 - [ ] Slice-level compile/build/smoke passed
 - [ ] Focused negative/migration check passed when a protected boundary changed
-- [ ] Full `pnpm gate:fast` / `pnpm gate` run only when `Subproduct gate: run` or required by this slice's risk
+- [ ] Full parent integration/recovery/live-host checks are deferred unless this is the subproduct completion PR
 - [ ] Failure/negative paths were tested where relevant
 - [ ] Any unrun required check is documented below with exact blocker and residual risk
 
