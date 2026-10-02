@@ -4,7 +4,7 @@ This is a **partial, fail-closed implementation**, not production commissioning 
 
 The packaged DirectAdmin relay `0.3.0` is experimental and is not approved for host installation. The source now rejects production relay requests on every hostname with sanitized 503 `cookie_boundary_unverified` before reading a config file or connecting upstream. No v1/v2 file, marker, CGI variable, or request header enables production forwarding. The test suite exercises the relay core with an explicit in-process config-loader injection; the extracted RAW executable uses the disabled production loader. This source correction is not included in package `0.3.0` or Library archive version 4. Version `0.2.0` / Library archive version 3 is historical. Do not install either archive.
 
-The DirectAdmin relay in package version `0.3.0` is **experimental and not approved or recommended for host installation**. Its current same-hostname cookie handling proposal has not been selected as the deployment architecture. The matching relay config is schema v2 and intentionally rejects the older v1 config; version `0.2.0` / Library archive version 3 is historical and must not be described as the current install candidate. The v2 `cookie_boundary` marker is only an assertion in operator config, not evidence of isolation.
+No same-hostname cookie-isolation design has been selected. Existing v1/v2 relay config files and the former `cookie_boundary` marker are ignored by the production RAW handler; test forwarding is available only through explicit in-process dependency injection.
 
 ## Runtime modes and health
 
