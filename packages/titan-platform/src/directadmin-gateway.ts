@@ -1,5 +1,6 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
-  directAdminBridgeFailureKind, matchesDirectAdminContextRevision, type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
+  directAdminBridgeFailureKind, matchesDirectAdminContextRevision, type DirectAdminBootstrapInput,
+  type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
 export type DirectAdminPluginId = 'titan_zero' | 'titan_workforce' | 'titan_operations' | 'titan_web';
@@ -31,6 +32,20 @@ export type DirectAdminGatewayOwners = Readonly<{
   requestIntent: (plugin: DirectAdminPluginId, intent: GovernedIntentRequest,
     context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>,
     withWorkforceZeroSession: WithWorkforceZeroSession) => Promise<{ receipt_id: string }>;
+}>;
+/** Server-only #302 adapter port. It must authenticate DirectAdmin's actual
+ * session proof, validate and consume the one-time bootstrap CSRF nonce, map
+ * the currently selected DirectAdmin company to canonical company_id, and
+ * return a short-lived signed login assertion plus the current device and a
+ * fresh CSRF token. CGI usernames, browser identity fields and DA roles are
+ * never authority. The SDK has no signer, nonce store or identity mapping. */
+export type DirectAdminBootstrapAssertionProvider = Readonly<{
+  provide: (input: Readonly<{
+    origin: string;
+    cookie: string | null;
+    authorization: string | null;
+    csrf_nonce: string;
+  }>) => Promise<DirectAdminBootstrapInput>;
 }>;
 const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
   status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
@@ -66,6 +81,15 @@ function bridgeFailure(error: unknown): Response {
   }
   return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
 }
+function bootstrapFailure(error: unknown): Response {
+  const kind = directAdminBridgeFailureKind(error);
+  if (kind === 'request-rejected' || kind === 'session-rejected') {
+    // Bootstrap never clears a Titan cookie: it is only entered before one
+    // exists, and the bridge rejects requests carrying an existing one.
+    return json(401, { error: 'directadmin-session-rejected', read_only: true });
+  }
+  return json(503, { error: 'directadmin-bootstrap-unavailable', read_only: true });
+}
 async function body(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json' || request.headers.has('content-encoding')) throw new Error('invalid-body');
   const reader = request.body?.getReader();
@@ -93,16 +117,42 @@ async function body(request: Request): Promise<Record<string, unknown>> {
 }
 
 /** Request handler only: launched Workforce/#812 retain server/bootstrap ownership. */
-export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owners: DirectAdminGatewayOwners) {
+export function createDirectAdminGateway(
+  bridge: DirectAdminSessionBridge,
+  owners: DirectAdminGatewayOwners,
+  bootstrapProvider?: DirectAdminBootstrapAssertionProvider,
+) {
   let active = 0;
   const handle = async (request: Request): Promise<Response> => {
+    let url: URL;
+    try { url = new URL(request.url); } catch { return json(400, { error: 'invalid-route' }); }
+    if (url.search || url.hash) return json(400, { error: 'invalid-route' });
+    const path = url.pathname;
+    // First-session route deliberately bypasses authenticate(): a Titan cookie
+    // does not exist yet. The bridge validates origin/Fetch Metadata and the
+    // one-time nonce before invoking this server-only assertion provider.
+    if (path === '/v1/directadmin/bootstrap') {
+      if (request.method !== 'POST') return json(405, { error: 'method-not-allowed' });
+      try {
+        const bootstrap = await bridge.bootstrapBrowserSession(request, async (validatedRequest, csrfNonce) => {
+          if (!bootstrapProvider) throw new Error('directadmin-service-unavailable');
+          // Pass only the ambient proof channels and the pre-auth nonce. Caller
+          // identity/company/role/session headers and request bodies are not
+          // part of the provider port.
+          return bootstrapProvider.provide(Object.freeze({
+            origin: validatedRequest.headers.get('origin')!,
+            cookie: validatedRequest.headers.get('cookie'),
+            authorization: validatedRequest.headers.get('authorization'),
+            csrf_nonce: csrfNonce,
+          }));
+        });
+        return json(200, { csrf_token: bootstrap.csrf_token }, bootstrap.set_cookie);
+      } catch (error) { return bootstrapFailure(error); }
+    }
     let session;
     try { session = await bridge.authenticate(request); }
     catch (error) { return bridgeFailure(error); }
     try {
-      const url = new URL(request.url);
-      if (url.search || url.hash) return json(400, { error: 'invalid-route' });
-      const path = url.pathname;
       if (request.method === 'GET' && path === '/v1/directadmin/context') return json(200, session.context);
       if (request.method === 'POST' && path === '/v1/directadmin/logout') {
         await session.logout();

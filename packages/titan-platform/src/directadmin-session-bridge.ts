@@ -74,7 +74,7 @@ function encode(value: Uint8Array): string {
 async function csrfDigest(value: string): Promise<string> {
   return encode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))));
 }
-type DirectAdminBootstrapInput = Readonly<{
+export type DirectAdminBootstrapInput = Readonly<{
   login_assertion: string; company_id: string; device_id: string; csrf_token: string;
 }>;
 function validBootstrapInput(value: unknown): value is DirectAdminBootstrapInput {
@@ -117,6 +117,13 @@ function cookie(request: Request): string {
   return credential;
 }
 
+function hasCookie(request: Request, name: string): boolean {
+  return (request.headers.get('cookie') ?? '').split(';').some(value => {
+    const separator = value.indexOf('=');
+    return (separator < 0 ? value : value.slice(0, separator)).trim() === name;
+  });
+}
+
 /** Retains the opaque credential and calls #302 again on every revalidation.
  * Caller IDs, company headers, DA roles and session IDs never grant authority. */
 export class DirectAdminSessionBridge {
@@ -141,16 +148,33 @@ export class DirectAdminSessionBridge {
    * a browser-supplied role/session ID. #302 verifies the assertion and resolves
    * the existing actor, company membership, device and current revisions.
    *
-   * The returned credential is only in the Secure HttpOnly cookie. The caller
-   * must render the same CSRF nonce through its trusted HTML bootstrap; this
-   * method does not create an HTTP route or a second login/provisioning store.
+   * The trusted provider consumes the one-time pre-authentication CSRF nonce,
+   * authenticates the DirectAdmin session proof and returns a signed assertion,
+   * canonical selected company/device and a fresh CSRF token bound into that
+   * assertion. The browser supplies no identity fields. The returned credential
+   * is only in the Secure HttpOnly cookie; the CSRF token is returned separately
+   * for the browser client. No identity store or assertion signer lives here.
    */
-  async bootstrapBrowserSession(request: Request, input: unknown): Promise<Readonly<{ set_cookie: string }>> {
+  async bootstrapBrowserSession(
+    request: Request,
+    resolveInput: (request: Request, csrfNonce: string) => Promise<unknown>,
+  ): Promise<Readonly<{ set_cookie: string; csrf_token: string }>> {
     let url: URL;
     try { url = new URL(request.url); } catch { return rejectRequest(); }
-    if (request.method !== 'POST' || url.origin !== this.#config.origin || url.search || url.hash ||
-        request.headers.get('origin') !== this.#config.origin || request.headers.get('sec-fetch-site') !== 'same-origin' ||
-        !validBootstrapInput(input)) return rejectRequest();
+    const csrfNonce = request.headers.get('x-titan-da-bootstrap-csrf') ?? '';
+    if (request.method !== 'POST' || url.origin !== this.#config.origin || url.pathname !== '/v1/directadmin/bootstrap' ||
+        url.search || url.hash || request.headers.get('origin') !== this.#config.origin ||
+        request.headers.get('sec-fetch-site') !== 'same-origin' || request.body !== null ||
+        hasCookie(request, COOKIE) || !/^[A-Za-z0-9_-]{43,128}$/.test(csrfNonce) || typeof resolveInput !== 'function') {
+      return rejectRequest();
+    }
+
+    // Origin, Fetch Metadata, the empty request body, absence of an existing
+    // Titan session and nonce syntax are checked before the trusted port runs.
+    let input: unknown;
+    try { input = await resolveInput(request, csrfNonce); }
+    catch (error) { return normalizeAuthenticationFailure(error); }
+    if (!validBootstrapInput(input)) return rejectRequest();
 
     // These expectations must be obtained by the trusted DirectAdmin adapter;
     // #302 additionally matches them to signed assertion claims and registry truth.
@@ -188,7 +212,10 @@ export class DirectAdminSessionBridge {
       catch { return unavailable(); }
       return fail();
     }
-    return Object.freeze({ set_cookie: `${COOKIE}=${issued.credential}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${seconds}` });
+    return Object.freeze({
+      set_cookie: `${COOKIE}=${issued.credential}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${seconds}`,
+      csrf_token: input.csrf_token,
+    });
   }
   async authenticate(request: Request): Promise<{
     context: DirectAdminBridgeContext;
