@@ -8,7 +8,8 @@ Native Titan FSM remains the default; Frappe is optional.
 ## Integration status
 
 The executable role routes render the same company-scoped cockpit. The browser
-uses the actual shared #1049 `DirectAdminCockpitSession` and its context/projection/intent routes.
+uses the actual shared #1049 `DirectAdminCockpitSession`, with its fetcher supplied
+by the published #812 Server Node adapter.
 Open draft PR #1201 now contains the #811 canonical company-filtered read-only projection
 owner and an optional `/v1/directadmin/*` Fetch-handler mount. Its published controls list
 is empty and lifecycle proposals are explicitly denied pending canonical caller-management
@@ -33,17 +34,19 @@ a real CLI child process with that transport and hostile identity/CSRF fields; i
 confirms the renderer ignores them. This checks the executable boundary, not a live
 DirectAdmin server or a functioning API route.
 
-The shared #1049 browser client requests same-origin `/v1/directadmin/...` routes.
-The #811 host's optional Fetch mount accepts a configured HTTPS public origin, checks
-the forwarded Host/origin and forwards an allowlist of cookie, origin, fetch-site and
-CSRF headers. The plugin's role route remains only an HTML renderer; it does not
-translate DirectAdmin CGI input into caller identity or a CSRF nonce. #1048's Developer
-Portal parser is plugin-specific and cannot commission Workforce. #812 now owns the
-official DirectAdmin RAW plugin ingress relay and strict `headers_to_env` / `pipe_post`
-parsing under existing PR #1211, with #1049 reviewing transport security. Keep this
-consumer's route mapping unchanged until #812 publishes the exact path/header contract.
-Do not put a private token in a URL or infer a nonce/caller from CGI values. No Apache
-443 shortcut is assumed. See the install-readiness checklist in
+The #1049 SDK keeps its canonical `/v1/directadmin/...` requests. The cockpit loads
+the exact #812 helper at
+`/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs` and injects
+`createDirectAdminRelayFetch()` as the SDK fetcher. That helper maps only the SDK's
+fixed path/method set to
+`/CMD_PLUGINS/titan-server-node/directadmin-gateway.raw`; #812 owns CGI `HEADERS`,
+stdin, parsing, filtering and proxying. Workforce adds no parallel parser or proxy.
+If the Server Node helper is missing, the page shows an explicit unavailable state;
+if its operator config is missing, the relay returns a sanitized 503. The #811 host's
+optional Fetch mount accepts a configured HTTPS public origin and checks the forwarded
+Host and browser protections. Do not inject caller identity or CSRF from CGI, put a
+private token in a URL, or assume Apache 443 can install a handler on DirectAdmin's
+port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
@@ -75,7 +78,9 @@ The builder requires the current canonical browser session and package-validator
 and runs the shared validator on the extracted final package. It produces a flat `titan_workforce.tar.gz` and SHA256 sidecar, applies
 executable modes, extracts the final tarball, compares contents/modes and runs
 staging-location preflight. The manifest controls the artifact version (currently
-0.1.3). Tests and development fixtures are excluded.
+0.1.4). Tests and development fixtures are excluded. The package requires the
+separately installed Titan Server Node plugin for its published relay module; it
+does not vendor or shadow that owner.
 
 Install/update only checks package/runtime prerequisites. It does not provision
 users, secrets, server processes, reverse proxies, permissions or databases.

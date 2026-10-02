@@ -39,7 +39,7 @@ test('canonical SDK accepts authority-neutral Workforce contribution for all rol
     assert.deepEqual(registry.snapshot().contributions[0].widgets[0].permitted_actions, []);
   }
 });
-test('published SDK without commissioned CSRF/session fails closed in real executable role routes', async () => {
+test('executable role ignores hostile CGI input and fails closed without the Server Node relay', async () => {
   const { execFileSync } = await import('node:child_process');
   const { chromium } = await import('@playwright/test');
   const folder = await mkdtemp(join(tmpdir(), 'workforce-real-sdk-route-'));
@@ -60,7 +60,7 @@ test('published SDK without commissioned CSRF/session fails closed in real execu
       const page = await browser.newPage();
       const errors = []; page.on('pageerror', error => errors.push(error.message));
       await page.setContent(html);
-      await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.').waitFor();
+      await page.getByText('DirectAdmin Workforce relay is unavailable. Install or restore the Titan Server Node plugin, then reconnect.', { exact: true }).waitFor();
       assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
       assert.equal(await page.getByText('fixture-company').count(), 0);
       assert.deepEqual(errors, []);
@@ -75,6 +75,10 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
   const folder = await mkdtemp(join(tmpdir(), 'workforce-browser-acceptance-'));
   const csrf = 'A'.repeat(43);
   const cookie = 'titan_test_session=browser-fixture-only';
+  // This lightweight browser fixture only lets consumer lifecycle tests keep
+  // their existing same-origin host. The separate relay integration harness
+  // loads #812's exact helper/RAW package and the #811 optional gateway.
+  const fixtureRelayClient = 'export function createDirectAdminRelayFetch(fetchImpl = globalThis.fetch) { return async (input, init) => { globalThis.__workforceRelayCalls = (globalThis.__workforceRelayCalls || 0) + 1; return fetchImpl(input, init); }; }';
   const requests = [];
   const acceptedIntents = [];
   let activeCompany = 'company-a';
@@ -123,6 +127,10 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     try {
       const url = new URL(request.url, 'http://127.0.0.1');
       const body = request.method === 'POST' ? await readBody(request) : undefined;
+      if (url.pathname === '/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs' && request.method === 'GET') {
+        response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' });
+        response.end(fixtureRelayClient); return;
+      }
       requests.push({ method: request.method, path: url.pathname, headers: request.headers, body });
       const protectedRequest = ['/v1/directadmin/context', '/v1/directadmin/titan_workforce/projection',
         '/v1/directadmin/titan_workforce/intents', '/v1/directadmin/logout'].includes(url.pathname);
@@ -147,8 +155,12 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
       }
       if (url.pathname === '/v1/directadmin/titan_workforce/intents' && request.method === 'POST') {
         if (loggedOut || expireNextIntent) { unauthorizedResponses++; expireNextIntent = false; json(response, 401, { error: 'session-expired' }); return; }
+        const contextRevision = `revision-${activeCompany}`;
+        const contextRevisionAssertion = typeof SDK.directAdminContextRevisionAssertion === 'function'
+          ? await SDK.directAdminContextRevisionAssertion(contextRevision) : contextRevision;
         if (body?.company_id !== activeCompany || body?.input?.action !== 'cancel' || body?.input?.work_id !== `${activeCompany}-work` ||
-            body?.actor_id !== 'browser-fixture-actor' || body?.capability_id !== 'test.cancel' || body?.context_revision !== `revision-${activeCompany}`) {
+            body?.actor_id !== 'browser-fixture-actor' || body?.capability_id !== 'test.cancel' ||
+            ![contextRevision, contextRevisionAssertion].includes(body?.context_revision)) {
           json(response, 409, { error: 'fixture-intent-scope-mismatch' }); return;
         }
         acceptedIntents.push(body);
@@ -201,7 +213,10 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await context.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
     const page = await context.newPage();
     const errors = [];
+    const network = [];
     page.on('pageerror', error => errors.push(error.message));
+    page.on('request', request => network.push(`${request.method()} ${request.url()}`));
+    page.on('requestfailed', request => network.push(`FAILED ${request.url()} ${request.failure()?.errorText ?? ''}`));
     const submitCancel = async (targetPage, companyId, reason) => {
       await targetPage.getByRole('button', { name: 'Controls', exact: true }).click();
       await targetPage.getByLabel('Operation').selectOption('cancel');
@@ -216,7 +231,10 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     };
     await page.goto(origin);
     await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.').waitFor();
-    assert.equal(requests.filter(item => item.path === '/v1/directadmin/titan_workforce/projection').length, 1, 'real shared SDK attempted the same-origin owner route');
+    const bootstrapMeta = await page.evaluate(() => ({ csrfPresent: Boolean(document.querySelector('meta[name="titan-directadmin-csrf"]')?.getAttribute('content')),
+      relayCalls: globalThis.__workforceRelayCalls ?? 0, href: location.href }));
+    assert.equal(requests.filter(item => item.path === '/v1/directadmin/titan_workforce/projection').length, 1,
+      `real shared SDK attempted the same-origin owner route; observed paths=${JSON.stringify(requests.map(item => item.path))}; page errors=${JSON.stringify(errors)}; bootstrap=${JSON.stringify(bootstrapMeta)}; network=${JSON.stringify(network)}`);
     assert.equal(await page.getByRole('navigation').count(), 0);
     assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
     assert.equal(await page.getByText('company-a', { exact: true }).count(), 0, 'no company is asserted when owner routes are unavailable');
@@ -233,7 +251,9 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByLabel('Reason', { exact: true }).fill('Browser cancellation acceptance fixture');
     pendingIntent = { entered: deferred(), release: deferred() };
     await page.locator('form button[type="submit"]').evaluate(button => { button.click(); button.click(); });
-    await Promise.race([pendingIntent.entered.promise, new Promise((_, reject) => setTimeout(() => reject(new Error('browser intent route was not reached')), 3000))]);
+    await Promise.race([pendingIntent.entered.promise, new Promise((_, reject) => setTimeout(async () => reject(new Error(
+      `browser intent route was not reached; requests=${JSON.stringify(requests.map(item => ({ method: item.method, path: item.path })))}; page errors=${JSON.stringify(errors)}; browser network=${JSON.stringify(network)}; UI=${JSON.stringify(await page.locator('#titan-workforce').innerText())}`,
+    )), 3000))]);
     assert.equal(acceptedIntents.length, 1, 'rapid repeated form activations submit only one hosted intent');
     assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).isDisabled(), true, 'submit control is disabled while the one request is pending');
     assert.equal(acceptedIntents[0].company_id, 'company-a');

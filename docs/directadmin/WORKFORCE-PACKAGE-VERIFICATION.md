@@ -4,16 +4,22 @@ This checklist verifies an artifact in a local workspace or disposable staging d
 
 ## Build the SDK and package
 
-Use the current canonical SDK source already integrated on `agent/issue-1050`. Node 22 or newer and the repository's locked dependencies are required.
+Use the current canonical SDK published on #1049 / PR #1204. The recorded build uses exact owner head `6300a4eb54ef008b1742fa9dbf5897535c518305`; no shared SDK implementation is copied into the Workforce plugin. Node 22 or newer and the repository's locked dependencies are required.
 
 ```sh
+work_area=/tmp/1050-sdk-source
+mkdir -p "$work_area"
+git archive 6300a4eb54ef008b1742fa9dbf5897535c518305 packages/titan-platform \
+  | tar -xf - -C "$work_area"
+ln -s "$PWD/packages/titan-platform/node_modules" \
+  "$work_area/packages/titan-platform/node_modules"
 node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/bin/esbuild \
-  packages/titan-platform/src/directadmin-plugin.ts \
+  "$work_area/packages/titan-platform/src/directadmin-plugin.ts" \
   --bundle --format=esm --platform=browser --target=es2022 \
-  --outfile=/tmp/1050-sdk/current-sdk.mjs
+  --outfile=/tmp/1050-sdk/upstream-1049-current.mjs
 
 node apps/directadmin/workforce/tools/package.mjs \
-  --sdk-module /tmp/1050-sdk/current-sdk.mjs \
+  --sdk-module /tmp/1050-sdk/upstream-1049-current.mjs \
   --output-dir /tmp/1050-package-final
 
 sha256sum /tmp/1050-package-final/titan_workforce.tar.gz
@@ -58,11 +64,11 @@ The hosted test exercises the real #302 fixture credential issuer/registry and #
 
 ## Current artifact record
 
-For this continuation, the package builder produced 19 files for plugin version **0.1.3** at:
+For this continuation, the package builder consumed the exact #1049 SDK head above and produced 19 files for plugin version **0.1.4** at:
 
 `/tmp/1050-package-final/titan_workforce.tar.gz`
 
-SHA256: `7306d5db900d752da1ddbdbb9efce39916e15c35fb8cfbce9b6da567c5bd54f8`
+SHA256: `b8bb62e0733ffe6b0ff2cd5a7c8e4ac762bb20077b3e2b5215fa9f2703d0b299`
 
 The `.sha256` sidecar records the same value; rebuild and refresh this record after any source change.
 
@@ -82,6 +88,41 @@ The role executable does not read DirectAdmin CGI stdin/environment values. The 
 
 **Can execute now:** package build, deterministic archive/checksum validation, staged install/update/uninstall preflight, and each role script as a CLI renderer. DirectAdmin's documented `pipe_post=yes` mode supplies `POST=stdin=true` and POST bytes on stdin; the packaged role process has been exercised with these values and ignores request data safely. Install/update scripts only preflight and do not mutate a host.
 
-**Published on open draft PRs but not commissioned:** #811/#1201 now contains the company-filtered read-only projection owner and optional `/v1/directadmin/*` Fetch mount. The current projection has `controls: []`; proposed lifecycle intents are denied without state, event or receipt writes. It is not merged to main or live-certified. #812 has assigned the official DirectAdmin RAW plugin ingress relay and strict `headers_to_env` / `pipe_post` parsing to existing PR #1211, with #1049 reviewing transport security. Await its exact path/header contract before changing this consumer's URL mapping. No Apache `443` shortcut is assumed, and no private token belongs in a URL.
+**Published on open draft PRs but not commissioned:** #811/#1201 contains the company-filtered read-only projection owner and optional `/v1/directadmin/*` Fetch mount. The current projection has `controls: []`; proposed lifecycle intents are denied without state, event or receipt writes. #1050 now imports the exact #812 helper path and sends it through the published RAW endpoint. A disposable extracted-package → RAW → #811 host run proved projection reads, company switch, invalid-CSRF and expiry denial. That run also found an owner-boundary mismatch: the #812 intent parser rejects the canonical #1049 `context_revision` before forwarding. The host owner independently denied the same valid context/action without writes when called directly. See the reproducible test and precise owner handoff below. Neither upstream PR is merged or live-certified. No Apache `443` shortcut is assumed, and no private token belongs in a URL.
 
-**Unavailable until owners commission and verify it:** trusted DirectAdmin session-to-HTTP-Request adaptation, the #302-backed #1049 actor/company/CSRF bridge and nonce bootstrap, the approved audience-bound Workforce handoff, same-origin `/v1/directadmin/...` panel routing, and real DirectAdmin admin/reseller/user installation, POST, Evolution theme, update, rollback and session tests. The package never injects caller identity or CSRF data. The CGI CLI parser in #1048 Developer Portal is specific to that plugin and does not supply Workforce identity or routes.
+### Disposable extracted relay-to-host integration
+
+This test packages the exact pinned owner sources, extracts all three owner packages, and uses only temporary SQLite files, a generated localhost TLS certificate, and the actual #1049 signed identity test fixture. It is not live-host or production-session certification. The owner snapshots used for the recorded run were #1049 `6300a4eb54ef008b1742fa9dbf5897535c518305`, #811 `d5a84e40fafc4696c730334610e8f29703a5d1ff` and #812 `9ffef58d51f0c7a0a9cfcf0e619f6bc0440508ef`.
+
+```sh
+work_area=/tmp/1050-extracted-integration
+mkdir -p "$work_area/host" "$work_area/server-node" "$work_area/sdk"
+git archive d5a84e40fafc4696c730334610e8f29703a5d1ff \
+  package.json services/workforce packages/storage packages/titan-platform \
+  packages/runtime packages/tools db/sqlite | tar -xf - -C "$work_area/host"
+git archive 9ffef58d51f0c7a0a9cfcf0e619f6bc0440508ef \
+  apps/directadmin/server-node scripts/package-directadmin-plugin.mjs \
+  | tar -xf - -C "$work_area/server-node"
+git archive 6300a4eb54ef008b1742fa9dbf5897535c518305 packages/titan-platform \
+  | tar -xf - -C "$work_area/sdk"
+ln -s "$PWD/packages/titan-platform/node_modules" \
+  "$work_area/sdk/packages/titan-platform/node_modules"
+
+node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/bin/esbuild \
+  "$work_area/sdk/packages/titan-platform/src/directadmin-plugin.ts" \
+  --bundle --format=esm --platform=browser --target=es2022 \
+  --outfile=/tmp/1050-sdk/upstream-1049-current.mjs
+
+TITAN_WORKFORCE_HOST_ROOT="$work_area/host" \
+TITAN_SERVER_NODE_SOURCE_ROOT="$work_area/server-node" \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk/upstream-1049-current.mjs \
+TITAN_HOST_SDK_MODULE=/tmp/1050-sdk/upstream-1049-current.mjs \
+TITAN_BRIDGE_FIXTURE_MODULE="$work_area/sdk/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs" \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+node --import ./node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs \
+  apps/directadmin/workforce/tests/relay-host.integration.mjs
+```
+
+The extracted integration test passed: missing relay config returned sanitized 503 before reaching #811; actual Workforce package/helper/RAW route read company A's canonical workers, work and evidence with controls empty; invalid CSRF was rejected; company switch exposed only company B; expiry cleared the client projection. A governed pause proposal passed #812's `ctx1_` validation, reached the actual #811 owner and returned #1049's sanitized 403 denial. SQLite work/events remained unchanged. The test uses the #1049 signed identity/nonce fixture and inserts its CSRF meta value into the disposable panel HTML only to exercise transport; it does not prove the commissioned production HTML bootstrap, protected identity provisioning, cookie-port sharing or live DirectAdmin HEADERS path.
+
+**Unavailable until owners commission and verify it:** the #302-backed #1049 production actor/company/CSRF bridge and trusted nonce bootstrap, approved audience-bound Workforce handoff, corrected #812 context-revision relay validation, and real DirectAdmin admin/reseller/user installation, POST, Evolution theme, update, rollback and session tests. The package never injects caller identity or CSRF data. The CGI CLI parser in #1048 Developer Portal is specific to that plugin and does not supply Workforce identity or routes.

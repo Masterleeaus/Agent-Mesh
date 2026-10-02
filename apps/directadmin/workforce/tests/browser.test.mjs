@@ -15,6 +15,11 @@ const fixtureSdk = `export class DirectAdminCockpitSession {
  status:{company_id,work:[{company_id,work_id:'fixture-work',objective:'Fixture job',assignee:'<img src=x onerror=alert(1)>',state:'COMPLETED',evidence_refs:['fixture-evidence']}]}}};}
  async intent(plugin,input){globalThis.fixtureCalls=(globalThis.fixtureCalls||0)+1; if(globalThis.fixtureDenied) throw Error('403 sensitive-error'); return {status:'REQUESTED',correlation_id:input.correlation_id,receipt_id:'fixture-receipt'};}
 }`;
+const fixtureRelayClient = `export function createDirectAdminRelayFetch(fetchImpl = globalThis.fetch) { return fetchImpl; }`;
+async function serveFixtureRelayClient(page) {
+  await page.route('https://workforce.test/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs', route =>
+    route.fulfill({ contentType: 'text/javascript', body: fixtureRelayClient }));
+}
 
 test('executable cockpit renders safely, submits bounded controls, and clears on denial', async () => {
   const folder = await mkdtemp(join(tmpdir(), 'workforce-browser-'));
@@ -26,6 +31,7 @@ test('executable cockpit renders safely, submits bounded controls, and clears on
     browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
     const page = await browser.newPage();
     const errors = []; page.on('pageerror', error => errors.push(error.message));
+    await serveFixtureRelayClient(page);
     await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry('user') }));
     await page.goto('https://workforce.test/');
     await page.getByText('Current hosted projection', { exact: true }).waitFor();
@@ -63,6 +69,7 @@ test('context change and page lifecycle erase the prior company before reconnect
     browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
     const page = await browser.newPage();
     const errors = []; page.on('pageerror', error => errors.push(error.message));
+    await serveFixtureRelayClient(page);
     await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry('user') }));
     await page.goto('https://workforce.test/');
     await page.getByText('Current hosted projection', { exact: true }).waitFor();
@@ -93,6 +100,7 @@ test('an explicitly empty hosted controls list renders read-only and sends no in
     const { renderEntry } = await import(pathToFileURL(join(folder, 'lib/entry.mjs')));
     browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
     const page = await browser.newPage();
+    await serveFixtureRelayClient(page);
     await page.addInitScript(() => { globalThis.fixtureControls = []; });
     await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry('user') }));
     await page.goto('https://workforce.test/');
@@ -101,5 +109,48 @@ test('an explicitly empty hosted controls list renders read-only and sends no in
     await page.getByText('This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { exact: true }).waitFor();
     assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
     assert.equal(await page.evaluate(() => globalThis.fixtureCalls || 0), 0);
+  } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
+});
+
+test('missing Server Node relay module renders an explicit unavailable state', async () => {
+  const folder = await mkdtemp(join(tmpdir(), 'workforce-no-relay-'));
+  let browser;
+  try {
+    await cp(new URL('../', import.meta.url), folder, { recursive: true });
+    await writeFile(join(folder, 'images/sdk.mjs'), fixtureSdk);
+    const { renderEntry } = await import(pathToFileURL(join(folder, 'lib/entry.mjs')));
+    browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+    const page = await browser.newPage();
+    await page.route('https://workforce.test/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs', route =>
+      route.fulfill({ status: 404, contentType: 'text/plain', body: 'not installed' }));
+    await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry('user') }));
+    await page.goto('https://workforce.test/');
+    await page.getByText('DirectAdmin Workforce relay is unavailable. Install or restore the Titan Server Node plugin, then reconnect.', { exact: true }).waitFor();
+    assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
+    assert.equal(await page.getByRole('navigation').count(), 0);
+  } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
+});
+
+test('invalid relay factory result cannot fall back to direct API fetch', async () => {
+  const folder = await mkdtemp(join(tmpdir(), 'workforce-invalid-relay-'));
+  let browser;
+  try {
+    await cp(new URL('../', import.meta.url), folder, { recursive: true });
+    await writeFile(join(folder, 'images/sdk.mjs'), fixtureSdk);
+    const { renderEntry } = await import(pathToFileURL(join(folder, 'lib/entry.mjs')));
+    browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+    const page = await browser.newPage();
+    const apiRequests = [];
+    await page.route('https://workforce.test/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs', route =>
+      route.fulfill({ contentType: 'text/javascript', body: 'export function createDirectAdminRelayFetch() { return undefined; }' }));
+    await page.route('https://workforce.test/v1/directadmin/**', async route => {
+      apiRequests.push(route.request().url());
+      await route.fulfill({ status: 500, body: 'unexpected direct request' });
+    });
+    await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry('user') }));
+    await page.goto('https://workforce.test/');
+    await page.getByText('DirectAdmin Workforce relay is unavailable. Install or restore the Titan Server Node plugin, then reconnect.', { exact: true }).waitFor();
+    assert.equal(apiRequests.length, 0);
+    assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
   } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
 });

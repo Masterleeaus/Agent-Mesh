@@ -5,6 +5,7 @@ import { boundedText, position, workState, receiptState, verifiedOutcome } from 
 
 const root = document.getElementById('titan-workforce');
 const role = root.dataset.role;
+let controller;
 let tab = 'Roster';
 let selectedAgent = null;
 let workFilter = 'all';
@@ -125,10 +126,33 @@ function renderControls(view, state, workers, work) {
 
 // #1049 owns the real session, CSRF/origin protection, expiry and cross-plugin invalidation.
 // Commissioned authenticated HTML supplies this nonce; a DA role/environment never supplies identity.
-const session = new SDK.DirectAdminCockpitSession(() => document.querySelector('meta[name="titan-directadmin-csrf"]')?.getAttribute('content') ?? '');
-const controller = new WorkforceController(new WorkforceApi(session), render);
-session.subscribe(() => controller.invalidate());
-window.addEventListener('pagehide', () => session.invalidate());
-window.addEventListener('pageshow', event => { if (event.persisted) void controller.connect(); });
-window.addEventListener('titan-context-changed', () => { session.invalidate(); void controller.connect(); });
-void controller.connect();
+async function start() {
+  let relayFetch;
+  try {
+    // #812 owns the DirectAdmin RAW parser and fetch adapter. Keep this fixed,
+    // same-origin module path; do not copy its CGI parsing or proxy behavior here.
+    const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
+    if (typeof relay.createDirectAdminRelayFetch !== 'function') throw new Error('directadmin-relay-adapter-invalid');
+    relayFetch = relay.createDirectAdminRelayFetch();
+    if (typeof relayFetch !== 'function') throw new Error('directadmin-relay-fetch-invalid');
+  } catch {
+    root.replaceChildren(
+      node('h1', 'Titan Workforce'),
+      node('p', 'DirectAdmin Workforce relay is unavailable. Install or restore the Titan Server Node plugin, then reconnect.', { role: 'status', 'aria-live': 'polite' }),
+    );
+    return;
+  }
+  // #1049 owns session, CSRF, expiry and cross-plugin invalidation. Authenticated
+  // host HTML supplies the nonce; the Workforce role/CGI process never does.
+  const session = new SDK.DirectAdminCockpitSession(
+    () => document.querySelector('meta[name="titan-directadmin-csrf"]')?.getAttribute('content') ?? '',
+    relayFetch,
+  );
+  controller = new WorkforceController(new WorkforceApi(session), render);
+  session.subscribe(() => controller.invalidate());
+  window.addEventListener('pagehide', () => session.invalidate());
+  window.addEventListener('pageshow', event => { if (event.persisted) void controller.connect(); });
+  window.addEventListener('titan-context-changed', () => { session.invalidate(); void controller.connect(); });
+  void controller.connect();
+}
+void start();
