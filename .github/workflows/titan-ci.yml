@@ -20,29 +20,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.24.0"
           channel: stable
-
       - name: Install mobile dependencies
         working-directory: apps/mobile
         run: flutter pub get
-
+      - name: Emit transport formatter bytes
+        working-directory: apps/mobile
+        run: |
+          echo FORMATTED_TRANSPORT_BASE64_BEGIN
+          dart format --output=show lib/titan/services/hosted_conversation_transport.dart | base64 -w0
+          echo FORMATTED_TRANSPORT_BASE64_END
       - name: Check mobile formatting
         working-directory: apps/mobile
         run: dart format --output=none --set-exit-if-changed lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
-
       - name: Analyze mobile transport
         working-directory: apps/mobile
         run: dart analyze lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
-
       - name: Run hosted transport test
         working-directory: apps/mobile
         run: flutter test test/hosted_conversation_transport_test.dart
-
   validate:
     runs-on: ubuntu-latest
     steps:
