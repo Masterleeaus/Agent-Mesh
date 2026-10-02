@@ -82,7 +82,7 @@ Rules:
 5. One implementation claim per agent/workspace unless a Manager issue explicitly authorizes otherwise.
 6. Use the same branch through implementation, verification, PR, fixes, and handoff.
 7. Never open a second branch because the first branch conflicts. Rebase/merge/fix the existing claim branch.
-8. The canonical PR targets `main` and contains `Closes #<issue>`.
+8. The canonical PR targets `main`. Use `Closes #<issue>` only when the full mission closure gate below is satisfied; partial or unverified work must use `Refs #<issue>`.
 9. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
 10. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
 
@@ -130,7 +130,7 @@ A mission is complete only when all are true:
 - No known relevant regression is left unexplained.
 - Canonical docs/contracts are updated if behavior or architecture changed.
 - PR contains concrete evidence: commands, results, changed boundaries, risks, and rollback/compatibility notes.
-- Branch is the canonical claim branch and the PR closes the issue.
+- Branch is the canonical claim branch and the PR closes the issue only after the mission closure gate is satisfied. A non-closing slice is not a completed mission.
 - Remaining work is explicitly out of scope or represented by a separate issue; do not hide TODOs in prose.
 
 Required task report:
@@ -141,6 +141,30 @@ Required task report:
 5. Gate/test results
 6. Risks, rollback, and follow-ups
 
+### Mission closure gate
+
+### Bounded blocked-work handoff
+
+When a small, independently executable remainder blocks finishing the current issue, use this sequence:
+
+1. Confirm the current branch has completed and verified all work it can safely deliver. Do not use this for unfinished work that still belongs in the current branch or for a broad, unbounded scope split.
+2. Create the successor issue **before** closing the original. It must name the blocker, preserve every unmet acceptance/verification/Done requirement, identify the canonical owner and dependencies, and link the original issue and the delivered PR. Check for an existing owner/issue first.
+3. Keep the PR non-closing: use `Refs #<original>`, `mode: partial`, and state that the mission is not fully delivered. Link the successor prominently and retain exact test/live-host gaps.
+4. Merge the completed slice on the existing canonical claim branch after its normal required reviews/checks pass. Do not create a replacement branch.
+5. After merge, add a durable handoff note to the original issue linking the merged PR and successor, enumerating what landed and what remains; then close the original as a handoff/administrative completion. Keep the successor open and authoritative for the remainder. Never describe or count this as full mission completion.
+6. If GitHub policy or a required gate prevents this sequence, leave the original open and report the precise gate; do not bypass protection.
+
+Do not create a successor merely to evade tests, review, implementation, or a dependency that can be resolved within the claimed work. The handoff is for a genuinely separate blocker or bounded remainder and preserves, rather than removes, the original unmet scope.
+
+A mission issue normally closes only after its full acceptance criteria and Done condition are satisfied. A related commit, green CI, contract, schema, projection, documentation slice, or partial implementation is not full completion. Use the bounded blocked-work handoff exception below only when a small, independent remainder cannot be completed in the current mission.
+
+- PRs that deliver only a slice normally say `Refs #<mission>`, not `Closes #<mission>`. Keep the mission open unless the bounded blocked-work handoff exception below applies. Do not split ordinary implementation steps into child issues.
+- A PR using `Closes #N` for full completion must map every acceptance criterion to implementation paths and executed verification evidence. Record failed or unrun checks, live-host verification, risks, and follow-ups. If required evidence is missing or the semantic outcome is incomplete, do not claim full completion.
+- Use the standard versioned PR evidence record defined in `docs/agent/MISSION_CLOSURE_EVIDENCE.md` and both PR templates. The existing claim gate verifies live issue linkage, the issue-body digest, per-criterion mappings and explicit verification/live-host status. Unknown, failed, blocked or unrun required evidence remains non-closing.
+- Distinguish planning/specification, implementation, integration and certification outcomes. Finishing one kind does not automatically finish a broader mission of another kind.
+- A mechanical checklist or CI check can validate evidence presence and structure; it cannot determine whether the evidence actually proves the criterion. The human reviewer must compare the PR evidence with the full issue and its current Done condition.
+- If a mission was closed through the handoff exception, retain the original issue and its full scope; the successor issue must link back and carry every unmet criterion. Do not mark the original as fully delivered. Reopen a mistakenly closed issue when possible; use `SUPERSEDED` only for genuinely replaced work with its successor link.
+
 ## 8. Handoff and concurrency
 
 Before final push or PR update:
@@ -149,7 +173,7 @@ Before final push or PR update:
 - Re-run verification invalidated by conflict resolution.
 - Keep commits reviewable and avoid unrelated formatting churn.
 
-If blocked, leave durable evidence on the issue/PR and keep the canonical branch. Do not create a replacement branch.
+If blocked, leave durable evidence on the issue/PR and keep the canonical branch. Use the bounded blocked-work handoff above only after the successor issue exists; otherwise keep the original issue open. Do not create a replacement branch.
 
 Lifecycle may be projected as:
 `AVAILABLE → CLAIMED → ACTIVE → VERIFYING → READY → PR_OPEN → MERGED → COMPLETED`
