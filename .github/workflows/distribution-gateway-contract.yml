@@ -6,7 +6,10 @@ on:
     paths:
       - "packages/titan-platform/src/distribution-gateway.ts"
       - "packages/titan-platform/src/distribution-catalog.ts"
+      - "scripts/generate-distribution-coverage.mjs"
+      - "packages/titan-platform/src/distribution-catalog.ts"
       - "packages/titan-platform/tests/distribution-gateway.test.mjs"
+      - "packages/titan-platform/tests/distribution-catalog.test.mjs"
       - "packages/titan-platform/tests/distribution-catalog.test.mjs"
       - "packages/titan-platform/package.json"
       - "pnpm-lock.yaml"
@@ -15,6 +18,8 @@ on:
     branches: [main]
     paths:
       - "packages/titan-platform/src/distribution-gateway.ts"
+      - "packages/titan-platform/src/distribution-catalog.ts"
+      - "scripts/generate-distribution-coverage.mjs"
       - "packages/titan-platform/tests/distribution-gateway.test.mjs"
       - "packages/titan-platform/package.json"
       - "pnpm-lock.yaml"
@@ -41,3 +46,12 @@ jobs:
         run: pnpm exec tsc packages/titan-platform/src/distribution-gateway.ts packages/titan-platform/src/distribution-catalog.ts --target ES2022 --module NodeNext --moduleResolution NodeNext --outDir packages/titan-platform/.test-dist --skipLibCheck --strict
       - name: Run focused distribution tests
         run: node --test packages/titan-platform/tests/distribution-gateway.test.mjs packages/titan-platform/tests/distribution-catalog.test.mjs
+      - name: Generate commit-bound gap inventory
+        run: node scripts/generate-distribution-coverage.mjs > "$RUNNER_TEMP/distribution-coverage.json"
+      - name: Publish coverage evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: distribution-coverage-${{ github.sha }}
+          path: ${{ runner.temp }}/distribution-coverage.json
+          if-no-files-found: error
+          retention-days: 14
