@@ -540,6 +540,37 @@ test('canonical identity-registry outage maps to unavailable, not a rejected bro
   assert.equal(bodyText.includes(f.token), false);
 });
 
+test('rejected replacement session after company switch returns 401 and clears the stale cookie', async t => {
+  const f = await fixture(t);
+  const canonicalAuthenticate = f.sessions.authenticate.bind(f.sessions);
+  f.bridgeSessions.authenticate = async (credential, expectation) => {
+    if (credential !== f.token) throw new Error('authentication-denied');
+    return canonicalAuthenticate(credential, expectation);
+  };
+  const response = await createDirectAdminGateway(f.bridge, f.owners)(
+    f.request('/v1/directadmin/company', post({ company_id: 'company-b' })),
+  );
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'directadmin-session-rejected', read_only: true });
+  assert.match(response.headers.get('set-cookie') ?? '', /Max-Age=0/);
+  assert.equal(response.headers.get('set-cookie')?.includes(f.token), false);
+});
+
+test('registry outage verifying a replacement company session returns 503 without clearing the source cookie', async t => {
+  const f = await fixture(t);
+  const canonicalAuthenticate = f.sessions.authenticate.bind(f.sessions);
+  f.bridgeSessions.authenticate = async (credential, expectation) => {
+    if (credential !== f.token) throw new Error('identity-registry-unavailable');
+    return canonicalAuthenticate(credential, expectation);
+  };
+  const response = await createDirectAdminGateway(f.bridge, f.owners)(
+    f.request('/v1/directadmin/company', post({ company_id: 'company-b' })),
+  );
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(response.headers.get('set-cookie'), null);
+});
+
 test('Workforce exchange service failure is a redacted 503 while the source session remains usable', async t => {
   const f = await fixture(t, { sessionOverrides: {
     exchangeWorkforceZero: async () => { throw new Error(`bearer=${f.token}; db=/private/path`); },
