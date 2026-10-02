@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { negotiateTitanMcpHost, TITAN_MCP_HOST_CONTRACT } from "../.test-dist/src/index.js";
+import { negotiateTitanMcpHost, TITAN_MCP_HOST_CONTRACT } from "../.test-dist/index.js";
 
 test("MCP host negotiation is intersection-only and authority-neutral", () => {
   const result=negotiateTitanMcpHost({
