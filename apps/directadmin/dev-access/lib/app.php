@@ -95,7 +95,7 @@ function post_string($name,$default=''){
  return is_string($v)?$v:$default;
 }
 function directadmin_role_can_mutate($role){return $role==='admin'&&PHP_SAPI==='cli'&&directadmin_identity_context()!==null;}
-function directadmin_post_field_names(){return ['csrf','cwd','command','run','public_key','add_key','remove_key'];}
+function directadmin_post_field_names(){return ['csrf','cwd','command','run','public_key','add_key','remove_key','expected_fingerprint'];}
 function directadmin_validate_post_fields($fields){
  if(!is_array($fields)||count($fields)>count(directadmin_post_field_names())) throw new RuntimeException('Invalid form fields.');
  $allowed=array_flip(directadmin_post_field_names()); $size=0;
@@ -116,6 +116,9 @@ function directadmin_validate_post_fields($fields){
   }
  }
  if($actions>1) throw new RuntimeException('Ambiguous form action.');
+ $hasExpectedFingerprint=array_key_exists('expected_fingerprint',$fields);
+ $hasRemoveKey=array_key_exists('remove_key',$fields);
+ if($hasExpectedFingerprint!==$hasRemoveKey) throw new RuntimeException('Invalid form action.');
  return $fields;
 }
 function directadmin_parse_form_body($body){
@@ -400,31 +403,40 @@ function directadmin_authorized_keys_lines($contents){
  if($lines&&end($lines)==='') array_pop($lines);
  return $lines;
 }
-function directadmin_authorized_key_identity($line){
- if(!is_string($line)||$line===''||strlen($line)>16384||strpos($line,"\0")!==false) return null;
- $tokens=[];$token='';$quoted=false;$escaped=false;$active=false;
- for($i=0,$length=strlen($line);$i<$length;$i++){
-  $char=$line[$i];
-  if($escaped){$token.=$char;$escaped=false;$active=true;continue;}
-  if($quoted&&$char==='\\'){$token.=$char;$escaped=true;$active=true;continue;}
-  if($char==='"'){$quoted=!$quoted;$token.=$char;$active=true;continue;}
-  if(!$quoted&&($char===' '||$char==="\t")){
-   if($active){$tokens[]=$token;$token='';$active=false;}
-   continue;
-  }
-  if(preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$char)===1) return null;
-  $token.=$char;$active=true;
+function directadmin_authorized_key_ignored_line($line){
+ if(!is_string($line)) return false;
+ $content=ltrim($line," \t");
+ return $content===''||$content[0]==='#';
+}
+function directadmin_authorized_key_prefix_token($line,&$offset){
+ $length=strlen($line);
+ while($offset<$length&&($line[$offset]===' '||$line[$offset]==="\t"))$offset++;
+ if($offset>=$length)return null;
+ $token='';$quoted=false;$escaped=false;
+ for(;$offset<$length;$offset++){
+  $char=$line[$offset];
+  if($escaped){$token.=$char;$escaped=false;continue;}
+  if($quoted&&$char==='\\'){$token.=$char;$escaped=true;continue;}
+  if($char==='"'){$quoted=!$quoted;$token.=$char;continue;}
+  if(!$quoted&&($char===' '||$char==="\t"))break;
+  if(preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$char)===1)return null;
+  $token.=$char;
  }
- if($quoted||$escaped) return null;
- if($active)$tokens[]=$token;
- if(count($tokens)<2) return null;
+ if($quoted||$escaped||$token==='')return null;
+ return $token;
+}
+function directadmin_authorized_key_identity($line){
+ if(!is_string($line)||$line===''||strlen($line)>16384||strpos($line,"\0")!==false||directadmin_authorized_key_ignored_line($line)) return null;
+ $offset=0;$first=directadmin_authorized_key_prefix_token($line,$offset);if(!is_string($first))return null;
+ $second=directadmin_authorized_key_prefix_token($line,$offset);if(!is_string($second))return null;
  $algorithms=['ssh-ed25519','ssh-rsa'];
  foreach(['nistp256','nistp384','nistp521'] as $curve)$algorithms[]='ecdsa-sha2-'.$curve;
- $offset=in_array($tokens[0],$algorithms,true)?0:(in_array($tokens[1]??null,$algorithms,true)?1:-1);
- if($offset<0||!isset($tokens[$offset+1])||!valid_pubkey($tokens[$offset].' '.$tokens[$offset+1])) return null;
- $blob=base64_decode($tokens[$offset+1],true);
+ if(in_array($first,$algorithms,true)){$algorithm=$first;$blobToken=$second;}
+ else{$algorithm=$second;$blobToken=directadmin_authorized_key_prefix_token($line,$offset);}
+ if(!in_array($algorithm,$algorithms,true)||!is_string($blobToken)||!valid_pubkey($algorithm.' '.$blobToken)) return null;
+ $blob=base64_decode($blobToken,true);
  if(!is_string($blob)) return null;
- return ['identity'=>$tokens[$offset].':'.hash('sha256',$blob),'fingerprint'=>'SHA256:'.rtrim(base64_encode(hash('sha256',$blob,true)),'=')];
+ return ['identity'=>$algorithm.':'.hash('sha256',$blob),'fingerprint'=>'SHA256:'.rtrim(base64_encode(hash('sha256',$blob,true)),'=')];
 }
 function directadmin_authorized_keys_lock(){
  ensure_ssh();
@@ -493,21 +505,24 @@ function add_key($k){
  }catch(Throwable $e){return 'Unable to update authorized_keys safely.';}
  finally{if(is_resource($lock)){@flock($lock,LOCK_UN);@fclose($lock);}}
 }
-function remove_key($idx){
+function remove_key($idx,$expectedFingerprint){
  if(!is_int($idx)||$idx<0) return 'Key not found.';
+ if(!is_string($expectedFingerprint)||preg_match('/\ASHA256:[A-Za-z0-9+\/]{43}\z/D',$expectedFingerprint)!==1)return 'Key list changed; reload before revoking.';
  $lock=null;
  try{
   $lock=directadmin_authorized_keys_lock();[$contents,$stat]=directadmin_authorized_keys_read();$lines=directadmin_authorized_keys_lines($contents);$visible=[];
-  foreach($lines as $line)if($line!=='')$visible[]=$line;
+  foreach($lines as $line)if(!directadmin_authorized_key_ignored_line($line))$visible[]=$line;
   if(!isset($visible[$idx]))return 'Key not found.';
-  $target=$visible[$idx];$targetIdentity=directadmin_authorized_key_identity($target);$removeIndex=null;$remaining=[];$visibleIndex=0;
+  $targetIdentity=directadmin_authorized_key_identity($visible[$idx]);
+  if(!$targetIdentity||!hash_equals($expectedFingerprint,$targetIdentity['fingerprint']))return 'Key list changed; reload before revoking.';
+  $remaining=[];$removed=false;
   foreach($lines as $line){
-   if($line===''){$remaining[]=$line;continue;}
-   $identity=directadmin_authorized_key_identity($line);$matches=$targetIdentity?($identity&&$identity['identity']===$targetIdentity['identity']):($visibleIndex===$idx);
-   if($matches){$removeIndex=$visibleIndex;}else{$remaining[]=$line;}
-   $visibleIndex++;
+   if(directadmin_authorized_key_ignored_line($line)){$remaining[]=$line;continue;}
+   $identity=directadmin_authorized_key_identity($line);
+   if($identity&&hash_equals($targetIdentity['identity'],$identity['identity'])){$removed=true;continue;}
+   $remaining[]=$line;
   }
-  if($removeIndex===null)return 'Key not found.';
+  if(!$removed)return 'Key not found.';
   $updated=$remaining?implode("\n",$remaining)."\n":'';
   if(!directadmin_authorized_keys_write_atomic($updated,$stat))return 'Unable to update authorized_keys safely.';
   return 'Key revoked.';
@@ -516,7 +531,7 @@ function remove_key($idx){
 }
 function fingerprints(){
  ensure_ssh();$contents=@file_get_contents(key_file());if(!is_string($contents)||strlen($contents)>1048576)throw new RuntimeException('Unable to read authorized_keys safely.');
- $out=[];$index=0;foreach(directadmin_authorized_keys_lines($contents) as $line){if($line==='')continue;$identity=directadmin_authorized_key_identity($line);$out[]=[$index++,$identity?$identity['fingerprint']:'fingerprint unavailable'];}
+ $out=[];$index=0;foreach(directadmin_authorized_keys_lines($contents) as $line){if(directadmin_authorized_key_ignored_line($line))continue;$identity=directadmin_authorized_key_identity($line);$out[]=[$index++,$identity?$identity['fingerprint']:'fingerprint unavailable'];}
  return $out;
 }
 function path_within($path,$root){
@@ -1048,7 +1063,8 @@ function render_directadmin_ssh_access($info,$command,$canInspectKeys,$keys,$tok
   echo '<div class="card"><h3>Install a workstation public key</h3><p>Paste the single-line <code>.pub</code> public key that matches the private key on the workstation. This admin-only, CSRF-protected action writes only that public key to this DirectAdmin account\'s <code>authorized_keys</code>. Never paste a private key.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... workstation-key"></textarea><button name="add_key" value="1">Install public key</button></form>';
   if(!$keys) echo '<p>No public keys are installed for this account.</p>';
   foreach($keys as [$i,$fingerprint]){
-   echo '<div class="keyrow"><b>'.h($fingerprint).'</b><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>';
+   if($fingerprint==='fingerprint unavailable')echo '<div class="keyrow"><b>'.h($fingerprint).'</b><p class="muted">Revoke is unavailable because this authorized_keys line could not be validated.</p></div>';
+   else echo '<div class="keyrow"><b>'.h($fingerprint).'</b><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><input type="hidden" name="expected_fingerprint" value="'.h($fingerprint).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>';
   }
   echo '</div>';
  }elseif($canMutate) echo '<div class="card"><h3>Public-key management unavailable</h3><p class="muted">SSH key storage is unsafe or unavailable. No key changes were made; ask the server administrator to repair this account storage through its approved process.</p></div>';
@@ -1109,7 +1125,7 @@ function render(){
   if(!$canMutate){$msg='Request rejected: this DirectAdmin role is read-only in Developer Portal.';}
   elseif(!check_csrf()){$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
   elseif(isset($_POST['add_key'])){$msg=add_key(post_string('public_key',''));}
-  elseif(isset($_POST['remove_key'])){$idx=filter_var($_POST['remove_key'],FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);$msg=remove_key($idx===false?-1:$idx);}
+  elseif(isset($_POST['remove_key'])){$idx=filter_var(post_string('remove_key',''),FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);$msg=remove_key($idx===false?-1:$idx,post_string('expected_fingerprint',''));}
   elseif(isset($_POST['run'])){[$output,$rc,$commandClass]=run_cmd(post_string('command',''),$cwd);}
  }
  $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();
