@@ -31,14 +31,23 @@ export class WorkforceController {
     } catch (error) { if (epoch === this.#epoch) this.#fail(error); }
   }
   #validateProjection(discovery, status, companyId) {
+    const invalid = () => { throw new Error('workforce-projection-invalid'); };
+    const strings = value => value === undefined || (Array.isArray(value) && value.every(item => typeof item === 'string' && item.trim()));
+    const optionalString = value => value == null || typeof value === 'string';
     if (!Array.isArray(discovery?.workers) || !Array.isArray(status?.work)) throw new Error('workforce-projection-invalid');
+    if (discovery.controls !== undefined && (!Array.isArray(discovery.controls) || discovery.controls.some(control =>
+      !control || typeof control.action !== 'string' || !control.action.trim() || typeof control.capability_id !== 'string' || !control.capability_id.trim()))) invalid();
     for (const worker of discovery.workers) {
       scoped(worker, companyId);
       if (typeof worker.worker_id !== 'string' || !worker.worker_id || !['digital', 'human'].includes(worker.kind)) throw new Error('workforce-projection-invalid');
+      if (!strings(worker.capabilities) || (worker.active !== undefined && typeof worker.active !== 'boolean')) invalid();
+      if (!optionalString(worker.role) || !optionalString(worker.tier)) invalid();
     }
     for (const item of status.work) {
       scoped(item, companyId);
       if (typeof item.work_id !== 'string' || !item.work_id || typeof item.state !== 'string') throw new Error('workforce-projection-invalid');
+      if (!strings(item.context_refs) || !strings(item.evidence_refs)) invalid();
+      if (!optionalString(item.run_id)) invalid();
     }
   }
   #fail(error, submitted = false) {

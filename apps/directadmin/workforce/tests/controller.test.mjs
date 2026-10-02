@@ -93,3 +93,41 @@ test('malformed evidence references cannot label an outcome verified', () => {
     assert.equal(verifiedOutcome({ state: 'VERIFIED', verification: { status: 'VERIFIED' }, evidence_refs }), false);
   }
 });
+test('malformed optional collections fail closed before any view consumes them', async () => {
+  const worker = { company_id: 'company-a', worker_id: 'w1', kind: 'digital' };
+  const work = { company_id: 'company-a', work_id: 'job1', state: 'RUNNING' };
+  for (const invalid of [null, {}, 'not-an-array', [null], [''], [{}]]) {
+    for (const field of ['capabilities', 'context_refs', 'evidence_refs', 'controls']) {
+      const api = fixture();
+      api.discover = async () => ({ company_id: 'company-a', workers: [{ ...worker, ...(field === 'capabilities' ? { capabilities: invalid } : {}) }], ...(field === 'controls' ? { controls: invalid } : {}) });
+      api.status = async () => ({ company_id: 'company-a', work: [{ ...work, ...(['context_refs', 'evidence_refs'].includes(field) ? { [field]: invalid } : {}) }] });
+      const observed = [];
+      const model = new WorkforceController(api, state => observed.push(state.phase));
+      await model.connect();
+      assert.equal(model.state.phase, 'unavailable', `${field}: ${JSON.stringify(invalid)}`);
+      assert.equal(model.state.context, null);
+      assert.equal(observed.includes('ready'), false);
+    }
+  }
+});
+test('malformed canonical refresh clears the prior receipt and company data', async () => {
+  const api = fixture(); const model = new WorkforceController(api); await model.connect();
+  api.status = async () => ({ company_id: 'company-a', work: [{ company_id: 'company-a', work_id: 'job1', state: 'RUNNING', evidence_refs: {} }] });
+  await model.submit({ action: 'pause' });
+  assert.equal(model.state.phase, 'unavailable');
+  assert.equal(model.state.receipt, null);
+  assert.equal(model.state.discovery, null);
+  assert.match(model.state.error, /outcome is unknown/);
+});
+test('malformed optional display scalars are rejected before later tab rendering', async () => {
+  for (const invalid of [{ toString: null }, {}, [], 123, false]) {
+    for (const field of ['run_id', 'role', 'tier']) {
+      const api = fixture();
+      api.discover = async () => ({ company_id: 'company-a', workers: [{ company_id: 'company-a', worker_id: 'w1', kind: 'digital', ...(field === 'run_id' ? {} : { [field]: invalid }) }] });
+      api.status = async () => ({ company_id: 'company-a', work: [{ company_id: 'company-a', work_id: 'job1', state: 'RUNNING', ...(field === 'run_id' ? { run_id: invalid } : {}) }] });
+      const model = new WorkforceController(api); await model.connect();
+      assert.equal(model.state.phase, 'unavailable');
+      assert.equal(model.state.context, null);
+    }
+  }
+});
