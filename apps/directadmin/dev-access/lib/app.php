@@ -83,6 +83,11 @@ function directadmin_validate_post_fields($fields){
 }
 function directadmin_parse_form_body($body){
  if(!is_string($body)||strlen($body)>16384) throw new RuntimeException('Form data exceeds the limit.');
+ if($body!==''){
+  if(substr($body,-2)==="\r\n") $body=substr($body,0,-2);
+  elseif(substr($body,-1)==="\n") $body=substr($body,0,-1);
+  if($body==='') throw new RuntimeException('Malformed form terminator.');
+ }
  if($body==='') return [];
  $pairs=explode('&',$body);
  if(count($pairs)>count(directadmin_post_field_names())) throw new RuntimeException('Too many form fields.');
@@ -170,9 +175,65 @@ function bootstrap_directadmin_request($role='admin'){
 }
 function key_dir(){return home_dir().'/.ssh';}
 function key_file(){return key_dir().'/authorized_keys';}
-function valid_pubkey($k){return preg_match('/^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+\/=]+(?:\s+.*)?$/',trim((string)$k))===1;}
+function directadmin_ssh_blob_read_string($blob,&$offset){
+ if(!is_string($blob)||!is_int($offset)) return null;
+ $total=strlen($blob);
+ if($offset<0||$offset>$total||$total-$offset<4) return null;
+ $header=unpack('Nlength',substr($blob,$offset,4));
+ if(!is_array($header)||!isset($header['length'])) return null;
+ $offset+=4;
+ $length=$header['length'];
+ if(!is_int($length)||$length<0||$length>$total-$offset) return null;
+ $value=substr($blob,$offset,$length);
+ $offset+=$length;
+ return $value;
+}
+function directadmin_ssh_blob_valid_positive_mpint($value){
+ if(!is_string($value)||$value==='') return false;
+ $length=strlen($value);
+ $first=ord($value[0]);
+ if(($first&0x80)!==0) return false;
+ if($first===0&&($length===1||(ord($value[1])&0x80)===0)) return false;
+ return true;
+}
+function valid_pubkey($k){
+ if(!is_string($k)||strpos($k,"\0")!==false) return false;
+ $line=trim($k);
+ if($line===''||strpos($line,"\r")!==false||strpos($line,"\n")!==false) return false;
+ if(preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$line)===1) return false;
+ if(preg_match('/\A(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp(?:256|384|521))[ \t]+([A-Za-z0-9+\/]+={0,2})(?:[ \t]+[^\r\n]*)?\z/D',$line,$matches)!==1) return false;
+ $blob=base64_decode($matches[2],true);
+ if(!is_string($blob)||base64_encode($blob)!==$matches[2]) return false;
+ $offset=0;
+ $blobType=directadmin_ssh_blob_read_string($blob,$offset);
+ if($blobType!==$matches[1]) return false;
+ if($matches[1]==='ssh-ed25519'){
+  $public=directadmin_ssh_blob_read_string($blob,$offset);
+  if(!is_string($public)||strlen($public)!==32) return false;
+ }elseif($matches[1]==='ssh-rsa'){
+  $exponent=directadmin_ssh_blob_read_string($blob,$offset);
+  $modulus=directadmin_ssh_blob_read_string($blob,$offset);
+  if(!directadmin_ssh_blob_valid_positive_mpint($exponent)||!directadmin_ssh_blob_valid_positive_mpint($modulus)) return false;
+ }else{
+  $curve=directadmin_ssh_blob_read_string($blob,$offset);
+  $point=directadmin_ssh_blob_read_string($blob,$offset);
+  $expectedCurve=substr($matches[1],strlen('ecdsa-sha2-'));
+  $pointLengths=['nistp256'=>65,'nistp384'=>97,'nistp521'=>133];
+  if($curve!==$expectedCurve||!is_string($point)||strlen($point)!==$pointLengths[$expectedCurve]||$point[0]!=="\x04") return false;
+ }
+ return $offset===strlen($blob);
+}
 function ensure_ssh(){ $d=key_dir(); if(!is_dir($d) && !mkdir($d,0700,true) && !is_dir($d)) throw new RuntimeException('Unable to create .ssh directory.'); chmod($d,0700); if(!file_exists(key_file())) touch(key_file()); chmod(key_file(),0600); }
-function add_key($k){ ensure_ssh(); $k=trim((string)$k); if(!valid_pubkey($k)) return 'Invalid public key format.'; $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]; if(in_array($k,$lines,true)) return 'Key already installed.'; file_put_contents(key_file(),$k."\n",FILE_APPEND|LOCK_EX); chmod(key_file(),0600); return 'Public key installed.'; }
+function add_key($k){
+ $k=is_string($k)?trim($k):'';
+ if(!valid_pubkey($k)) return 'Invalid public key format.';
+ ensure_ssh();
+ $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[];
+ if(in_array($k,$lines,true)) return 'Key already installed.';
+ file_put_contents(key_file(),$k."\n",FILE_APPEND|LOCK_EX);
+ chmod(key_file(),0600);
+ return 'Public key installed.';
+}
 function remove_key($idx){ ensure_ssh(); if(!is_int($idx)||$idx<0) return 'Key not found.'; $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]; if(!isset($lines[$idx])) return 'Key not found.'; unset($lines[$idx]); file_put_contents(key_file(),$lines?implode("\n",$lines)."\n":'',LOCK_EX); chmod(key_file(),0600); return 'Key revoked.'; }
 function fingerprints(){ ensure_ssh(); $out=[]; foreach((file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]) as $i=>$k){ $tmp=tempnam(sys_get_temp_dir(),'tda'); if($tmp===false){$out[]=[$i,'fingerprint unavailable'];continue;} file_put_contents($tmp,$k."\n"); $fp=trim((string)shell_exec('ssh-keygen -lf '.escapeshellarg($tmp).' 2>/dev/null')); @unlink($tmp); $out[]=[$i,$fp?:'fingerprint unavailable']; } return $out; }
 function path_within($path,$root){
