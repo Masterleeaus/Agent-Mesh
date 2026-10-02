@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const ENABLED_PLUGINS = [
   { id: "titan-server-node", source: "apps/directadmin/server-node", files: ["plugin.conf", "install.sh", "update.sh", "uninstall.sh", "health.sh", "runtime.mjs"] },
-  { id: "titan_dev_access", source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts", "images"] },
+  { id: "titan_dev_access", source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts"] },
 ];
 
 const executable = new Set(["admin/index.html", "reseller/index.html", "user/index.html", "install.sh", "update.sh", "uninstall.sh", "health.sh", "scripts/install.sh", "scripts/uninstall.sh"]);
