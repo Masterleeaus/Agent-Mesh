@@ -137,27 +137,36 @@ table or second identity store is added. Source
 switch/revoke, actor/company/membership/device changes and expiry make the child
 fail current resolution, including after registry restart. The child exposes only
 its selected company in `allowed_company_ids`; it cannot switch company itself.
+A signing service configured for a DirectAdmin upstream and Workforce audience
+must configure this fixed exchange; generic `issue()` cannot mint a separate
+Workforce session that survives the source. A public-key-only Workforce verifier
+remains valid for consumers.
 
 ## Effect-time source fence
 
 `IdentitySessionRegistry.withCurrentSessionFence(proof, expected, { signal },
 callback)` is the reusable owner API for consumers. The proof includes the signed
-source reference and verified child bearer expiry. The registry samples its
-trusted clock after acquiring the existing SQLite `BEGIN IMMEDIATE` transaction,
-then re-resolves child and source before invoking the effect boundary with a
-fixed 500 ms deadline and AbortSignal. SQLite is WAL with a 5-second busy timeout;
-cross-process writer contention therefore fails at that storage timeout. The
-callback deadline starts after acquisition and identity revalidation. Keep all
-registry transactions free of network waits so local connection serialization
-stays short. Lock order is GLOBAL_REGISTRY → Workforce control store →
-company/business store; the callback must not re-enter the registry. Readiness
-probes stay outside the fence.
+source reference and verified child bearer expiry. At entry, the registry creates
+one 500 ms monotonic deadline before queueing for its SQLite
+`BEGIN IMMEDIATE` transaction. Storage includes same-connection queue time and
+native writer-lock acquisition by setting a temporary connection-local
+`busy_timeout` to the remaining budget; ordinary transactions keep the
+configured five-second timeout. If acquisition expires, the storage error is
+normalized to `session-fence-timeout` and the transaction callback does not run.
+After acquisition, the registry samples its trusted clock and re-resolves child
+and source, then passes the same absolute deadline and an AbortSignal for the
+remaining budget to the effect boundary. Workforce passes that unchanged deadline
+to its control-store transaction. Keep the callback to short local admission work:
+no provider/network wait, readiness probe, or registry re-entry. Lock order is
+GLOBAL_REGISTRY → Workforce control store. Company-native reads and provider work
+run outside both locks.
 
 The fence covers admission/immediate bounded effect work only, never a 120-second
 adapter lifecycle. On timeout it releases the registry lock and rejects as
 `session-fence-timeout`. The callback may still be running if it ignores abort;
 consumers must preserve `UNCERTAIN`, avoid replay and wait for observed outcome.
-This does not claim logout/company switch can cancel an effect already admitted.
+A source switch or revoke that commits first denies admission. If the fence admits
+first, a later switch/revoke does not undo that in-flight work.
 
 This service exposes no principal/company/membership/device provisioning methods.
 Those existing registry primitives remain protected commissioning/governance
@@ -169,11 +178,15 @@ permission to provision. No automatic historical mapping/backfill is authorized.
 
 ## #1049 DirectAdmin adapter reconciliation
 
-Inspected PR #1204 at `12261fd020e41d5cc4580b4ccd3d8faf63d84cf4`.
-Its provisional hand-written `titan-da-session+jwt` verifier must be replaced by
-this canonical service before commissioning. No implicit acceptance of that old
-type or legacy tokens is supplied. #1049 owns its bridge/plugin/gateway files;
-this slice does not edit them.
+PR #1204 remains the #1049-owned DirectAdmin bridge/plugin/gateway. Its current
+draft consumes the canonical credential service; it does not create a second
+identity store. Do not accept the older hand-written `titan-da-session+jwt` token
+type or relabel a DirectAdmin-audience credential as Workforce. The #1049 owner
+retains its CSRF, Origin, gateway and UI response policy and owns consumer review
+and commissioning; this slice does not edit those files. A signing service with
+a DirectAdmin upstream and Workforce audience must configure the fixed exchange;
+generic `issue()` cannot mint a separate Workforce session. Verification-only
+Workforce hosts remain public-key-only consumers.
 
 Configure `directadmin: { node_id }` to require signed `node_id`, `csrf_sha256`
 (base64url SHA-256, 43 characters), and `da_role` (`admin`/`reseller`/`user`) in the
@@ -223,12 +236,13 @@ remain with #811/#812.
 `apps/web/lib/auth/current-session.ts` is an opt-in server adapter over this service.
 It projects current `{userId, accountId, role}` for existing web callers through
 a required trusted `resolveLegacyAccountId(company_id)` compatibility mapping;
-there is no assumption that a canonical company ID equals a legacy account ID.
-Unknown, malformed or throwing mappings fail closed with sanitized errors.
-The adapter revalidates the exact credential/context after an asynchronous mapping
-lookup, so a concurrent switch or revocation cannot return a stale projection. Operation scope remains the canonical
-selected company, even when its legacy account ID differs. Unsupported web roles and legacy JWTs fail
-closed. It never falls back to `users.account_id` or reconstructs missing membership.
+there is no assumption that canonical company ID equals a legacy account ID.
+Unknown, malformed or throwing mappings fail closed with sanitized errors. The
+adapter revalidates the exact credential/context after the asynchronous mapping
+lookup, so a concurrent switch or revocation cannot return a stale projection.
+Operation scope remains the canonical selected company even when its legacy
+account ID differs. Unsupported web roles and legacy JWTs fail closed. It never
+falls back to `users.account_id` or reconstructs missing membership.
 Real SQLite tests exercise issue/switch/revoke/restart and legacy-token denial.
 
 Existing login/middleware/`session.ts` remain on the preserved legacy path. Cutover
