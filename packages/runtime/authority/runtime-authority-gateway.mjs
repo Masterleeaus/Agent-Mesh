@@ -62,6 +62,7 @@ export class RuntimeAuthorityGateway {
       run_id,
       idempotency_key,
       execution_mode:"autonomous",
+      input,
       execution_input:input,
       authority_decision_id:`${previous.authority_decision_id}:execute:${required(idempotency_key??run_id,"runtime-idempotency-key-required")}`,
       supersedes_authority_decision_id:previous.authority_decision_id,
