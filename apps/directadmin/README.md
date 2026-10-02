@@ -1,36 +1,70 @@
-# DirectAdmin plugin portfolio
+# Titan DirectAdmin Business Node Control Plane
 
-This tree tracks the DirectAdmin plugin workspaces in the canonical portfolio map. A folder is an inventory/scaffold marker; it does not mean the plugin is packaged, installable, or complete. DirectAdmin runtime entrypoints and `plugin.conf` must be added by each mission when its implementation is ready.
+DirectAdmin is Titan Zero's first server-resident **Business Node control plane / meta-orchestration environment**.
 
-| Plugin | Folder | Mission | State |
+It manages the business's digital system estate while canonical Titan services remain responsible for factual history, authority, Workforce identity and reusable business/runtime logic.
+
+The #1049 continuation adds a signed-session bridge over #302 and shared SDK consumers in `zero-core/`, `operations-hub/`, and `brand-studio/`. These source modules have disposable integration coverage but are not installed DirectAdmin packages; the issuer, launched gateway and live Evolution migration remain uncommissioned. See the [bridge contract](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/agent/issue-1049/docs/contracts/directadmin-authenticated-session-bridge.md) and open [PR #1204](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1204).
+
+## Canonical docs
+
+- [Plugin Development Guide](../../docs/directadmin/PLUGIN-DEVELOPMENT-GUIDE.md)
+- [Plugin Portfolio & Source Assignment](../../docs/directadmin/PLUGIN-PORTFOLIO-MAP.md)
+- [Blueprint v3](../../docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md)
+- [Canonical Rules](../../docs/architecture/CANONICAL-RULES.md)
+
+## Plugin portfolio inventory
+
+Folder names below are source paths, not stable DirectAdmin machine IDs. Resolve machine IDs and display labels through the canonical registry owner; do not infer IDs from folder names.
+
+| Plugin | Source path / inventory note | Mission | Current scope or state |
 |---|---|---:|---|
-| Titan Business Node Core | [`server-node/`](./server-node/) | #812 | Existing implementation slice; portfolio and host certification pending |
-| Cockpit SDK | [`cockpit-sdk/`](./cockpit-sdk/) | #1049 | Scaffold only; not installable |
-| Titan Business Engine | [`business-engine/`](./business-engine/) | #1051 | Scaffold only; not installable |
-| Titan Zero | [`zero/`](./zero/) | #1046 | Scaffold only; not installable |
-| Titan Workforce | [`workforce/`](./workforce/) | #1050 | Scaffold only; not installable |
-| Titan Operations | [`operations/`](./operations/) | #1045 | Scaffold only; not installable |
-| Titan Foundry | [`foundry/`](./foundry/) | #1047 | Scaffold only; not installable |
-| Titan Web | [`web/`](./web/) | #1044 | Scaffold only; not installable |
-| Titan Dev | [`dev-access/`](./dev-access/) | #1048 + #1049 | Existing server-validated donor |
-| Titan Experience | [`experience/`](./experience/) | #1052 | Scaffold only; not installable |
-| Titan Surfaces | [`surfaces/`](./surfaces/) | #1059 | Scaffold only; not installable |
-| Titan Channels | [`channels/`](./channels/) | #1060 | Scaffold only; not installable |
-| Titan Interaction | [`interaction/`](./interaction/) | #1061 | Scaffold only; not installable |
-| Titan Decision | [`decision/`](./decision/) | #1062 | Scaffold only; not installable |
-| Titan Communications | [`communications/`](./communications/) | #1053 | Scaffold only; not installable |
-| Titan Finance & Commerce | [`finance-commerce/`](./finance-commerce/) | #1054 | Scaffold only; not installable |
-| Titan Intelligence | [`intelligence/`](./intelligence/) | #1055 | Scaffold only; not installable |
-| Titan Governance & Assurance | [`governance-assurance/`](./governance-assurance/) | #1056 | Scaffold only; not installable |
-| Titan Sprout | [`sprout/`](./sprout/) | #1057 | Scaffold only; not installable |
-| Titan Analytics | [`analytics/`](./analytics/) | — | Proposed; no mission; not installable |
+| Titan Business Node Core | [`server-node/`](./server-node/) | #812 | Existing read-only implementation slice; portfolio and host certification remain open. Active relay work is in [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211). |
+| Cockpit SDK | [`cockpit-sdk/`](./cockpit-sdk/README.md) | #1049 | Inventory note at this path; shared SDK/session-bridge source is in [PR #1204](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1204), not a separately installed plugin. |
+| Titan Business Engine | [`business-engine/`](./business-engine/README.md) | #1051 | Portfolio inventory note; Frappe/ERPNext remains an optional provider beneath canonical Titan services. |
+| Titan Zero | [`zero/`](./zero/README.md) | #1046 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Workforce | [`workforce/`](./workforce/PORTFOLIO-SCAFFOLD.md) | #1050 | Owner plugin source and richer README are in open [PR #1143](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1143); not merged or live-certified. |
+| Titan Operations | [`operations/`](./operations/README.md) | #1045 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Foundry | [`foundry/`](./foundry/README.md) | #1047 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Web | [`web/`](./web/README.md) | #1044 | Portfolio inventory note; `apps/web` remains the separate full base web application. |
+| Developer Portal (historical Titan Dev donor) | [`dev-access/`](./dev-access/) | #1048 | Historical donor reference only; see the current candidate and installation scope below. |
+| Titan Experience | [`experience/`](./experience/README.md) | #1052 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Communications | [`communications/`](./communications/README.md) | #1053 | Proposed cockpit inventory note; implementation remains with canonical service owners and its mission. |
+| Titan Finance & Commerce | [`finance-commerce/`](./finance-commerce/README.md) | #1054 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Intelligence | [`intelligence/`](./intelligence/README.md) | #1055 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Governance & Assurance | [`governance-assurance/`](./governance-assurance/README.md) | #1056 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Sprout | [`sprout/`](./sprout/README.md) | #1057 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Surfaces | [`surfaces/`](./surfaces/README.md) | #1059 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Channels | [`channels/`](./channels/README.md) | #1060 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Interaction | [`interaction/`](./interaction/README.md) | #1061 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Decision | [`decision/`](./decision/README.md) | #1062 | Portfolio inventory note; see snapshot scope and the owning mission for implementation state. |
+| Titan Analytics | [`analytics/`](./analytics/README.md) | — | Proposed optional cockpit; no mission has been assigned. |
 
+## Snapshot scope and active owner work
+
+This inventory is audited against `main` at commit [`14163faa316ac6236e88167b7c8d8a5e95007c7e`](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/commit/14163faa316ac6236e88167b7c8d8a5e95007c7e). In that exact snapshot, the DirectAdmin source tree contains `server-node/` and `dev-access/`; the 18 portfolio paths introduced by #1187 were absent. This PR adds inventory documentation at those paths. That statement is limited to the audited base snapshot and #1187's documentation changes: it does not assert that implementation is absent from active branches, canonical packages, or installed hosts.
+
+Active owner work not represented by that base snapshot:
+
+- [PR #1143](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1143) contains the Workforce plugin routes, package tooling and the owner-authored `workforce/README.md`. It remains open and unmerged; host/session commissioning is incomplete. The #1187 inventory note uses a different filename so the owner README can land without an add/add conflict.
+- [PR #1204](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1204) contains the signed-session bridge and shared consumer source. These modules are not installed DirectAdmin packages; the issuer, gateway and live Evolution migration remain uncommissioned.
+- [PR #1209](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1209) carries the current Developer Portal source candidate. Its package and transport checks are evidence for that candidate, not proof of a live install or supported-host lifecycle.
+- [PR #1211](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1211) carries the Server Node RAW relay and browser helper work; live DirectAdmin commissioning remains open.
+
+## Developer Portal donor history and current candidate
+
+The prior `dev-access/` donor/server-verification label is historical evidence, not certification of the currently installed plugin or a new candidate. The previously inspected installed v1.1.3 form had a reported CSRF failure and is not a verified rollback. PR #1209 reports source candidate v1.3.3 (archive SHA-256 `6145b02a9fc0626f31bf7350f881419cf5cfe41036879b724e5abf4c38addbbc`); the latest exact-head PHP package/transport workflow passed on PHP 8.3.6 at head `97a44e14abc92b216d861a17a777eceda4b6ab5e` ([run 36989703571](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/actions/runs/36989703571)). This is candidate-package evidence, not a live install. Live install, update, removal and rollback remain unverified. A newer user report of a diagnostics-v2 installation does not yet include a confirmed version/hash or successful authenticated form submission.
 
 ## Shared implementation boundary
 
-- `server-node/` contains a bounded read-only health implementation and package; portfolio integration and live-host certification remain open. `dev-access/` is the existing server-validated Titan Dev donor. Both are preserved.
-- The 17 mission-linked scaffolds and proposed Analytics folder are documentation only and none is installable: each has no `plugin.conf`, executable role routes, lifecycle scripts, or package artifact. Folder names are source paths, not assertions of stable DirectAdmin machine IDs.
-- Keep business, Workforce identity/runtime, authority, evidence, and reusable service logic in their canonical `packages/` and `services/` owners. Plugins consume those through stable contracts.
-- `apps/web` remains the separate full base web application. The PWA and native mobile app each remain one app with Zero/Go/Hub modes; these plugin folders do not replace or split those surfaces.
+- `server-node/` contains a bounded read-only health implementation and package. Its integration, lifecycle and live-host certification remain with #812 and the linked owner work.
+- The new folders are inventory notes, not proof of plugin completeness. Their source paths are not stable plugin IDs.
+- Keep business, Workforce identity/runtime, authority, evidence and reusable service logic in canonical `packages/` and `services/` owners. Plugins consume those through stable contracts.
+- `apps/web` remains the separate full base web application. The PWA and native mobile app each remain one app with Zero/Go/Hub modes; DirectAdmin folders do not replace or split those surfaces.
 - Titan Analytics is a proposed optional cockpit in the portfolio map; it has no mission assignment and is not part of the supported install set yet.
+- Do not copy canonical business/runtime implementations into plugins merely to expose them in DirectAdmin.
 - Follow the [Plugin Development Guide](../../docs/directadmin/PLUGIN-DEVELOPMENT-GUIDE.md) and [Portfolio Map](../../docs/directadmin/PLUGIN-PORTFOLIO-MAP.md).
+
+## Multi-language plugins
+
+DirectAdmin plugin GUI entrypoints are executable scripts. They may use PHP, Python, Perl, shell, Node, Ruby, native binaries or another executable runtime available on the server. See the Plugin Development Guide for the language/porting policy.
