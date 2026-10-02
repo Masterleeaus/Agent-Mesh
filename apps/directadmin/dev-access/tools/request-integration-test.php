@@ -159,6 +159,19 @@ function integration_init_git_repo(string $path,string $home):void{
  integration_expect(proc_close($process)===0&&$stdout===''&&$stderr==='','synthetic Git setup must be quiet and successful');
 }
 
+function integration_git_command(string $cwd,array $arguments,array $environment):string{
+ $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+ $process=@proc_open(array_merge(['git','-C',$cwd],$arguments),$descriptors,$pipes,$cwd,$environment,['bypass_shell'=>true]);
+ integration_expect(is_resource($process),'synthetic Git setup command must start');
+ fclose($pipes[0]);
+ $stdout=(string)stream_get_contents($pipes[1]);
+ $stderr=(string)stream_get_contents($pipes[2]);
+ fclose($pipes[1]); fclose($pipes[2]);
+ $exit=proc_close($process);
+ integration_expect($exit===0,'synthetic Git setup command must succeed: '.implode(' ',$arguments).' '.trim($stderr));
+ return trim($stdout);
+}
+
 function integration_ssh_wire_string(string $value):string{
  return pack('N',strlen($value)).$value;
 }
@@ -325,6 +338,43 @@ integration_expect(hash_file('sha256',$gitConfig)===$gitConfigBefore,'actual rol
 
 $externalGit=$fixture.'/outside-git';
 integration_init_git_repo($externalGit,$fixture);
+$externalSubject='synthetic-outside-packed-git-subject-'.bin2hex(random_bytes(6));
+integration_expect(file_put_contents($externalGit.'/fixture.txt',$externalSubject.PHP_EOL)!==false,'packed-object subject fixture must be written');
+$gitSetupEnvironment=[
+ 'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+ 'HOME'=>$fixture,
+ 'GIT_CONFIG_NOSYSTEM'=>'1',
+ 'GIT_CONFIG_GLOBAL'=>'/dev/null',
+ 'GIT_TERMINAL_PROMPT'=>'0'
+];
+integration_git_command($externalGit,['-c','user.name=DirectAdmin Fixture','-c','user.email=fixture@example.invalid','add','fixture.txt'],$gitSetupEnvironment);
+integration_git_command($externalGit,['-c','user.name=DirectAdmin Fixture','-c','user.email=fixture@example.invalid','commit','--quiet','-m',$externalSubject],$gitSetupEnvironment);
+$externalCommit=integration_git_command($externalGit,['rev-parse','HEAD'],$gitSetupEnvironment);
+integration_git_command($externalGit,['gc','--prune=now','--quiet'],$gitSetupEnvironment);
+$externalPacks=glob($externalGit.'/.git/objects/pack/*.pack')?:[];
+integration_expect(count($externalPacks)>0,'outside fixture must contain a packed commit object');
+
+$nestedEscapeRepo=$homeA.'/nested-object-escape';
+integration_init_git_repo($nestedEscapeRepo,$homeA);
+$nestedHead=$nestedEscapeRepo.'/.git/refs/heads/main';
+integration_expect(is_dir(dirname($nestedHead))||mkdir(dirname($nestedHead),0700,true),'nested-ref fixture directory must exist');
+integration_expect(file_put_contents($nestedHead,$externalCommit."\n")!==false,'synthetic external commit ref must be written');
+$nestedPack=$nestedEscapeRepo.'/.git/objects/pack';
+if(!is_dir($nestedPack)) integration_expect(mkdir($nestedPack,0700,true),'nested object pack path must be created before linking');
+$nestedPackEntries=array_values(array_diff(scandir($nestedPack)?:[],['.','..']));
+integration_expect($nestedPackEntries===[],'synthetic nested pack directory must be empty before link setup');
+integration_expect(rmdir($nestedPack),'empty nested pack path must be removed before external link setup');
+integration_expect(symlink($externalGit.'/.git/objects/pack',$nestedPack),'nested Git objects/pack symlink must point to external packed objects');
+$nestedFields=['csrf'=>$token,'cwd'=>$nestedEscapeRepo,'command'=>'git log --oneline -5','run'=>'1'];
+$nestedBody=http_build_query($nestedFields,'','&',PHP_QUERY_RFC1738);
+$nestedEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($nestedBody)
+];
+[$nestedHtml]=integration_run_role($root,'admin',$nestedEnvironment,$nestedBody);
+integration_expect(strpos($nestedHtml,'Exit code: 126')!==false,'actual role executable must reject nested external Git object traversal before Git runs');
+integration_expect(strpos($nestedHtml,$externalSubject)===false&&strpos($nestedHtml,$externalCommit)===false,'actual role output must not disclose a subject or object reachable only through nested external metadata');
+
 $escapedWorktree=$homeA.'/linked-gitdir-escape';
 integration_expect(mkdir($escapedWorktree,0700,true),'linked-worktree containment fixture must be created');
 integration_expect(file_put_contents($escapedWorktree.'/.git',"gitdir: ".$externalGit.'/.git'."\n")!==false,'external linked-worktree pointer must be created');
