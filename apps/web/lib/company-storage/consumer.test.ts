@@ -6,7 +6,7 @@ import {
   type VerifiedCompanyScope,
 } from "../../../../packages/storage/src/company-storage-resolver";
 import type { StorageClient } from "../../../../packages/storage/src/index";
-import { withNativeCompanyStore } from "./consumer";
+import { NativeCompanyStoreCloseAfterOperationError, withNativeCompanyStore } from "./consumer";
 
 const scope: VerifiedCompanyScope = {
   kind: "authenticated",
@@ -22,13 +22,14 @@ function setup(options: {
   company_id?: string;
   revision?: number;
   assertPhysicalPath?: () => Promise<void>;
+  close?: () => Promise<void>;
 } = {}) {
   let revision = options.revision ?? 4;
   const client: StorageClient = {
     dialect: "sqlite",
     query: vi.fn(async () => ({ rows: [], rowCount: 0 })),
     transaction: vi.fn(async fn => fn(client)),
-    close: vi.fn(async () => undefined),
+    close: vi.fn(options.close ?? (async () => undefined)),
   };
   const registry = {
     findByCompanyId: vi.fn(async (companyId: string) => ({
@@ -109,6 +110,24 @@ describe("native company-store consumer", () => {
     await expect(withNativeCompanyStore({
       resolver: f.resolver, scope, company_id: "company-a", operation,
     })).rejects.toMatchObject({ code: "placement-stale" });
+    expect(f.client.close).toHaveBeenCalledTimes(1);
+  });
+
+  it("marks close failure after a successful callback as unsafe to retry", async () => {
+    const closeError = new Error("sqlite-close-failed");
+    const f = setup({ close: async () => { throw closeError; } });
+    const operation = vi.fn(async () => "write-returned");
+
+    await expect(withNativeCompanyStore({
+      resolver: f.resolver, scope, company_id: "company-a", operation,
+    })).rejects.toMatchObject({
+      name: "NativeCompanyStoreCloseAfterOperationError",
+      message: "native-company-store-close-after-operation",
+      operation_returned_successfully: true,
+      automatic_retry_allowed: false,
+      cause: closeError,
+    } satisfies Partial<NativeCompanyStoreCloseAfterOperationError>);
+    expect(operation).toHaveBeenCalledTimes(1);
     expect(f.client.close).toHaveBeenCalledTimes(1);
   });
 });

@@ -5,6 +5,21 @@ import type {
 import type { StorageClient } from "../../../../packages/storage/src/index";
 
 /**
+ * The operation callback returned successfully, but the physical lease could
+ * not be closed. The callback's side effects may already be committed, so
+ * callers must not treat this as a safe-to-retry operation failure.
+ */
+export class NativeCompanyStoreCloseAfterOperationError extends Error {
+  readonly operation_returned_successfully = true;
+  readonly automatic_retry_allowed = false;
+
+  constructor(cause: unknown) {
+    super("native-company-store-close-after-operation", { cause });
+    this.name = "NativeCompanyStoreCloseAfterOperationError";
+  }
+}
+
+/**
  * Execute one native FSM operation against the company store selected by the
  * canonical #1233 resolver. Callers must pass a scope freshly produced by the
  * #302 session verifier (or a verified public capability); request JSON is
@@ -45,6 +60,12 @@ export async function withNativeCompanyStore<T>(input: {
     throw error;
   } finally {
     if (failed) await lease.close().catch(() => undefined);
-    else await lease.close();
+    else {
+      try {
+        await lease.close();
+      } catch (error) {
+        throw new NativeCompanyStoreCloseAfterOperationError(error);
+      }
+    }
   }
 }
