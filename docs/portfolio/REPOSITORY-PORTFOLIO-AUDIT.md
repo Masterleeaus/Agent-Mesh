@@ -152,3 +152,12 @@ A repository-by-repository naming map with proposed GitHub slugs, README titles,
 - Kept the banner system consistent in layout and varied each project's title, status label, and accent color. Existing project artwork remains alongside the banner where already present.
 - Left `cleanhub` and `cleanhub2` unbranded because both are near-empty deletion candidates pending disposition.
 - Banner images are documentation assets; no application builds or tests were run for this visual pass.
+
+
+### README accuracy and provenance pass — 2026-10-02
+
+- Aligned remaining public README titles with the rename plan and fixed stale banner statements after adding the image assets.
+- Corrected `Titan-Zero`'s default-branch content description to include its checked-in banner, and retained it for review because four non-main branches contain unique integration work.
+- Corrected `cleanhub` to describe its current state: one status README, no app source or release artifact.
+- Added explicit attribution notes to `ForgeMesh` and `TitanPro`: checked-in package/license metadata identifies third-party copyright/provenance that must be preserved and reviewed before claiming original authorship. The `workcore-extensions` repository has no root license file, now called out before public release.
+- These changes improve README accuracy only. They do not verify functional completeness, licenses beyond the checked-in notices, or runtime behavior.
