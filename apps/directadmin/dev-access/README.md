@@ -10,6 +10,8 @@ Current implemented slice:
 - HOME-scoped working-directory validation using canonical `realpath` boundaries.
 - Fail-closed command classification for READ, VERIFY, BUILD/TEST, WRITE and UNKNOWN operations.
 - Read/verify/build-test terminal allowlist only; shell chaining, redirection, Git mutation, package installation, destructive and privileged commands are rejected.
+- Exact Git read commands only: `status` (optionally `--short`), `diff --stat`, `diff --name-only`, `log --oneline -5`, `branch --show-current`, `rev-parse --short HEAD`, `ls-files`, and `describe --always --dirty`. All `remote` commands, Git config, global options, and other Git argument combinations are blocked.
+- Before Git terminal commands or Codex-readiness probes, the worktree root, `.git` pointer, Git directory, common directory, and object alternates must resolve inside the account HOME. The Git child receives bounded fixed options with system/global config, credential helpers, hooks and fsmonitor disabled. Command output redacts URL userinfo.
 - 30-second command timeout and a true 512 KiB streaming output ceiling that terminates over-limit processes.
 - Copyable diagnostics with token/password/cookie/private-key redaction.
 - DirectAdmin CLI request handling for bounded raw POST bodies from the `POST` environment value or stdin selected by `pipe_post=yes`; exploded per-field environment values fail closed. The parser rejects duplicate/array/malformed input and uses the installed `csrf` field name.
@@ -18,9 +20,11 @@ Current implemented slice:
 - Read-only canonical Server Node health projection from the fixed loopback `/v1/status` endpoint; malformed, oversized or unavailable responses fail closed.
 - No private-key storage and no automatic sudo/root elevation.
 
-Version 1.3.3 is the current source candidate. It carries the bounded DirectAdmin request transport, role-aware least privilege (admin operator actions; reseller/user read-only), canonical loopback Server Node health projection, and the read-only self-locating lifecycle validator. The validator checks required plugin files and executable role entrypoints; it does not fetch, replace or migrate plugin data.
+Version 1.3.4 is the current **source security candidate**, not an install-ready or live-certified release. It carries the bounded DirectAdmin request bridge, strict one-line SSH public-key wire-format validation, and the HOME-bound read-only Git policy described above. Its PHP integration/security tests run the packaged role executables and use disposable account/repository fixtures only. The exact-head PHP workflow must pass and an independent security reviewer must inspect the source before this candidate is distributed.
 
-The committed v1.3.2 archive is retained as a historical, checksum-verified artifact only. It predates the v1.3.3 role and health changes and must not be treated as the current install candidate. Current-source CI builds and exercises a fresh v1.3.3 archive from the exact PR head. Live DirectAdmin update, remove/reinstall and rollback behavior still require a disposable-host check.
+The previously Library-published v1.3.3 archive (SHA-256 `6145b02a9fc0626f31bf7350f881419cf5cfe41036879b724e5abf4c38addbbc`) is **not a safe current candidate**: independent synthetic probes found malformed or multiline SSH key payloads were accepted and Git remote commands were not actually read-only. Keep that historical artifact intact for audit, but do not install it or treat it as a rollback.
+
+The committed v1.3.2 archive (SHA-256 `22b54eabaf2a12a5bba04c9b21d58f798f93b7c1a6845362035edf574c488755`) is historical and checksum-verified. It is not an operational rollback. v1.3.1 is also retained only as an artifact reference. No existing archive has been verified as a working rollback for the installed 1.1.3 plugin. The v1.3.4 archive must be generated from the exact tested head, accompanied by a version/hash provenance sidecar, and independently reviewed before any publication or installation. Live DirectAdmin update, install, remove/reinstall, and rollback behavior still require a matching disposable-host check.
 
 This plugin does **not** grant Titan business authority. Mutating or privileged repair work belongs to canonical governed execution and deployment/runtime owners.
 
