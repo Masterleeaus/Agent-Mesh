@@ -35,7 +35,7 @@
     "@titan-zero/titan-platform": "workspace:*",
     "lucide-react": "^1.48.0",
     "react-hook-form": "^7.89.0",
-    "resend": "^6.30.0"
+    "resend": "6.30.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",

@@ -105,7 +105,10 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   // Offline payload context is a constraint, never authority. Reject stale tabs
   // after a company switch before accessing any storage or writing a file.
   const queuedCompanyId = formData.get("company_id");
-  if (queuedCompanyId !== null && queuedCompanyId !== requireCompanyId(session)) {
+  if (typeof queuedCompanyId !== "string" || queuedCompanyId.trim() === "") {
+    return errorJson(session, 422, "VALIDATION_ERROR", "company_id is required");
+  }
+  if (queuedCompanyId !== requireCompanyId(session)) {
     return errorJson(session, 403, "COMPANY_MISMATCH", "Capture belongs to a different company");
   }
 

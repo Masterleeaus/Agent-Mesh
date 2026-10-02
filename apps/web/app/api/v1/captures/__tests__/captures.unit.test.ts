@@ -68,6 +68,12 @@ function postRequest(form: FormData): NextRequest {
   });
 }
 
+function companyForm(): FormData {
+  const form = new FormData();
+  form.append("company_id", mockSession.accountId);
+  return form;
+}
+
 function getRequest(kind: "audio" | "photo", id = CAPTURE_ID): NextRequest {
   return new NextRequest(`http://localhost/api/v1/captures/${id}/${kind}`, {
     method: "GET",
@@ -100,14 +106,13 @@ describe("POST /api/v1/captures", () => {
   });
 
   it("accepts queued media bound to the authenticated company", async () => {
-    const form = new FormData();
-    form.append("company_id", mockSession.accountId);
+    const form = companyForm();
     form.append("transcript", "My offline note");
     expect((await POST(postRequest(form))).status).toBe(201);
   });
 
   it("owner upload succeeds and stores the original under /app/uploads/captures/<id>/", async () => {
-    const form = new FormData();
+    const form = companyForm();
     form.append("audio", audioFile());
 
     const res = await POST(postRequest(form));
@@ -141,7 +146,7 @@ describe("POST /api/v1/captures", () => {
   });
 
   it("stores a client transcript so the worker can extract without Whisper", async () => {
-    const form = new FormData();
+    const form = companyForm();
     form.append("audio", audioFile());
     form.append("transcript", "  I told Mrs. Chen I would call tomorrow.  ");
 
@@ -156,7 +161,7 @@ describe("POST /api/v1/captures", () => {
   });
 
   it("stores a transcript without audio for Android speech-only captures", async () => {
-    const form = new FormData();
+    const form = companyForm();
     form.append("transcript", "I told Mrs. Chen I would call tomorrow.");
 
     const res = await POST(postRequest(form));
@@ -171,7 +176,7 @@ describe("POST /api/v1/captures", () => {
   });
 
   it("caps an oversized transcript", async () => {
-    const form = new FormData();
+    const form = companyForm();
     form.append("audio", audioFile());
     form.append("transcript", "x".repeat(20_050));
 
@@ -185,7 +190,7 @@ describe("POST /api/v1/captures", () => {
 
   it("returns 403 for tech", async () => {
     mockSession.role = "tech";
-    const form = new FormData();
+    const form = companyForm();
     form.append("audio", audioFile());
 
     const res = await POST(postRequest(form));
@@ -206,7 +211,7 @@ describe("POST /api/v1/captures", () => {
       return { rows: [] };
     });
 
-    const form = new FormData();
+    const form = companyForm();
     form.append("client_id", clientId);
     form.append("audio", audioFile());
     const res = await POST(postRequest(form));
@@ -217,13 +222,36 @@ describe("POST /api/v1/captures", () => {
   });
 
   it("returns 422 when audio file is missing", async () => {
-    const res = await POST(postRequest(new FormData()));
+    const res = await POST(postRequest(companyForm()));
     expect(res.status).toBe(422);
     const json = await res.json();
     expect(json.error.code).toBe("VALIDATION_ERROR");
     expect(json.error.message).toMatch(/audio/i);
     expect(json.error.traceId).toBe(mockSession.traceId);
     expect(mockWithDbSession).not.toHaveBeenCalled();
+  });
+
+  it("rejects missing company context before database or file access", async () => {
+    const form = new FormData();
+    form.append("transcript", "Private offline note");
+
+    const response = await POST(postRequest(form));
+    expect(response.status).toBe(422);
+    expect((await response.json()).error.code).toBe("VALIDATION_ERROR");
+    expect(mockWithDbSession).not.toHaveBeenCalled();
+    expect(fsMocks.writeFileSync).not.toHaveBeenCalled();
+  });
+
+  it("rejects blank company context before database or file access", async () => {
+    const form = new FormData();
+    form.append("company_id", "  ");
+    form.append("transcript", "Private offline note");
+
+    const response = await POST(postRequest(form));
+    expect(response.status).toBe(422);
+    expect((await response.json()).error.code).toBe("VALIDATION_ERROR");
+    expect(mockWithDbSession).not.toHaveBeenCalled();
+    expect(fsMocks.writeFileSync).not.toHaveBeenCalled();
   });
 });
 
