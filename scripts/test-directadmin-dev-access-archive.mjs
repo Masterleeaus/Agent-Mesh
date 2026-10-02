@@ -166,7 +166,7 @@ function runCGIFormIntegration(pluginRoot) {
   }
   const integration = run(php, [FORM_INTEGRATION, pluginRoot], { cwd: pluginRoot });
   assert.equal(integration.status, 0, integration.stderr || integration.stdout);
-  assert.match(integration.stdout, /synthetic public-key form submission passed/i);
+  assert.match(integration.stdout, /Synthetic key integration passed:/i);
   process.stdout.write(integration.stdout);
 }
 
