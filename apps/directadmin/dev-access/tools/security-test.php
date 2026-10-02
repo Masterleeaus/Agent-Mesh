@@ -223,6 +223,59 @@ expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME
 [$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
 
+expect_true(directadmin_git_parse_divergence("1\t2")===['ahead'=>1,'behind'=>2],'Git divergence parser must read bounded ahead/behind counts');
+foreach(['','1 2','01\t2','1\t02','1\t2 extra','99999999999\t1','-1\t0'] as $invalidDivergence){
+ expect_true(directadmin_git_parse_divergence($invalidDivergence)===null,'malformed or oversized Git divergence must fail closed');
+}
+foreach(['git rev-list --left-right --count HEAD...@{u}','git rev-parse --symbolic-full-name @{u}'] as $internalOnlyGitCommand){
+ [$internalClass,, $internalAllowed]=command_policy($internalOnlyGitCommand);
+ expect_true($internalAllowed===false&&$internalClass==='UNKNOWN',$internalOnlyGitCommand.' must not widen the user-facing Git command policy');
+}
+
+$workflowRepo=$home.'/workflow-readiness';
+expect_true(mkdir($workflowRepo,0700,true),'workflow readiness repository fixture must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'init','--quiet'],$home),'workflow readiness repository must initialize');
+expect_true(file_put_contents($workflowRepo.'/base.txt','base')!==false,'workflow base file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','base.txt'],$home),'workflow base file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','workflow base'],$home),'workflow base commit must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'branch','--move','agent/issue-1048'],$home),'canonical claim fixture branch must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','upstream-side'],$home),'upstream fixture branch must be created');
+expect_true(file_put_contents($workflowRepo.'/upstream.txt','upstream')!==false,'upstream side file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','upstream.txt'],$home),'upstream side file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','upstream fixture'],$home),'upstream-side commit must be created');
+[$upstreamHeadExit,$upstreamHead,$upstreamHeadError]=run_security_git_capture(['-C',$workflowRepo,'rev-parse','HEAD'],$home);
+expect_true($upstreamHeadExit===0&&$upstreamHeadError===''&&preg_match('/^[0-9a-f]{40}$/D',trim($upstreamHead))===1,'upstream fixture commit must resolve');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','agent/issue-1048'],$home),'canonical claim fixture branch must be checked out');
+expect_true(file_put_contents($workflowRepo.'/local.txt','local')!==false,'local side file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','local.txt'],$home),'local side file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','local fixture'],$home),'local-side commit must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'update-ref','refs/remotes/origin/agent/issue-1048',trim($upstreamHead)],$home),'local cached upstream ref must be installed');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/issue-1048.remote','origin'],$home),'fixture upstream remote name must be configured');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/issue-1048.merge','refs/heads/agent/issue-1048'],$home),'fixture upstream branch must be configured');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'remote','add','origin','https://synthetic-user:synthetic-token@example.invalid/repository.git'],$home),'credential-shaped fixture remote must be configured without connecting');
+$workflowContext=directadmin_git_repository_context($workflowRepo);
+expect_true(is_array($workflowContext),'workflow readiness fixture must pass the HOME-bounded repository resolver');
+$workflowHeadBefore=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+$workflowConfigBefore=hash_file('sha256',$workflowRepo.'/.git/config');
+$workflowReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($workflowReadiness['git_claim_branch_format_valid']===true&&$workflowReadiness['git_claim_issue_number']==='1048','canonical issue branch must be identified without asserting remote ownership');
+expect_true($workflowReadiness['git_upstream_configured']===true&&$workflowReadiness['git_ahead']===1&&$workflowReadiness['git_behind']===1,'local-only comparison must report one ahead and one behind commit');
+expect_true($workflowReadiness['git_dirty']===false,'read-only workflow diagnostics must preserve clean worktree state');
+$workflowJson=json_encode($workflowReadiness);
+expect_true(is_string($workflowJson)&&strpos($workflowJson,'synthetic-user')===false&&strpos($workflowJson,'synthetic-token')===false&&strpos($workflowJson,'example.invalid')===false,'workflow readiness must never expose remote URLs or credentials');
+expect_true(directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD'])===$workflowHeadBefore,'workflow readiness must not move HEAD or create commits');
+expect_true(hash_file('sha256',$workflowRepo.'/.git/config')===$workflowConfigBefore,'workflow readiness must not modify Git configuration');
+expect_true(directadmin_git_probe($workflowContext,['status','--porcelain'])==='','workflow readiness must not modify the worktree');
+
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','agent/issue-01048'],$home),'noncanonical padded issue branch fixture must be created');
+$paddedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($paddedReadiness['git_claim_branch_format_valid']===false&&$paddedReadiness['git_claim_issue_number']===null,'padded issue numbers must not be shown as canonical claim branches');
+expect_true($paddedReadiness['git_upstream_configured']===false&&$paddedReadiness['git_ahead']===null&&$paddedReadiness['git_behind']===null,'missing upstream must produce unknown divergence counts');
+$notRepo=$home.'/not-a-repository';
+expect_true(mkdir($notRepo,0700,true),'non-repository fixture must be created');
+$notRepoReadiness=codex_readiness($notRepo,[],['git'=>'/usr/bin/git']);
+expect_true($notRepoReadiness['git_repository']===false&&$notRepoReadiness['git_claim_branch_format_valid']===null&&$notRepoReadiness['git_upstream_configured']===null,'non-repository checkout must report claim/upstream state as unknown');
+
 $textconvHelper=$home.'/synthetic-textconv-helper';
 $textconvMarker=$home.'/synthetic-textconv-marker';
 $textconvScript="#!/bin/sh\nprintf invoked >> ".escapeshellarg($textconvMarker)."\ncat \"$1\"\n";

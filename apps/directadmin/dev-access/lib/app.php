@@ -522,6 +522,10 @@ function directadmin_git_probe($context,$arguments){
  if($rc!==0||strlen($out)>8192||strlen($err)>8192) return '';
  return trim($out);
 }
+function directadmin_git_parse_divergence($raw){
+ if(!is_string($raw)||strlen($raw)>32||!preg_match('/^(0|[1-9][0-9]{0,9})\t(0|[1-9][0-9]{0,9})$/D',$raw,$matches)) return null;
+ return ['ahead'=>(int)$matches[1],'behind'=>(int)$matches[2]];
+}
 function command_policy($cmd){
  $cmd=trim((string)$cmd);
  if($cmd==='') return ['EMPTY','Empty command.',false];
@@ -638,6 +642,10 @@ function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $branch=$gitRepo?redact_text(directadmin_git_probe($gitContext,['branch','--show-current'])):'';
  $head=$gitRepo?redact_text(directadmin_git_probe($gitContext,['rev-parse','--short','HEAD'])):'';
  $dirty=$gitRepo?directadmin_git_probe($gitContext,['status','--porcelain']):'';
+ // Compare only existing local refs; this never fetches or contacts the remote.
+ $divergence=$gitRepo?directadmin_git_parse_divergence(directadmin_git_probe($gitContext,['rev-list','--left-right','--count','HEAD...@{u}'])):null;
+ $claimIssue=null;
+ if($gitRepo&&preg_match('/^agent\/issue-([1-9][0-9]{0,17})$/D',$branch,$claimMatch)) $claimIssue=$claimMatch[1];
  $sshDir=key_dir(); $auth=key_file();
  return [
   'cwd'=>$cwd,
@@ -647,6 +655,11 @@ function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
   'git_branch'=>$branch?:null,
   'git_head'=>$head?:null,
   'git_dirty'=>$gitRepo?($dirty!==''):null,
+  'git_claim_branch_format_valid'=>$gitRepo?($claimIssue!==null):null,
+  'git_claim_issue_number'=>$claimIssue,
+  'git_upstream_configured'=>$gitRepo?($divergence!==null):null,
+  'git_ahead'=>$divergence['ahead']??null,
+  'git_behind'=>$divergence['behind']??null,
   'ssh_public_keys'=>count($keys),
   'ssh_dir_mode'=>$includeSshState&&is_dir($sshDir)?substr(sprintf('%o',fileperms($sshDir)),-4):null,
   'authorized_keys_mode'=>$includeSshState&&is_file($auth)?substr(sprintf('%o',fileperms($auth)),-4):null,

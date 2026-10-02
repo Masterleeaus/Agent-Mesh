@@ -6,6 +6,7 @@ Current implemented slice:
 
 - Evolution-aware light/dark UI.
 - Runtime diagnostics for Git, SSH, PHP, Composer, Node/npm/pnpm and curl.
+- Read-only Git workflow readiness for canonical `agent/issue-N` branch naming and cached upstream ahead/behind counts; it does not verify GitHub ownership or fetch/push.
 - SSH public-key add, fingerprint and revoke. Installed keys are rendered by fingerprint only.
 - HOME-scoped working-directory validation using canonical `realpath` boundaries.
 - Fail-closed command classification for READ, VERIFY, BUILD/TEST, WRITE and UNKNOWN operations.
