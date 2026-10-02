@@ -107,6 +107,24 @@ Cookies do not isolate by port: [RFC 6265 §8.5](https://www.rfc-editor.org/rfc/
 
 A disposable Apache 2.4.68 runtime test found the candidate `RequestHeader` filter fails open for separate `Cookie` fields when the unrelated cookie is first and Titan cookie second. Reversing the field order removed the full header. A synthetic earlier `SetEnvIf` module also observed the Titan cookie before the late request-header filter. The candidate Apache template was removed. No replacement hostname or cookie-isolation design has been selected. Keep production relay forwarding disabled until the #1049/#302/#811 owners approve and verify a boundary and an independently reviewed source change enforces it. Do not include cookie values or raw headers in logs or evidence.
 
+The operator has since reported that the already-existing `https://server-216-219-85-159.da.direct:2222/` loads the DirectAdmin login without redirecting to `titanzero.io`. This is a candidate hostname, not a commissioned cookie boundary. It is a separate hostname from `titanzero.io`, but a host-only `Path=/` cookie remains shared with every port on `server-216-219-85-159.da.direct`, including `:443`. The direct origin's `:443` content/certificate and public reachability of `3010`/`3015` still require an authorized direct-network check. A browser observation on `:2222` does not establish those facts.
+
+### Read-only host-boundary handoff
+
+Use the repository verifier from a direct-network workstation and, separately, on the DirectAdmin host after the operator authorizes read-only access:
+
+```sh
+python3 apps/directadmin/server-node/verify-host-boundary.py external
+python3 apps/directadmin/server-node/verify-host-boundary.py panel \
+  --workforce-origin 'https://<operator-supplied-private-workforce-host>:<port>'
+```
+
+The `external` mode bypasses environment proxies, performs anonymous GET `/` requests on `:443` and `:2222` without following redirects or sending cookies, and makes data-free TCP probes to `3010`/`3015`. It resolves the candidate once, rejects any non-global or reserved DNS answer, and pins each probe to the validated address while preserving the hostname for TLS SNI and HTTP Host. It reports certificate metadata, status/content type, a bounded body sample hash, a same-origin redirect boolean, a hash of any HTML title, and cookie names only; it never prints response bodies, redirect paths, title text, query strings, or cookie values. Run it from an independent network with outbound access. A timeout is **unknown**, not proof that a port is closed.
+
+The `panel` mode reads `ss -H -ltn` listener addresses and only the `TCP_IN`/`TCP6_IN` entries from `/etc/csf/csf.conf`. Those entries describe configured CSF ingress, not effective firewall state. If the #811 owner supplies the exact private Workforce origin, the verifier checks that HTTP is literal loopback only, HTTPS resolves exclusively to private addresses, pins a validated address, and verifies TLS without sending an HTTP request or credential. It does not modify host state. Exit codes are `0` for observations only, `1` for incomplete evidence, and `2` for an unsafe finding; even exit `0` never authorizes relay enablement.
+
+The verifier cannot attest the live #302 issuer registration or #1049/#811 startup config. Those existing owners must confirm the exact shared origin `https://server-216-219-85-159.da.direct:2222` and provider `directadmin:https://server-216-219-85-159.da.direct:2222`; #811 must provide its fixed private target and protected transport. If any of those checks is unavailable, preserve the production RAW 503 and attach the sanitized verifier reports to this issue/PR for the owners. Do not create relay config, change DNS/TLS/firewall/host settings, or open `3010`/`3015`.
+
 ### DirectAdmin 1.711 commissioning checklist
 
 This checklist is for a later, separately authorized commissioning window. It is not evidence that the target panel, Workforce host, DNS, firewall, session issuer, or production identity path has been configured.
