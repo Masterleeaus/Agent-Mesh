@@ -9,6 +9,16 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+  }
+
   ::selection {
     background: rgba(29, 78, 216, 0.3);
     color: #fafafa;

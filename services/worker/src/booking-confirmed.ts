@@ -110,7 +110,7 @@ export async function processBookingConfirmation(client: DatabaseClient, automat
   for (const booking of await findEligibleBookings(client, automation)) {
     try {
       const emitted = await emitBookingConfirmation(client, booking, automation.id);
-      emitted ? result.sent++ : result.skipped++;
+      if (emitted) result.sent++; else result.skipped++;
     } catch (error) {
       result.errors++;
       logger.error("booking-confirmed: failed to emit", error, { visitId: booking.id });

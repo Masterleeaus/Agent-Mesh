@@ -2170,6 +2170,43 @@
       ]
     }
   ],
+  "action_capabilities": [
+    {
+      "capability_id": "titan.workforce.reassign",
+      "kind": "host_action",
+      "semantic_owner": "packages/workforce",
+      "implementation_owner": "services/workforce",
+      "provider_kind": "NATIVE_TITAN",
+      "host_projection": "directadmin_workforce",
+      "operation": "reassign",
+      "mutates": true,
+      "effect": "write",
+      "risk_class": "medium",
+      "required_permissions": [
+        "titan.workforce.reassign"
+      ],
+      "execution_contract": {
+        "autonomy": "auto",
+        "evidence_required": [
+          "management_authority"
+        ],
+        "approval_required_for": [
+          "work_reassignment"
+        ],
+        "idempotency_required": true,
+        "human_identity_binding_required": true,
+        "current_management_authority_required": true
+      },
+      "default_grants": [],
+      "grants_execution_authority": false,
+      "current_source_verification": "verified-current",
+      "current_sources": [
+        "services/workforce/src/directadmin-workforce-owners.ts",
+        "services/workforce/src/sqlite-store.ts",
+        "packages/runtime/authority/runtime-authority-gateway.mjs"
+      ]
+    }
+  ],
   "phase3_retirement_migration": {
     "directive": "TZ-MGR-DONOR-SLIM-M42-003",
     "tools_changed": 26,

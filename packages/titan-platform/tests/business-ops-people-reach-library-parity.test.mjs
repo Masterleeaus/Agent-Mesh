@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   getTitanBusinessOpsAgentCommand,
   assessTitanBusinessOpsAgentCommand,
-} from "../.test-dist/src/business-ops.js";
+} from "../.test-dist/business-ops.js";
 
 test("People convergence reuses canonical human workforce identities", () => {
   const people = getTitanBusinessOpsAgentCommand("people.list");

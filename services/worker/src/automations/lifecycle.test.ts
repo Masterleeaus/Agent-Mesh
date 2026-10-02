@@ -18,6 +18,7 @@ import * as seasonal from "../seasonal-reminder.js";
 
 function mockClient(): Client {
   return {
+    dialect: "postgres",
     query: vi.fn().mockResolvedValue({ rows: [], rowCount: 1 }),
   } as unknown as Client;
 }
@@ -118,9 +119,10 @@ describe.each(LIFECYCLE_CASES)("advanceNextRun ($name)", ({ advance, type, inter
 
     expect(client.query).toHaveBeenCalledOnce();
     const [sql, params] = (client.query as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(sql).toContain("last_run_at = now()");
-    expect(sql).toContain(`interval '${interval}'`);
-    expect(params).toEqual([automation.id]);
+    expect(sql).toContain("last_run_at=now()");
+    const [amount, unit] = interval.split(" ");
+    expect(sql).toContain(`($1 || ' ${unit.endsWith("s") ? unit : unit + "s"}')::interval`);
+    expect(params).toEqual([amount, automation.id]);
   });
 });
 
@@ -137,8 +139,8 @@ describe("advanceSeasonalNextRun", () => {
     await advanceSeasonalNextRun(client, automation, RESULT);
 
     const [sql, params] = (client.query as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(sql).toContain("interval '7 days'");
-    expect(params).toEqual([automation.id]);
+    expect(sql).toContain("($1 || ' days')::interval");
+    expect(params).toEqual(["7", automation.id]);
   });
 
   it("advances to next season start when out of season", async () => {
@@ -151,7 +153,7 @@ describe("advanceSeasonalNextRun", () => {
     await advanceSeasonalNextRun(client, automation, RESULT);
 
     const [sql, params] = (client.query as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(sql).toContain("next_run_at = $1");
+    expect(sql).toContain("next_run_at=$1");
     expect(params).toEqual([nextStart.toISOString(), automation.id]);
   });
 });

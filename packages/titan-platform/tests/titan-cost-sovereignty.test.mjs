@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { decideInferenceRoute } from "../.test-dist/src/index.js";
+import { decideInferenceRoute } from "../.test-dist/index.js";
 
 test("cost sovereignty keeps inference local when local-only policy is set",()=>{
   const d=decideInferenceRoute({company_id:"c1",allowed_routes:["device","byo-cloud"],privacy_local_only:true});

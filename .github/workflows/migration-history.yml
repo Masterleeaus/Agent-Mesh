@@ -1,0 +1,53 @@
+name: Migration History Verification
+
+on:
+  pull_request:
+    paths:
+      - 'db/migrations/**'
+      - 'scripts/check-migration-prefixes.mjs'
+      - 'scripts/check-migration-prefixes.test.mjs'
+      - 'scripts/db-migrate.sh'
+      - 'scripts/db-migrate-runner.test.mjs'
+      - 'scripts/db-migrate-postgres.integration.mjs'
+      - 'scripts/export-migration-history-evidence.mjs'
+      - 'db/MIGRATION-OWNERSHIP.md'
+      - '.github/workflows/migration-history.yml'
+  workflow_dispatch:
+
+jobs:
+  postgres-migration-history:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: titan_test
+          POSTGRES_PASSWORD: titan_test_password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U titan_test -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client
+      - name: Verify immutable migration manifest
+        run: |
+          node scripts/check-migration-prefixes.mjs
+          node scripts/check-migration-prefixes.test.mjs
+      - name: Verify runner failure and replay behavior against PostgreSQL 16
+        env:
+          TEST_POSTGRES_ADMIN_URL: postgresql://titan_test:titan_test_password@127.0.0.1:5432/postgres
+        run: node scripts/db-migrate-postgres.integration.mjs
+      - name: Verify isolated runner behavior
+        run: node scripts/db-migrate-runner.test.mjs

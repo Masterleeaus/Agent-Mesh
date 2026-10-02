@@ -9,9 +9,16 @@ on:
       - "apps/web/lib/work-orders/**"
       - "apps/web/app/api/v1/zero/**"
       - "packages/storage/**"
+      - "packages/deployment/**"
+      - "scripts/verify-release-candidate.mjs"
+      - "scripts/inventory-release-artifacts.mjs"
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
       - "packages/tools/execution-gateway.mjs"
+      - "packages/tools/governed-execution-recovery.mjs"
+      - "packages/tools/*recovery*.test.mjs"
+      - "tests/fixtures/native-*.ts"
+      - "tests/hosted-workforce-runtime.test.ts"
       - ".github/workflows/production-convergence-verification.yml"
   workflow_dispatch:
 
@@ -19,7 +26,20 @@ permissions:
   contents: read
 
 jobs:
+  release-candidate-gate-tests:
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Signed release candidate and lifecycle verification
+        run: node --test packages/deployment/*.test.mjs
+
   cleaning-convergence:
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -47,7 +67,7 @@ jobs:
       - name: SQLite Zero job acceptance
         run: |
           node --test tests/zero-verified-job-schema.test.mjs
-          pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../tests/zero-verified-job.test.ts ../../tests/zero-work-order-owner.test.ts ../../tests/zero-storage-concurrency.test.ts
+          pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../tests/zero-verified-job.test.ts ../../tests/zero-work-order-owner.test.ts ../../tests/zero-storage-concurrency.test.ts ../../tests/zero-execution-recovery.test.ts ../../tests/hosted-workforce-runtime.test.ts
 
       - name: Workforce behavioural tests
         run: pnpm --filter @titan-zero/workforce test
@@ -56,4 +76,4 @@ jobs:
         run: node --test packages/runtime/agent-runtime/tests/agent-runtime.test.mjs packages/runtime/agent-runtime/sqlite-run-store.test.mjs
 
       - name: Governed execution gateway tests
-        run: node --test packages/tools/execution-gateway.test.mjs
+        run: node --test packages/tools/execution-gateway.test.mjs packages/tools/governed-execution-recovery.test.mjs packages/tools/execution-recovery-durable.test.mjs packages/tools/accepted-evidence-ledger.test.mjs

@@ -1,0 +1,125 @@
+{
+  "schema": "titan-distribution-provenance/v1",
+  "policy": {
+    "repository_license_decision": "OWNER_DECISION_REQUIRED",
+    "unknown_rights": "BLOCK_DISTRIBUTION",
+    "private_package_json_means_proprietary": false,
+    "statement": "No repository-wide license is inferred. A package.json private flag only affects npm publication and does not establish rights for other distribution channels. Unknown or unapproved rights block publication. Donor archives and RAG ingestion permissions are tracked separately from redistribution rights."
+  },
+  "artifacts": [
+    {
+      "id": "titan-source-repository",
+      "kind": "source-repository",
+      "source_root": ".",
+      "source_revision": "15d8b1be1584ce07259762527f9abfe040c9d504",
+      "source_manifest": null,
+      "distribution_state": "blocked",
+      "first_party_spdx": "NOASSERTION",
+      "first_party_license_file": null,
+      "legal_approval_ref": null,
+      "dependency_license_status": "incomplete",
+      "dependency_lockfiles": [
+        {
+          "path": "pnpm-lock.yaml",
+          "sha256": "36801ebf82e4e6f390c7fd0fb0d412b81e93afe9dd91fef5b50a4ccf5228761b"
+        }
+      ],
+      "notice_files": [],
+      "reason": "No owner-approved repository license or complete dependency provenance/notices exist."
+    },
+    {
+      "id": "titan-zero-browser-node",
+      "kind": "browser-extension",
+      "source_root": "apps/browser",
+      "source_revision": "15d8b1be1584ce07259762527f9abfe040c9d504",
+      "source_manifest": {
+        "path": "apps/browser/SOURCE-MANIFEST.json",
+        "sha256": "ea917646959d717f192e0cf1b37ca98d4807460501c76988030cbeb2f596cdd4"
+      },
+      "distribution_state": "blocked",
+      "first_party_spdx": "NOASSERTION",
+      "first_party_license_file": null,
+      "legal_approval_ref": null,
+      "dependency_license_status": "incomplete",
+      "dependency_lockfiles": [
+        {
+          "path": "pnpm-lock.yaml",
+          "sha256": "36801ebf82e4e6f390c7fd0fb0d412b81e93afe9dd91fef5b50a4ccf5228761b"
+        }
+      ],
+      "component_ids": [
+        "openbrowser-v0.5.0-adaptations",
+        "external-browser-ai-import-2026-09-21"
+      ],
+      "notice_files": [],
+      "reason": "Titan first-party rights and all bundled dependency/donor redistribution rights are not approved for this artifact."
+    },
+    {
+      "id": "wordpress-field-service-plugin",
+      "kind": "wordpress-plugin",
+      "source_root": null,
+      "source_revision": null,
+      "source_manifest": null,
+      "distribution_state": "not_present",
+      "first_party_spdx": "NOASSERTION",
+      "first_party_license_file": null,
+      "legal_approval_ref": null,
+      "dependency_license_status": "not_assessed",
+      "dependency_lockfiles": [],
+      "component_ids": [],
+      "notice_files": [],
+      "reason": "No releasable WordPress plugin artifact exists in current main; the WordPress product owner must identify the artifact before licensing it."
+    }
+  ],
+  "components": [
+    {
+      "id": "openbrowser-v0.5.0-adaptations",
+      "kind": "adapted-third-party-code",
+      "source_ref": "OpenBrowser v0.5.0 (as stated in the existing donor notice)",
+      "upstream_url": null,
+      "upstream_sha256": null,
+      "spdx": "MIT",
+      "redistribution_state": "review_required",
+      "modification_status": "adapted",
+      "notice_file": "apps/browser/docs/third-party/OPENBROWSER-DONOR-NOTICE.md",
+      "local_evidence": [
+        {
+          "path": "apps/browser/src/intelligence/prompt-template-runtime.js",
+          "sha256": "625997e56bc1d154516bf1d19b260797f9a62fce7c04de6164684c51226d47c9"
+        },
+        {
+          "path": "apps/browser/src/intelligence/export-utilities.js",
+          "sha256": "885bd1d2756702dfa331e61adc5a489fdac3fd349a6748d5558477835a5bc4b1"
+        },
+        {
+          "path": "apps/browser/docs/third-party/OPENBROWSER-DONOR-NOTICE.md",
+          "sha256": "0805803446d03c7acc11e1930d6e701d68168c771d802e9ae785fc0594bc30b9"
+        }
+      ],
+      "reason": "The local notice records MIT terms and the stated version, but no upstream URL or upstream source hash was found; exact source correspondence and artifact inclusion need review."
+    },
+    {
+      "id": "external-browser-ai-import-2026-09-21",
+      "kind": "staged-donor-archive",
+      "source_ref": "Extensions(1).zip",
+      "upstream_url": null,
+      "upstream_sha256": "138be3f09e191ad400a2311c400ff46e019878524c9f7abcdae978cdcdf39950",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "staging_only",
+      "modification_status": "unmodified staged import; per-subsystem license status unknown",
+      "notice_file": null,
+      "local_evidence": [
+        {
+          "path": "apps/browser/imports/browser-ai-subsystems-2026-09-21/provenance/IMPORT-MANIFEST.json",
+          "sha256": "38944f3c71467accb93667156cb0e94080320ea497e0ba3709c1c7a49e76dd7a"
+        }
+      ],
+      "reason": "The import manifest identifies the source archive and its hash but does not establish redistribution rights for every staged subsystem."
+    }
+  ],
+  "separate_rights_domains": [
+    "RAG/document ingestion and retrieval rights",
+    "software source and binary redistribution rights",
+    "trademarks, product names, logos, and other branding rights"
+  ]
+}

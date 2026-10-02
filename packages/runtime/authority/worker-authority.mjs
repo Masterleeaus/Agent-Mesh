@@ -18,6 +18,31 @@ function list(value) {
     ? [...new Set(value.map(v => String(v).trim()).filter(Boolean))].sort()
     : []);
 }
+function nonNegative(value, code) {
+  if (value == null || value === '') return null;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) throw new Error(code);
+  return n;
+}
+function nonNegativeInteger(value, code) {
+  const n = nonNegative(value, code);
+  if (n == null) return null;
+  if (!Number.isInteger(n)) throw new Error(code);
+  return n;
+}
+function normalizeLimits(input = {}) {
+  if (input == null) return Object.freeze({
+    currency:null,max_amount:null,max_provider_cost:null,max_messages:null,max_recipients:null,
+  });
+  if (typeof input !== 'object' || Array.isArray(input)) throw new Error('authority-limits-invalid');
+  const currency = opt(input.currency)?.toUpperCase() ?? null;
+  const max_amount = nonNegative(input.max_amount, 'authority-max-amount-invalid');
+  const max_provider_cost = nonNegative(input.max_provider_cost, 'authority-max-provider-cost-invalid');
+  const max_messages = nonNegativeInteger(input.max_messages, 'authority-max-messages-invalid');
+  const max_recipients = nonNegativeInteger(input.max_recipients, 'authority-max-recipients-invalid');
+  if ((max_amount != null || max_provider_cost != null) && !currency) throw new Error('authority-limit-currency-required');
+  return Object.freeze({currency,max_amount,max_provider_cost,max_messages,max_recipients});
+}
 
 export function createWorkerIdentity(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('worker-identity-input-required');
@@ -53,6 +78,7 @@ export function createAuthorityRequirement(input) {
     required_evidence: list(input.required_evidence),
     minimum_autonomy_score: Number.isFinite(Number(input.minimum_autonomy_score)) ? Number(input.minimum_autonomy_score) : 0,
     approval_policy: opt(input.approval_policy),
+    limits: normalizeLimits(input.limits),
     reversibility: opt(input.reversibility) ?? 'unknown',
     evidence_refs: list(input.evidence_refs),
     identity_confers_authority: false,

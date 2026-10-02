@@ -322,6 +322,7 @@ export default async function AppPage() {
       ) : null}
       <OwnerDashboard
         actionQueue={actionQueue}
+        openPromiseRows={openPromiseRows}
         todayJobs={todayJobs}
         materialCount={materialCount}
         materialJobs={materialJobs}

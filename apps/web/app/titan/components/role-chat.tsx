@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, CalendarDays, Camera, Check, ChevronRight, CircleDollarSign, MapPin, Mic, Paperclip, Plus, Send, ShieldAlert, ShieldCheck, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
 import { ZeroMark } from "./titan-brand";
 import { getDemoSurfaceProjection } from "../runtime/surface-contract.mjs";
 import { TitanInteractionClient, requestedWorkerFromText } from "../runtime/interaction-client";
@@ -179,7 +179,7 @@ export function RoleChat({ role, onOpenDetails }: { role: TitanRole; onOpenDetai
         {history.map((message) => <div key={message.id} data-delivery-state={message.delivery_state} className={message.from === "user" ? "bubble user" : "bubble zero compact"}>{message.text}{message.delivery_state === "sending" && <small> · Sending…</small>}{message.delivery_state === "failed" && <small> · Not sent</small>}</div>)}
       </div>
       <footer className="chat-footer"><span><Check />Live demo data</span><span>Designed for offline-ready PWA delivery</span></footer>
-      <div className="chat-input-dock"><div className="chat-suggestions">{profile.suggestions.map((suggestion) => <button key={suggestion} onClick={() => send(suggestion)}>{suggestion}</button>)}</div><div className="chat-composer"><Textarea value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); send(); } }} placeholder={profile.prompt} aria-label={`Message ${profile.name}`} /><div className="composer-tools"><input ref={fileInputRef} className="sr-only" type="file" tabIndex={-1} onChange={(event) => { const file = event.currentTarget.files?.[0]; if (file) prepareMultimodal("file", file); event.currentTarget.value = ""; }} /><button type="button" aria-label="Attach file as evidence" onClick={() => fileInputRef.current?.click()}><Paperclip /></button><button type="button" aria-label="Use camera for evidence" onClick={() => prepareMultimodal("camera")}><Camera /></button><button type="button" aria-label="Use voice input" onClick={() => prepareMultimodal("voice")}><Mic /></button><Button onClick={() => send()} disabled={!query.trim()} aria-label="Send"><Send /></Button></div></div></div>
+      <div className="chat-input-dock"><div className="chat-suggestions">{profile.suggestions.map((suggestion) => <button key={suggestion} onClick={() => send(suggestion)}>{suggestion}</button>)}</div><div className="chat-composer"><Textarea id={`titan-${role}-message`} value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); send(); } }} placeholder={profile.prompt} aria-label={`Message ${profile.name}`} /><div className="composer-tools"><input ref={fileInputRef} className="sr-only" type="file" tabIndex={-1} onChange={(event) => { const file = event.currentTarget.files?.[0]; if (file) prepareMultimodal("file", file); event.currentTarget.value = ""; }} /><button type="button" aria-label="Attach file as evidence" onClick={() => fileInputRef.current?.click()}><Paperclip /></button><button type="button" aria-label="Use camera for evidence" onClick={() => prepareMultimodal("camera")}><Camera /></button><button type="button" aria-label="Use voice input" onClick={() => prepareMultimodal("voice")}><Mic /></button><Button onClick={() => send()} disabled={!query.trim()} aria-label="Send"><Send /></Button></div></div></div>
     </section>
   </div>;
 }

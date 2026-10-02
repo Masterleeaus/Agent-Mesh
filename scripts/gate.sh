@@ -81,11 +81,13 @@ wait_http() {
 log "lint"
 pnpm lint
 
-log "migration prefixes"
+log "immutable migration manifest"
 node scripts/check-migration-prefixes.mjs
 log "rls coverage"
 node scripts/check-rls-coverage.mjs
 node --test scripts/*.test.mjs
+log "release candidate verification"
+node --test packages/deployment/*.test.mjs
 
 log "typecheck"
 pnpm typecheck

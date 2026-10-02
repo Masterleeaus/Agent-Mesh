@@ -1,6 +1,6 @@
-import { normalizeSurface, type TitanSurface } from "@titan-zero/titan-platform/interface-registry";
+import { normalizeSurface, type CanonicalProductSurface } from "@titan-zero/titan-platform/interface-registry";
 
-export type HostSurface = TitanSurface;
+export type HostSurface = Exclude<CanonicalProductSurface, "onboarding">;
 type NavItem = readonly [label: string, href: string];
 
 const HOST_NAVIGATION: Readonly<Record<HostSurface, readonly NavItem[]>> = Object.freeze({
@@ -10,7 +10,9 @@ const HOST_NAVIGATION: Readonly<Record<HostSurface, readonly NavItem[]>> = Objec
 });
 
 export function normalizeHostSurface(value: string): HostSurface {
-  return normalizeSurface(value);
+  const surface = normalizeSurface(value);
+  if (surface === "onboarding") throw new Error("unsupported host surface: onboarding");
+  return surface;
 }
 
 export function projectHostNavigation(value: string) {

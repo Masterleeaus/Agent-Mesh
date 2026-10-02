@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createPrimeEnvelope, runtimeDescriptor } from "../.test-dist/src/ported/titan-runtime/prime/index.js";
+import { createPrimeEnvelope, runtimeDescriptor } from "../.test-dist/ported/titan-runtime/prime/index.js";
 
 const base = {
   company_id: "company-a",

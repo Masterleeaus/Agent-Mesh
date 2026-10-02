@@ -10,6 +10,29 @@ export interface WorkerDatabaseClient extends DatabaseClient {
   close(): Promise<void>;
 }
 
+export type WorkerDeploymentProfile = "local" | "test" | "vps" | "compatibility";
+
+export function resolveWorkerDeploymentProfile(environment: NodeJS.ProcessEnv = process.env): WorkerDeploymentProfile {
+  const inferred = environment.NODE_ENV === "test" ? "test"
+    : environment.NODE_ENV === "production" ? "compatibility" : "local";
+  const profile = environment.TITAN_DEPLOYMENT_PROFILE ?? inferred;
+  if (profile !== "local" && profile !== "test" && profile !== "vps" && profile !== "compatibility") {
+    throw new Error("worker-deployment-profile-invalid:TITAN_DEPLOYMENT_PROFILE");
+  }
+  const dialect = normalizeWorkerDialect(environment.DATABASE_DIALECT);
+  if (profile === "local" || profile === "test" || profile === "vps") {
+    if (dialect !== "sqlite") throw new Error(`worker-deployment-profile-requires-sqlite:${profile}:DATABASE_DIALECT`);
+    const url = environment.DATABASE_URL;
+    if (url !== undefined && url !== "" && !url.startsWith("file:")) {
+      throw new Error(`worker-deployment-profile-requires-file-sqlite-url:${profile}:DATABASE_URL`);
+    }
+  }
+  if (profile === "vps" && environment.NODE_ENV !== "production") {
+    throw new Error("worker-deployment-profile-requires-production:vps:NODE_ENV");
+  }
+  return profile;
+}
+
 export function normalizeWorkerDialect(value: string | undefined): DatabaseDialect {
   const normalized = (value ?? "sqlite").trim().toLowerCase();
   if (normalized === "sqlite" || normalized === "sqlite3") return "sqlite";
@@ -75,9 +98,11 @@ class MysqlWorkerClient implements WorkerDatabaseClient {
 }
 
 export async function createWorkerDatabaseClient(databaseUrl?: string): Promise<WorkerDatabaseClient> {
+  const configuredUrl = databaseUrl ?? process.env.DATABASE_URL;
+  resolveWorkerDeploymentProfile({ ...process.env, DATABASE_URL: configuredUrl });
   const dialect = normalizeWorkerDialect(process.env.DATABASE_DIALECT);
   if (dialect === "sqlite") {
-    const path = process.env.SQLITE_PATH ?? (databaseUrl?.startsWith("file:") ? databaseUrl.slice(5) : databaseUrl) ?? "./data/titan-zero.sqlite";
+    const path = process.env.SQLITE_PATH ?? (configuredUrl?.startsWith("file:") ? configuredUrl.slice(5) : configuredUrl) ?? "./data/titan-zero.sqlite";
     ensureSqliteParent(path);
     const db = new Database(path);
     db.pragma("journal_mode = WAL");
@@ -86,10 +111,10 @@ export async function createWorkerDatabaseClient(databaseUrl?: string): Promise<
     db.pragma("synchronous = NORMAL");
     return new SqliteWorkerClient(db);
   }
-  if (!databaseUrl) throw new Error("DATABASE_URL is required for non-SQLite worker storage");
+  if (!configuredUrl) throw new Error("DATABASE_URL is required for non-SQLite worker storage");
   if (dialect === "mysql") {
     const { default: mysql } = await import("mysql2/promise");
-    const pool = mysql.createPool({ uri: databaseUrl, connectionLimit: Number(process.env.WORKER_DB_POOL_SIZE ?? "2"), enableKeepAlive: true, decimalNumbers: true });
+    const pool = mysql.createPool({ uri: configuredUrl, connectionLimit: Number(process.env.WORKER_DB_POOL_SIZE ?? "2"), enableKeepAlive: true, decimalNumbers: true });
     const connection = await pool.getConnection();
     const client = new MysqlWorkerClient(connection);
     const close = client.close.bind(client);
@@ -97,7 +122,7 @@ export async function createWorkerDatabaseClient(databaseUrl?: string): Promise<
     return client;
   }
   const { Client: PgClient } = await import("pg");
-  const pg = new PgClient({ connectionString: databaseUrl });
+  const pg = new PgClient({ connectionString: configuredUrl });
   await pg.connect();
   pg.on("error", () => { /* surfaced by query/reconnect path */ });
   return new PgWorkerClient(pg);

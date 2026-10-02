@@ -18,6 +18,10 @@ export function getProductionZeroRuntime(): Promise<any> {
       return await createFieldServiceRuntime({ storage, workOrders: {
         complete: ({ company_id, actor_id, work_order_id }: { company_id: string; actor_id: string; work_order_id: string }) =>
           storage.transaction(client => completeAssignedWorkOrder(client, work_order_id, company_id, actor_id)),
+        // Compatibility for this legacy same-store composition. Hosted runtime
+        // providers use separate company databases and never receive control tx.
+        completeInControlTransaction: ({ company_id, actor_id, work_order_id, authorityFence }: { company_id: string; actor_id: string; work_order_id: string; authorityFence?: { assertCurrent(): void } }, client: import("../../../../packages/storage/src/index").StorageClient) =>
+          completeAssignedWorkOrder(client, work_order_id, company_id, actor_id, authorityFence),
         async read({ company_id, actor_id, work_order_id }: { company_id: string; actor_id: string; work_order_id: string }) {
           return (await storage.query("SELECT id,title,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3", [company_id, work_order_id, actor_id])).rows[0] ?? null;
         },

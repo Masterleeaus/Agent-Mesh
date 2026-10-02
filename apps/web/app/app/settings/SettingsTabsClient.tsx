@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { Card } from "@/components/ui";
@@ -13,18 +13,24 @@ import { WorkspaceModeSetting } from "./WorkspaceModeSetting";
 import { LocationDaySettings, type LocationDayValues } from "./LocationDaySettings";
 import { TravelSettingsForm } from "./TravelSettingsForm";
 import { PricingSettingsForm } from "./PricingSettingsForm";
+import { WorkforceLifecyclePanel } from "./WorkforceLifecyclePanel";
+import { WorkforceHierarchyPanel } from "./WorkforceHierarchyPanel";
+import type { WorkforceLifecycleInspectionView } from "@/lib/titan/workforce-lifecycle/inspection";
+import type { WorkforceHierarchyInspection } from "./workforce-hierarchy-data";
 
 interface Props {
   role: "owner" | "admin" | "tech";
   userId: string;
   me: { id: string; full_name: string; email: string; phone: string | null };
-  account: { id: string; name: string; settings: any } | null;
+  account: { id: string; name: string; settings: ComponentProps<typeof CompanyForm>["initialSettings"] } | null;
   users: TeamMember[];
   square: SquareStatus | null;
   locationDay?: LocationDayValues;
+  workforceLifecycle: readonly WorkforceLifecycleInspectionView[];
+  workforceHierarchy: WorkforceHierarchyInspection | null;
 }
 
-export function SettingsTabsClient({ role, userId, me, account, users, square, locationDay }: Props) {
+export function SettingsTabsClient({ role, userId, me, account, users, square, locationDay, workforceLifecycle, workforceHierarchy }: Props) {
   const isAdmin = role === "owner" || role === "admin";
   const isOwner = role === "owner";
 
@@ -36,6 +42,7 @@ export function SettingsTabsClient({ role, userId, me, account, users, square, l
     ...(isAdmin && account ? [{ id: "travel", label: "Travel & Mileage", icon: <TravelIcon /> }] : []),
     ...(isAdmin && account ? [{ id: "pricing", label: "Labor & Pricing", icon: <PricingIcon /> }] : []),
     ...(isAdmin ? [{ id: "team", label: "Team", icon: <TeamIcon /> }] : []),
+    ...(isAdmin ? [{ id: "workforce", label: "Workforce", icon: <TeamIcon /> }] : []),
     ...(isOwner && square ? [{ id: "payments", label: "Payments", icon: <PaymentsIcon /> }] : []),
     ...(isOwner && locationDay ? [{ id: "location-day", label: "Location & Day", icon: <LocationDayIcon /> }] : []),
     ...(isAdmin ? [{ id: "system-health", label: "System Health", icon: <HealthIcon /> }] : []),
@@ -156,6 +163,20 @@ export function SettingsTabsClient({ role, userId, me, account, users, square, l
               currentUserId={userId}
               currentRole={role}
             />
+          </section>
+        )}
+
+        {activeTab === "workforce" && isAdmin && (
+          <section>
+            <h2 style={{ fontSize: 20, fontWeight: 700, margin: "0 0 8px 0" }}>Workforce</h2>
+            <h3>Lifecycle inspection</h3>
+            <WorkforceLifecyclePanel agents={workforceLifecycle} />
+            <h3>Organisational hierarchy</h3>
+            {workforceHierarchy ? (
+              <WorkforceHierarchyPanel inspection={workforceHierarchy} />
+            ) : (
+              <p>No workforce hierarchy inspection is available.</p>
+            )}
           </section>
         )}
 

@@ -203,6 +203,47 @@ Titan Business Node Control Plane (#812)
 The portfolio map and source assignment live in:
 `docs/directadmin/PLUGIN-PORTFOLIO-MAP.md`.
 
+### Shared SDK contract entry point
+
+The current TypeScript contract package is exported as
+`@titan-zero/titan-platform/directadmin-plugin`. It provides package validation,
+server-resolved DirectAdmin-to-Titan context projection, company/revision checks,
+a same-origin versioned API client, authority-neutral widget/navigation types,
+and a contribution registry that degrades invalid plugins independently. The
+registry treats `sdk_compatibility` as the contribution API's SemVer and
+isolates a plugin whose required major differs from the runtime's supported
+major; matching majors permit minor and patch updates. The API compatibility
+version is separate from the npm package release version. Its diagnostic
+redactor removes credential-like fields and common bearer/private-key values
+before a support bundle is rendered or exported.
+
+Hosted routes use `DirectAdminSessionBridge` and `createDirectAdminGateway`, which
+verify a commissioned issuer's signed credential before calling #302's durable
+current-session resolver. The older injected resolver is deprecated presentation
+compatibility, not authentication. DirectAdmin role is presentation only; the SDK refuses missing,
+expired, unresolved, or inconsistent company mappings. `company_id`, actor IDs,
+and revisions carried by the API client are assertions for the Server Node to
+re-resolve. They never authorize an action. Consequential work is submitted as a
+governed intent and requires canonical authorization, execution, verification,
+and evidence downstream. Never put bearer secrets or provider credentials in
+plugin contributions, URLs, diagnostics, or browser storage.
+
+Package validators should inspect the final archive, then pass its exact
+`<plugin_id>.tar.gz` name, root manifest text/version, complete file list, and
+executable paths to `validateDirectAdminPluginPackage`. The function rejects
+path traversal, noncanonical role routes, mismatched archive identity/version,
+and missing executable modes. This is a reusable contract; it does not itself
+install or certify a plugin on a live DirectAdmin host.
+
+Three source consumers now share the authenticated SDK session/renderer:
+`apps/directadmin/{zero-core,operations-hub,brand-studio}/cockpit.mjs`.
+Their signed-session/SQLite integration tests pass; installed role entrypoints and
+real Evolution host integration are still unverified. See the
+[authenticated session bridge contract](../contracts/directadmin-authenticated-session-bridge.md)
+for credential delivery, CSRF/origin checks, canonical company rotation, execution
+revalidation, exact evidence and remaining prerequisites. Do not equate local
+adapter tests with a commissioned host or completed portfolio migration.
+
 ## 6. Plugin ID and archive naming
 
 DirectAdmin routing uses the installed plugin directory/plugin ID.

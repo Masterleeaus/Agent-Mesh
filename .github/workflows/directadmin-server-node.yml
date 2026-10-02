@@ -1,0 +1,40 @@
+name: DirectAdmin Server Node Health Bridge
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/directadmin/server-node/**"
+      - "scripts/package-directadmin-plugin.mjs"
+      - ".github/workflows/directadmin-server-node.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/directadmin/server-node/**"
+      - "scripts/package-directadmin-plugin.mjs"
+      - ".github/workflows/directadmin-server-node.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate the Server Node DirectAdmin package
+        run: node scripts/validate-directadmin-plugin.mjs apps/directadmin/server-node
+      - name: Test read-only health and dependency isolation
+        run: node --test apps/directadmin/server-node/runtime.test.mjs apps/directadmin/server-node/runtime.security.test.mjs
+      - name: Test deterministic DirectAdmin packaging
+        run: node --test scripts/package-directadmin-plugin.test.mjs
+      - name: Build and verify the plugin archive
+        run: node scripts/package-directadmin-plugin.mjs apps/directadmin/server-node "$RUNNER_TEMP/directadmin-packages"
+      - name: Test fail-closed lifecycle reporting
+        run: node --test apps/directadmin/server-node/lifecycle.test.mjs
+      - name: Check shell lifecycle scripts
+        run: bash -n apps/directadmin/server-node/health.sh apps/directadmin/server-node/install.sh apps/directadmin/server-node/update.sh apps/directadmin/server-node/uninstall.sh

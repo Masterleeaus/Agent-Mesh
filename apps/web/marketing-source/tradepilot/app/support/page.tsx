@@ -129,7 +129,7 @@ export default function SupportPage() {
           <div className="flex gap-6 text-sm">
             <Link href="/privacy" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Privacy</Link>
             <Link href="/terms" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Terms</Link>
-            <Link href="/support" style={{ color: '#E8352A' }} className="font-medium">Support</Link>
+            <a href="/support" style={{ color: '#E8352A' }} className="font-medium">Support</a>
             <a href="mailto:hello@fldwrk.ai" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
           </div>
         </div>
