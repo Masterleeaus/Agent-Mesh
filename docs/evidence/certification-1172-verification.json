@@ -272,5 +272,726 @@
   ],
   "production_eligible": false,
   "mission_complete": false,
-  "risk": "Pure and fixture consumer tests cannot prove coverage completeness or authentic receipts; canonical production producer and release consumer remain unimplemented."
+  "risk": "Pure and fixture consumer tests cannot prove coverage completeness or authentic receipts; canonical production producer and release consumer remain unimplemented.",
+  "refresh_history": [
+    {
+      "recorded_at": "2026-10-02T07:12:05Z",
+      "workspace_base": "16ba374ab1e46e49793117453016d9c1e6d680f0",
+      "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh of the 28-row source-only readiness snapshot and current main source hashes. Prior verification history above is retained. Production eligibility stays denied; published state, runtime, integration, deployment, live host and physical-device states are not promoted.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce"
+      ],
+      "related_owner_lanes_observed_open": [
+        {
+          "issue": 811,
+          "pull_request": 1201,
+          "state": "OPEN"
+        },
+        {
+          "issue": 302,
+          "pull_request": 1183,
+          "state": "OPEN"
+        },
+        {
+          "issue": 1049,
+          "pull_request": 1204,
+          "state": "OPEN"
+        },
+        {
+          "issue": 1182,
+          "pull_request": 1188,
+          "state": "OPEN"
+        }
+      ],
+      "source_hashes": [
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/README.md",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "f90d74e88bd36f8a76595e46df517ee6414ca2676ef3aad6b0060526cb0d495a"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/install.sh",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "22b045a09d36c5bb5a2ecacb98bed027e4a2543fc476b1875af28b1cce9d9129"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "a762ab35e48d246552957be4c21ecc66d87ccfc4b2526aee71fcc4df1d8f181d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.test.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "d597ca290a7112f8c6138652c0131f8f6d7c64a66fe69704256de305166afadc"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/update.sh",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "615bd8fdc8173a239e748b2318c453fd8ec9f2168d5b18c9f0a1e1a5f14d897d"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "c31fa8c05a814f8af1ee7d21cd8aea15d5ff46bbf0551639b491b642df54ca7f"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "e62b5bf82fc4a5aac045df80559245648af00d34ab4489d81122d8c045cb174c"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "ac149c8d8f5437da60a86c0c0af149dc19c70c1e715ceb05980d67e9cca61e49"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_replay_service.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "c0d22db94f6657cb9141d58e74af5b94e3a1b6818678966ca27d89c3640e6444"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "89635fea135fb5e504ba8c8670ab28c8c1d3aa6b0785ef925767cd94e20ea1ef"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/mobile_release_certification_test.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "004244f67dcaa0488a8e10565db47f5d90f2435be8740445afa53518be9a32f1"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_conversation_gateway_test.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "47a17aa2b809b61b90626644b0bea2110c1afd039dd3c0d9484644ea12013453"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "3893289c4537cae33ca2e028f981e78d670bc3ac8b1c92af2148ba3ea2ee74fc"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/README.md",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "f442880e78b50b1d795a4df38a6f34695c208f63e004d2e5560cac929ec4efda"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/sw.js",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "98351d60c2b61845db249783a7023dfc227fdd85ea62194fd806c79cad7725cc"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/browser-regression.test.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "25b6ee654a1b13b2e0ee5ccb610bedd1d3d4d3b296f36a1fb784d2e759dd1d39"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/contracts.test.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "711dc0f4b93b223f6f50c77f4f03d8f9e8e0f686650ef83f6a833060c0428caa"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/layout.tsx",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "b5ee6527166b608bb1ddb87cc8cd12e106586801da800bde8ada8ec5c5053ffb"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/package.json",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "infra/compose.vps.yml",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/field-service-runtime.mjs",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "6767b3641a0205a919bdd065f00834268d824dfdfca59c9aab9d386468f697df"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.test.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "be8737e06b779ee08680e4a89b99533a7f5853a1bec98b5ce6fb54bf2c7e8ff4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "2b884bffa0c8efed15fdd2b0277823458908301ddfd8fc7f824b078a0ceeb3af"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.test.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "c97eb8a3a7ec983450eeff6a021f6896ebdbafc1ada0a90665393628051109b7"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "1171c5ebb27e67bff8aaf905938f854417dfc3ed92cd7772f7511c54eb67e416"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.test.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "2c185b26049d18e8ebe34b5a9428a3fc12cd0abb6185f0e6718f94c235fa2669"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.ts",
+          "source_commit": "eae071d2b4323171b62bdbb8211063dabfbebf5c",
+          "sha256": "7dd98a53c988edfc12a51570269880fa2b58f9c39c44b8f65bac8114be190aa5"
+        }
+      ],
+      "commands": [
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 regression tests pass."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 CLI and source snapshot tests pass."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Deterministic current-main-bound 28-row snapshot matches; production eligibility remains denied."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm --filter @titan-zero/pwa typecheck",
+          "status": "PASS",
+          "detail": "PWA syntax/typecheck script exits 0."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm --filter @titan-zero/pwa build",
+          "status": "PASS",
+          "detail": "PWA build exits 0; deterministic shell cache identifier 870ef67ef9dbdd4c."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm --filter @titan-zero/pwa test",
+          "status": "PASS",
+          "detail": "7/7 contract and headless Chromium browser tests pass. Chromium was installed under /tmp only."
+        },
+        {
+          "command": "node --test apps/directadmin/server-node/runtime.test.mjs",
+          "status": "PASS",
+          "detail": "15/15 loopback health-bridge tests pass; this is local test evidence, not host commissioning."
+        },
+        {
+          "command": "cd services/workforce && node --import tsx --test src/*.test.ts",
+          "status": "PASS",
+          "detail": "21/21 tests pass, including SQLite runtime composition, company/message idempotency, completed replay after bootstrap restart, continuation scoping, and /ready after local host restart. Test fixtures do not establish a deployed hosted service."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store corepack pnpm gate:fast",
+          "status": "FAIL",
+          "detail": "Lint completes; gate stops at existing duplicate migration prefixes 151-183 (TASK-128). Later gate stages are not reached."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store corepack pnpm gate",
+          "status": "FAIL",
+          "detail": "Same existing duplicate migration prefixes stop the full gate before later stages."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm build",
+          "status": "FAIL",
+          "detail": "Workspace build stops in apps/llm-plugin with 33 missing zod/v3 and zod/v4-mini resolution errors. packages/titan-platform, apps/pwa, and core TypeScript packages completed before the failure."
+        },
+        {
+          "command": "COREPACK_HOME=/tmp/titan-corepack PATH=/tmp/titan-pnpm-bin:$PATH npm_config_store_dir=/tmp/titan-pnpm-store PLAYWRIGHT_BROWSERS_PATH=/tmp/titan-playwright-browsers corepack pnpm test",
+          "status": "FAIL",
+          "detail": "packages/titan-platform reports 922 tests: 848 passed and 72 failed. Failures span existing test-build artifact/import and source-assertion expectations. The same root run passes PWA 7/7 and Workforce 21/21; do not treat the aggregate as a pass."
+        },
+        {
+          "command": "flutter test test/titan_conversation_gateway_test.dart test/titan_shell_conversation_test.dart test/mobile_release_certification_test.dart",
+          "status": "NOT_RUN",
+          "detail": "Neither Flutter nor Dart is installed in this execution environment; no native mobile test run or device certification is claimed."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in the tracked refresh."
+        }
+      ],
+      "live_host": "NOT_CONTACTED",
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    },
+    {
+      "recorded_at": "2026-10-02T07:30:14Z",
+      "workspace_base": "118a13fe076d053129cf73a49b77d3ca302784c6",
+      "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+      "issue_body_sha256": "c99eee69ce205a8bdae650845030f91f176afa9bb4bf2be8c1621be076f720b5",
+      "scope": "Append-only refresh of source evidence after latest main merged Workforce #811/#1201 and PWA #1171/#1176. Audited client/host compatibility, current source hashes and local verification. Existing history remains unchanged; production eligibility stays denied and deployment/runtime/device states are not promoted.",
+      "refreshed_rows": [
+        "pwa",
+        "native-mobile",
+        "directadmin",
+        "workforce",
+        "web-ui"
+      ],
+      "related_owner_lanes_observed": [
+        {
+          "issue": 811,
+          "issue_state": "OPEN",
+          "pull_request": 1201,
+          "pull_request_state": "MERGED",
+          "pull_request_merged_at": "2026-10-02T07:02:31Z"
+        },
+        {
+          "issue": 1171,
+          "issue_state": "OPEN",
+          "pull_request": 1176,
+          "pull_request_state": "MERGED",
+          "pull_request_merged_at": "2026-10-02T05:49:57Z"
+        },
+        {
+          "issue": 302,
+          "issue_state": "OPEN",
+          "pull_request": 1183,
+          "pull_request_state": "OPEN"
+        },
+        {
+          "issue": 1049,
+          "issue_state": "OPEN",
+          "pull_request": 1204,
+          "pull_request_state": "OPEN"
+        },
+        {
+          "issue": 1182,
+          "issue_state": "OPEN",
+          "pull_request": 1188,
+          "pull_request_state": "OPEN"
+        }
+      ],
+      "source_hashes": [
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/README.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "f442880e78b50b1d795a4df38a6f34695c208f63e004d2e5560cac929ec4efda"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/public/sw.js",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "98351d60c2b61845db249783a7023dfc227fdd85ea62194fd806c79cad7725cc"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/api-client.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "b8f11b4859e17ff06e120760326e90e4fa8117c7d7646a165cfeebd754328529"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/src/scope.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "6b3bfadf4616b4e466a25f49b679e914cfbc040d0f59b3c78e6fed1d60a6b368"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/browser-regression.test.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "25b6ee654a1b13b2e0ee5ccb610bedd1d3d4d3b296f36a1fb784d2e759dd1d39"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "apps/pwa/tests/contracts.test.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "711dc0f4b93b223f6f50c77f4f03d8f9e8e0f686650ef83f6a833060c0428caa"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "pwa",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/screens/titan_shell_screen.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c31fa8c05a814f8af1ee7d21cd8aea15d5ff46bbf0551639b491b642df54ca7f"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/core/titan_session.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "0c9163648bc8ce74b4d18ae16d5f3ba7ff1043f2f51f7fb57ca996b11146e0d8"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "e62b5bf82fc4a5aac045df80559245648af00d34ab4489d81122d8c045cb174c"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "ac149c8d8f5437da60a86c0c0af149dc19c70c1e715ceb05980d67e9cca61e49"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/offline_replay_service.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c0d22db94f6657cb9141d58e74af5b94e3a1b6818678966ca27d89c3640e6444"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/lib/titan/services/titan_gateway.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "89635fea135fb5e504ba8c8670ab28c8c1d3aa6b0785ef925767cd94e20ea1ef"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/mobile_release_certification_test.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "004244f67dcaa0488a8e10565db47f5d90f2435be8740445afa53518be9a32f1"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_conversation_gateway_test.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "47a17aa2b809b61b90626644b0bea2110c1afd039dd3c0d9484644ea12013453"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "apps/mobile/test/titan_shell_conversation_test.dart",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "3893289c4537cae33ca2e028f981e78d670bc3ac8b1c92af2148ba3ea2ee74fc"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "docs/contracts/hosted-workforce-runtime.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "services/workforce/src/conversation-api.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4"
+        },
+        {
+          "subsystem_id": "native-mobile",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/README.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "f90d74e88bd36f8a76595e46df517ee6414ca2676ef3aad6b0060526cb0d495a"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/install.sh",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "22b045a09d36c5bb5a2ecacb98bed027e4a2543fc476b1875af28b1cce9d9129"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "a762ab35e48d246552957be4c21ecc66d87ccfc4b2526aee71fcc4df1d8f181d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/runtime.test.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "d597ca290a7112f8c6138652c0131f8f6d7c64a66fe69704256de305166afadc"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "apps/directadmin/server-node/update.sh",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "615bd8fdc8173a239e748b2318c453fd8ec9f2168d5b18c9f0a1e1a5f14d897d"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "services/workforce/src/directadmin-workforce-owners.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "bf9088ee332900104769de4b0481f598d5fdda256847a1927ae826b0efd863ce"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "services/workforce/src/hosted-runtime.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817"
+        },
+        {
+          "subsystem_id": "directadmin",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "docs/contracts/hosted-workforce-runtime.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "9fb51ce9a2275e4ba93a23552d492b46f3576494c059bd216829801f227c2910"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "docs/operations/workforce-clean-host-acceptance.md",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "b339ef935e2d0821876d990c0f323afd8593c9cb09b399abfd60898c421c7a3c"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "infra/compose.vps.yml",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "0be5e7d52c1d122f3f7fb3af5b1638fed748f98856c95cfdba924608de2f1ea6"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/conversation-api.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "45d6d53ed30d91712676f7a1f8a44b31cb38cf9fdcc8f52e591a9471a3c3c5d4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/conversation-api.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "87832fad0bf7e34bdfa6e856d59a2b9158f98f55dfab322806aa38924b1b7609"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/field-service-runtime.mjs",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c009aeb765d3a3b40f214ebfc0d1c103957b1658ef787550873715042562ffb4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/hosted-runtime.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "ae4f1a0b216d824776d14808b39eec3f77443a6a38dee96e0930a1e67d395817"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "be8737e06b779ee08680e4a89b99533a7f5853a1bec98b5ce6fb54bf2c7e8ff4"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/production-runtime-bootstrap.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "2b884bffa0c8efed15fdd2b0277823458908301ddfd8fc7f824b078a0ceeb3af"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "cde5309e0e9db2e50f976192527669ad300ffbaa0f5cfeaca7b81ab8f72943cd"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/server.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "07519a8562261a9b81e3eef5b9137ee83fb397dd8802832c6e8e640f0183a755"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/session-credential-verifier.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "a26a501fc1e85fc2f492d7d1047e365331fc6f2417d2656c84fbd088175e2956"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-correlation.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "f56038cdfc1084f7e59300d396b29d81b7e4386a3af8329fb86ed81a5108f3d0"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "5ff1abaaba57b85ee8fdafce23e3e7b5f1478149d259bac3058f4bda4f3a14dd"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "services/workforce/src/zero-runtime-dispatcher.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "c699319c8af083bb7b3a125e4d12a4038d5d9dffbde730488390c20ac7539758"
+        },
+        {
+          "subsystem_id": "workforce",
+          "path": "tests/hosted-workforce-runtime.test.ts",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "5b49a2a5900983d3bd8d8f8109b991cbb1399ef59846bb4ed91a1e0e352d9dfa"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/app/layout.tsx",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "b5ee6527166b608bb1ddb87cc8cd12e106586801da800bde8ada8ec5c5053ffb"
+        },
+        {
+          "subsystem_id": "web-ui",
+          "path": "apps/web/package.json",
+          "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
+          "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+        }
+      ],
+      "environment": {
+        "node": "24.19.0",
+        "pnpm": "9.12.0",
+        "playwright_chromium": "Installed under /tmp/titan-playwright-browsers only",
+        "flutter_sdk": "NOT_INSTALLED",
+        "dart_sdk": "NOT_INSTALLED"
+      },
+      "client_host_findings": [
+        "PWA remains one separate installable Zero/Go/Hub app with public shell caching and read-only same-origin no-store projections. It currently has no hosted conversation transport, authenticated session bootstrap, durable encrypted private working set or governed offline conversation replay.",
+        "Native mobile recognizes Zero/Go/Hub but its session DTO has no session_id/context_revision; the adapter sends a completed Future<Map> request with an items response shape and omits host-required session_id/interaction_id/client_message_id. It only requires a nonempty response revision, accepting a revision change between request and response.",
+        "Neither client implements incremental event parsing, event-log resume or conversation cancel. Workforce SSE is serialized only after awaited dispatch completes; Last-Event-ID filters that completed event array rather than replaying a durable event log.",
+        "Workforce current main is hosted Zero-only; Go/Hub are rejected pending a server-owned authority-aware dispatcher. Client continuity owner #1182/#1188 remains separate from #302 identity and #1049 SDK owners.",
+        "Company ID remains the canonical scope boundary from the authenticated session; client-supplied company or surface values confer no authority. Logout/company/context revision rotation must clear private client cache and queued work; auth, stale, unconfigured, unavailable and canceled states need distinct UI handling."
+      ],
+      "commands": [
+        {
+          "command": "pnpm install --frozen-lockfile",
+          "status": "PASS",
+          "detail": "Pinned Corepack pnpm 9.12.0 install completed; no manifest or lockfile changes."
+        },
+        {
+          "command": "CERTIFICATION_SOURCE=1 node --test packages/titan-platform/tests/certification-matrix.test.mjs",
+          "status": "PASS",
+          "detail": "24/24 evaluator regression tests pass."
+        },
+        {
+          "command": "node --test scripts/certification/*.test.mjs",
+          "status": "PASS",
+          "detail": "8/8 certification integration and deterministic source snapshot tests pass."
+        },
+        {
+          "command": "node scripts/generate-readiness-snapshot.mjs --check",
+          "status": "PASS",
+          "detail": "Deterministic 28-row snapshot matches current audit input; eligibility remains denied."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/pwa typecheck",
+          "status": "PASS",
+          "detail": "PWA typecheck passes."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/pwa build",
+          "status": "PASS",
+          "detail": "PWA build passes."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/pwa test",
+          "status": "PASS",
+          "detail": "7/7 PWA contract and headless Chromium browser tests pass; no hosted browser or physical device tested."
+        },
+        {
+          "command": "node --test apps/directadmin/server-node/runtime.test.mjs",
+          "status": "PASS",
+          "detail": "20/20 loopback DirectAdmin runtime tests pass; no host commissioning is established."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/workforce test",
+          "status": "PASS",
+          "detail": "34/34 Workforce tests pass, including session/revision binding, SQLite recovery and current completed-response streaming semantics."
+        },
+        {
+          "command": "pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.test.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false && node --test packages/titan-platform/tests/security-session-credentials.test.mjs packages/titan-platform/tests/security-session-registry.test.mjs packages/titan-platform/tests/security-session-workforce-exchange.test.mjs",
+          "status": "PASS",
+          "detail": "120/120 identity/session credential, registry and Workforce exchange tests pass."
+        },
+        {
+          "command": "pnpm build",
+          "status": "PASS",
+          "detail": "Root workspace build passes on current main after frozen install."
+        },
+        {
+          "command": "pnpm gate:fast",
+          "status": "FAIL",
+          "detail": "Lint completes; gate stops on unchanged duplicate migration prefixes 151, 152, 177-183 (TASK-128). Later gate stages are not reached."
+        },
+        {
+          "command": "pnpm gate",
+          "status": "FAIL",
+          "detail": "Same duplicate migration prefix validation failures stop the full gate before later stages."
+        },
+        {
+          "command": "pnpm test",
+          "status": "FAIL",
+          "detail": "Root run reports 1,057 tests: 983 passed and 72 failed. Failures span existing generated test-build artifact/import ordering and source assertion expectations in unrelated package suites. PWA 7/7 and Workforce 34/34 pass in the same root run."
+        },
+        {
+          "command": "flutter test test/titan_conversation_gateway_test.dart test/titan_shell_conversation_test.dart test/mobile_release_certification_test.dart",
+          "status": "NOT_RUN",
+          "detail": "Flutter and Dart SDKs are absent from this environment."
+        },
+        {
+          "command": "git diff --check",
+          "status": "PASS",
+          "detail": "No whitespace errors in refreshed tracked files."
+        }
+      ],
+      "live_host": "NOT_RUN",
+      "physical_devices": "NOT_AVAILABLE",
+      "production_eligible": false,
+      "mission_complete": false
+    }
+  ]
 }

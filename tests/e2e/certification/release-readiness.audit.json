@@ -1,7 +1,7 @@
 {
   "schema": "titan.readiness-audit-input/v1",
-  "observed_at": "2026-10-01T22:49:22Z",
-  "source_commit": "6a88cdf92cf0f69fc2a51162f5b471f9438d1c12",
+  "observed_at": "2026-10-02T07:21:10Z",
+  "source_commit": "14163faa316ac6236e88167b7c8d8a5e95007c7e",
   "scope": "28 user-requested audit headings; evidence presentation only, not a capability/host catalogue",
   "audit_completeness": "PARTIAL",
   "production_eligibility": "DENIED_MISSING_EVIDENCE",
@@ -87,21 +87,28 @@
       "label": "PWA",
       "canonical_owner_refs": [
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1171",
-        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542"
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/542",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811"
       ],
       "implementation_paths": [
-        "apps/web/app/manifest.ts",
-        "apps/web/public/sw.js"
+        "apps/pwa/README.md",
+        "apps/pwa/src/api-client.mjs",
+        "apps/pwa/src/scope.mjs",
+        "apps/pwa/public/sw.js",
+        "apps/pwa/tests/contracts.test.mjs",
+        "apps/pwa/tests/browser-regression.test.mjs",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/server.ts"
       ],
-      "source_assessment": "Web install assets exist but do not prove the separate canonical Zero/Go/Hub PWA. Separate Site metadata and #1171 source-scan report require reconciliation.",
+      "source_assessment": "Current main contains one separately installable Zero/Go/Hub PWA, distinct from apps/web and native mobile. The PWA client exposes only same-origin, no-store GET projections with a returned company_id check; its bounded working set is memory-only and partitions by company, actor, device, surface, audience, context revision and session revision. It has no authenticated session bootstrap or conversation POST/event transport. The merged Workforce host now exposes an authenticated conversation endpoint, but that path is not wired into this PWA; the host contract is currently commissioned only for Zero. The service worker caches the public shell only; no durable private database, encrypted evidence staging or governed command outbox/replay exists in the PWA.",
       "missing_requirements": [
-        "Site v39/source commit 1d27bd6c4309881244fe412bcf5b5ca63bd4f344 is not this GitHub source baseline; source bytes, independent install lifecycle and physical-browser production tests were not executed by this audit."
+        "Integrate server-verified current session/company context with the hosted projection and conversation contracts; extend the PWA beyond read-only GETs to real event transport, reconnect/cancel and explicit unavailable states; implement bounded encrypted private offline storage and governed replay with server revalidation. The external Sites v39/source commit 1d27bd6c4309881244fe412bcf5b5ca63bd4f344 remains metadata-only here, and physical-browser/hosted production certification is outstanding."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
       "test_evidence": {
         "status": "NOT_RUN",
-        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
       },
       "integration_evidence": {
         "status": "NOT_RUN"
@@ -119,20 +126,35 @@
       "canonical_owner_refs": [
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1158",
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1164",
-        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1170"
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1170",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1182",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811"
       ],
       "implementation_paths": [
-        "apps/mobile/lib/titan/services/titan_gateway.dart"
+        "apps/mobile/lib/titan/core/titan_session.dart",
+        "apps/mobile/lib/titan/services/titan_gateway.dart",
+        "apps/mobile/lib/screens/titan_shell_screen.dart",
+        "apps/mobile/lib/titan/services/offline_replay_service.dart",
+        "apps/mobile/lib/titan/services/offline_deterministic_replay_planner.dart",
+        "apps/mobile/lib/titan/release/mobile_release_certification.dart",
+        "apps/mobile/test/titan_conversation_gateway_test.dart",
+        "apps/mobile/test/titan_shell_conversation_test.dart",
+        "apps/mobile/test/mobile_release_certification_test.dart",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/conversation-api.test.ts",
+        "docs/contracts/hosted-workforce-runtime.md"
       ],
-      "source_assessment": "Native gateway validates capability projections; converse still throws production-conversation-transport-required.",
+      "source_assessment": "The client recognizes zero/go/hub, but TitanSession carries company/actor/device/surface without session_id or context_revision. Its conversation request is a Future<Map> returning completed items and omits the hosted contract required interaction_id, client_message_id and session_id; it has no event-stream parser, continuation action/token or cancellation API. It expects an items array and authority_neutral response flag, while the current host returns schema_version plus events and no such flag. The host requires an authenticated session whose company, actor, device, surface, session and context_revision match exactly. The mobile test fake returns rev-13 after a rev-12 request and the client accepts it because it checks only that the response revision is nonempty. The host can serialize a completed dispatch result as JSON or SSE, but its SSE writer runs after awaited dispatch and Last-Event-ID filters that completed event array; this is not incremental delivery or reconnectable event-log replay. The hosted runtime currently rejects Go/Hub. The shell keeps the user text and displays one generic reachability/sign-in error. A separate offline command replay service/planner exists and requires server revalidation, but it is not conversation replay or evidence of client integration. Release certification code validates evidence fields; no signed physical-device result is established here.",
       "missing_requirements": [
-        "Production hosted conversation, signed builds and physical Zero/Go/Hub device certification remain outstanding."
+        "Align the native adapter with the authenticated host DTO: include required session, interaction and client-message identity from the verified session; require exact context revision; consume events instead of items; and support true incremental delivery, durable event replay/resume and explicit cancel. Add a server-owned Go/Hub contract before claiming all three hosted modes. Wire logout/company/context revision rotation to clearing cached projections and queued private work, connect offline replay to current server revalidation, and map auth/stale/unconfigured/unavailable/cancel states distinctly. Physical signed iOS/Android Zero/Go/Hub certification remains unrun. #1182/#1188 owns client continuity; #302/#1183 identity and #1049/#1204 SDK work are separate owner lanes."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
       "test_evidence": {
         "status": "NOT_RUN",
-        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
       },
       "integration_evidence": {
         "status": "NOT_RUN"
@@ -152,18 +174,24 @@
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1049"
       ],
       "implementation_paths": [
+        "apps/directadmin/server-node/README.md",
+        "apps/directadmin/server-node/runtime.mjs",
+        "apps/directadmin/server-node/runtime.test.mjs",
         "apps/directadmin/server-node/install.sh",
-        "apps/directadmin/server-node/update.sh"
+        "apps/directadmin/server-node/update.sh",
+        "services/workforce/src/hosted-runtime.ts",
+        "services/workforce/src/directadmin-workforce-owners.ts",
+        "services/workforce/src/server.ts"
       ],
-      "source_assessment": "Server Node lifecycle scripts exist; install reports bounded-projection.",
+      "source_assessment": "Current main contains a loopback-only, read-only DirectAdmin health bridge plus an optional Workforce gateway mount. The mount stays unavailable without operator configuration; the Workforce owner currently projects canonical worker/work/run data and rejects lifecycle mutations. The host contract requires the #1049 SDK bridge and #302 current-session exchange for DirectAdmin company switch/revocation; those integration requirements are not established by the bounded health bridge. No live DirectAdmin install, update, recovery or production endpoint is evidenced.",
       "missing_requirements": [
-        "Full operator suite and disposable/live-host install, update, recovery outcomes require execution evidence."
+        "Complete the #1049/#302 DirectAdmin-to-Workforce authenticated session and role-checked action integration, then execute the operator suite and disposable/live-host install, update, rollback and recovery acceptance. Loopback health observations do not prove production business outcomes."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
       "test_evidence": {
         "status": "NOT_RUN",
-        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
       },
       "integration_evidence": {
         "status": "NOT_RUN"
@@ -182,21 +210,37 @@
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811",
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/639",
         "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/640",
-        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050"
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1050",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/302",
+        "https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/1182"
       ],
       "implementation_paths": [
         "services/workforce/src/server.ts",
-        "infra/compose.vps.yml"
+        "services/workforce/src/server.test.ts",
+        "services/workforce/src/conversation-api.ts",
+        "services/workforce/src/conversation-api.test.ts",
+        "services/workforce/src/hosted-runtime.ts",
+        "services/workforce/src/session-credential-verifier.ts",
+        "services/workforce/src/production-runtime-bootstrap.ts",
+        "services/workforce/src/production-runtime-bootstrap.test.ts",
+        "services/workforce/src/zero-runtime-dispatcher.ts",
+        "services/workforce/src/zero-runtime-dispatcher.test.ts",
+        "services/workforce/src/zero-runtime-correlation.test.ts",
+        "services/workforce/src/field-service-runtime.mjs",
+        "tests/hosted-workforce-runtime.test.ts",
+        "infra/compose.vps.yml",
+        "docs/contracts/hosted-workforce-runtime.md",
+        "docs/operations/workforce-clean-host-acceptance.md"
       ],
-      "source_assessment": "Compose includes Workforce; current service entrypoint serves health/readiness. Separate production bootstrap/dispatcher code exists.",
+      "source_assessment": "Current main, including merged #811/#1201, contains a hosted runtime composed over durable SQLite run/work stores, cryptographically verified Workforce credentials, current identity-session resolution, company/session/context-revision binding, idempotent request/recovery, continuation and cancellation paths. POST /v1/workforce/conversations supports JSON and SSE and projects a bounded public event set. The server waits for dispatch/recovery/cancel to finish before writing the response; SSE and Last-Event-ID only serialize/filter the completed event array, not live incremental delivery or durable event-log replay. The hosted Workforce contract currently commissions the Zero surface; Go/Hub are rejected pending their authority-aware dispatcher. Code and local/CI tests establish implementation-level behavior, not a live commissioned host, production credential/provider operation or reboot/backup acceptance.",
       "missing_requirements": [
-        "Hosted service composition of persistent governed business execution and restart/replay proof remain unverified; health alone is insufficient."
+        "Run the clean-host commissioning, exact artifact/hash, real credential/provider, reboot/update/rollback and recovery acceptance in docs/operations/workforce-clean-host-acceptance.md. Deliver actual incremental stream and durable event resume plus broader mobile lifecycle under #1182; keep the host runtime at Zero-only until Go/Hub have their own authority-aware contract. Production/live-host and physical-client evidence remains outstanding."
       ],
       "assessment_status": "INCOMPLETE",
       "source_evidence": "SOURCE_INSPECTED",
       "test_evidence": {
         "status": "NOT_RUN",
-        "scope": "Subsystem acceptance tests not executed by this source audit; see separate slice verification report."
+        "scope": "Deployed/physical subsystem acceptance is not certified by this source snapshot. Local test executions are recorded in the append-only refresh history; they do not establish production runtime or live-host readiness."
       },
       "integration_evidence": {
         "status": "NOT_RUN"
