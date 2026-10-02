@@ -2,15 +2,6 @@ import 'package:flutter/material.dart';
 import '../titan/services/titan_gateway.dart';
 import '../titan/models/generative_item.dart';
 import '../titan/widgets/generative_cards.dart';
-import '../titan/models/map_job.dart';
-import '../titan/screens/titan_map_screen.dart';
-import '../titan/screens/capture_screen.dart';
-import '../titan/screens/titan_schedule_screen.dart';
-import '../titan/screens/titan_job_screen.dart';
-import '../titan/models/job_detail.dart';
-import '../titan/screens/titan_commercial_screen.dart';
-import '../titan/screens/titan_customer_screen.dart';
-import '../titan/models/customer_record.dart';
 
 class TitanShellScreen extends StatefulWidget {
   final TitanGateway gateway;
@@ -46,65 +37,14 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
   }
 
   void _quickAsk(String text) {
-    final lower = text.toLowerCase();
-    if (lower.contains('photo') || lower.contains('scan') || lower.contains('signature') || lower.contains('evidence')) { Navigator.of(context).push(MaterialPageRoute(builder: (_) => TitanCaptureScreen(jobId: 'job-101', gateway: _gateway))); return; }
-    if (lower.contains('schedule') || lower.contains('dispatch') || lower.contains('calendar') || lower.contains('reschedule')) { _openSchedule(); return; }
-    if (lower.contains('map') || lower.contains('where are') || lower.contains('route') || lower.contains('navigate')) {
-      _openJobsMap();
-      return;
-    }
-    _composer.text = text; _send();
+    _composer.text = text;
+    _send();
   }
 
   void _handleGeneratedAction(String action, TitanGenerativeItem item) {
-    final a = action.toLowerCase();
-    final jobId = (item.context['job_id'] ?? 'job-101').toString();
-    if (a.contains('customer')) {
-      Navigator.of(context).push(MaterialPageRoute(builder:(_)=>TitanCustomerScreen(gateway:_gateway,customer:const TitanCustomerRecord(
-        id:'customer-101',name:'Smith Residence',phone:'+61 400 000 000',email:'smith@example.com',
-        addresses:[TitanCustomerAddress(label:'Service address',address:'Fitzroy, VIC',latitude:-37.7984,longitude:144.9783)],
-        history:[TitanContactEvent(type:'call',summary:'Booking confirmed',when:'Today · 8:40 AM'),TitanContactEvent(type:'message',summary:'Arrival reminder sent',when:'Yesterday · 4:15 PM'),TitanContactEvent(type:'note',summary:'Prefers side gate access',when:'Last job')]
-      )))); return;
-    }
-    if (a.contains('quote') || a.contains('invoice') || a.contains('payment') || a.contains('paid')) {
-      Navigator.of(context).push(MaterialPageRoute(builder:(_)=>TitanCommercialScreen(gateway:_gateway,jobId:jobId,customer:item.title)));
-      return;
-    }
-    if (a.contains('open') || a.contains('detail') || a.contains('start job') || a.contains('view job')) {
-      _openJob(jobId, item.title, item.subtitle ?? 'Customer');
-      return;
-    }
-    if (a.contains('evidence')) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => TitanCaptureScreen(jobId: jobId, gateway: _gateway)));
-      return;
-    }
-    if (a.contains('schedule') || a.contains('reschedule') || a.contains('dispatch')) { _openSchedule(); return; }
-    if (a.contains('map') || a.contains('navigate')) { _openJobsMap(); return; }
+    // Generated labels are presentation data, not object references or
+    // authority. Ask the server-backed conversation to resolve the intent.
     _quickAsk('$action ${item.title}');
-  }
-
-
-  void _openJob(String jobId, String title, String customer) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => TitanJobScreen(
-      gateway: _gateway,
-      job: TitanJobDetail(
-        id: jobId, title: title, customer: customer,
-        phone: '+61 400 000 000', address: 'Melbourne, VIC',
-        worker: 'Assigned worker', status: 'scheduled',
-        checklist: const ['Confirm scope with customer','Complete service checklist','Capture completion evidence'],
-      ),
-    )));
-  }
-
-  void _openSchedule() { Navigator.of(context).push(MaterialPageRoute(builder: (_) => TitanScheduleScreen(gateway: _gateway))); }
-
-  void _openJobsMap() {
-    const jobs = <TitanMapJob>[
-      TitanMapJob(id: 'job-101', title: 'House cleaning', customer: 'Smith Residence', address: 'Fitzroy, VIC', latitude: -37.7984, longitude: 144.9783, time: '9:00 AM', status: 'scheduled'),
-      TitanMapJob(id: 'job-102', title: 'Pressure wash', customer: 'Northside Property', address: 'Northcote, VIC', latitude: -37.7712, longitude: 144.9980, time: '12:30 PM', status: 'scheduled'),
-      TitanMapJob(id: 'job-103', title: 'Maintenance', customer: 'Thornbury Client', address: 'Thornbury, VIC', latitude: -37.7582, longitude: 145.0057, time: '3:00 PM', status: 'scheduled'),
-    ];
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TitanMapScreen(jobs: jobs)));
   }
 
   @override Widget build(BuildContext context) => Scaffold(
