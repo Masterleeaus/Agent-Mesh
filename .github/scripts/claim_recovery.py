@@ -129,6 +129,11 @@ def stale_claim_blockers(*, now: datetime, branch_name: str,
             blockers.append("claim-branch-head-unknown")
         if branch.get("observed_head_sha") != head:
             blockers.append("claim-branch-head-changed-during-snapshot")
+        ahead = branch.get("ahead_of_main_count")
+        if not isinstance(ahead, int) or isinstance(ahead, bool) or ahead < 0:
+            blockers.append("claim-branch-uniqueness-unknown")
+        elif ahead > 0:
+            blockers.append("claim-branch-has-unique-commits")
     else:
         blockers.append("invalid-activity-source:branch")
 
@@ -181,11 +186,8 @@ def stale_claim_blockers(*, now: datetime, branch_name: str,
             _record_events(pr, ("updated_at", "comment_updated_at", "review_updated_at",
                                 "review_comment_updated_at"), cutoff=cutoff, name=name,
                            blockers=blockers)
-            if pr.get("state") == "open":
-                if pr.get("head_ref") != branch_name or pr.get("head_sha") != (branch or {}).get("head_sha"):
-                    blockers.append("open-pr-does-not-match-claim-head")
-                if pr.get("base_ref") != "main":
-                    blockers.append("open-pr-does-not-target-main")
+            if pr.get("state") == "open" and pr.get("head_ref") == branch_name:
+                blockers.append("open-pr-uses-claim-branch")
     else:
         blockers.append("invalid-activity-source:pull_requests")
 
