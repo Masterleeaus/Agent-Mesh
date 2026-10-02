@@ -7,6 +7,22 @@ export type DirectAdminProjection = Readonly<{
   company_id: string; source: string; freshness: string | null;
   evidence_refs: readonly string[]; data: unknown;
 }>;
+
+/** Validate the transport envelope at both ingress and browser boundaries. A
+ * correctly stamped outer envelope cannot relabel another company's projection. */
+export function assertDirectAdminProjection(value: unknown, company_id: string): asserts value is DirectAdminProjection {
+  if (!value || typeof value !== 'object') throw new Error('directadmin-invalid-projection');
+  const projection = value as DirectAdminProjection;
+  const data = projection.data as Record<string, unknown> | null;
+  if (projection.company_id !== company_id || !data || typeof data !== 'object' || Array.isArray(data) ||
+      data.company_id !== company_id || typeof data.schema !== 'string' || !data.schema ||
+      typeof projection.source !== 'string' || !projection.source.trim() || projection.source.length > 1024 ||
+      (projection.freshness !== null && (typeof projection.freshness !== 'string' || !Number.isFinite(Date.parse(projection.freshness)))) ||
+      !Array.isArray(projection.evidence_refs) || projection.evidence_refs.length > 256 ||
+      projection.evidence_refs.some(ref => typeof ref !== 'string' || !ref.trim() || ref.length > 2048)) {
+    throw new Error('directadmin-invalid-projection');
+  }
+}
 /** Composition supplies canonical projection owners and governed intent ingress.
  * revalidate MUST be called again by the execution owner at authorization/effect,
  * including queued work. A successful ingress response is only REQUESTED. */
@@ -72,7 +88,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       if (request.method === 'GET' && route[2] === 'projection') {
         const context = await session.revalidate();
         const projection = await owners.projection(plugin, context);
-        if (projection.company_id !== context.company_id) throw new Error('projection-scope');
+        assertDirectAdminProjection(projection, context.company_id);
         await session.revalidate(); // suppress an in-flight response after a switch/revocation
         return json(200, { context, projection });
       }

@@ -3,77 +3,12 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
 import { tsImport } from 'tsx/esm/api';
-import { createIdentitySessionRegistry } from '../.test-dist/security-boundary.js';
 import { DirectAdminSessionBridge, createDirectAdminGateway, DirectAdminCockpitSession,
   redactDirectAdminDiagnostics } from '../.test-dist/directadmin-plugin.js';
-import { projectZeroCockpit } from '../.test-dist/zero-cockpit.js';
-import { createOperationsHealth } from '../.test-dist/operations-health.js';
-import { createBrandPublication } from '../.test-dist/brand-publication.js';
-const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 const { mountZeroCore } = await tsImport('../../../apps/directadmin/zero-core/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
 const { mountOperationsHub } = await tsImport('../../../apps/directadmin/operations-hub/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
 const { mountBrandStudio } = await tsImport('../../../apps/directadmin/brand-studio/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
-const ORIGIN = 'https://panel.example.test';
-const b64 = value => Buffer.from(value).toString('base64url');
-const encode = value => b64(JSON.stringify(value));
-const external = { provider: 'directadmin:node-1', subject: 'host-human-17' };
-const proof = { ...external, session_id: 'session-1', device_id: 'device-1', session_revision: 1 };
-const expected = { company_id: 'company-a', audience: 'titan-directadmin:node-1' };
-const csrf = b64(crypto.getRandomValues(new Uint8Array(32)));
-
-async function fixture(t) {
-  const now = Math.floor(Date.now() / 1000) * 1000;
-  let clock = now;
-  const storage = createSqliteStorage(':memory:');
-  t.after(() => storage.close());
-  const registry = await createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY' });
-  await registry.putActor({ actor_id: 'actor-1', status: 'active' }, null);
-  await registry.putDevice({ actor_id: 'actor-1', device_id: 'device-1', status: 'active' }, null);
-  for (const company_id of ['company-a', 'company-b']) {
-    await registry.putCompany({ company_id, status: 'active' }, null);
-    await registry.putMembership({ actor_id: 'actor-1', company_id, role: 'member', status: 'active' }, null);
-    await registry.putExternalBinding({ ...external, binding_id: `mapping-${company_id}`, company_id, actor_id: 'actor-1', status: 'active' }, null);
-  }
-  const current = await registry.issueSession({ ...proof, company_id: 'company-a', audience: expected.audience,
-    issued_at: new Date(now).toISOString(), expires_at: new Date(now + 3600_000).toISOString() }, new Date(now).toISOString());
-  const keys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
-  const claims = { iss: external.provider, sub: external.subject, aud: expected.audience, node_id: 'node-1',
-    session_id: proof.session_id, device_id: proof.device_id, session_revision: 1, company_id: 'company-a', actor_id: 'actor-1',
-    context_revision: current.context_revision, csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(csrf))),
-    da_role: 'admin', iat: now / 1000, exp: now / 1000 + 120 };
-  const sign = async (patch = {}, header = {}, privateKey = keys.privateKey) => {
-    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-da-session+jwt', kid: 'key-1', ...header })}.${encode({ ...claims, ...patch })}`;
-    return `${payload}.${b64(await crypto.subtle.sign('Ed25519', privateKey, Buffer.from(payload)))}`;
-  };
-  const token = await sign();
-  const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, issuer: external.provider, audience: expected.audience,
-    node_id: 'node-1', verification_keys: new Map([['key-1', keys.publicKey]]), registry, now: () => clock });
-  const request = (path = '/v1/directadmin/context', options = {}) => {
-    const headers = new Headers({ origin: ORIGIN, 'sec-fetch-site': 'same-origin', 'x-titan-csrf': csrf,
-      cookie: `__Host-titan-da-session=${token}` });
-    for (const [k, v] of Object.entries(options.headers ?? {})) {
-      if (v === null) headers.delete(k); else headers.set(k, v);
-    }
-    return new Request(options.url ?? `${ORIGIN}${path}`, { method: options.method ?? 'GET', headers,
-      ...(options.body === undefined ? {} : { body: options.body }) });
-  };
-  const effects = [];
-  const owners = {
-    projection: async (plugin, context) => {
-      const company_id = context.company_id;
-      const time = new Date(clock).toISOString();
-      const data = plugin === 'titan_zero' ? projectZeroCockpit({ company_id, generated_at: time, attention: [] })
-        : plugin === 'titan_operations' ? createOperationsHealth({ company_id, observed_at: time, nodes: [] })
-        : createBrandPublication({ company_id, publication_id: 'publication-1', site_id: 'site-1', version: 1,
-          source_snapshot_hash: 'hash-1', route_manifest: ['/'], created_at: time });
-      return { company_id, source: plugin, freshness: time, evidence_refs: [], data };
-    },
-    requestIntent: async (_plugin, intent, context, revalidate) => {
-      const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
-    },
-  };
-  return { registry, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
-}
+import { fixture, ORIGIN, b64, encode, external, proof, expected, csrf } from './fixtures/directadmin-bridge-fixture.mjs';
 
 for (const role of ['admin', 'reseller', 'user']) test(`signed ${role} maps canonical actor and selected company only`, async t => {
   const f = await fixture(t);
@@ -295,4 +230,51 @@ test('cross-tab invalidation clears every mounted consumer without accepting a s
   t.after(() => session.dispose()); await session.connect(); const r = root(); const mount = mountZeroCore(session, r); await mount.refresh();
   channel.onmessage({ data: { company_id: 'company-b', authority: 'allowed' } });
   assert.equal(r.children[2].textContent, ''); await assert.rejects(session.intent('titan_zero', intentBody(f)), /context-mismatch/);
+});
+
+for (const [label, mutate] of [
+  ['nested company relabelling', p => ({ ...p, data: { ...p.data, company_id: 'company-b' } })],
+  ['missing nested company', p => ({ ...p, data: { schema: 'titan.zero-cockpit.v1' } })],
+  ['missing source', p => ({ ...p, source: '' })],
+  ['invalid freshness', p => ({ ...p, freshness: 'yesterday-ish' })],
+  ['missing evidence array', p => ({ ...p, evidence_refs: null })],
+  ['malformed evidence reference', p => ({ ...p, evidence_refs: [{ token: 'do-not-render' }] })],
+]) test(`projection boundary rejects ${label} at gateway and browser`, async t => {
+  const f = await fixture(t); const original = f.owners.projection;
+  f.owners.projection = async (...args) => mutate(await original(...args));
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  assert.equal((await gateway(f.request('/v1/directadmin/titan_zero/projection'))).status, 503);
+  const auth = await f.bridge.authenticate(f.request());
+  const session = new DirectAdminCockpitSession(() => csrf, async () => new Response(JSON.stringify({ context: auth.context,
+    projection: mutate(await original('titan_zero', auth.context)) }), { headers: { 'content-type': 'application/json' } }));
+  t.after(() => session.dispose()); await assert.rejects(session.projection('titan_zero'), /invalid-projection/);
+});
+
+for (const [label, modify, expected] of [
+  ['incompatible schema', p => ({ ...p, data: { ...p.data, schema: 'titan.zero-cockpit.v99' } }), 'incompatible'],
+  ['unknown freshness', p => ({ ...p, freshness: null }), 'unknown'],
+  ['future freshness', p => ({ ...p, freshness: new Date(Date.now() + 300_000).toISOString() }), 'unknown'],
+  ['stale projection', p => ({ ...p, freshness: new Date(Date.now() - 600_000).toISOString() }), 'stale'],
+]) test(`renderer exposes ${label} as read-only without a fresh data summary`, async t => {
+  const f = await fixture(t); const original = f.owners.projection;
+  f.owners.projection = async (...args) => modify(await original(...args));
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const session = new DirectAdminCockpitSession(() => csrf, (path, init) => gateway(f.request(path, { headers: init.headers })));
+  t.after(() => session.dispose()); const r = root(); await mountZeroCore(session, r).refresh();
+  assert.equal(r.attrs['data-state'], expected); assert.match(r.children[1].textContent, /^Read-only/);
+  assert.doesNotMatch(r.children[1].textContent, /attention items/);
+});
+
+test('a projection response cannot silently replace the selected company or restore an intent context', async t => {
+  const f = await fixture(t); const auth = await f.bridge.authenticate(f.request());
+  let replace = false, requests = 0;
+  const session = new DirectAdminCockpitSession(() => csrf, async () => {
+    requests++;
+    if (!replace) return new Response(JSON.stringify(auth.context));
+    const context = { ...auth.context, company_id: 'company-b', company_ids: ['company-b'], context_revision: 'new' };
+    return new Response(JSON.stringify({ context, projection: await f.owners.projection('titan_zero', context) }));
+  }); t.after(() => session.dispose()); await session.connect(); replace = true;
+  await assert.rejects(session.projection('titan_zero'), /context-invalidated/);
+  await assert.rejects(session.intent('titan_zero', { ...intentBody(f), company_id: 'company-b' }), /context-mismatch/);
+  assert.equal(requests, 2);
 });
