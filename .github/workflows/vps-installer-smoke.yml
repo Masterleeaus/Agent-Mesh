@@ -31,13 +31,44 @@ jobs:
           bash -n scripts/vps/update-vps.sh
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
-          mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads"
-          mkdir -p "$RUNNER_TEMP/workforce-company-stores"
+          mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads" \
+            "$RUNNER_TEMP/titan-data/runtime" "$RUNNER_TEMP/workforce-company-stores" \
+            "$RUNNER_TEMP/workforce-keys"
+          # Empty public-key sentinels and CI-only identifiers keep Compose
+          # inspectable without creating session credentials or commissioning auth.
+          touch "$RUNNER_TEMP/titan-data/runtime/identity.db" \
+            "$RUNNER_TEMP/workforce-keys/workforce-session.pub.pem" \
+            "$RUNNER_TEMP/workforce-keys/upstream-session.pub.pem"
           export TZ_ENV_FILE="$PWD/.env.vps"
           export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
           export WORKFORCE_COMPANY_STORE_HOST_ROOT="$RUNNER_TEMP/workforce-company-stores"
-          printf 'TZ_ENV_FILE=%s\nTZ_DATA_ROOT=%s\nWORKFORCE_COMPANY_STORE_HOST_ROOT=%s\n' \
-            "$TZ_ENV_FILE" "$TZ_DATA_ROOT" "$WORKFORCE_COMPANY_STORE_HOST_ROOT" >> "$GITHUB_ENV"
+          export WORKFORCE_IDENTITY_SQLITE_HOST_PATH="$RUNNER_TEMP/titan-data/runtime/identity.db"
+          export WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH="$RUNNER_TEMP/workforce-keys/workforce-session.pub.pem"
+          export WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH="$RUNNER_TEMP/workforce-keys/upstream-session.pub.pem"
+          export WORKFORCE_DIRECTADMIN_NODE_ID=ci-smoke-uncommissioned
+          export WORKFORCE_SESSION_ISSUER=ci:uncommissioned-session
+          export WORKFORCE_SESSION_KEY_ID=ci-smoke-no-key
+          export WORKFORCE_SESSION_ALGORITHM=EdDSA
+          export WORKFORCE_UPSTREAM_SESSION_ISSUER=ci:uncommissioned-upstream
+          export WORKFORCE_UPSTREAM_SESSION_AUDIENCE=ci:uncommissioned-workforce
+          export WORKFORCE_UPSTREAM_SESSION_KEY_ID=ci-smoke-no-key
+          export WORKFORCE_UPSTREAM_SESSION_ALGORITHM=EdDSA
+          cat >> "$GITHUB_ENV" <<EOF
+          TZ_ENV_FILE=$TZ_ENV_FILE
+          TZ_DATA_ROOT=$TZ_DATA_ROOT
+          WORKFORCE_COMPANY_STORE_HOST_ROOT=$WORKFORCE_COMPANY_STORE_HOST_ROOT
+          WORKFORCE_IDENTITY_SQLITE_HOST_PATH=$WORKFORCE_IDENTITY_SQLITE_HOST_PATH
+          WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH=$WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH
+          WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH=$WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH
+          WORKFORCE_DIRECTADMIN_NODE_ID=$WORKFORCE_DIRECTADMIN_NODE_ID
+          WORKFORCE_SESSION_ISSUER=$WORKFORCE_SESSION_ISSUER
+          WORKFORCE_SESSION_KEY_ID=$WORKFORCE_SESSION_KEY_ID
+          WORKFORCE_SESSION_ALGORITHM=$WORKFORCE_SESSION_ALGORITHM
+          WORKFORCE_UPSTREAM_SESSION_ISSUER=$WORKFORCE_UPSTREAM_SESSION_ISSUER
+          WORKFORCE_UPSTREAM_SESSION_AUDIENCE=$WORKFORCE_UPSTREAM_SESSION_AUDIENCE
+          WORKFORCE_UPSTREAM_SESSION_KEY_ID=$WORKFORCE_UPSTREAM_SESSION_KEY_ID
+          WORKFORCE_UPSTREAM_SESSION_ALGORITHM=$WORKFORCE_UPSTREAM_SESSION_ALGORITHM
+          EOF
           docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
           if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
             echo 'PostgreSQL leaked into canonical VPS topology' >&2
