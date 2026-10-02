@@ -14,9 +14,9 @@ const { mountBrandStudio } = await tsImport('../../../apps/directadmin/brand-stu
 import { fixture, ORIGIN, b64, encode, external, proof, expected, csrf } from './fixtures/directadmin-bridge-fixture.mjs';
 
 const bootstrapNonce = 'N'.repeat(43);
-const bootstrapRequest = (f, headers = {}) => f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: {
+const bootstrapRequest = (f, headers = {}, body) => f.request('/v1/directadmin/bootstrap', { method: 'POST', headers: {
   cookie: null, 'x-titan-csrf': null, 'x-titan-da-bootstrap-csrf': bootstrapNonce, ...headers,
-} });
+}, ...(body === undefined ? {} : { body }) });
 const trustedBootstrapInput = input => async proof => {
   assert.equal(proof.csrf_nonce, bootstrapNonce);
   assert.equal(proof.origin, ORIGIN);
@@ -236,7 +236,7 @@ test('gateway bootstrap invokes only the trusted provider and returns a selected
   const response = await gateway(bootstrapRequest(f, {
     caller_id: 'root', 'x-titan-company-id': 'company-b', 'x-directadmin-role': 'admin',
     'x-directadmin-user': 'forged-user', 'x-titan-da-bootstrap-csrf': bootstrapNonce,
-  }));
+  }, Buffer.alloc(0)));
   assert.equal(response.status, 200);
   assert.equal(providerCalls, 1);
   const payload = await response.json();

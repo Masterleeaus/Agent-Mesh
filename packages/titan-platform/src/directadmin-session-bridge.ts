@@ -128,6 +128,22 @@ function hasCookie(request: Request, name: string): boolean {
     return (separator < 0 ? value : value.slice(0, separator)).trim() === name;
   });
 }
+async function hasEmptyBody(request: Request): Promise<boolean> {
+  const reader = request.body?.getReader();
+  if (!reader) return true;
+  let timedOut = false;
+  const deadline = setTimeout(() => { timedOut = true; void reader.cancel().catch(() => {}); }, 5000);
+  let empty = false;
+  try {
+    const first = await reader.read();
+    empty = first.done && !timedOut;
+  } catch { /* malformed or aborted bodies fail closed */ }
+  finally {
+    clearTimeout(deadline);
+    if (!empty) void reader.cancel().catch(() => {});
+  }
+  return empty;
+}
 
 /** Retains the opaque credential and calls #302 again on every revalidation.
  * Caller IDs, company headers, DA roles and session IDs never grant authority. */
@@ -169,10 +185,11 @@ export class DirectAdminSessionBridge {
     const csrfNonce = request.headers.get('x-titan-da-bootstrap-csrf') ?? '';
     if (request.method !== 'POST' || url.origin !== this.#config.origin || url.pathname !== '/v1/directadmin/bootstrap' ||
         url.search || url.hash || request.headers.get('origin') !== this.#config.origin ||
-        request.headers.get('sec-fetch-site') !== 'same-origin' || request.body !== null ||
+        request.headers.get('sec-fetch-site') !== 'same-origin' || request.headers.has('content-encoding') ||
         hasCookie(request, COOKIE) || !/^[A-Za-z0-9_-]{43,128}$/.test(csrfNonce) || typeof resolveInput !== 'function') {
       return rejectRequest();
     }
+    if (!await hasEmptyBody(request)) return rejectRequest();
 
     // Origin, Fetch Metadata, the empty request body, absence of an existing
     // Titan session and nonce syntax are checked before the trusted port runs.
