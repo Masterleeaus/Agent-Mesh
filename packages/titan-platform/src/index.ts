@@ -36,3 +36,5 @@ export * from "./knowledge-governance.js";
 
 export * from "./mission-planning.js";
 export * from "./titan-forge/runtime.js";
+
+export * from "./maps-intelligence/runtime.js";
