@@ -50,8 +50,8 @@ function validateArchive(archive, plugin) {
   for (const required of plugin.files) if (!entries.includes(required) && !entries.includes(`${required}/`)) throw new Error(`${plugin.id}: archive missing ${required}`);
   const details = spawnSync("tar", ["-tvzf", archive], { encoding: "utf8" });
   if (details.error || details.status !== 0) throw details.error ?? new Error(`${plugin.id}: archive metadata cannot be read`);
-  for (const required of [...executable].filter((entry) => plugin.files.some((root) => required === root || required.startsWith(`${root}/`)))) {
-    if (!details.stdout.split(/\r?\n/).some((line) => /^-rwxr-xr-x\s/.test(line) && line.endsWith(` ${required}`))) throw new Error(`${plugin.id}: executable mode missing for ${required}`);
+  for (const executablePath of [...executable].filter((entry) => plugin.files.some((root) => entry === root || entry.startsWith(`${root}/`)))) {
+    if (!details.stdout.split(/\r?\n/).some((line) => /^-rwxr-xr-x\s/.test(line) && line.endsWith(` ${executablePath}`))) throw new Error(`${plugin.id}: executable mode missing for ${executablePath}`);
   }
 }
 
