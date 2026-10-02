@@ -165,6 +165,52 @@ test('gateway rejects cross-company owner projection, oversized body and redacts
   assert.deepEqual(safe, { cookie: '[REDACTED]', session_id: '[REDACTED]', csrf: '[REDACTED]', message: 'Rejected [REDACTED]' });
 });
 
+test('gateway preserves only the canonical typed Workforce unsupported-action denial', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  class DirectAdminWorkforceActionDenied extends Error {
+    code = 'directadmin-workforce-action-unsupported';
+    status = 403;
+    constructor(action) {
+      super(`DirectAdmin Workforce action is not supported: ${action}`);
+      this.name = 'DirectAdminWorkforceActionDenied';
+    }
+  }
+  const privateDiagnostic = `private-work-id=${f.token}`;
+  f.owners.requestIntent = async () => { throw new DirectAdminWorkforceActionDenied(privateDiagnostic); };
+  const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', post(intentBody(f))));
+  assert.equal(response.status, 403);
+  const responseBody = await response.text();
+  assert.deepEqual(JSON.parse(responseBody), { error: 'directadmin-workforce-action-unsupported', read_only: true });
+  assert.equal(responseBody.includes(privateDiagnostic), false);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+});
+
+test('gateway treats status/code lookalikes and hostile typed-error accessors as service failures', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  let getterCalls = 0;
+  const generic403 = Object.assign(new Error(`do-not-return:${f.token}`), { status: 403, code: 'some-other-owner-error' });
+  const lookalike = Object.assign(new Error(`do-not-return:${f.token}`), {
+    name: 'DirectAdminWorkforceActionDenied', code: 'directadmin-workforce-action-unsupported', status: 403,
+  });
+  class DirectAdminWorkforceActionDenied extends Error {
+    status = 403;
+    constructor() { super('hostile typed denial'); this.name = 'DirectAdminWorkforceActionDenied'; }
+  }
+  const accessorBacked = new DirectAdminWorkforceActionDenied();
+  Object.defineProperty(accessorBacked, 'code', { get() { getterCalls++; throw new Error('getter must not run'); } });
+  for (const error of [generic403, lookalike, accessorBacked, new Error(`owner unavailable:${f.token}`)]) {
+    f.owners.requestIntent = async () => { throw error; };
+    const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', post(intentBody(f))));
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  }
+  assert.equal(getterCalls, 0);
+  f.owners.requestIntent = undefined; // An unconfigured owner also remains unavailable.
+  const unavailable = await gateway(f.request('/v1/directadmin/titan_operations/intents', post(intentBody(f))));
+  assert.equal(unavailable.status, 503);
+  assert.deepEqual(await unavailable.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+});
+
 // Minimal DOM fixture executes the real consumer modules and shared renderer;
 // browser/Evolution commissioning is a separate required host verification.
 function root() {

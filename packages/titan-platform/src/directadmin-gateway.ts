@@ -34,6 +34,27 @@ export type DirectAdminGatewayOwners = Readonly<{
 const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
   status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
 });
+/** #811 publishes this exact, non-mutating denial for unsupported Workforce
+ * lifecycle proposals. Translate only its fixed typed contract; never echo an
+ * exception's message, status, code, or attached diagnostics to the caller. */
+function isUnsupportedWorkforceActionDenial(error: unknown): boolean {
+  try {
+    if (!(error instanceof Error)) return false;
+    const prototype = Object.getPrototypeOf(error);
+    const constructor = prototype && Object.getOwnPropertyDescriptor(prototype, 'constructor')?.value;
+    const name = Object.getOwnPropertyDescriptor(error, 'name');
+    const code = Object.getOwnPropertyDescriptor(error, 'code');
+    const status = Object.getOwnPropertyDescriptor(error, 'status');
+    return Boolean(constructor?.name === 'DirectAdminWorkforceActionDenied' &&
+      Object.getPrototypeOf(prototype) === Error.prototype &&
+      name && 'value' in name && name.value === 'DirectAdminWorkforceActionDenied' &&
+      code && 'value' in code && code.value === 'directadmin-workforce-action-unsupported' &&
+      status && 'value' in status && status.value === 403);
+  } catch {
+    // Proxies or hostile accessor-backed exceptions are ordinary owner failures.
+    return false;
+  }
+}
 async function body(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json' || request.headers.has('content-encoding')) throw new Error('invalid-body');
   const reader = request.body?.getReader();
@@ -113,6 +134,9 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       // Never return exception messages, cookies, credentials or arbitrary provider diagnostics.
       if (error instanceof Error && error.message === 'directadmin-session-rejected') {
         return json(401, { error: 'directadmin-session-rejected', read_only: true });
+      }
+      if (isUnsupportedWorkforceActionDenial(error)) {
+        return json(403, { error: 'directadmin-workforce-action-unsupported', read_only: true });
       }
       return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
     }

@@ -1,6 +1,6 @@
 # DirectAdmin authenticated session bridge — #1049
 
-Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / open draft PR #1183 head `363d3f018e971d09309d95e87c56bd5209511b9f` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). That owner commit is inherited through the claim branch for integration; #1183 has not merged to `main`. This SDK does not copy or reimplement its identity/credential logic.
+Status: the DirectAdmin browser bridge and three SDK consumers pass focused local tests; the newly published #302 Workforce/Zero exchange is **not yet consumed through the hosted HTTP path**, and no DirectAdmin host is commissioned. PR #1204 remains draft/non-closing. #302 / open draft PR #1183 is currently at `9bfc15f69613493761b4ae53a484004957c14dec`; it has not merged to `main`. This SDK does not copy or reimplement its identity/credential logic.
 
 The latest security review correction is addressed: the bridge now requires the verified canonical `provider` to equal `directAdminIssuer(config.origin)` before projection, retained revalidation, and post-switch use. Adversarial tests reject both a valid credential issued in another DirectAdmin host namespace and a valid credential presented to a bridge configured for another host. This is a host/service wiring defense; no live exploit was reported.
 
@@ -46,35 +46,13 @@ The browser uses the canonical **persisted session** expiry supplied by #302. Ea
 
 `requestIntent` receives a revalidation function. The canonical execution owner **must call it again at authorization and immediately before effects**, and preserve the original authenticated company context for queued work. This per-request closure is not a durable queue credential. The SDK neither grants effective authority nor executes providers; 202 means `REQUESTED`, not authorized or verified. Canonical execution remains responsible for idempotency, replay protection and accepted evidence.
 
-Inspected current #811/#1201 head `26be7b4a278dcfa27ea91af91a23a25f86802d0a`: its hosted verifier fixes audience to `workforce` and surface to `zero`, then rechecks durable identity at effects. A DirectAdmin-audience credential cannot be relabelled or forwarded there. #302's public-key verifier can support that owner, but the current service has no cross-audience exchange API.
+At current #302 / #1183 head `9bfc15f69613493761b4ae53a484004957c14dec`, the canonical credential service offers `exchangeWorkforceZero(verifiedDaCredential, optionalExpectation)`. It fixes target audience/surface to `workforce`/`zero`; the signed child binds its DirectAdmin source issuer, provider/subject, session and context revisions, actor/company/device, source expiry, configured node and CSRF hash. A deterministic child is reused on retry, can only have its expiry tightened, and cannot be recreated after revocation. The new `withCurrentSessionFence` rechecks child and source under the registry writer lock before its bounded effect callback. The owner reports 137/137 identity/session tests on Node 22 with its production `@titan-zero/storage` / `better-sqlite3` wrapper and separate child-process SQLite connections; exact-head GitHub validation is still pending ([evidence comment](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1183#issuecomment-5945589876)).
 
-The bounded file-backed regression test in
-`packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs` uses
-ephemeral Ed25519 provider, DirectAdmin and Workforce keys with the real #302
-service and registry. It confirms that the canonical Workforce verifier rejects
-the DirectAdmin token. A fresh provider login assertion can issue a separate
-Workforce-audience session, but that session has a different session ID and stays
-on company A after the DirectAdmin session switches to B. This is not an exchange
-and cannot satisfy shared switch/revocation semantics. The test is deliberately
-not presented as a Workforce HTTP integration or effect-fence proof.
+The published #811 / #1201 head `aa4345c58a00078fa4065fee0224195639dcf8c6` is not yet a compatible consumer of that child. Its `createWorkforceSessionCredentialVerifier` currently drops `source_session` and `credential_expires_at` returned by canonical authentication, then `hosted-runtime.ts` rebuilds a smaller proof without them before `resolveCurrentSession` and durable run revalidation. The derived child therefore cannot complete current-session resolution through the hosted conversation verifier, and the current runtime does not consume the new effect-fence API. I posted a targeted consumer-only request on PR #1201 comment [#5945586745](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1201#issuecomment-5945586745). No #811 server/bootstrap files were edited here.
 
-Before connecting DirectAdmin intents to the hosted HTTP runtime, #302 must own
-an explicit server-side audience exchange in its existing credential/registry
-boundary. It must authenticate and revalidate the source DirectAdmin credential,
-allow only commissioned target audience/surface pairs (currently Workforce/Zero),
-issue a target credential no longer-lived than the source, preserve source
-session/company revision revocation and switch invalidation, and define safe
-duplicate/retry behavior. Do not accept a caller-selected audience/surface or
-make a second issuer/store. #811/#812 then own the server-side composition that
-maps the SDK's governed intent and current context to the existing authenticated
-`POST /v1/workforce/conversations` contract, propagates cancellation and
-idempotency, and never returns credentials to browser code. Their launched
-`HostedWorkforceDependencies.credentialVerifier` accepts Workforce Bearer
-credentials and independently revalidates identity; it has no DirectAdmin cookie
-or audience-exchange route today. A composed real-HTTP adversarial test must wait
-for those owner APIs and cover source switch/revocation at the effect fence,
-cancellation and duplicate requests with real canonical keys and temporary
-SQLite stores.
+The existing file-backed `directadmin-workforce-handoff.test.mjs` is historical evidence for the pre-exchange boundary only: it confirms a DirectAdmin-audience credential is rejected by a Workforce verifier and that a separate Workforce login is not linked to the DA session. It is not evidence that the new exchange works through #811 HTTP. Do not treat #302 source tests or the API handoff as that acceptance.
+
+Before claiming the full bridge, #1049 must consume the fixed canonical exchange without exposing the child credential to browser code, and #811/#812 plus the conversation-transport owner must preserve the verified child proof through the actual `POST /v1/workforce/conversations` consumer and revalidate it at the effect fence. The composed adversarial test must exercise real HTTP with ephemeral canonical keys and disposable SQLite state, including selected-company projection, source switch/revocation before effect admission, duplicate requests, cancellation, and UNCERTAIN timeout behavior. DirectAdmin credential issuance, registry commissioning, final CI/smoke, and real-host browser/OS commissioning remain separate prerequisites.
 
 ## Actual consumers and routes
 
