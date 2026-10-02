@@ -18,13 +18,13 @@ export function validateVisualRequest(r:TitanVisualAnalysisRequest):TitanVisualA
  need(r.request_id,"request_id");need(r.company_id,"company_id");need(r.subject_id,"subject_id");need(r.consent_ref,"consent_ref");
  if(!Number.isInteger(r.source_revision)||r.source_revision<1)throw Error("visual_source_revision_invalid");
  if(!r.evidence_refs.length)throw Error("visual_evidence_required");if(!Number.isFinite(r.max_payload_bytes)||r.max_payload_bytes<1)throw Error("visual_prompt_payload_limit_invalid");
- for(const e of r.evidence_refs){if(e.company_id!==r.company_id)throw Error("visual_cross_company_evidence");if(!e.accepted)throw Error("visual_evidence_not_accepted");if(e.subject_id!==r.subject_id||e.subject_type!==r.subject_type)throw Error("visual_subject_mismatch");if(e.consent_ref!==r.consent_ref)throw Error("visual_consent_mismatch");if(!Number.isInteger(e.revision)||e.revision<1)throw Error("visual_evidence_revision_invalid");if(!["image/jpeg","image/png","image/webp","image/heic"].includes(e.mime_type))throw Error("visual_format_unsupported");if(e.byte_size<=0||e.byte_size>20000000)throw Error("visual_media_size_invalid");iso(e.captured_at)}
+ for(const e of r.evidence_refs){if(e.company_id!==r.company_id)throw Error("visual_cross_company_evidence");if(!e.accepted)throw Error("visual_evidence_not_accepted");if(e.subject_id!==r.subject_id||e.subject_type!==r.subject_type)throw Error("visual_subject_mismatch");if(e.consent_ref!==r.consent_ref)throw Error("visual_consent_mismatch");if(e.purpose!==r.purpose)throw Error("visual_purpose_mismatch");if(!Number.isInteger(e.revision)||e.revision<1)throw Error("visual_evidence_revision_invalid");if(!["image/jpeg","image/png","image/webp","image/heic"].includes(e.mime_type))throw Error("visual_format_unsupported");if(e.byte_size<=0||e.byte_size>20000000)throw Error("visual_media_size_invalid");iso(e.captured_at)}
  if(payloadSize({fields:["company_id","subject_type","subject_id","purpose","media_refs"],refs:r.evidence_refs.map(e=>e.media_ref)})>r.max_payload_bytes)throw Error("visual_prompt_payload_too_large");
  return r;
 }
 export function createCaptureGuidance(i:{checklist:CaptureChecklist;company_id:string;subject_id:string;captured:readonly EvidenceRef[];offline:boolean;low_quality_refs?:readonly string[]}):CaptureGuidance{
  if(i.checklist.company_id!==i.company_id)throw Error("visual_checklist_company_mismatch");
- const mine=i.captured.filter(e=>e.company_id===i.company_id&&e.subject_id===i.subject_id);
+ const mine=i.captured.filter(e=>e.accepted&&e.company_id===i.company_id&&e.subject_id===i.subject_id&&e.subject_type===i.checklist.subject_type);
  const have=new Set(mine.map(e=>e.evidence_id));
  const missing=i.checklist.items.filter(x=>x.required&&!have.has(x.id)).map(x=>x.id);
  const low=new Set(i.low_quality_refs??[]);
@@ -32,7 +32,7 @@ export function createCaptureGuidance(i:{checklist:CaptureChecklist;company_id:s
 }
 export function pairBeforeAfter(before:EvidenceRef,after:EvidenceRef,company_id:string){
  if(before.company_id!==company_id||after.company_id!==company_id)throw Error("visual_cross_company_evidence");
- if(before.subject_type!==after.subject_type||before.subject_id!==after.subject_id)throw Error("visual_comparison_subject_mismatch");
+ if(before.subject_type!==after.subject_type||before.subject_id!==after.subject_id||before.purpose!==after.purpose||before.purpose!=="before-after")throw Error("visual_comparison_subject_mismatch");
  if(!before.accepted||!after.accepted)throw Error("visual_evidence_not_accepted");
  if(new Date(after.captured_at)<new Date(before.captured_at))throw Error("visual_comparison_time_order_invalid");
  return{company_id,before_ref:before.evidence_id+":"+before.revision,after_ref:after.evidence_id+":"+after.revision,basis:"same-subject-purpose" as const,source_revision:Math.max(before.revision,after.revision),captured_at:[iso(before.captured_at),iso(after.captured_at)] as const};
@@ -58,11 +58,11 @@ export function createVisualProposal(i:{company_id:string;kind:VisualProposal["k
 export function recordVisualReview(p:VisualProposal,i:{company_id:string;reviewer_ref:string;decision:"ACCEPT_OBSERVATION"|"REJECT";reason:string;current_source_revision:number;fresh_authority_ref:string|null}){
  need(i.reviewer_ref,"reviewer");need(i.reason,"review_reason");if(i.company_id!==p.company_id)throw Error("visual_review_company_mismatch");if(i.current_source_revision!==p.source_revision)throw Error("visual_source_revision_conflict");
  if(i.decision==="ACCEPT_OBSERVATION"&&!i.fresh_authority_ref)throw Error("visual_fresh_authority_required");
- return{proposal_id:p.proposal_id,company_id:p.company_id,decision:i.decision,reviewer_ref:i.reviewer_ref,reason:i.reason,source_revision:p.source_revision,authority_decision_ref:i.fresh_authority_ref,accepted_as:"OBSERVATION" as const,verified:false as const,reviewed_at:new Date().toISOString()};
+ return{proposal_id:p.proposal_id,company_id:p.company_id,decision:i.decision,reviewer_ref:i.reviewer_ref,reason:i.reason,source_revision:p.source_revision,authority_decision_ref:i.fresh_authority_ref,accepted_as:i.decision==="ACCEPT_OBSERVATION"?"OBSERVATION" as const:null,verified:false as const,reviewed_at:new Date().toISOString()};
 }
-export function recordVisualVerification(i:{company_id:string;proposal:VisualProposal;observed_ref:string;verification_ref:string;current_source_revision:number;authority_valid:boolean}){
- if(i.company_id!==i.proposal.company_id)throw Error("visual_verification_company_mismatch");if(i.current_source_revision!==i.proposal.source_revision)throw Error("visual_source_revision_conflict");if(!i.authority_valid)throw Error("visual_fresh_authority_required");need(i.observed_ref,"observed_outcome");need(i.verification_ref,"verification_ref");
- return{company_id:i.company_id,proposal_id:i.proposal.proposal_id,observed_ref:i.observed_ref,verification_ref:i.verification_ref,verified_by_observation:true,model_output_used_as_proof:false as const};
+export function recordVisualVerification(i:{company_id:string;proposal:VisualProposal;review:ReturnType<typeof recordVisualReview>;observed_ref:string;verification_ref:string;current_source_revision:number;authority_valid:boolean}){
+ if(i.company_id!==i.proposal.company_id||i.review.company_id!==i.company_id||i.review.proposal_id!==i.proposal.proposal_id)throw Error("visual_verification_company_mismatch");if(i.current_source_revision!==i.proposal.source_revision)throw Error("visual_source_revision_conflict");if(i.review.decision!=="ACCEPT_OBSERVATION"||i.review.accepted_as!=="OBSERVATION")throw Error("visual_human_acceptance_required");if(!i.review.authority_decision_ref||!i.authority_valid)throw Error("visual_fresh_authority_required");need(i.observed_ref,"observed_outcome");need(i.verification_ref,"verification_ref");
+ return{company_id:i.company_id,proposal_id:i.proposal.proposal_id,review_decision_ref:i.review.authority_decision_ref,observed_ref:i.observed_ref,verification_ref:i.verification_ref,verified_by_observation:true,model_output_used_as_proof:false as const};
 }
 export function createVisualChecklistProposal(i:{company_id:string;version:number;items:CaptureChecklist["items"];source:"vertical-pack"|"business-standards"}){
  if(!Number.isInteger(i.version)||i.version<1||!i.items.length)throw Error("visual_profile_invalid");
