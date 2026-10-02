@@ -24,15 +24,28 @@ beforeEach(() => {
 });
 describe("public estimate response transaction", () => {
   it("locks before transition and scopes the write to the token-bound company", async () => {
-    const response = await POST(request({ action: "approve", name: "Customer", company_id: "attacker-company" }), params);
+    const response = await POST(request({ action: "approve", name: "Customer", signature_svg: "private-signature", company_id: "attacker-company" }), params);
     expect(response.status).toBe(200);
     expect(mocks.query).toHaveBeenNthCalledWith(1, "BEGIN");
     expect(mocks.query).toHaveBeenNthCalledWith(2, expect.stringContaining("share_token = $1 FOR UPDATE"), ["opaque-token-a"]);
     const update = mocks.query.mock.calls.find(([sql]) => sql.includes("UPDATE estimates"))!;
     expect(update[0]).toContain("account_id = $5 AND share_token = $6 AND status = 'sent'");
-    expect(update[1]).toEqual(["approved", "Customer", null, "estimate-a", "company-a", "opaque-token-a"]);
+    expect(update[1]).toEqual(["approved", "Customer", "private-signature", "estimate-a", "company-a", "opaque-token-a"]);
+    expect(mocks.audit).toHaveBeenCalledWith(client, {
+      account_id: "company-a",
+      entity_type: "estimate",
+      entity_id: "estimate-a",
+      action: "update",
+      actor_id: null,
+      old_value: { status: "sent" },
+      new_value: { status: "approved", via: "portal" },
+    });
+    expect(JSON.stringify(mocks.audit.mock.calls[0])).not.toContain("opaque-token-a");
+    expect(JSON.stringify(mocks.audit.mock.calls[0])).not.toContain("private-signature");
     expect(mocks.artifacts).toHaveBeenCalledWith(client, { estimateId: "estimate-a", accountId: "company-a", userId: "existing-owner" });
+    expect(mocks.audit.mock.invocationCallOrder[0]).toBeLessThan(mocks.artifacts.mock.invocationCallOrder[0]);
     expect(mocks.query).toHaveBeenLastCalledWith("COMMIT");
+    expect(mocks.audit.mock.invocationCallOrder[0]).toBeLessThan(mocks.query.mock.invocationCallOrder.at(-1)!);
     expect(mocks.release).toHaveBeenCalledOnce();
   });
 
@@ -63,8 +76,22 @@ describe("public estimate response transaction", () => {
     expect(mocks.query).toHaveBeenLastCalledWith("ROLLBACK");
   });
 
+  it("rolls the estimate transition back when required audit evidence cannot be written", async () => {
+    mocks.audit.mockRejectedValue(new Error("audit unavailable"));
+    await expect(POST(request(), params)).rejects.toThrow("audit unavailable");
+    expect(mocks.query.mock.calls.some(([sql]) => sql.includes("UPDATE estimates"))).toBe(true);
+    expect(mocks.job).not.toHaveBeenCalled();
+    expect(mocks.artifacts).not.toHaveBeenCalled();
+    expect(mocks.query).toHaveBeenLastCalledWith("ROLLBACK");
+  });
+
   it("records a decline without creating approval artifacts", async () => {
     expect((await POST(request({ action: "decline" }), params)).status).toBe(200);
+    expect(mocks.audit).toHaveBeenCalledWith(client, expect.objectContaining({
+      actor_id: null,
+      old_value: { status: "sent" },
+      new_value: { status: "declined", via: "portal" },
+    }));
     expect(mocks.owner).not.toHaveBeenCalled();
     expect(mocks.artifacts).not.toHaveBeenCalled();
   });
