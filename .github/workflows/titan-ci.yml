@@ -200,6 +200,7 @@ jobs:
           test/titan/mobile_session_context_test.dart
           test/titan/scoped_offline_queue_test.dart
           test/titan_conversation_gateway_test.dart
+          test/titan_shell_conversation_test.dart
       - name: Run full mobile analysis and test suite
         working-directory: apps/mobile
         shell: bash
