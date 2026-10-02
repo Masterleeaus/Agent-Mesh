@@ -136,8 +136,10 @@ out-of-order responses, duplicate clicks, false verification and hostile text.
 - #811: independently hosted Workforce, canonical registry/work/runs, read-only
   DirectAdmin projection and explicit denial of lifecycle proposals until caller
   management authority exists; #1182: conversation transport.
-- #302: global actor/company relationship resolver. Protected provisioning and
-  credential verification remain upstream requirements.
+- #302 / #1183: the shared resolver, signed-credential verification and durable
+  current-company session path are published in current main; #1240 adds the company
+  placement/storage contract. Regression coverage is code evidence only. Verified
+  upstream credentials and protected provisioning remain uncommissioned requirements.
 - #14/#640: execution/authority; #913: evidence and verified outcome provenance.
 - #1045: infrastructure health (linked by role route); #1046: Zero summary.
 - #1084/#1179: shared build/index/lock repair. This branch merges that prerequisite
