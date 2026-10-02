@@ -89,7 +89,7 @@ export default function App() {
         <Route path="/measured-outcomes" element={<><PageMeta title="Measured Outcomes" description="Measure personal experience and shared business outcomes without collapsing them into one memory, so Titan Zero can learn from real results." /><MeasuredOutcomes /></>} />
         <Route path="/features" element={<><PageMeta title="Cleaning SaaS Features" description="Explore Titan Zero capabilities for cleaning workflows, the AI workforce, connected systems, privacy and governed operations." /><Features /></>} />
         <Route path="/investment" element={<Navigate to="/pricing" replace />} />
-        <Route path="/pricing" element={siteContext.kind === 'preview' ? <Navigate to="/investment" replace /> : <PlatformPricing />} />
+        <Route path="/pricing" element={<PlatformPricing />} />
         <Route path="/works-everywhere" element={<WorksEverywhere />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/industries" element={<Industries />} />
@@ -98,8 +98,8 @@ export default function App() {
         <Route path="/privacy-architecture" element={<><PageMeta title="Privacy & Architecture" description="Explore Titan Zero privacy, local intelligence, customer-controlled edge nodes, governed access and company-scoped architecture." /><Architecture /></>} />
         <Route path="/cost-sovereignty" element={<><PageMeta title="Cost Sovereignty" description="Use customer-owned providers, API keys, local models and compute where suitable, with Titan-managed services available when useful." /><CostSovereignty /></>} />
         <Route path="/environmental-systems" element={<><PageMeta title="Environmental Systems" description="Connect environmental assessment, auditing, evidence, compliance, resource improvement and qualified professional review to business operations." /><EnvironmentalSystems /></>} />
-        <Route path="/compare" element={<><PageMeta title="Compare" description="Compare Titan Zero’s managed operating model, trust progression, privacy architecture and software gap filling with conventional field-service SaaS." /><Compare /></>} />
-        <Route path="/about" element={<><PageMeta title="About" description="Learn the principles behind Titan Zero Field Services: keep useful systems, fill gaps, govern intelligence, preserve choice and measure operational value." /><About /></>} />
+        <Route path="/compare" element={<><PageMeta title="Compare" description="Compare Titan Zero’s Cleaning-first managed operating model, trust progression, privacy architecture and software gap filling with conventional cleaning SaaS." /><Compare /></>} />
+        <Route path="/about" element={<><PageMeta title="About" description="Learn the principles behind Titan Zero Cleaning: keep useful systems, fill gaps, govern intelligence, preserve choice and measure operational value." /><About /></>} />
         <Route path="/faq" element={<><PageMeta title="FAQ" description="Answers about personal Zeros, the managed workforce, integrations, private and local intelligence, authority controls, environmental systems and the commercial model." /><FAQ /></>} />
         <Route path="/changelog" element={<><PageMeta title="System Evolution" description="Follow the evolution of Titan Zero Field Services and the managed operating-system capabilities available across customer deployments." /><Changelog /></>} />
         <Route path="*" element={<Navigate to="/" replace />} />
