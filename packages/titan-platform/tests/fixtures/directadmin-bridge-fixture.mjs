@@ -4,7 +4,7 @@ const bridgeApi = await tsImport('../../src/directadmin-session-bridge.ts', { pa
 const zeroCockpit = await tsImport('../../src/zero-cockpit.ts', { parentURL: import.meta.url, tsconfig: false });
 const operationsHealth = await tsImport('../../src/operations-health.ts', { parentURL: import.meta.url, tsconfig: false });
 const brandPublication = await tsImport('../../src/brand-publication.ts', { parentURL: import.meta.url, tsconfig: false });
-const { createIdentitySessionRegistry, createSessionCredentialService } = security;
+const { createIdentitySessionRegistry, createSessionCredentialService, createSessionCredentialVerifier } = security;
 const { DirectAdminSessionBridge } = bridgeApi;
 const { projectZeroCockpit } = zeroCockpit;
 const { createOperationsHealth } = operationsHealth;
@@ -35,11 +35,20 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
   }
   const keys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const upstreamKeys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
+  const workforceKeys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const policy = { issuer: 'titan:node-1', audience: expected.audience, key_id: 'key-1', algorithm: 'EdDSA',
     verification_key: keys.publicKey, signing_key: keys.privateKey, registry, lifetime_seconds: 300,
     upstream: { issuer: external.provider, audience: 'titan-login:node-1', key_id: 'upstream-1', algorithm: 'EdDSA', verification_key: upstreamKeys.publicKey },
-    directadmin: { node_id: 'node-1' }, now: () => new Date(clock) };
+    directadmin: { node_id: 'node-1' },
+    workforce_zero_exchange: { issuer: 'titan:workforce', key_id: 'workforce-1', algorithm: 'EdDSA',
+      verification_key: workforceKeys.publicKey, signing_key: workforceKeys.privateKey, lifetime_seconds: 120 },
+    now: () => new Date(clock) };
   const sessions = createSessionCredentialService(policy);
+  const workforceVerifier = createSessionCredentialVerifier({
+    registry, upstream: policy.upstream, issuer: 'titan:workforce', audience: 'workforce', key_id: 'workforce-1',
+    algorithm: 'EdDSA', verification_key: workforceKeys.publicKey, lifetime_seconds: 120,
+    directadmin: { node_id: 'node-1' }, now: () => new Date(clock),
+  });
   const loginClaims = { iss: external.provider, sub: external.subject, aud: policy.upstream.audience,
     jti: nonce, company_id: 'company-a', device_id: 'device-1', node_id: 'node-1',
     csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(csrf))), da_role: 'admin', iat: now / 1000, exp: now / 1000 + 120 };
@@ -82,5 +91,6 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
       const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
     },
   };
-  return { registry, sessions, policy, upstreamToken, upstreamKeys, loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
+  return { registry, sessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
+    loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }

@@ -1,5 +1,5 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
-  type DirectAdminBridgeContext } from './directadmin-session-bridge.js';
+  type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
 export type DirectAdminPluginId = 'titan_zero' | 'titan_operations' | 'titan_web';
@@ -29,7 +29,8 @@ export function assertDirectAdminProjection(value: unknown, company_id: string):
 export type DirectAdminGatewayOwners = Readonly<{
   projection: (plugin: DirectAdminPluginId, context: DirectAdminBridgeContext) => Promise<DirectAdminProjection>;
   requestIntent: (plugin: DirectAdminPluginId, intent: GovernedIntentRequest,
-    context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>) => Promise<{ receipt_id: string }>;
+    context: DirectAdminBridgeContext, revalidate: () => Promise<DirectAdminBridgeContext>,
+    withWorkforceZeroSession: WithWorkforceZeroSession) => Promise<{ receipt_id: string }>;
 }>;
 const json = (status: number, body: unknown, sessionCookie?: string) => new Response(JSON.stringify(body), {
   status, headers: { ...DIRECTADMIN_RESPONSE_HEADERS, ...(sessionCookie ? { 'set-cookie': sessionCookie } : {}) },
@@ -126,7 +127,12 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         const intent: GovernedIntentRequest = Object.freeze({ company_id: context.company_id, actor_id: context.actor_id,
           capability_id: input.capability_id as string, operation_id: input.operation_id as string,
           correlation_id: input.correlation_id as string, input: input.input as Record<string, unknown> });
-        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate);
+        const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, session.withWorkforceZeroSession);
+        if (!receipt || typeof receipt.receipt_id !== 'string' || receipt.receipt_id.length > 200 ||
+            !/^[A-Za-z0-9:._-]+$/.test(receipt.receipt_id) ||
+            /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(receipt.receipt_id)) {
+          throw new Error('directadmin-owner-receipt-invalid');
+        }
         return json(202, { status: 'REQUESTED', receipt_id: receipt.receipt_id, correlation_id: intent.correlation_id });
       }
       return json(405, { error: 'method-not-allowed' });

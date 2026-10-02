@@ -121,6 +121,72 @@ test('gateway preserves canonical intent correlation and only reports REQUESTED'
   assert.equal(f.effects.length, 1);
 });
 
+test('SDK exchanges the authenticated DA session for a fixed selected-company Workforce child inside the owner callback', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  let childCredential;
+  let childContext;
+  let authenticatedChild;
+  f.owners.requestIntent = async (_plugin, _intent, _context, revalidate, withWorkforceZeroSession) => {
+    const current = await revalidate();
+    assert.equal(current.company_id, 'company-a');
+    return withWorkforceZeroSession(async (credential, context) => {
+      childCredential = credential;
+      childContext = context;
+      authenticatedChild = await f.workforceVerifier.authenticate(credential);
+      return { receipt_id: 'receipt-1' };
+    });
+  };
+  const response = await gateway(f.request('/v1/directadmin/titan_operations/intents', {
+    ...post(intentBody(f)), headers: { 'content-type': 'application/json', 'x-titan-company-id': 'company-b', caller_id: 'root' },
+  }));
+  assert.equal(response.status, 202);
+  const bodyText = await response.text();
+  assert.deepEqual(JSON.parse(bodyText), { status: 'REQUESTED', receipt_id: 'receipt-1', correlation_id: 'correlation-1' });
+  assert.ok(childCredential);
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal(childContext.schema, 'titan.workforce-zero.session/v1');
+  assert.equal(childContext.audience, 'workforce');
+  assert.equal(childContext.surface, 'zero');
+  assert.equal(childContext.actor_id, 'actor-1');
+  assert.equal(childContext.company_id, 'company-a');
+  assert.deepEqual(childContext.company_ids, ['company-a']);
+  assert.equal(typeof childContext.session_id, 'string');
+  assert.notEqual(childContext.session_id, f.claims.session_id);
+  assert.equal('da_role' in childContext, false);
+  assert.equal(authenticatedChild.context.audience, 'workforce');
+  assert.equal(authenticatedChild.surface, 'zero');
+  assert.equal(authenticatedChild.context.session_id === f.claims.session_id, false);
+  assert.deepEqual(authenticatedChild.context.allowed_company_ids, ['company-a']);
+  assert.equal(authenticatedChild.source_session.provider, external.provider);
+  assert.equal(authenticatedChild.source_session.subject, external.subject);
+  assert.equal(authenticatedChild.source_session.session_id, f.claims.session_id);
+  assert.equal(authenticatedChild.source_session.session_revision, f.claims.session_revision);
+  assert.equal(authenticatedChild.source_session.context_revision, f.claims.context_revision);
+  assert.equal(authenticatedChild.source_session.company_id, 'company-a');
+  assert.equal(authenticatedChild.source_session.actor_id, 'actor-1');
+  assert.equal(authenticatedChild.source_session.device_id, 'device-1');
+  assert.ok(Date.parse(authenticatedChild.credential_expires_at) <= Date.parse(f.policy.now().toISOString()) + 120_000);
+  assert.equal(bodyText.includes(childCredential), false);
+  assert.equal(bodyText.includes(f.token), false);
+
+  await f.sessions.switchCompany(f.token, { company_id: 'company-a', device_id: 'device-1',
+    actor_id: 'actor-1', context_revision: f.claims.context_revision }, 'company-b');
+  await assert.rejects(f.workforceVerifier.authenticate(childCredential), /authentication-denied/);
+});
+
+test('gateway refuses to serialize an exchanged Workforce bearer as an owner receipt', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  let childCredential;
+  f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, withWorkforceZeroSession) =>
+    withWorkforceZeroSession(async credential => { childCredential = credential; return { receipt_id: credential }; });
+  const response = await gateway(f.request('/v1/directadmin/titan_zero/intents', post(intentBody(f))));
+  assert.equal(response.status, 503);
+  const bodyText = await response.text();
+  assert.deepEqual(JSON.parse(bodyText), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(bodyText.includes(childCredential), false);
+  assert.equal(response.headers.get('set-cookie'), null);
+});
+
 test('company switch changes canonical revision and old credentials fail for all three plugins', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const pending = await f.bridge.authenticate(f.request());
