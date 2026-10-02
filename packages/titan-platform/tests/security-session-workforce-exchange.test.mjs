@@ -185,12 +185,9 @@ test('exchange rejects login assertions, wrong DA host/audience/node/algorithm/k
   await denied(f.source.exchangeWorkforceZero(loginAssertion, sourceExpectation));
 
   const wrongAlgorithmKey = crypto.getRandomValues(new Uint8Array(32));
-  const [header, payload, encodedSignature] = da.credential.split('.');
-  // Mutate an actual signature byte; changing unused Base64url tail bits can
-  // decode to the same EdDSA signature and make this rejection test flaky.
-  const signatureBytes = Buffer.from(encodedSignature, 'base64url');
+  const signatureBytes = Buffer.from(da.credential.split('.')[2], 'base64url');
   signatureBytes[0] ^= 1;
-  const invalidSignature = `${header}.${payload}.${signatureBytes.toString('base64url')}`;
+  const badSignature = `${da.credential.split('.').slice(0, 2).join('.')}.${signatureBytes.toString('base64url')}`;
   const variants = [
     ['host identity', await f.signSource(da.credential, { identity_provider: directAdminIssuer('https://da-two.example.test') })],
     ['source JWT issuer', await f.signSource(da.credential, { iss: 'titan:other-host' })],
@@ -202,7 +199,7 @@ test('exchange rejects login assertions, wrong DA host/audience/node/algorithm/k
     ['key identifier', await f.signSource(da.credential, {}, { kid: 'untrusted-key' })],
     ['type', await f.signSource(da.credential, {}, { typ: 'JWT' })],
     ['algorithm', await f.signSource(da.credential, {}, { alg: 'HS256', kid: 'da-session-key' }, wrongAlgorithmKey)],
-    ['signature', invalidSignature],
+    ['signature', badSignature],
   ];
   for (const [label, token] of variants) await assert.rejects(f.source.exchangeWorkforceZero(token, sourceExpectation), { message: 'authentication-denied' }, label);
 

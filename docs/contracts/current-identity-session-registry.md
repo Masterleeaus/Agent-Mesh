@@ -114,16 +114,21 @@ reissued. Every subsequent lookup observes current persisted revocation; no
 long-lived token role/company snapshot or cached identity grants continued access.
 
 `withCurrentSessionFence` requires a verified child proof containing its signed
-source reference and bearer expiry. It starts a GLOBAL_REGISTRY SQLite
-`BEGIN IMMEDIATE` transaction, samples the registry's trusted clock after lock
-acquisition, revalidates source and child, then calls the effect-boundary callback
-with a fixed 500 ms deadline/AbortSignal. SQLite uses WAL and `busy_timeout=5000`,
-so cross-process writer contention fails at that storage timeout; the callback
-deadline begins after acquisition and identity revalidation. Keep other registry
-transactions free of network waits so local connection serialization stays short.
-Lock order is identity registry → Workforce control store → company/business
-store. Do not run readiness work or re-enter the registry from the callback. Do
-not hold this lock through a long adapter/network lifecycle.
+source reference and bearer expiry. At entry it creates one 500 ms monotonic
+deadline before queueing for the GLOBAL_REGISTRY SQLite transaction. The storage
+wrapper includes same-connection queue time and native `BEGIN IMMEDIATE`
+acquisition in that budget by applying only the remaining time as a temporary
+connection-local `busy_timeout`; ordinary transactions retain the configured
+5-second timeout. Acquisition expiry returns
+`storage-transaction-acquire-timeout` without invoking the transaction callback.
+After acquisition, the registry samples its trusted clock and revalidates source
+and child. The callback receives the same absolute deadline plus an AbortSignal
+for the remaining budget. Workforce passes that unchanged deadline to the
+control-store transaction, so it cannot obtain a fresh 500 ms lock wait. Keep
+other registry transactions free of network waits. Lock order is identity
+registry → Workforce control store → company/business store. Do not run readiness
+work or re-enter the registry from the callback, and do not hold these locks
+through a long adapter/network lifecycle.
 
 On timeout the transaction releases and the callback may still run if it ignores
 abort. A consumer must retain `UNCERTAIN`, avoid replay and await observed outcome;

@@ -14,12 +14,12 @@ const principal = { provider: 'directadmin:node-1', subject: 'host-account-17' }
 const proof = (session_revision = 1) => ({ ...principal, session_id: 'session-1', device_id: 'device-1', session_revision });
 const expected = { audience: 'titan-workforce', company_id: 'company-a' };
 
-async function fixture(t, path = ':memory:') {
-  const storage = createSqliteStorage(path);
+async function fixture(t, path = ':memory:', storageOverride, now) {
+  const storage = storageOverride ?? createSqliteStorage(path);
   let closed = false;
   const close = async () => { if (!closed) { await storage.close(); closed = true; } };
   t.after(close);
-  const registry = await security.createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY' });
+  const registry = await security.createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY', ...(now ? { now } : {}) });
   await registry.putActor({ actor_id: 'stable-user-17', status: 'active' }, null);
   await registry.putCompany({ company_id: 'company-a', status: 'active' }, null);
   await registry.putCompany({ company_id: 'company-b', status: 'active' }, null);
@@ -200,6 +200,53 @@ test('deleting membership cannot fall back to an actor or host role', async t =>
   const { registry, storage } = await fixture(t);
   await storage.query('DELETE FROM titan_security_memberships WHERE company_id=$1 AND actor_id=$2', ['company-a', 'stable-user-17']);
   await assert.rejects(registry.resolveCurrentSession({ ...proof(), role: 'admin', account_id: 'company-a' }, expected, NOW), /membership/);
+});
+
+test('source-session fence propagates one absolute acquisition deadline to storage and its callback', async t => {
+  const underlying = createSqliteStorage(':memory:');
+  let observeTransactions = false;
+  const transactions = [];
+  const storage = {
+    dialect: underlying.dialect,
+    query: (sql, params) => underlying.query(sql, params),
+    transaction: (operation, options) => {
+      if (observeTransactions) transactions.push(options);
+      return underlying.transaction(operation, options);
+    },
+    close: () => underlying.close(),
+  };
+  const { registry, session } = await fixture(t, ':memory:', storage, () => new Date(NOW));
+  const source = {
+    schema: 'titan.session-source/v1', provider: principal.provider, subject: principal.subject,
+    issuer: 'titan:directadmin', audience: expected.audience,
+    session_id: session.session_id, session_revision: session.session_revision,
+    context_revision: session.context_revision, company_id: session.company_id,
+    actor_id: session.actor_id, device_id: session.device_id, expires_at: session.expires_at,
+    node_id: 'node-1', csrf_sha256: 'a'.repeat(43),
+  };
+  const derived = await registry.issueWorkforceZeroSession(proof(), {
+    ...expected, actor_id: session.actor_id, context_revision: session.context_revision,
+  }, source, 300, NOW);
+  const derivedProof = {
+    ...proof(), session_id: derived.session_id, session_revision: derived.session_revision,
+    source_session: source, credential_expires_at: derived.expires_at,
+  };
+  const derivedExpected = {
+    audience: 'workforce', company_id: derived.company_id,
+    actor_id: derived.actor_id, context_revision: derived.context_revision,
+  };
+  observeTransactions = true;
+  let callbackDeadline;
+  await registry.withCurrentSessionFence(derivedProof, derivedExpected, {}, (_current, _signal, deadline) => {
+    callbackDeadline = deadline;
+    return 'admitted';
+  });
+
+  assert.equal(transactions.length, 1);
+  assert.equal(typeof transactions[0].acquireDeadlineMs, 'number');
+  assert.ok(Number.isFinite(transactions[0].acquireDeadlineMs));
+  assert.ok(transactions[0].acquireDeadlineMs > 0);
+  assert.equal(transactions[0].acquireDeadlineMs, callbackDeadline);
 });
 
 test('failed additive migration rolls back and leaves legacy data untouched', async t => {

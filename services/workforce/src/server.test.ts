@@ -5,7 +5,49 @@ import { join } from "node:path";
 import { connect } from "node:net";
 import test from "node:test";
 
-import { createWorkforceServer } from "./server.js";
+import { createSqliteStorage, type StorageClient } from "../../../packages/storage/src/index.js";
+import { createReadinessStorageProbe, createWorkforceServer } from "./server.js";
+
+test("timed-out readiness storage probes share one queued SQLite read until it settles", async () => {
+  const storage = createSqliteStorage(":memory:");
+  await storage.query("CREATE TABLE workforce_work_items (id INTEGER PRIMARY KEY)");
+  let probeQueries = 0;
+  const query = storage.query.bind(storage);
+  storage.query = ((sql: string, params?: readonly unknown[]) => {
+    if (sql === "SELECT 1 FROM workforce_work_items LIMIT 1") probeQueries += 1;
+    return query(sql, params);
+  }) as StorageClient["query"];
+  let enter!: () => void;
+  let release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const blocked = new Promise<void>(resolve => { release = resolve; });
+  try {
+    const transaction = storage.transaction(async tx => {
+      enter();
+      await blocked;
+      await tx.query("SELECT 1");
+    });
+    await entered;
+    const probeStorage = createReadinessStorageProbe(storage);
+    const first = probeStorage();
+    const second = probeStorage();
+    const third = probeStorage();
+    assert.strictEqual(first, second);
+    assert.strictEqual(second, third);
+    assert.equal(probeQueries, 1);
+
+    release();
+    await transaction;
+    await first;
+    const next = probeStorage();
+    assert.notStrictEqual(next, first);
+    await next;
+    assert.equal(probeQueries, 2, "a fresh probe starts after the shared read settles");
+  } finally {
+    release();
+    await storage.close();
+  }
+});
 
 async function listen(host: Awaited<ReturnType<typeof createWorkforceServer>>): Promise<string> {
   await new Promise<void>((resolve, reject) => {
@@ -37,13 +79,13 @@ test("malformed request targets return 400 without terminating the workforce hos
     assert.match(response, /^HTTP\/1\.1 400 /);
     assert.match(response, /invalid_request_target/);
     assert.equal((await fetch(`${baseUrl}/health`)).status, 200);
-    assert.equal((await fetch(`${baseUrl}/ready`)).status, 200);
+    assert.equal((await fetch(`${baseUrl}/ready`)).status, 503);
   } finally {
     await host.close();
   }
 });
 
-test("workforce readiness checks the configured durable database and survives host restart", async () => {
+test("unconfigured runtime stays unready despite durable storage across host restart", async () => {
   const directory = await mkdtemp(join(tmpdir(), "titan-workforce-"));
   const databasePath = join(directory, "workforce.db");
 
@@ -59,11 +101,11 @@ test("workforce readiness checks the configured durable database and survives ho
     });
 
     const ready = await fetch(`${firstUrl}/ready`);
-    assert.equal(ready.status, 200);
+    assert.equal(ready.status, 503);
     assert.deepEqual(await ready.json(), {
-      status: "ok",
+      status: "degraded",
       service: "workforce",
-      checks: { storage: "ok" },
+      checks: { storage: "ok", runtime: "unconfigured", authentication: "fail", authority: "fail", provider: "fail", evidence: "fail" },
     });
 
     const method = await fetch(`${firstUrl}/ready`, { method: "POST" });
@@ -83,11 +125,11 @@ test("workforce readiness checks the configured durable database and survives ho
   const restartedUrl = await listen(restartedHost);
   try {
     const readyAfterRestart = await fetch(`${restartedUrl}/ready`);
-    assert.equal(readyAfterRestart.status, 200);
+    assert.equal(readyAfterRestart.status, 503);
     assert.deepEqual(await readyAfterRestart.json(), {
-      status: "ok",
+      status: "degraded",
       service: "workforce",
-      checks: { storage: "ok" },
+      checks: { storage: "ok", runtime: "unconfigured", authentication: "fail", authority: "fail", provider: "fail", evidence: "fail" },
     });
   } finally {
     await restartedHost.close();

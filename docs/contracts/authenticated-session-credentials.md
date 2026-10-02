@@ -142,16 +142,20 @@ its selected company in `allowed_company_ids`; it cannot switch company itself.
 
 `IdentitySessionRegistry.withCurrentSessionFence(proof, expected, { signal },
 callback)` is the reusable owner API for consumers. The proof includes the signed
-source reference and verified child bearer expiry. The registry samples its
-trusted clock after acquiring the existing SQLite `BEGIN IMMEDIATE` transaction,
-then re-resolves child and source before invoking the effect boundary with a
-fixed 500 ms deadline and AbortSignal. SQLite is WAL with a 5-second busy timeout;
-cross-process writer contention therefore fails at that storage timeout. The
-callback deadline starts after acquisition and identity revalidation. Keep all
-registry transactions free of network waits so local connection serialization
-stays short. Lock order is GLOBAL_REGISTRY → Workforce control store →
-company/business store; the callback must not re-enter the registry. Readiness
-probes stay outside the fence.
+source reference and verified child bearer expiry. At entry, the registry creates
+one 500 ms monotonic deadline before queueing for its SQLite
+`BEGIN IMMEDIATE` transaction. Storage includes same-connection queue time and
+native writer-lock acquisition by setting a temporary connection-local
+`busy_timeout` to the remaining budget; ordinary transactions keep the
+configured five-second timeout. If lock acquisition expires,
+`storage-transaction-acquire-timeout` is returned and the transaction callback
+does not run. After acquisition, the registry samples its trusted clock and
+re-resolves child and source. It passes the same absolute deadline and an
+AbortSignal for the remaining budget to the effect boundary. Workforce passes
+that unchanged deadline to its control-store transaction. Keep registry
+transactions free of network waits. Lock order is GLOBAL_REGISTRY → Workforce
+control store → company/business store; the callback must not re-enter the
+registry. Readiness probes stay outside the fence.
 
 The fence covers admission/immediate bounded effect work only, never a 120-second
 adapter lifecycle. On timeout it releases the registry lock and rejects as
@@ -221,13 +225,8 @@ remain with #811/#812.
 ## Web migration surface and limits
 
 `apps/web/lib/auth/current-session.ts` is an opt-in server adapter over this service.
-It projects current `{userId, accountId, role}` for existing web callers through
-a required trusted `resolveLegacyAccountId(company_id)` compatibility mapping;
-there is no assumption that a canonical company ID equals a legacy account ID.
-Unknown, malformed or throwing mappings fail closed with sanitized errors.
-The adapter revalidates the exact credential/context after an asynchronous mapping
-lookup, so a concurrent switch or revocation cannot return a stale projection. Operation scope remains the canonical
-selected company, even when its legacy account ID differs. Unsupported web roles and legacy JWTs fail
+It projects current `{userId, accountId, role}` for existing web callers and a
+selected-company-only operation scope. Unsupported web roles and legacy JWTs fail
 closed. It never falls back to `users.account_id` or reconstructs missing membership.
 Real SQLite tests exercise issue/switch/revoke/restart and legacy-token denial.
 

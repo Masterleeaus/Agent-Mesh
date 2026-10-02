@@ -48,7 +48,7 @@ export function mergeCompletionCriteriaToggles(
   );
 }
 /** Shared completion operation; callers must supply a transaction-scoped client. */
-export async function completeAssignedWorkOrder(client: DbClient, id: string, companyId: string, actorId: string) {
+export async function completeAssignedWorkOrder(client: DbClient, id: string, companyId: string, actorId: string, authorityFence?: { assertCurrent(): void }) {
   const { loadWorkOrderCompletionCriteria } = await import("./task-time");
   const { validateWorkOrderCompletion } = await import("./validate");
   const wo = await assertAssignedLead(client, id, companyId, actorId);
@@ -62,6 +62,7 @@ export async function completeAssignedWorkOrder(client: DbClient, id: string, co
   const criteria = await loadWorkOrderCompletionCriteria(client, id, companyId, wo.completion_criteria);
   const message = await validateWorkOrderCompletion(client, id, companyId, criteria);
   if (message) return { kind: "gate" as const, message };
+  authorityFence?.assertCurrent();
   await client.query(
     "UPDATE work_orders SET status='completed', completed_at=COALESCE(completed_at,CURRENT_TIMESTAMP), updated_at=CURRENT_TIMESTAMP WHERE id=$1 AND account_id=$2 AND assigned_user_id=$3 AND status <> 'completed'",
     [id, companyId, actorId],
