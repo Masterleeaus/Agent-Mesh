@@ -1,30 +1,44 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:titan_zero_mobile/screens/splash_screen.dart';
+import 'package:titan_zero_mobile/titan/models/generative_item.dart';
+import 'package:titan_zero_mobile/titan/services/titan_gateway.dart';
 
-import 'package:titan_mobile_mvp/main.dart';
+class _NoopGateway implements TitanGateway {
+  @override
+  Future<List<TitanGenerativeItem>> converse(String message) async => const [];
+
+  @override
+  Future<void> command(
+    String capability,
+    Map<String, dynamic> payload, {
+    String? operation,
+    bool onlineRequired = false,
+  }) async {}
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  testWidgets('configured splash opens the Titan shell', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SplashScreen(gatewayFactory: () => _NoopGateway()),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Titan Zero'), findsOneWidget);
+    expect(find.text('Ask Titan…'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('missing hosted configuration is recoverable', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: SplashScreen()));
+
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.byKey(const Key('runtime-configuration-error')), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+    expect(find.textContaining('hosted runtime configuration'), findsOneWidget);
   });
 }

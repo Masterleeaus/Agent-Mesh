@@ -1,0 +1,52 @@
+name: Titan Mobile CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "apps/mobile/**"
+      - "packages/titan-platform/**"
+      - ".github/workflows/titan-mobile-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/mobile/**"
+      - "packages/titan-platform/**"
+      - ".github/workflows/titan-mobile-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: titan-mobile-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    name: Flutter analyze and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Resolve Flutter dependencies
+        run: flutter pub get
+
+      - name: Parse changed Dart files
+        run: dart format --output=none lib/main.dart lib/screens/splash_screen.dart lib/screens/titan_shell_screen.dart lib/titan/generative/demo_engine.dart lib/titan/services/titan_gateway.dart test/titan_shell_conversation_test.dart test/titan_conversation_gateway_test.dart test/widget_test.dart
+
+      - name: Analyze changed Flutter source
+        run: flutter analyze lib/main.dart lib/screens/splash_screen.dart lib/screens/titan_shell_screen.dart lib/titan/generative/demo_engine.dart lib/titan/services/titan_gateway.dart test/titan_shell_conversation_test.dart test/titan_conversation_gateway_test.dart test/widget_test.dart
+
+      - name: Run changed Flutter tests
+        run: flutter test test/titan_shell_conversation_test.dart test/titan_conversation_gateway_test.dart test/widget_test.dart
