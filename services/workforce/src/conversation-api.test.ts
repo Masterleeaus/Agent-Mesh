@@ -54,13 +54,28 @@ test("mismatched company, actor, device, surface, session, and stale revision fa
 
 test("cancel is a separate lifecycle action and never dispatches a user command", async () => {
   let dispatched = false;
+  let forwarded: Parameters<NonNullable<ConversationHostRuntime["cancel"]>>[0] | undefined;
   const cancelRuntime: ConversationHostRuntime = {
     async dispatch() { dispatched = true; throw new Error("must-not-dispatch"); },
-    async cancel(input) { assert.equal(input.continuation_token, "continuation-1"); return { accepted: true, events: [] }; },
+    async cancel(input) { forwarded = input; assert.equal(input.continuation_token, "continuation-1"); return { accepted: true, events: [] }; },
   };
-  const result = await handleConversationRequest(request({ action: "cancel", continuation_token: "continuation-1", text: undefined }), auth, cancelRuntime, undefined);
+  const result = await handleConversationRequest(request({
+    action: "cancel", continuation_token: "continuation-1", text: undefined,
+    request_id: "cancel-request", operation_id: "cancel-operation", trace_id: "cancel-trace",
+    correlation_id: "cancel-correlation", idempotency_key: "cancel-idempotency",
+    interaction_id: "cancel-interaction", client_message_id: "cancel-message",
+  }), auth, cancelRuntime, undefined);
   assert.equal(result.accepted, true);
   assert.equal(dispatched, false);
+  assert.equal(forwarded?.actor_id, context.actor_id);
+  assert.equal(forwarded?.session_id, context.session_id);
+  assert.equal(forwarded?.interaction_id, "cancel-interaction");
+  assert.equal(forwarded?.client_message_id, "cancel-message");
+  assert.equal(forwarded?.request_id, "cancel-request");
+  assert.equal(forwarded?.operation_id, "cancel-operation");
+  assert.equal(forwarded?.trace_id, "cancel-trace");
+  assert.equal(forwarded?.correlation_id, "cancel-correlation");
+  assert.equal(forwarded?.idempotency_key, "cancel-idempotency");
 });
 
 test("SSE resume emits ordered events after Last-Event-ID and does not duplicate prior events", async () => {
@@ -86,4 +101,33 @@ test("SSE resume emits ordered events after Last-Event-ID and does not duplicate
 test("identity fields are bounded and malformed lifecycle input is rejected", () => {
   assert.throws(() => normalizeConversationRequest({}), /conversation-company-id-required/);
   assert.throws(() => request({ text: "x".repeat(20 * 1024 + 1) }), /conversation-text-too-large/);
+});
+
+test("JSON and SSE project public lifecycle without provider errors or approval secrets", async () => {
+  const secret = "DO_NOT_EXPOSE_PROVIDER_SECRET";
+  const internal = { ...events[1], kind: "run.failed", state: "FAILED", work_id: "work", run_id: "run", evidence_ref: "evidence", error: { code: secret, message: secret }, wait: { decision: { private_key: secret }, tool_call: { arguments: secret } }, execution: { secret } };
+  const value = await handleConversationRequest(request(), auth, { async dispatch() { return { accepted: true, events: [internal, { ...internal, id: "approval", kind: "agent.waiting", state: "WAITING_APPROVAL" }] }; } }, undefined);
+  for (const stream of [false, true]) {
+    const server = createServer((_, response) => writeConversationResponse(response, value, stream));
+    await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
+    try {
+      const address = server.address(); assert.ok(address && typeof address !== "string");
+      const text = await (await fetch(`http://127.0.0.1:${address.port}`)).text();
+      assert.ok(!text.includes(secret));
+      assert.ok(!text.includes('"wait"'));
+      assert.match(text, /runtime-failed/);
+      assert.match(text, /WAITING_APPROVAL/);
+      assert.match(text, /"evidence_ref":"evidence"/);
+    } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
+  }
+});
+
+test("action must be a primitive string and every continuation action requires its token", () => {
+  for (const action of [["cancel"], ["resume"], {}, null, 1, true]) {
+    assert.throws(() => request({ action }), /conversation-action-invalid/);
+  }
+  for (const action of ["continue", "resume", "cancel"]) {
+    for (const continuation_token of [undefined, "", " ", ["token"]]) assert.throws(() => request({ action, continuation_token }), /conversation-continuation-required/);
+  }
+  assert.throws(() => request({ action: "start", continuation_token: "token" }), /conversation-action-invalid/);
 });

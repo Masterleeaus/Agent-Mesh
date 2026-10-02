@@ -13,6 +13,15 @@ const files = {
   "uninstall.sh": "#!/usr/bin/env bash\nexit 0\n",
   "health.sh": "#!/usr/bin/env bash\nexit 0\n",
   "runtime.mjs": "export const ready = true;\n",
+  "directadmin-relay.mjs": "export const relay = true;\n",
+  "package.json": '{"name":"@titan-zero/server-node","type":"module"}\n',
+  "titan-server-node.service": "[Service]\nExecStart=/usr/bin/node /usr/local/titan/server-node/runtime.mjs --serve\n",
+  "scripts/install.sh": "#!/bin/sh\nexit 0\n",
+  "scripts/update.sh": "#!/bin/sh\nexit 0\n",
+  "scripts/uninstall.sh": "#!/bin/sh\nexit 0\n",
+  "user/index.html": "#!/bin/sh\nexit 0\n",
+  "user/directadmin-gateway.raw": "#!/bin/sh\nexit 0\n",
+  "images/directadmin-relay-client.mjs": "export const client = true;\n",
 };
 
 function fixture(run) {
@@ -20,7 +29,11 @@ function fixture(run) {
   const sourceDir = path.join(root, "source");
   const outputDir = path.join(root, "output");
   fs.mkdirSync(sourceDir);
-  for (const [name, content] of Object.entries(files)) fs.writeFileSync(path.join(sourceDir, name), content);
+  for (const [name, content] of Object.entries(files)) {
+    const filePath = path.join(sourceDir, name);
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, content);
+  }
   try { return run({ root, sourceDir, outputDir }); }
   finally { fs.rmSync(root, { recursive: true, force: true }); }
 }
@@ -38,7 +51,7 @@ test("package has a deterministic archive-root layout and executable scripts", (
 
   const details = spawnSync("tar", ["-tvzf", first.archive], { encoding: "utf8" });
   assert.equal(details.status, 0, details.stderr);
-  for (const name of ["install.sh", "update.sh", "uninstall.sh", "health.sh"]) {
+  for (const name of ["install.sh", "update.sh", "uninstall.sh", "health.sh", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh", "user/index.html", "user/directadmin-gateway.raw"]) {
     assert.match(details.stdout, new RegExp("^-rwxr-xr-x.*\\s" + name + "$", "m"));
   }
 }));
