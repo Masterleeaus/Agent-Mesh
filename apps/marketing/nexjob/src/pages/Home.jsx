@@ -4,7 +4,7 @@ import { ButtonPrimary, ButtonOutline } from '../components/Button'
 import SectionLabel from '../components/SectionLabel'
 import FadeIn from '../components/FadeIn'
 import CTASection from '../components/CTASection'
-import { appRoutes } from '../config'
+import { appRoutes, APP_ACCESS_AVAILABLE, APP_SIGNUP_AVAILABLE } from '../config'
 
 const heroProofs = [
   'Managed around the systems you already use',
@@ -14,10 +14,10 @@ const heroProofs = [
 ]
 
 const heroStats = [
-  { num: '5–10%', label: 'Estimated revenue opportunity' },
-  { num: '3–5%', label: 'Estimated cost opportunity' },
-  { num: '4–6%', label: 'Estimated time-value opportunity' },
-  { num: '2–4%', label: 'Estimated cash-flow opportunity' },
+  { num: 'Revenue', label: 'Measured from a customer baseline' },
+  { num: 'Cost', label: 'Compared with current operations' },
+  { num: 'Time', label: 'Based on verified work records' },
+  { num: 'Cash', label: 'Measured from actual outcomes' },
 ]
 
 const trades = ['🧹 Cleaning', '🌿 Landscaping', '🏊 Pool Service', '💦 Pressure Washing', '🐛 Pest Control', '🪟 Window Cleaning', '🏠 Property Maintenance', '🚐 Mobile Services']
@@ -56,10 +56,10 @@ const aiFeatures = [
 
 
 const stats = [
-  { num: '24/7', label: 'Workforce availability where configured' },
-  { num: '1', label: 'Conversation-first operating surface' },
-  { num: '5', label: 'Core operating stages connected' },
-  { num: '0', label: 'Forced rip-and-replace migrations' },
+  { num: 'Configured', label: 'Availability varies by deployment' },
+  { num: 'Connected', label: 'Systems depend on approved access' },
+  { num: 'Governed', label: 'Actions follow configured review and authority' },
+  { num: 'Measured', label: 'Results need a verified baseline' },
 ]
 
 export default function Home() {
@@ -88,8 +88,8 @@ export default function Home() {
           </p>
 
           <div className="flex justify-center gap-4 flex-wrap mb-8">
-            <ButtonPrimary size="lg" href={appRoutes.signup}>Sign Up &rarr;</ButtonPrimary>
-            <ButtonOutline size="lg" href={appRoutes.login}>Login</ButtonOutline>
+            <ButtonPrimary size="lg" href={appRoutes.signup} disabled={!APP_SIGNUP_AVAILABLE}>{APP_SIGNUP_AVAILABLE ? 'Sign Up' : 'Sign-up temporarily unavailable'} &rarr;</ButtonPrimary>
+            <ButtonOutline size="lg" href={appRoutes.login} disabled={!APP_ACCESS_AVAILABLE}>{APP_ACCESS_AVAILABLE ? 'Login' : 'Login temporarily unavailable'}</ButtonOutline>
           </div>
 
           <p className="text-xs text-nx-muted2 mb-4">Not another chatbot. Not another dashboard. Not another piece of software your team has to learn.</p>
@@ -128,12 +128,12 @@ export default function Home() {
           <div className="text-center mb-10">
             <SectionLabel>Measured Value</SectionLabel>
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight">Five places Titan Zero looks for value.</h2>
-            <p className="text-nx-muted text-lg max-w-3xl mx-auto mt-3">These are planning ranges used to identify potential opportunity, not guaranteed savings or returns. Discovery establishes the customer baseline; Titan Zero then measures actual results against it.</p>
+            <p className="text-nx-muted text-lg max-w-3xl mx-auto mt-3">Revenue, cost, time, cash and resource changes require a customer baseline. This review preview contains no verified performance estimate.</p>
           </div>
           <div className="mb-7 bg-nx-surface border border-nx-border rounded-2xl p-6 text-center">
-            <div className="text-4xl sm:text-5xl font-black gradient-text">14–25%</div>
-            <p className="font-semibold mt-2">estimated annual revenue-equivalent opportunity</p>
-            <p className="text-xs text-nx-muted mt-2 max-w-2xl mx-auto">Planning estimate across revenue creation, cost reduction, recovered time and accelerated cash. Resource and environmental improvements are measured separately where practical to avoid double counting.</p>
+            <div className="text-4xl sm:text-5xl font-black gradient-text">No generic estimate</div>
+            <p className="font-semibold mt-2">No unverified return or savings figure is shown in this preview.</p>
+            <p className="text-xs text-nx-muted mt-2 max-w-2xl mx-auto">Any future performance statement needs a validated customer baseline and measured results.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
             {[

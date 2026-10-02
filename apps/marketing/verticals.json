@@ -1,188 +1,40 @@
 {
   "brand": "Titan Zero",
-  "destination": "https://titanzero.io",
-  "sites": [
-    {
-      "id": "cleaning",
-      "name": "Titan Zero Cleaning",
-      "source": "fieldcrew-marketing",
-      "appPath": "/app",
-      "assessmentPath": "/assessment",
-      "positioning": "Managed Advanced Intelligence workforce for cleaning businesses."
-    },
-    {
-      "id": "automotive-service",
-      "name": "Titan Zero Automotive Service",
-      "source": "fieldops-marketing",
-      "appPath": "/app",
-      "positioning": "Service-operations intelligence for automotive service departments and dealerships."
-    },
-    {
-      "id": "trades",
-      "name": "Titan Zero Trades",
-      "source": "tradepilot-marketing",
-      "appPath": "/app",
-      "positioning": "Managed Advanced Intelligence workforce for plumbing, HVAC, electrical and related trade businesses."
-    }
-  ],
-  "rules": [
-    "Keep each donor site's visual structure and functional interactions intact.",
-    "Remove donor branding and route consequential product actions to the canonical Titan Zero application.",
-    "Use company_id as the canonical tenant boundary.",
-    "Marketing sites never become a runtime dependency of Titan Zero Base App.",
-    "Standalone marketing apps remain separate surfaces but share Titan Zero destination contracts.",
-    "Do not carry donor pricing, testimonials, savings figures, feature counts, trial claims, or named integration claims into Titan Zero unless verified against the canonical product."
-  ],
-  "verticals": [
-    {
-      "id": "field-services",
-      "name": "Field Services",
-      "examples": [
-        "Cleaning",
-        "Landscaping",
-        "Lawn care",
-        "Pool cleaning",
-        "Pressure washing",
-        "Pest control",
-        "Window cleaning",
-        "Mobile services",
-        "Property maintenance"
-      ],
-      "sites": [
-        "marketing-nexjob",
-        "marketing-fieldcrew"
-      ]
-    },
-    {
-      "id": "trades-construction",
-      "name": "Trades & Construction",
-      "examples": [
-        "Plumbing",
-        "Electrical",
-        "HVAC",
-        "Roofing",
-        "Carpentry",
-        "Painting",
-        "Building",
-        "Renovations",
-        "Flooring",
-        "Tiling",
-        "Concreting"
-      ],
-      "sites": [
-        "marketing-tradepilot"
-      ]
-    },
-    {
-      "id": "asset-services",
-      "name": "Asset Services",
-      "examples": [
-        "Automotive",
-        "Cars & trucks",
-        "Appliance repair",
-        "Electronics & devices",
-        "Machinery",
-        "Equipment servicing",
-        "Mobile repairs",
-        "Workshops",
-        "Auto electricians",
-        "Detailing"
-      ],
-      "sites": [
-        "marketing-fieldops"
-      ]
-    },
-    {
-      "id": "personal-services",
-      "name": "Personal Services",
-      "examples": [
-        "Salons",
-        "Barbers",
-        "Beauty",
-        "Nails",
-        "Massage",
-        "Spas",
-        "Personal trainers",
-        "Gyms",
-        "Fitness studios",
-        "Wellness",
-        "Coaching"
-      ],
-      "sites": [
-        "marketing-trydrafted"
-      ]
-    },
-    {
-      "id": "professional-business-services",
-      "name": "Professional & Business Services",
-      "examples": [
-        "Accounting",
-        "Consulting",
-        "Agencies",
-        "Real estate/property services",
-        "Recruitment",
-        "Marketing",
-        "IT services",
-        "Business advisors"
-      ],
-      "sites": []
-    }
-  ],
-  "sitePolicy": {
-    "marketing-fieldcrew": "Field Services / Cleaning industry pack",
-    "marketing-nexjob": "Field Services / broad field-service industry pack",
-    "marketing-tradepilot": "Trades & Construction / trade industry packs",
-    "marketing-fieldops": "Asset Services / automotive is the initial industry pack; broaden the vertical entry point to assets, equipment, devices, appliances and vehicles",
-    "marketing-trydrafted": "Personal Services / initial donor conversion; do not retain contractor-only positioning"
+  "status": "planning-only; parent confirmation is required before host configuration, indexing, or deployment",
+  "hostPlan": {
+    "productHub": "https://titanzero.io",
+    "managedServices": "https://titanzero.pro",
+    "canonicalApplication": "https://app.titanzero.io",
+    "dedicatedPwa": "https://pwa.titanzero.io",
+    "industryPattern": "https://<slug>.titanzero.io"
   },
-  "crossVerticalCapabilities": [
-    "Fully managed Advanced Intelligence workforce",
-    "Existing-system integration plus software gap filling",
-    "Environmental assessment, auditing and improvement",
-    "Privacy-first and device-first architecture",
-    "Private and local LLMs and private RAG",
-    "Customer-controlled edge node network",
-    "BYO API and AI keys",
-    "Governance and assurance",
-    "Cost sovereignty"
-  ],
-  "sharedPageSystem": {
-    "strategy": "Each vertical site is the entry point for that vertical and may be deployed on its own subdomain. Preserve useful donor sales pages, rebrand/correct them, and add the shared Titan Zero differentiation pages rather than deleting the original site breadth.",
-    "requiredPages": [
-      {
-        "id": "fully-managed",
-        "purpose": "Explain assessment, integration, gap-filling software, workforce configuration, ongoing management and improvement."
-      },
-      {
-        "id": "privacy-architecture",
-        "purpose": "Privacy-first/device-first architecture, private LLM/RAG, edge node network, locality and provider choice."
-      },
-      {
-        "id": "cost-sovereignty",
-        "purpose": "BYO API/AI keys, local/private models, customer-owned compute and transparent third-party cost structure."
-      },
-      {
-        "id": "environmental-systems",
-        "purpose": "Environmental assessment, auditing, evidence, compliance and improvement with appropriately qualified environmental scientists where professional judgement/sign-off is required."
-      },
-      {
-        "id": "compare",
-        "purpose": "Explain how the Titan Zero managed-system model differs from typical software-first and bundled-AI approaches without unsupported competitor claims."
-      },
-      {
-        "id": "industries",
-        "purpose": "Vertical-specific industry directory linking to dedicated industry landing pages."
-      }
-    ],
-    "verticalEntryPoints": {
-      "field-services": "marketing-nexjob",
-      "trades-construction": "marketing-tradepilot",
-      "personal-services": "marketing-trydrafted",
-      "asset-services": "marketing-fieldops",
-      "professional-business-services": "pending dedicated site"
-    },
-    "deployment": "Vertical entry sites must remain independently deployable so DNS/subdomains can be assigned later without making them Titan Zero runtime dependencies.",
-    "copyRule": "Reuse the shared page architecture and concepts across verticals, but rewrite examples, workflows, pain points, workforce roles, capabilities and industry language for the target vertical.",
-    "industryPageRule": "Each listed industry should have a dedicated landing page beneath its vertical entry site. Industry pages should use the vertical's shared managed-system architecture but contain industry-specific workflows, pain points, workforce roles, knowledge and capabilities."
-  }
+  "sources": {
+    "sharedHubAndIndustryBuild": "marketing/nexjob",
+    "industryLayoutDonor": "marketing/tradepilot",
+    "managedServicesContentDonor": "marketing/trydrafted/index.html",
+    "industryCatalogue": "marketing/nexjob/src/data/verticalCatalogue.js",
+    "pwaOwner": "apps/pwa (issue #1171 / PR #1176)",
+    "retiredPublicPreview": {
+      "id": "fieldops",
+      "source": "marketing/fieldops",
+      "policy": "Not publicly routed or mapped to a host. Preserve repository history/source archive; server retirement is parent-owned."
+    }
+  },
+  "verticalCatalogue": {
+    "sourceOfTruth": "marketing/nexjob/src/data/verticalCatalogue.js",
+    "expectedProfiles": 20,
+    "hostPolicy": "One canonical subdomain per profile, rendered by one shared marketing build. No copied per-vertical backend, login, or business store."
+  },
+  "sourceCaveats": {
+    "tradepilot": "Use layout only. Do not carry over unverified metrics, live/demo claims, signup forms, integrations, login links, or media with unresolved provenance.",
+    "personalServices": "Use as the source for the .pro managed-service design. Its current one-page donor is not the final multi-page site; verify or omit customer stories, metrics, third-party contact/payment/booking paths, tracking and form behavior.",
+    "otherDonors": "FieldCrew and older donor pages are excluded from this host plan unless separately reviewed and approved."
+  },
+  "sharedBoundaries": [
+    "Marketing websites remain separate from apps/web and never become runtime dependencies.",
+    "All marketing login links target the canonical app host and contain no bearer credentials.",
+    "Do not share cookies indiscriminately between .io and .pro.",
+    "Marketing content must match catalogue evidence; planned workflows are labeled and unavailable workflows are not presented as functional.",
+    "Review builds remain noindex until the parent approves the complete deployment plan and host-specific sitemap/robots strategy."
+  ]
 }

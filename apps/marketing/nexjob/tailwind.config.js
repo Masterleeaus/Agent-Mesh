@@ -18,7 +18,7 @@ export default {
           text: '#fafafa',
           text2: '#d4d4d8',
           muted: '#a1a1aa',
-          muted2: '#71717a',
+          muted2: '#909098',
           purple: '#1d4ed8',
           'purple-light': '#60a5fa',
           'purple-dark': '#1e40af',

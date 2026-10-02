@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { getCurrentSiteContext, getIndustryDirectoryLinks } from '../config/siteContext'
 
 const footerLinks = {
   Product: [
@@ -29,7 +30,7 @@ const footerLinks = {
   ],
 }
 
-export default function Footer() {
+function LegacyFooter() {
   return (
     <footer className="border-t border-nx-border mt-16">
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
@@ -89,4 +90,48 @@ export default function Footer() {
       </div>
     </footer>
   )
+}
+
+function ConfiguredFooter({ context }) {
+  const brand = context.kind === 'industry' ? `Titan Zero ${context.site.name}` : 'Titan Zero'
+  const columns = context.kind === 'industry'
+      ? {
+          Industry: [['Overview', '/'], ['Workflows', '/#workflows'], ['Features & workforce', '/#features'], ['Works Everywhere', '/works-everywhere'], ['Pricing', '/pricing']],
+          OtherIndustries: getIndustryDirectoryLinks().filter(({ host }) => host !== context.site.host).map(({ label, href }) => [label, href]),
+          Platform: [['Titan Zero platform', 'https://titanzero.io/']],
+        }
+      : {
+          Product: [['How it works', '/#how-it-works'], ['Features', '/features'], ['AI workforce', '/ai-workforce'], ['Works Everywhere', '/works-everywhere'], ['Industries', '/industries'], ['Pricing', '/pricing']],
+          Resources: [['Privacy & architecture', '/privacy-architecture'], ['Cost sovereignty', '/cost-sovereignty'], ['Security & recovery', '/security-recovery'], ['Resources', '/resources']],
+          Company: [['About', '/about'], ['System evolution', '/changelog']],
+        }
+
+  return <footer className="border-t border-nx-border mt-16">
+    <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div>
+          <Link to="/" className="flex items-center gap-2 font-extrabold text-lg"><span className="w-2 h-2 bg-nx-purple rounded-full" />{brand}</Link>
+          <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">{context.kind === 'industry' ? `${context.site.name} product information, workflows and work surfaces.` : 'The Titan Zero platform, its capabilities and the work surfaces in development.'}</p>
+        </div>
+        {Object.entries(columns).map(([heading, links]) => <div key={heading}>
+          <h4 className="text-xs font-semibold text-nx-muted uppercase tracking-wider mb-4">{heading === 'OtherIndustries' ? 'Other industries' : heading}</h4>
+          <ul className="space-y-2">{links.map(([label, href]) => <li key={`${label}-${href}`}>
+            {href.startsWith('https://') ? <a href={href} className="text-sm text-nx-muted2 hover:text-nx-text transition-colors">{label}</a> : <Link to={href} className="text-sm text-nx-muted2 hover:text-nx-text transition-colors">{label}</Link>}
+          </li>)}</ul>
+        </div>)}
+      </div>
+      <div className="border-t border-nx-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <p className="text-xs text-nx-muted2">© 2026 Titan Zero. All rights reserved.</p>
+        <p className="text-xs text-nx-muted2">Different person. Different Zero. Same connected business.</p>
+      </div>
+    </div>
+  </footer>
+}
+
+export default function Footer() {
+  const context = getCurrentSiteContext()
+  if (context.kind === 'hub' || context.kind === 'industry') {
+    return <ConfiguredFooter context={context} />
+  }
+  return context.kind === 'preview' ? <LegacyFooter /> : null
 }
