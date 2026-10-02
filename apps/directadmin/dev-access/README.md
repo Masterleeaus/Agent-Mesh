@@ -17,7 +17,9 @@ Current implemented slice:
 - Read-only canonical Server Node health projection from the fixed loopback `/v1/status` endpoint; malformed, oversized or unavailable responses fail closed.
 - No private-key storage and no automatic sudo/root elevation.
 
-Version 1.3.2 carries the bounded request transport and form compatibility from 1.3.1 and adds a read-only, self-locating lifecycle validator. The validator checks required plugin files and executable role entrypoints; it does not fetch, replace or migrate plugin data. The candidate keeps the `titan_dev_access` plugin ID, CSRF secret path/token derivation, SSH key paths and flat archive identity, with no persistent data migration. Retain the 1.3.1 archive until DirectAdmin accepts and verifies this candidate. Live update, remove/reinstall and rollback behavior still require a disposable-host check.
+Version 1.3.3 is the current source candidate. It carries the bounded DirectAdmin request transport, role-aware least privilege (admin operator actions; reseller/user read-only), canonical loopback Server Node health projection, and the read-only self-locating lifecycle validator. The validator checks required plugin files and executable role entrypoints; it does not fetch, replace or migrate plugin data.
+
+The committed v1.3.2 archive is retained as a historical, checksum-verified artifact only. It predates the v1.3.3 role and health changes and must not be treated as the current install candidate. Current-source CI builds and exercises a fresh v1.3.3 archive from the exact PR head. Live DirectAdmin update, remove/reinstall and rollback behavior still require a disposable-host check.
 
 This plugin does **not** grant Titan business authority. Mutating or privileged repair work belongs to canonical governed execution and deployment/runtime owners.
 
