@@ -45,6 +45,15 @@ async function provision(registry) {
     actor_id: 'actor-a', company_id: 'company-b', status: 'active' }, null);
 }
 
+async function provisionUnique(registry) {
+  await registry.putActor({ actor_id: 'actor-a', status: 'active' }, null);
+  await registry.putCompany({ company_id: 'company-a', status: 'active' }, null);
+  await registry.putMembership({ actor_id: 'actor-a', company_id: 'company-a', role: 'owner', status: 'active' }, null);
+  await registry.putDevice({ device_id: 'device-a', actor_id: 'actor-a', status: 'active' }, null);
+  await registry.putExternalBinding({ binding_id: 'binding-a', provider: ISSUER, subject: 'effective-user',
+    actor_id: 'actor-a', company_id: 'company-a', status: 'active' }, null);
+}
+
 function issueProof(changes = {}) {
   return { origin: ORIGIN, cookie: COOKIE, authorization: null,
     company_id: 'company-a', device_id: 'device-a', ...changes };
@@ -122,6 +131,127 @@ test('issue stores only the nonce digest and binds one validated company/device 
   assert.equal(rows[0].company_id, 'company-b');
   assert.equal(rows[0].device_id, 'device-b');
   assert.ok(rows[0].context_generation.includes('binding-b'));
+});
+
+test('first-session issuer authenticates DirectAdmin and atomically resolves one canonical company/device', async t => {
+  const { storage, registry } = await store();
+  t.after(() => storage.close());
+  await enableNonceStore(storage);
+  await provisionUnique(registry);
+  const keys = await generateKeyPair('EdDSA');
+  const trust = { issuer: ISSUER, audience: 'titan-login', key_id: 'test-da', algorithm: 'EdDSA', verification_key: keys.publicKey };
+  let fetchCalls = 0;
+  const flow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, node_id: 'node-a', upstream: trust,
+    signing_key: keys.privateKey, registry, now: () => new Date(NOW),
+    fetcher: async url => { fetchCalls++; assert.equal(String(url), `${ORIGIN}/api/session`); return response(apiSession()); } });
+
+  await assert.rejects(flow.issueNonceForUniqueCurrentContext({ origin: ORIGIN, cookie: null, authorization: null }),
+    { message: 'authentication-denied' });
+  await assert.rejects(flow.issueNonceForUniqueCurrentContext({ origin: ORIGIN, cookie: COOKIE, authorization: null,
+    company_id: 'caller-chosen-company' }), { message: 'authentication-denied' });
+  assert.equal(fetchCalls, 0);
+  const issued = await flow.issueNonceForUniqueCurrentContext({ origin: ORIGIN, cookie: COOKIE, authorization: null });
+  assert.deepEqual({ company_id: issued.company_id, device_id: issued.device_id },
+    { company_id: 'company-a', device_id: 'device-a' });
+  assert.match(issued.csrf_nonce, /^[A-Za-z0-9_-]{43}$/);
+  assert.equal(fetchCalls, 1);
+  const row = (await storage.query('SELECT company_id,device_id,context_generation FROM titan_security_directadmin_bootstrap_nonces')).rows[0];
+  assert.deepEqual({ company_id: row.company_id, device_id: row.device_id },
+    { company_id: 'company-a', device_id: 'device-a' });
+  assert.ok(row.context_generation.includes('binding-a'));
+  const assertion = await flow.provide({ origin: ORIGIN, cookie: COOKIE, authorization: null, csrf_nonce: issued.csrf_nonce });
+  assert.equal(assertion.company_id, issued.company_id);
+  assert.equal(assertion.device_id, issued.device_id);
+});
+
+test('first-session selection denies multiple companies instead of choosing a row', async t => {
+  const { storage, registry } = await store();
+  t.after(() => storage.close());
+  await enableNonceStore(storage);
+  await provision(registry);
+  await registry.putDevice({ device_id: 'device-b', actor_id: 'actor-a', status: 'revoked' }, 1);
+  await assert.rejects(registry.issueDirectAdminBootstrapNonceForUniqueContext({
+    origin: ORIGIN, subject: 'effective-user', real_subject: 'operator-admin', da_role: 'admin', impersonating: true,
+  }), { message: 'identity-bootstrap-selection-ambiguous' });
+  const issuer = security.createDirectAdminBootstrapNonceIssuer({ origin: ORIGIN, registry,
+    fetcher: async () => response(apiSession()) });
+  await assert.rejects(issuer.issueForUniqueCurrentContext({ origin: ORIGIN, cookie: COOKIE, authorization: null }),
+    { message: 'authentication-denied' });
+  assert.equal((await storage.query('SELECT COUNT(*) AS count FROM titan_security_directadmin_bootstrap_nonces')).rows[0].count, 0);
+});
+
+test('first-session selection denies multiple active devices instead of choosing a row', async t => {
+  const { storage, registry } = await store();
+  t.after(() => storage.close());
+  await enableNonceStore(storage);
+  await provisionUnique(registry);
+  await registry.putDevice({ device_id: 'device-b', actor_id: 'actor-a', status: 'active' }, null);
+  await assert.rejects(registry.issueDirectAdminBootstrapNonceForUniqueContext({
+    origin: ORIGIN, subject: 'effective-user', real_subject: 'operator-admin', da_role: 'admin', impersonating: true,
+  }), { message: 'identity-bootstrap-selection-ambiguous' });
+  assert.equal((await storage.query('SELECT COUNT(*) AS count FROM titan_security_directadmin_bootstrap_nonces')).rows[0].count, 0);
+});
+
+test('first-session selection denies an issuer subject mapped to distinct Titan actors', async t => {
+  const { storage, registry } = await store();
+  t.after(() => storage.close());
+  await enableNonceStore(storage);
+  await provisionUnique(registry);
+  await registry.putActor({ actor_id: 'actor-b', status: 'active' }, null);
+  await registry.putCompany({ company_id: 'company-b', status: 'active' }, null);
+  await registry.putMembership({ actor_id: 'actor-b', company_id: 'company-b', role: 'owner', status: 'active' }, null);
+  await registry.putDevice({ device_id: 'device-b', actor_id: 'actor-b', status: 'active' }, null);
+  await registry.putExternalBinding({ binding_id: 'binding-b', provider: ISSUER, subject: 'effective-user',
+    actor_id: 'actor-b', company_id: 'company-b', status: 'active' }, null);
+  await assert.rejects(registry.issueDirectAdminBootstrapNonceForUniqueContext({
+    origin: ORIGIN, subject: 'effective-user', real_subject: 'operator-admin', da_role: 'admin', impersonating: true,
+  }), { message: 'identity-binding-ambiguous' });
+  assert.equal((await storage.query('SELECT COUNT(*) AS count FROM titan_security_directadmin_bootstrap_nonces')).rows[0].count, 0);
+});
+
+test('first-session selection denies a revoked membership with no eligible canonical context', async t => {
+  const { storage, registry } = await store();
+  t.after(() => storage.close());
+  await enableNonceStore(storage);
+  await provisionUnique(registry);
+  await registry.putMembership({ actor_id: 'actor-a', company_id: 'company-a', role: 'owner', status: 'revoked' }, 1);
+
+  await assert.rejects(registry.issueDirectAdminBootstrapNonceForUniqueContext({
+    origin: ORIGIN, subject: 'effective-user', real_subject: 'operator-admin', da_role: 'admin', impersonating: true,
+  }), { message: 'identity-bootstrap-selection-unavailable' });
+  assert.equal((await storage.query('SELECT COUNT(*) AS count FROM titan_security_directadmin_bootstrap_nonces')).rows[0].count, 0);
+});
+
+test('unique first-session nonce becomes unusable after membership revocation and registry restart', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'titan-da-unique-context-restart-'));
+  const path = join(directory, 'identity.sqlite');
+  let storage = createSqliteStorage(path);
+  let registry = await security.createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY', now: () => new Date(NOW) });
+  t.after(async () => { await storage.close(); await rm(directory, { recursive: true, force: true }); });
+  await enableNonceStore(storage);
+  await provisionUnique(registry);
+  const keys = await generateKeyPair('EdDSA');
+  const trust = { issuer: ISSUER, audience: 'titan-login', key_id: 'test-da', algorithm: 'EdDSA', verification_key: keys.publicKey };
+  const flow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, node_id: 'node-a', upstream: trust,
+    signing_key: keys.privateKey, registry, now: () => new Date(NOW),
+    fetcher: async () => response(apiSession()) });
+  const issued = await flow.issueNonceForUniqueCurrentContext({ origin: ORIGIN, cookie: COOKIE, authorization: null });
+  assert.deepEqual({ company_id: issued.company_id, device_id: issued.device_id },
+    { company_id: 'company-a', device_id: 'device-a' });
+
+  await storage.close();
+  storage = createSqliteStorage(path);
+  registry = await security.createIdentitySessionRegistry({ storage, storage_role: 'GLOBAL_REGISTRY', now: () => new Date(NOW) });
+  const persisted = (await storage.query('SELECT company_id,device_id FROM titan_security_directadmin_bootstrap_nonces')).rows[0];
+  assert.deepEqual(persisted, { company_id: 'company-a', device_id: 'device-a' });
+  await registry.putMembership({ actor_id: 'actor-a', company_id: 'company-a', role: 'owner', status: 'revoked' }, 1);
+  const restartedFlow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, node_id: 'node-a', upstream: trust,
+    signing_key: keys.privateKey, registry, now: () => new Date(NOW),
+    fetcher: async () => response(apiSession()) });
+  await assert.rejects(restartedFlow.provide({ origin: ORIGIN, cookie: COOKIE, authorization: null,
+    csrf_nonce: issued.csrf_nonce }), { message: 'authentication-denied' });
+  const consumed = (await storage.query('SELECT consumed_at FROM titan_security_directadmin_bootstrap_nonces')).rows[0];
+  assert.notEqual(consumed.consumed_at, null);
 });
 
 test('rejects invalid DirectAdmin hosts, unmapped company/device, and overlong nonce lifetimes', async t => {

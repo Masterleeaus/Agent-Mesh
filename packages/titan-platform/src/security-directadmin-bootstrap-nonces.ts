@@ -1,5 +1,5 @@
 import { isIdentityRegistryUnavailableError, type DirectAdminBootstrapNonceConsume,
-  type DirectAdminBootstrapNonceIssued,
+  type DirectAdminBootstrapNonceIssued, type DirectAdminBootstrapNonceIssuedSelection,
   type DirectAdminBootstrapNonceSelection, type IdentitySessionRegistry } from './security-session-registry.js';
 import { createDirectAdminBootstrapAssertionProvider, directAdminIssuer,
   parseDirectAdminSessionInfo, projectDirectAdminSessionIdentity, type DirectAdminAssertionTrust,
@@ -25,6 +25,13 @@ export type DirectAdminBootstrapNonceIssuerProof = Readonly<{
   device_id: string;
 }>;
 
+/** Proof for the first-session path when no Titan cookie supplies context. */
+export type DirectAdminBootstrapNonceIssuerIdentityProof = Readonly<{
+  origin: string;
+  cookie: string;
+  authorization: null;
+}>;
+
 export type DirectAdminBootstrapNonceIssuerOptions = Readonly<{
   origin: string;
   registry: IdentitySessionRegistry;
@@ -42,6 +49,9 @@ export type DirectAdminBootstrapFlowOptions = DirectAdminBootstrapNonceIssuerOpt
 
 export type DirectAdminBootstrapFlow = Readonly<{
   issueNonce: (proof: DirectAdminBootstrapNonceIssuerProof) => Promise<DirectAdminBootstrapNonceIssued>;
+  issueNonceForUniqueCurrentContext: (
+    proof: DirectAdminBootstrapNonceIssuerIdentityProof,
+  ) => Promise<DirectAdminBootstrapNonceIssuedSelection>;
   provide: (proof: DirectAdminBootstrapProofEnvelope) => Promise<DirectAdminLoginAssertionInput>;
 }>;
 
@@ -81,6 +91,12 @@ function nonceIssueProof(value: unknown, origin: string): Readonly<{
   requireId(fields.company_id, 'company_id');
   requireId(fields.device_id, 'device_id');
   return Object.freeze({ origin, cookie, company_id: fields.company_id, device_id: fields.device_id });
+}
+
+function nonceIssueIdentityProof(value: unknown, origin: string): Readonly<{ origin: string; cookie: string }> {
+  const fields = exactDataProperties(value, ['origin', 'cookie', 'authorization']);
+  if (fields.origin !== origin || fields.authorization !== null) throw new Error('authentication-denied');
+  return Object.freeze({ origin, cookie: directAdminSessionCookieHeader(fields.cookie) });
 }
 
 function consumeRequest(value: DirectAdminBootstrapContextRequest, issuer: string): DirectAdminBootstrapNonceConsume {
@@ -168,6 +184,9 @@ async function authenticatedIdentity(
  */
 export function createDirectAdminBootstrapNonceIssuer(options: DirectAdminBootstrapNonceIssuerOptions): Readonly<{
   issue: (proof: DirectAdminBootstrapNonceIssuerProof) => Promise<DirectAdminBootstrapNonceIssued>;
+  issueForUniqueCurrentContext: (
+    proof: DirectAdminBootstrapNonceIssuerIdentityProof,
+  ) => Promise<DirectAdminBootstrapNonceIssuedSelection>;
 }> {
   const origin = configuredOrigin(options.origin);
   if (options.lifetime_seconds !== undefined && (!Number.isSafeInteger(options.lifetime_seconds)
@@ -191,7 +210,26 @@ export function createDirectAdminBootstrapNonceIssuer(options: DirectAdminBootst
       throw new Error('directadmin-service-unavailable');
     }
   };
-  return Object.freeze({ issue });
+  const issueForUniqueCurrentContext = async (
+    proofInput: DirectAdminBootstrapNonceIssuerIdentityProof,
+  ): Promise<DirectAdminBootstrapNonceIssuedSelection> => {
+    const proof = nonceIssueIdentityProof(proofInput, origin);
+    const identity = await authenticatedIdentity(origin, proof.cookie, fetcher);
+    try {
+      return await options.registry.issueDirectAdminBootstrapNonceForUniqueContext({ origin: proof.origin,
+        subject: identity.subject, real_subject: identity.real_subject, da_role: identity.da_role,
+        impersonating: identity.impersonating,
+        ...(options.lifetime_seconds === undefined ? {} : { lifetime_seconds: options.lifetime_seconds }) });
+    } catch (error) {
+      if (isIdentityRegistryUnavailableError(error)) throw new Error('directadmin-service-unavailable');
+      if (error instanceof Error && ['identity-binding-ambiguous', 'identity-binding-unavailable',
+        'identity-actor-unavailable', 'identity-company-unavailable', 'identity-membership-unavailable',
+        'identity-device-unavailable', 'identity-bootstrap-selection-ambiguous',
+        'identity-bootstrap-selection-unavailable'].includes(error.message)) throw new Error('authentication-denied');
+      throw new Error('directadmin-service-unavailable');
+    }
+  };
+  return Object.freeze({ issue, issueForUniqueCurrentContext });
 }
 
 /** A ready-to-compose issuer callback for the existing signed assertion producer. */
@@ -228,5 +266,6 @@ export function createDirectAdminBootstrapFlow(options: DirectAdminBootstrapFlow
     ...(options.now === undefined ? {} : { now: options.now }),
     ...(options.assertion_lifetime_seconds === undefined ? {} : { lifetime_seconds: options.assertion_lifetime_seconds }),
   });
-  return Object.freeze({ issueNonce: issuer.issue, provide: provider.provide });
+  return Object.freeze({ issueNonce: issuer.issue, issueNonceForUniqueCurrentContext: issuer.issueForUniqueCurrentContext,
+    provide: provider.provide });
 }

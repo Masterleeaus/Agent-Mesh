@@ -69,8 +69,8 @@ export function createSecureEnvelope(binding: SessionBinding, company_id: string
 
 export { createIdentitySessionRegistry, initializeDirectAdminBootstrapNonceStore, IdentitySessionRegistry } from './security-session-registry.js';
 export type { VerifiedSessionIdentity, SessionSourceReference, ExpectedSessionContext, CurrentSessionContext, IssueSessionInput,
-  DirectAdminBootstrapNonceIssue, DirectAdminBootstrapNonceIssued, DirectAdminBootstrapNonceConsume,
-  DirectAdminBootstrapNonceSelection } from './security-session-registry.js';
+  DirectAdminBootstrapNonceIssue, DirectAdminBootstrapNonceIdentityIssue, DirectAdminBootstrapNonceIssued,
+  DirectAdminBootstrapNonceIssuedSelection, DirectAdminBootstrapNonceConsume, DirectAdminBootstrapNonceSelection } from './security-session-registry.js';
 export { createSessionCredentialService, createSessionCredentialVerifier, directAdminIssuer, parseDirectAdminSessionInfo,
   projectDirectAdminSessionIdentity, createDirectAdminBootstrapAssertionProvider } from './security-session-credentials.js';
 export type { CredentialExpectation, SessionCredentialOptions, IssuedSessionCredential, AuthenticatedSessionCredential,
@@ -82,4 +82,5 @@ export type { CredentialExpectation, SessionCredentialOptions, IssuedSessionCred
 export { createDirectAdminBootstrapNonceIssuer, createDirectAdminBootstrapNonceConsumer,
   createDirectAdminBootstrapFlow } from './security-directadmin-bootstrap-nonces.js';
 export type { DirectAdminBootstrapNonceIssuerProof, DirectAdminBootstrapNonceIssuerOptions,
-  DirectAdminBootstrapFlowOptions, DirectAdminBootstrapFlow } from './security-directadmin-bootstrap-nonces.js';
+  DirectAdminBootstrapNonceIssuerIdentityProof, DirectAdminBootstrapFlowOptions,
+  DirectAdminBootstrapFlow } from './security-directadmin-bootstrap-nonces.js';
