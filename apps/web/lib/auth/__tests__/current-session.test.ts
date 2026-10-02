@@ -7,9 +7,14 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   createIdentitySessionRegistry,
   createSessionCredentialService,
+  createSessionCredentialVerifier,
 } from "@titan-zero/titan-platform/security-boundary";
 import { createSqliteStorage } from "../../../../../packages/storage/src/index";
-import { createCurrentWebSessionAdapter } from "../current-session";
+import {
+  createCurrentWebSessionAdapter,
+  createCurrentWebSessionIngress,
+  CURRENT_WEB_SESSION_COOKIE_NAME,
+} from "../current-session";
 
 const issuer = "https://titan.example.test/session";
 const upstreamIssuer = "https://da-a.example.test/identity";
@@ -23,15 +28,33 @@ let signingKey: Uint8Array;
 let upstreamKey: Uint8Array;
 let approvedAccounts: Map<string, string>;
 let service: ReturnType<typeof createSessionCredentialService>;
+let verifier: ReturnType<typeof createSessionCredentialVerifier>;
+let ingress: ReturnType<typeof createCurrentWebSessionIngress>;
 
 function compose(resolveLegacyAccountId = async (companyId: string): Promise<string | null> => approvedAccounts.get(companyId) ?? null) {
-  service = createSessionCredentialService({
+  const credentialConfig = {
     registry, issuer, audience: "titan-web", key_id: "test-access-key",
-    signing_key: signingKey, verification_key: signingKey, algorithm: "HS256",
-    upstream: { issuer: upstreamIssuer, audience: "titan-session-exchange", key_id: "test-upstream-key", algorithm: "HS256", verification_key: upstreamKey },
+    verification_key: signingKey, algorithm: "HS256" as const,
+    upstream: { issuer: upstreamIssuer, audience: "titan-session-exchange", key_id: "test-upstream-key", algorithm: "HS256" as const, verification_key: upstreamKey },
     now: () => now, lifetime_seconds: 300,
-  });
-  return createCurrentWebSessionAdapter(service, { resolveLegacyAccountId });
+  };
+  service = createSessionCredentialService({ ...credentialConfig, signing_key: signingKey });
+  verifier = createSessionCredentialVerifier(credentialConfig);
+  const projection = { resolveLegacyAccountId };
+  ingress = createCurrentWebSessionIngress(verifier, projection);
+  return createCurrentWebSessionAdapter(service, projection);
+}
+
+function requestWithCookie(
+  cookie: string | null,
+  url = "https://web.example.test/api/v1/visits/visit-1/checklist?company_id=company-b",
+  authorization?: string,
+) {
+  return new Request(url, { headers: {
+    ...(cookie === null ? {} : { cookie }),
+    "x-company-id": "company-b",
+    ...(authorization === undefined ? {} : { authorization }),
+  } });
 }
 
 function delayedMapper() {
@@ -162,6 +185,65 @@ describe("opt-in web durable session migration", () => {
     expect(issued.context.allowed_company_ids).toEqual(["company-a", "company-b"]);
     expect(issued.operationCompanyIds).toEqual(["company-a"]);
     expect(await web.getSession(issued.credential, expected)).toEqual(issued.session);
+  });
+
+  it("derives request company, actor, device and revisions only from the canonical credential", async () => {
+    const issued = await web.issue(await upstream(), expected);
+    const request = requestWithCookie(`${CURRENT_WEB_SESSION_COOKIE_NAME}=${issued.credential}; fsm_session=legacy-token`);
+    const current = await ingress.resolveRequest(request);
+
+    expect(current?.session).toEqual({ userId: "stable-user-17", accountId: "company-a", role: "owner" });
+    expect(current?.operationCompanyIds).toEqual(["company-a"]);
+    expect(current?.context).toMatchObject({
+      company_id: "company-a", actor_id: "stable-user-17", device_id: "device-1",
+      session_id: issued.context.session_id, session_revision: issued.context.session_revision,
+      context_revision: issued.context.context_revision, audience: "titan-web", authority_neutral: true,
+    });
+    expect(current?.scope).toEqual({
+      kind: "authenticated",
+      current: {
+        company_id: "company-a", actor_id: "stable-user-17", session_id: issued.context.session_id,
+        session_revision: issued.context.session_revision, context_revision: issued.context.context_revision,
+        audience: "titan-web", expires_at: issued.context.expires_at, authority_neutral: true,
+      },
+    });
+  });
+
+  it("does not authenticate from legacy cookies, company fields, bearer headers or ambiguous credentials", async () => {
+    const issued = await web.issue(await upstream(), expected);
+    const legacy = await new SignJWT({ userId: "stable-user-17", accountId: "company-a", role: "owner" })
+      .setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime("7d").sign(signingKey);
+
+    expect(await ingress.resolveRequest(requestWithCookie(`fsm_session=${legacy}`))).toBeNull();
+    expect(await ingress.resolveRequest(requestWithCookie(null))).toBeNull();
+    expect(await ingress.resolveRequest(requestWithCookie(null, undefined, `Bearer ${issued.credential}`))).toBeNull();
+    expect(await ingress.resolveRequest(requestWithCookie(
+      `${CURRENT_WEB_SESSION_COOKIE_NAME}=${issued.credential}; ${CURRENT_WEB_SESSION_COOKIE_NAME}=${issued.credential}`,
+    ))).toBeNull();
+    expect(await ingress.resolveRequest(requestWithCookie(`${CURRENT_WEB_SESSION_COOKIE_NAME}=not-a-jwt`))).toBeNull();
+  });
+
+  it("preserves only the sanitized registry-unavailable signal for server error handling", async () => {
+    const unavailableIngress = createCurrentWebSessionIngress({
+      authenticate: async () => { throw new Error("identity-registry-unavailable"); },
+      resolve: verifier.resolve,
+    }, { resolveLegacyAccountId: async companyId => approvedAccounts.get(companyId) ?? null });
+    const request = requestWithCookie(`${CURRENT_WEB_SESSION_COOKIE_NAME}=a.b.c`);
+
+    await expect(unavailableIngress.resolveRequest(request)).rejects.toThrow(/^identity-registry-unavailable$/);
+    expect(await ingress.resolveRequest(request)).toBeNull();
+  });
+
+  it("revalidates canonical session context after request identity mapping", async () => {
+    const issued = await web.issue(await upstream(), expected);
+    const gate = delayedMapper();
+    const delayedIngress = createCurrentWebSessionIngress(verifier, { resolveLegacyAccountId: gate.resolve });
+    const pending = delayedIngress.resolveRequest(requestWithCookie(`${CURRENT_WEB_SESSION_COOKIE_NAME}=${issued.credential}`));
+    await gate.entered;
+    await service.switchCompany(issued.credential, expected, "company-b");
+    gate.release();
+
+    await expect(pending).resolves.toBeNull();
   });
 
   it("switches with current authentication and invalidates the old credential", async () => {
