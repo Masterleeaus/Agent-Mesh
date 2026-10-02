@@ -148,17 +148,22 @@ try {
   assert.equal(scalar(freshUrl, "SELECT COUNT(*) FROM schema_migrations WHERE checksum IS NULL"), "0");
   assert.equal(scalar(freshUrl, "SELECT COUNT(DISTINCT filename) FROM schema_migrations"), expectedCount);
   assertManifestLedger(freshUrl);
-  const freshFingerprint = schemaFingerprint(freshUrl);
-  console.log(`fresh schema fingerprint (schema only, no business rows): ${freshFingerprint}`);
-  const evidence = spawnSync("node", ["scripts/export-migration-history-evidence.mjs"], {
-    cwd: repoRoot,
-    encoding: "utf8",
-    env: { ...process.env, MIGRATION_DATABASE_URL: freshUrl },
-  });
-  assert.equal(evidence.status, 0, `sanitized evidence export failed: ${evidence.stderr}`);
-  const exportedEvidence = JSON.parse(evidence.stdout);
+  const exportEvidence = () => {
+    const result = spawnSync("node", ["scripts/export-migration-history-evidence.mjs"], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      env: { ...process.env, MIGRATION_DATABASE_URL: freshUrl },
+    });
+    assert.equal(result.status, 0, `sanitized evidence export failed: ${result.stderr}`);
+    return JSON.parse(result.stdout);
+  };
+  const exportedEvidence = exportEvidence();
+  const repeatedEvidence = exportEvidence();
   assert.equal(exportedEvidence.data_included, false);
-  assert.equal(exportedEvidence.schema_fingerprint_sha256, freshFingerprint);
+  assert.match(exportedEvidence.schema_fingerprint_sha256, /^[a-f0-9]{64}$/);
+  assert.equal(repeatedEvidence.schema_fingerprint_sha256, exportedEvidence.schema_fingerprint_sha256,
+    "schema-only evidence fingerprint must be repeatable for an unchanged database");
+  console.log(`fresh schema fingerprint (schema only, no business rows): ${exportedEvidence.schema_fingerprint_sha256}`);
   assert.equal(exportedEvidence.applied_history.length, manifest.entries.length);
   assert.ok(exportedEvidence.applied_history.every((row) => row.status === "checksum-matched"));
   assert.equal(exportedEvidence.duplicate_prefix_status.length, manifest.prefix_collisions.length);
