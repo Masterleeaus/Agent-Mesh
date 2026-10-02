@@ -176,14 +176,16 @@ test("DirectAdmin projection reads canonical company-filtered workers, work, run
     await workforce.migrate(); await runs.migrate();
     await workforce.putWorker({ company_id: "company-a", worker_id: "worker-a", kind: "digital", active: true, capabilities: ["crm.work_order.complete"] });
     await workforce.putWorker({ company_id: "company-b", worker_id: "worker-b", kind: "human", active: true, capabilities: ["work.delegate"] });
-    await workforce.put({ ...work("company-a", "work-a", ["evidence-ref-a"]), assignee: "worker-a" });
+    await workforce.put({ ...work("company-a", "work-a", ["evidence-ref-a"]),
+      required_capabilities: ["crm.work_order.complete"], assignee: "worker-a" });
     await workforce.put(work("company-b", "work-b", ["evidence-ref-b"]));
     await runs.create({ company_id: "company-a", run_id: "run-a", state: "COMPLETED", conversation_id: "conversation-a", agent_id: "worker-a", work_id: "work-a", updated_at: now });
     await runs.create({ company_id: "company-b", run_id: "run-b", state: "COMPLETED", conversation_id: "conversation-b", agent_id: "worker-b", work_id: "work-b", updated_at: now });
 
-    const projection = await createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession,
+    const owners = createDirectAdminWorkforceOwners({ storage, verifyWorkforceZeroSession: verifyDisposableWorkforceZeroSession,
       withWorkforceZeroSessionFence: withDisposableWorkforceFence,
-      workforceStore: workforce, runStore: runs }).projection("titan_workforce", context);
+      workforceStore: workforce, runStore: runs });
+    const projection = await owners.projection("titan_workforce", context);
     const data = projection.data as any;
     assert.equal(projection.company_id, "company-a");
     assert.equal(data.company_id, "company-a");
@@ -193,10 +195,13 @@ test("DirectAdmin projection reads canonical company-filtered workers, work, run
     assert.deepEqual(data.discovery.controls, []);
     assert.deepEqual(data.status.company_id, "company-a");
     assert.deepEqual(data.status.work, [{ company_id: "company-a", work_id: "work-a", state: "IN_PROGRESS",
+      required_capabilities: ["crm.work_order.complete"],
       context_refs: ["context-work-a"], evidence_refs: ["evidence-ref-a"], assignee: "worker-a", run_id: "run-a" }]);
     assert.deepEqual(projection.evidence_refs, ["evidence-ref-a"]);
     assert.equal(JSON.stringify(projection).includes("company-b"), false);
     assert.ok(projection.freshness && Number.isFinite(Date.parse(projection.freshness)));
+    await workforce.put({ ...work("company-a", "work-a", ["evidence-ref-a"]), required_capabilities: [" "] });
+    await assert.rejects(() => owners.projection("titan_workforce", context), /directadmin-workforce-record-invalid/);
   } finally { await storage.close(); rmSync(dir, { recursive: true, force: true }); }
 });
 

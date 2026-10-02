@@ -110,10 +110,11 @@ function projectWorker(company_id: string, worker: WorkforceWorker) {
 
 function projectWork(company_id: string, work: WorkItem, run_id?: string) {
   if (work.company_id !== company_id || !id(work.work_id) || !id(work.state) ||
-      !stringRefs(work.context_refs) || !stringRefs(work.evidence_refs)) {
+      !stringRefs(work.required_capabilities) || !stringRefs(work.context_refs) || !stringRefs(work.evidence_refs)) {
     throw new Error("directadmin-workforce-record-invalid");
   }
   return Object.freeze({ company_id, work_id: work.work_id, state: work.state,
+    required_capabilities: Object.freeze([...work.required_capabilities]),
     context_refs: Object.freeze([...work.context_refs]), evidence_refs: Object.freeze([...work.evidence_refs]),
     ...(id(work.assignee) ? { assignee: work.assignee } : {}),
     ...(id(run_id) ? { run_id } : {}),
