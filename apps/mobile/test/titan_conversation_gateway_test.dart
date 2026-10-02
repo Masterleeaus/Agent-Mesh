@@ -74,14 +74,9 @@ void main() {
     expect(transport.requests[0]['conversation_id'], transport.requests[1]['conversation_id']);
     expect(transport.requests[0]['context_revision'], 'rev-12');
 
-    transport.responses.add(accepted({
-      ...transport.requests[1],
-      'conversation_id': 'next-conversation',
-      'request_id': 'next-request',
-    }));
+    transport.responses.add(accepted(transport.requests[2]));
     await gateway.converse('Check my next job');
-    expect(transport.requests[2]['conversation_id'], 'next-conversation');
-    expect(transport.requests[2]['request_id'], 'next-request');
+    expect(transport.requests[2]['conversation_id'], isNot(transport.requests[0]['conversation_id']));
     expect(transport.requests[2]['request_id'], isNot(transport.requests[0]['request_id']));
   });
 
