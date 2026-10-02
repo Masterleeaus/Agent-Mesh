@@ -1,5 +1,5 @@
 {
-  "code_head": "working tree based on fc6bd2bbd7c75261fbe334fb5af7dfb530d2351d",
+  "code_head": "865697a3aa6f4ce79f8bfa6f0b3b405b7367a1f5",
   "dependency": "latest reviewed PR1179 head 13279000737e7714f18024047954bd373de8ee58 pending merge",
   "main": "987728413bfdae855dba1a0796a686efb53e8805 observed; not integrated into tested branch",
   "runtime": "Node22.23.3 / pnpm9.12.0",
