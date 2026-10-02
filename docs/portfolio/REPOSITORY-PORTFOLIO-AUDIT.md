@@ -51,7 +51,7 @@ The inspected inventory contains distinct projects including `ZeroPay`, `Interac
 
 - `Developer-Workforce-Extension-` retains an opaque upstream ID/version directory containing the seed extension; it now has a package-level README. Normalize the path only through a provenance-preserving migration.
 - `Documents` has a landing README; the ZIP archive still needs contents and provenance review.
-- Many substantive READMEs lack project-specific wide banners. Use existing repo artwork where verified; do not substitute unrelated images or imply a banner exists when it does not.
+- Portfolio banner pass added checked-in, project-specific SVG headers to 29 additional substantive repositories; together with existing artwork, 30 of 33 default-branch READMEs now reference a checked-in banner. The two near-empty deletion candidates remain intentionally unbranded. Verify image rendering in GitHub after any repository rename.
 - Several repositories still need stronger status, setup, CI/test, license/provenance, and screenshot coverage.
 - Repository descriptions/topics, release tags, branch protection, and repo-level settings have not been normalized because no repository metadata update operation was exposed in this session.
 - Some repositories contain imported ZIPs, generated artifacts, environment variants, or OS files. Review each item and its history before removing it.
@@ -144,3 +144,11 @@ A targeted review of ten substantive repositories found active pull requests acr
 ## Rebranding handoff
 
 A repository-by-repository naming map with proposed GitHub slugs, README titles, provenance notes, and disposition guidance is in [REPOSITORY-NAMING-PLAN.md](REPOSITORY-NAMING-PLAN.md). Repository names and descriptions were not changed because the connected GitHub capability here does not expose repository settings edits; the owner can apply the proposed slugs in GitHub.
+
+
+### Portfolio branding pass — 2026-10-02
+
+- Added project-specific wide SVG banner files and README references across 29 additional repositories, including prototypes and source archives. The private `cleanly` workspace also has its own banner. A follow-up fetch verified that all 30 README banner references point to checked-in SVG files.
+- Kept the banner system consistent in layout and varied each project's title, status label, and accent color. Existing project artwork remains alongside the banner where already present.
+- Left `cleanhub` and `cleanhub2` unbranded because both are near-empty deletion candidates pending disposition.
+- Banner images are documentation assets; no application builds or tests were run for this visual pass.
