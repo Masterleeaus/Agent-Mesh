@@ -97,6 +97,7 @@ This test packages the exact pinned owner sources, extracts all three owner pack
 
 ```sh
 work_area=/tmp/1050-extracted-integration
+rm -rf "$work_area"
 mkdir -p "$work_area/host" "$work_area/server-node" "$work_area/sdk"
 git archive 85c6de1cf243dbbb4d96b97a6d33fe6e9177d9f2 \
   package.json services/workforce packages/storage packages/titan-platform \
@@ -109,7 +110,7 @@ git archive 495bfb6a876473eb6d52302993457fa34024be5d packages/titan-platform \
 ln -s "$PWD/packages/titan-platform/node_modules" \
   "$work_area/sdk/packages/titan-platform/node_modules"
 
-node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/bin/esbuild \
+node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/bin/esbuild \
   "$work_area/sdk/packages/titan-platform/src/directadmin-plugin.ts" \
   --bundle --format=esm --platform=browser --target=es2022 \
   --outfile=/tmp/1050-sdk/upstream-1049-current.mjs
@@ -120,7 +121,7 @@ TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk/upstream-1049-current.mjs \
 TITAN_HOST_SDK_MODULE=/tmp/1050-sdk/upstream-1049-current.mjs \
 TITAN_BRIDGE_FIXTURE_MODULE="$work_area/sdk/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs" \
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
-node --import ./node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/loader.mjs \
+node --import ./node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/loader.mjs \
   apps/directadmin/workforce/tests/relay-host.integration.mjs
 ```
 
