@@ -245,24 +245,35 @@ test("canonical DA-derived Zero identity is persisted, fenced and replayed throu
   } finally { await f.close(); }
 });
 
-test("restored source-derived identity fails closed when its persisted source reference is missing", async () => {
-  const f = await fixture(); try {
+test("restored source-derived run missing source reference fails closed before recovery admission", { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 30 });
+  let enter!: () => void;
+  let release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const blocked = new Promise<void>(resolve => { release = resolve; });
+  try {
     const identity = await f.workforceZero();
     const input = { ...f.input, company_id: "a", actor_id: "lead", device_id: "device",
       session_id: identity.context.session_id, context_revision: identity.context.context_revision };
+    f.beforeComplete(async signal => { enter(); await blocked; signal?.throwIfAborted(); });
     const first = await f.post(input, identity.authorization);
     assert.equal(first.status, 200, JSON.stringify(first.body));
-    assert.equal(f.nativeInvocations, 1);
+    await entered;
+    release();
+    await new Promise<void>(resolve => setTimeout(resolve, 25));
+    assert.equal(f.nativeInvocations, 0);
+    await f.restart();
+    const restored = await f.post(input, identity.authorization);
+    assert.ok(restored.body.continuation_token);
     const run = (await f.run())[0];
-    assert.ok(run.authenticated_identity.source_session);
     assert.equal(run.authenticated_identity.source_session_required, true);
     delete run.authenticated_identity.source_session;
     await f.control.query("UPDATE agent_runs SET payload=$1 WHERE company_id='a' AND run_id=$2", [JSON.stringify(run), run.run_id]);
-    await f.restart();
-    const restored = await f.post(input, identity.authorization);
-    assert.notEqual(restored.status, 200, JSON.stringify(restored.body));
-    assert.equal(f.nativeInvocations, 1, "missing durable lineage fails before provider invocation");
-  } finally { await f.close(); }
+    const observed = await f.post({ ...input, action: "resume", continuation_token: restored.body.continuation_token }, identity.authorization);
+    assert.notEqual(observed.status, 200, JSON.stringify(observed.body));
+    assert.equal(f.nativeInvocations, 0, "missing durable lineage is rejected before any recovery provider call");
+    assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
+  } finally { release(); await f.close(); }
 });
 
 test("host rejects missing, forged, wrong-audience and caller-altered bound identity before creating work", async () => {
