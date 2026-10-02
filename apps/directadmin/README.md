@@ -4,32 +4,33 @@ This tree tracks the DirectAdmin plugin workspaces in the canonical portfolio ma
 
 | Plugin | Folder | Mission | State |
 |---|---|---:|---|
-| Titan Business Node Core | [`server-node/`](./server-node/) | #812 | Existing scaffold |
-| Cockpit SDK | [`cockpit-sdk/`](./cockpit-sdk/) | #1049 | Scaffold only |
-| Titan Business Engine | [`business-engine/`](./business-engine/) | #1051 | Scaffold only |
-| Titan Zero | [`zero/`](./zero/) | #1046 | Scaffold only |
-| Titan Workforce | [`workforce/`](./workforce/) | #1050 | Scaffold only |
-| Titan Operations | [`operations/`](./operations/) | #1045 | Scaffold only |
-| Titan Foundry | [`foundry/`](./foundry/) | #1047 | Scaffold only |
-| Titan Web | [`web/`](./web/) | #1044 | Scaffold only |
-| Titan Dev | [`dev-access/`](./dev-access/) | #1048 + #1049 | Existing donor |
-| Titan Experience | [`experience/`](./experience/) | #1052 | Scaffold only |
-| Titan Surfaces | [`surfaces/`](./surfaces/) | #1059 | Scaffold only |
-| Titan Channels | [`channels/`](./channels/) | #1060 | Scaffold only |
-| Titan Interaction | [`interaction/`](./interaction/) | #1061 | Scaffold only |
-| Titan Decision | [`decision/`](./decision/) | #1062 | Scaffold only |
-| Titan Communications | [`communications/`](./communications/) | #1053 | Scaffold only |
-| Titan Finance & Commerce | [`finance-commerce/`](./finance-commerce/) | #1054 | Scaffold only |
-| Titan Intelligence | [`intelligence/`](./intelligence/) | #1055 | Scaffold only |
-| Titan Governance & Assurance | [`governance-assurance/`](./governance-assurance/) | #1056 | Scaffold only |
-| Titan Sprout | [`sprout/`](./sprout/) | #1057 | Scaffold only |
-| Titan Analytics | [`analytics/`](./analytics/) | — | Proposed; no mission |
+| Titan Business Node Core | [`server-node/`](./server-node/) | #812 | Existing implementation slice; portfolio and host certification pending |
+| Cockpit SDK | [`cockpit-sdk/`](./cockpit-sdk/) | #1049 | Scaffold only; not installable |
+| Titan Business Engine | [`business-engine/`](./business-engine/) | #1051 | Scaffold only; not installable |
+| Titan Zero | [`zero/`](./zero/) | #1046 | Scaffold only; not installable |
+| Titan Workforce | [`workforce/`](./workforce/) | #1050 | Scaffold only; not installable |
+| Titan Operations | [`operations/`](./operations/) | #1045 | Scaffold only; not installable |
+| Titan Foundry | [`foundry/`](./foundry/) | #1047 | Scaffold only; not installable |
+| Titan Web | [`web/`](./web/) | #1044 | Scaffold only; not installable |
+| Titan Dev | [`dev-access/`](./dev-access/) | #1048 + #1049 | Existing server-validated donor |
+| Titan Experience | [`experience/`](./experience/) | #1052 | Scaffold only; not installable |
+| Titan Surfaces | [`surfaces/`](./surfaces/) | #1059 | Scaffold only; not installable |
+| Titan Channels | [`channels/`](./channels/) | #1060 | Scaffold only; not installable |
+| Titan Interaction | [`interaction/`](./interaction/) | #1061 | Scaffold only; not installable |
+| Titan Decision | [`decision/`](./decision/) | #1062 | Scaffold only; not installable |
+| Titan Communications | [`communications/`](./communications/) | #1053 | Scaffold only; not installable |
+| Titan Finance & Commerce | [`finance-commerce/`](./finance-commerce/) | #1054 | Scaffold only; not installable |
+| Titan Intelligence | [`intelligence/`](./intelligence/) | #1055 | Scaffold only; not installable |
+| Titan Governance & Assurance | [`governance-assurance/`](./governance-assurance/) | #1056 | Scaffold only; not installable |
+| Titan Sprout | [`sprout/`](./sprout/) | #1057 | Scaffold only; not installable |
+| Titan Analytics | [`analytics/`](./analytics/) | — | Proposed; no mission; not installable |
 
 
 ## Shared implementation boundary
 
-- `server-node/` is the existing control-plane scaffold; `dev-access/` is the existing Titan Dev donor. Both are preserved.
-- Each plugin folder links its portfolio mission and states its DirectAdmin responsibility. The scaffolds do not copy domain/runtime logic.
+- `server-node/` contains a bounded read-only health implementation and package; portfolio integration and live-host certification remain open. `dev-access/` is the existing server-validated Titan Dev donor. Both are preserved.
+- The 17 mission-linked scaffolds and proposed Analytics folder are documentation only and none is installable: each has no `plugin.conf`, executable role routes, lifecycle scripts, or package artifact. Folder names are source paths, not assertions of stable DirectAdmin machine IDs.
 - Keep business, Workforce identity/runtime, authority, evidence, and reusable service logic in their canonical `packages/` and `services/` owners. Plugins consume those through stable contracts.
+- `apps/web` remains the separate full base web application. The PWA and native mobile app each remain one app with Zero/Go/Hub modes; these plugin folders do not replace or split those surfaces.
 - Titan Analytics is a proposed optional cockpit in the portfolio map; it has no mission assignment and is not part of the supported install set yet.
 - Follow the [Plugin Development Guide](../../docs/directadmin/PLUGIN-DEVELOPMENT-GUIDE.md) and [Portfolio Map](../../docs/directadmin/PLUGIN-PORTFOLIO-MAP.md).
