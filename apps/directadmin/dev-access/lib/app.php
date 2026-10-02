@@ -247,6 +247,149 @@ function safe_cwd($requested){
  if(!$cwd || !is_dir($cwd) || !path_within($cwd,$home)) return $home;
  return $cwd;
 }
+function directadmin_git_metadata_path_safe($path,$home,$expectDirectory){
+ $stat=@lstat($path);
+ if($stat===false) return true;
+ $resolved=realpath($path);
+ if($resolved===false||!path_within($resolved,$home)) return false;
+ return $expectDirectory?is_dir($resolved):is_file($resolved);
+}
+function directadmin_git_resolve_path($path,$base,$home,$expectDirectory){
+ if(!is_string($path)||$path===''||strpos($path,"\0")!==false) return null;
+ $candidate=$path[0]==='/'?$path:rtrim($base,'/').'/'.$path;
+ $resolved=realpath($candidate);
+ if($resolved===false||!path_within($resolved,$home)) return null;
+ if($expectDirectory?!is_dir($resolved):!is_file($resolved)) return null;
+ return $resolved;
+}
+function directadmin_git_read_pointer($file,$label,$base,$home,$expectDirectory){
+ if(!directadmin_git_metadata_path_safe($file,$home,false)) return null;
+ $resolvedFile=realpath($file);
+ if($resolvedFile===false||!is_file($resolvedFile)||!path_within($resolvedFile,$home)) return null;
+ $raw=@file_get_contents($resolvedFile,false,null,0,4097);
+ if(!is_string($raw)||strlen($raw)>4096||strpos($raw,"\0")!==false) return null;
+ $pattern='/\A'.preg_quote($label,'/').': ([^\r\n]+)(?:\r?\n)?\z/D';
+ if(preg_match($pattern,$raw,$matches)!==1) return null;
+ return directadmin_git_resolve_path($matches[1],$base,$home,$expectDirectory);
+}
+function directadmin_git_alternates_safe($objects,$home){
+ if(!directadmin_git_metadata_path_safe($objects,$home,true)){
+  if(@lstat($objects)===false) return true;
+  return false;
+ }
+ $objectsReal=realpath($objects);
+ if($objectsReal===false) return false;
+ $info=$objectsReal.'/info';
+ if(!directadmin_git_metadata_path_safe($info,$home,true)){
+  if(@lstat($info)===false) return true;
+  return false;
+ }
+ $alternates=$info.'/alternates';
+ if(!directadmin_git_metadata_path_safe($alternates,$home,false)){
+  if(@lstat($alternates)===false) return true;
+  return false;
+ }
+ if(@lstat($alternates)===false) return true;
+ $resolvedAlternates=realpath($alternates);
+ if($resolvedAlternates===false) return false;
+ $raw=@file_get_contents($resolvedAlternates,false,null,0,16385);
+ if(!is_string($raw)||strlen($raw)>16384||strpos($raw,"\0")!==false) return false;
+ if($raw==='') return true;
+ $lines=preg_split('/\r?\n/',$raw);
+ if(!$lines) return false;
+ if(end($lines)==='') array_pop($lines);
+ foreach($lines as $line){
+  if($line===''||strpos($line,"\r")!==false) return false;
+  if(directadmin_git_resolve_path($line,$objectsReal,$home,true)===null) return false;
+ }
+ return true;
+}
+function directadmin_git_repository_context($requested){
+ $home=realpath(home_dir());
+ if($home===false||!is_dir($home)) return null;
+ $directory=safe_cwd($requested);
+ if(!path_within($directory,$home)) return null;
+ $cursor=$directory;
+ while(path_within($cursor,$home)){
+  $gitEntry=$cursor.'/.git';
+  if(@lstat($gitEntry)!==false){
+   if(is_dir($gitEntry)){
+    $gitDirectory=realpath($gitEntry);
+    if($gitDirectory===false||!path_within($gitDirectory,$home)) return null;
+   }else{
+    $gitDirectory=directadmin_git_read_pointer($gitEntry,'gitdir',$cursor,$home,true);
+    if($gitDirectory===null) return null;
+   }
+   $commonDirectory=$gitDirectory;
+   $commonPointer=$gitDirectory.'/commondir';
+   if(@lstat($commonPointer)!==false){
+    $commonDirectory=directadmin_git_read_pointer($commonPointer,'commondir',$gitDirectory,$home,true);
+    if($commonDirectory===null) return null;
+   }
+   $worktreePointer=$gitDirectory.'/gitdir';
+   if(@lstat($worktreePointer)!==false){
+    $backPointer=directadmin_git_read_pointer($worktreePointer,'gitdir',$gitDirectory,$home,false);
+    $expectedEntry=realpath($gitEntry);
+    if($backPointer===null||$expectedEntry===false||$backPointer!==$expectedEntry) return null;
+   }
+   foreach(array_values(array_unique([$gitDirectory,$commonDirectory])) as $metadataDirectory){
+    foreach(['HEAD','config','packed-refs','index','shallow','commondir','gitdir'] as $file){
+     if(!directadmin_git_metadata_path_safe($metadataDirectory.'/'.$file,$home,false)) return null;
+    }
+    foreach(['objects','refs','logs'] as $subdirectory){
+     $path=$metadataDirectory.'/'.$subdirectory;
+     if(!directadmin_git_metadata_path_safe($path,$home,true)&&@lstat($path)!==false) return null;
+    }
+    if(!directadmin_git_alternates_safe($metadataDirectory.'/objects',$home)) return null;
+   }
+   return ['root'=>$cursor,'git_dir'=>$gitDirectory,'common_dir'=>$commonDirectory];
+  }
+  $parent=dirname($cursor);
+  if($parent===$cursor||!path_within($parent,$home)) break;
+  $cursor=$parent;
+ }
+ return null;
+}
+function directadmin_git_command_args($context,$arguments){
+ return array_merge([
+  'git',
+  '--git-dir',$context['git_dir'],
+  '--work-tree',$context['root'],
+  '-c','core.bare=false',
+  '-c','core.worktree='.$context['root'],
+  '-c','core.hooksPath=/dev/null',
+  '-c','core.fsmonitor=false',
+  '-c','credential.helper=',
+  '-c','diff.external=',
+  '--no-pager',
+  '--no-optional-locks'
+ ],$arguments);
+}
+function directadmin_git_environment(){
+ return [
+  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+  'HOME'=>home_dir(),
+  'GIT_CONFIG_NOSYSTEM'=>'1',
+  'GIT_CONFIG_GLOBAL'=>'/dev/null',
+  'GIT_OPTIONAL_LOCKS'=>'0',
+  'GIT_TERMINAL_PROMPT'=>'0',
+  'GIT_PAGER'=>'cat',
+  'PAGER'=>'cat'
+ ];
+}
+function directadmin_git_probe($context,$arguments){
+ $argv=array_merge(['/usr/bin/env','timeout','5s'],directadmin_git_command_args($context,$arguments));
+ $spec=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
+ $proc=@proc_open($argv,$spec,$pipes,$context['root'],directadmin_git_environment());
+ if(!is_resource($proc)) return '';
+ fclose($pipes[0]);
+ $out=(string)stream_get_contents($pipes[1],8193);
+ $err=(string)stream_get_contents($pipes[2],8193);
+ fclose($pipes[1]); fclose($pipes[2]);
+ $rc=proc_close($proc);
+ if($rc!==0||strlen($out)>8192||strlen($err)>8192) return '';
+ return trim($out);
+}
 function command_policy($cmd){
  $cmd=trim((string)$cmd);
  if($cmd==='') return ['EMPTY','Empty command.',false];
@@ -261,9 +404,23 @@ function command_policy($cmd){
   if(strpos($arg,'../')!==false || $arg==='..' || (strlen($arg)>0 && $arg[0]==='/')) return ['UNKNOWN','Absolute paths and parent traversal are not allowed in terminal arguments.',false];
  }
  if($bin==='git'){
-  $sub=strtolower($parts[1]??'');
-  $allowed=['status','diff','log','show','branch','rev-parse','remote','ls-files','grep','describe'];
-  if(!in_array($sub,$allowed,true)) return ['WRITE','Git mutation is blocked here; use the governed repository workflow.',false];
+  $arguments=array_slice($parts,1);
+  $allowed=[
+   ['status'],
+   ['status','--short'],
+   ['diff','--stat'],
+   ['diff','--name-only'],
+   ['log','--oneline','-5'],
+   ['branch','--show-current'],
+   ['rev-parse','--short','HEAD'],
+   ['ls-files'],
+   ['describe','--always','--dirty']
+  ];
+  if(in_array($arguments,$allowed,true)) return ['READ','Allowlisted read-only Git inspection.',true];
+  $sub=strtolower($arguments[0]??'');
+  $mutating=['add','checkout','clean','commit','config','fetch','merge','mv','pull','push','rebase','remote','reset','restore','rm','switch','tag','update-ref','worktree'];
+  if(in_array($sub,$mutating,true)) return ['WRITE','Git mutation or remote inspection is blocked here; use the governed repository workflow.',false];
+  return ['UNKNOWN','Git command is outside the exact read-only subcommand and argument allowlist.',false];
  }
  if(in_array($bin,['npm','pnpm'],true)){
   $sub=strtolower($parts[1]??'');
@@ -300,11 +457,21 @@ function run_cmd($cmd,$cwd){
  [$class,$reason,$allowed]=command_policy($cmd);
  if(!$allowed) return ["Blocked by Developer Portal policy [".$class."]: ".$reason,126,$class];
  $cwd=safe_cwd($cwd);
+ $parts=preg_split('/\s+/',trim((string)$cmd));
+ if(!$parts||!isset($parts[0])) return ['Unable to start command.',127,$class];
+ $programParts=$parts;
+ $environment=['PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin','HOME'=>home_dir()];
+ if(strtolower($parts[0])==='git'){
+  $context=directadmin_git_repository_context($cwd);
+  if($context===null) return ['Blocked by Developer Portal policy [READ]: Git worktree and metadata must resolve inside the account HOME.',126,'READ'];
+  $programParts=directadmin_git_command_args($context,array_slice($parts,1));
+  $cwd=$context['root'];
+  $environment=directadmin_git_environment();
+ }
  $argv=['/usr/bin/env','timeout','30s','/bin/bash','--noprofile','--norc','-c','exec "$@"','tda-command'];
- $parts=preg_split('/\s+/',trim($cmd));
- foreach($parts as $part)$argv[]=$part;
+ foreach($programParts as $part)$argv[]=$part;
  $spec=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
- $proc=@proc_open($argv,$spec,$pipes,$cwd,['PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin','HOME'=>home_dir()]);
+ $proc=@proc_open($argv,$spec,$pipes,$cwd,$environment);
  if(!is_resource($proc)) return ['Unable to start command.',127,$class];
  fclose($pipes[0]); stream_set_blocking($pipes[1],false); stream_set_blocking($pipes[2],false);
  $limit=524288; $out=''; $start=microtime(true); $truncated=false;
@@ -325,23 +492,20 @@ function run_cmd($cmd,$cwd){
  if(strlen($out)>$limit){$out=substr($out,0,$limit);$truncated=true;}
  $rc=proc_close($proc);
  if($truncated)$out.="\n[output truncated at 512 KiB and process terminated]";
- return [$out,$rc,$class];
+ return [redact_text($out),$rc,$class];
 }
 function diagnostics(){
  $bins=['git','ssh','ssh-keygen','php','composer','node','npm','pnpm','curl']; $r=[];
  foreach($bins as $b){$p=trim((string)shell_exec('command -v '.escapeshellarg($b).' 2>/dev/null'));$r[$b]=$p?:null;}
  return $r;
 }
-function probe_output($command){
- $out=shell_exec($command.' 2>/dev/null');
- return trim((string)$out);
-}
 function codex_readiness($cwd,$keys,$diag,$includeSshState=false){
  $cwd=safe_cwd($cwd);
- $gitRepo=probe_output('git -C '.escapeshellarg($cwd).' rev-parse --is-inside-work-tree')==='true';
- $branch=$gitRepo?probe_output('git -C '.escapeshellarg($cwd).' rev-parse --abbrev-ref HEAD'):'';
- $head=$gitRepo?probe_output('git -C '.escapeshellarg($cwd).' rev-parse --short HEAD'):'';
- $dirty=$gitRepo?probe_output('git -C '.escapeshellarg($cwd).' status --porcelain'):'';
+ $gitContext=directadmin_git_repository_context($cwd);
+ $gitRepo=$gitContext!==null&&directadmin_git_probe($gitContext,['rev-parse','--is-inside-work-tree'])==='true';
+ $branch=$gitRepo?directadmin_git_probe($gitContext,['branch','--show-current']):'';
+ $head=$gitRepo?directadmin_git_probe($gitContext,['rev-parse','--short','HEAD']):'';
+ $dirty=$gitRepo?directadmin_git_probe($gitContext,['status','--porcelain']):'';
  $sshDir=key_dir(); $auth=key_file();
  return [
   'cwd'=>$cwd,
@@ -396,6 +560,7 @@ function redact_text($value){
  $patterns=[
   '/(?i)(authorization\s*:\s*bearer\s+)[^\s]+/',
   '/(?i)\b(api[_-]?key|token|secret|password|passwd|cookie|session[_-]?id)\s*[=:]\s*[^\s,;]+/',
+  '/\b([a-z][a-z0-9+.-]*:\/\/)[^\s\/@]+@/i',
   '/-----BEGIN [A-Z ]*PRIVATE KEY-----.*?-----END [A-Z ]*PRIVATE KEY-----/s'
  ];
  foreach($patterns as $p)$s=preg_replace($p,'$1[REDACTED]',$s);
