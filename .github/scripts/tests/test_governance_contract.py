@@ -1,14 +1,16 @@
-"""Keep repository guidance aligned with the single existing claim gate."""
+"""Keep repository guidance aligned with the claim-recovery policy."""
 import json
 from pathlib import Path
 import re
 import sys
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from types import SimpleNamespace
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / '.github' / 'scripts'))
-from claim_recovery import stale_claim_blockers
+from claim_recovery import reserve_same_ref, stale_claim_blockers
 
 
 class GovernanceContractTests(unittest.TestCase):
@@ -38,36 +40,156 @@ class GovernanceContractTests(unittest.TestCase):
                          'SUPERSEDED', 'september-28-plugin-mission.json'):
             self.assertIn(required, contract)
 
-    def test_stale_claim_recovery_is_bounded_and_multi_issue_work_is_serialized(self):
+    def test_stale_recovery_contract_preserves_review_and_completion_gates(self):
         contract = (ROOT / 'AGENTS.md').read_text()
         claim_rules = contract.split('## 5. GitHub claim and branch discipline', 1)[1].split('## 6.', 1)[0]
-        for required in ('at least one hour', 'no open PR', 'no commits ahead of current `main`',
-                         'reuse the exact branch', 'durable takeover comment',
+        for required in ('within five minutes', 'last hour', 'quiet open PR',
+                         'preserve the existing PR', 'never discard or rewrite them',
+                         'unique empty reservation commit', 'normal non-forced Git semantics',
+                         'rejected', 'durable takeover comment',
                          '.github/scripts/claim_recovery.py',
-                         'Never force-reset', 'multiple claims may be held sequentially',
+                         'multiple claims may be held sequentially',
                          'only one branch may be checked out or written'):
             self.assertIn(required, claim_rules)
         self.assertIn('It does not relax human review, required checks, tenant isolation', contract)
         self.assertIn('only after full completion', contract)
         mission_template = (ROOT / 'docs/agent/MISSION_TEMPLATE.md').read_text()
-        self.assertIn('one-hour recovery procedure in root `AGENTS.md`', mission_template)
+        self.assertIn('every activity source', mission_template)
+        self.assertIn('normal non-forced push', mission_template)
         self.assertIn('may proceed sequentially', mission_template)
 
-    def test_stale_claim_eligibility_requires_all_fresh_facts(self):
+    @staticmethod
+    def make_snapshot(now):
+        observed = now - timedelta(minutes=1)
+        quiet = now - timedelta(hours=2)
+        stamp = lambda value: value.isoformat().replace('+00:00', 'Z')
+        return {
+            'observed_at': stamp(observed),
+            'issue': {'observed_at': stamp(observed), 'state': 'open', 'updated_at': stamp(quiet)},
+            'issue_comments': {'observed_at': stamp(observed), 'complete': True, 'updated_at': []},
+            'owner_status_updates': {'observed_at': stamp(observed), 'complete': True, 'updated_at': []},
+            'pull_requests': [],
+            'pull_requests_complete': True,
+            'branch': {'observed_at': stamp(observed), 'complete': True, 'head_sha': 'a' * 40,
+                       'observed_head_sha': 'a' * 40},
+            'main': {'observed_at': stamp(observed), 'complete': True, 'head_sha': 'c' * 40},
+            'repository_push_events': {'observed_at': stamp(observed), 'complete': True,
+                                       'covered_since': stamp(now - timedelta(hours=2)),
+                                       'events': [{'ref': 'refs/heads/agent/issue-1255',
+                                                   'created_at': stamp(quiet)}]},
+            'workflow_runs': {'observed_at': stamp(observed), 'complete': True,
+                              'covered_since': stamp(now - timedelta(hours=2)),
+                              'updated_at': [], 'statuses': []},
+        }
+
+    def test_complete_quiet_snapshot_allows_same_ref_continuation(self):
         now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
-        eligible = dict(now=now, issue_updated_at='2026-10-02T22:59:59Z',
-                        issue_is_open=True, open_pr_uses_branch=False, ahead_by=0)
-        self.assertEqual(stale_claim_blockers(**eligible), [])
-        self.assertIn('issue-active-within-one-hour', stale_claim_blockers(
-            **{**eligible, 'issue_updated_at': '2026-10-02T23:00:01Z'}))
-        self.assertIn('open-pr-uses-claim-branch', stale_claim_blockers(
-            **{**eligible, 'open_pr_uses_branch': True}))
-        self.assertIn('claim-branch-has-unique-commits', stale_claim_blockers(
-            **{**eligible, 'ahead_by': 1}))
-        self.assertIn('pr-active-within-one-hour', stale_claim_blockers(
-            **{**eligible, 'latest_pr_activity_at': '2026-10-02T23:30:00Z'}))
-        self.assertIn('issue-not-open', stale_claim_blockers(
-            **{**eligible, 'issue_is_open': False}))
+        self.assertEqual(stale_claim_blockers(now=now, branch_name='agent/issue-1255',
+                                              activity_snapshot=self.make_snapshot(now)), [])
+
+    def test_missing_source_stale_snapshot_and_changed_head_fail_closed(self):
+        now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
+        snapshot = self.make_snapshot(now)
+        del snapshot['owner_status_updates']
+        blockers = stale_claim_blockers(now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot)
+        self.assertIn('missing-activity-source:owner_status_updates', blockers)
+        snapshot = self.make_snapshot(now)
+        snapshot['observed_at'] = '2026-10-02T23:00:00Z'
+        self.assertIn('activity-snapshot-not-fresh', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+        snapshot = self.make_snapshot(now)
+        snapshot['branch']['observed_head_sha'] = 'b' * 40
+        self.assertIn('claim-branch-head-changed-during-snapshot', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+
+    def test_each_activity_stream_restarts_quiet_window(self):
+        now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
+        recent = '2026-10-02T23:30:00Z'
+        cases = [
+            ('issue', 'updated_at', recent, 'issue-active-within-one-hour'),
+            ('issue_comments', 'updated_at', [recent], 'activity-within-one-hour:issue_comments.updated_at'),
+            ('owner_status_updates', 'updated_at', [recent], 'activity-within-one-hour:owner_status_updates.updated_at'),
+            ('workflow_runs', 'updated_at', [recent], 'activity-within-one-hour:workflow_runs.updated_at'),
+        ]
+        for source, key, value, expected in cases:
+            with self.subTest(source=source):
+                snapshot = self.make_snapshot(now)
+                snapshot[source][key] = value
+                self.assertIn(expected, stale_claim_blockers(
+                    now=now, branch_name='agent/issue-1255',
+                    activity_snapshot=snapshot))
+        snapshot = self.make_snapshot(now)
+        snapshot['repository_push_events']['events'] = [{
+            'ref': 'refs/heads/agent/issue-1255', 'created_at': recent}]
+        self.assertIn('activity-within-one-hour:repository_push_events.events', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+
+    def test_quiet_open_pr_can_continue_only_on_matching_claim_head(self):
+        now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
+        snapshot = self.make_snapshot(now)
+        observed = snapshot['observed_at']
+        snapshot['pull_requests'] = [{
+            'observed_at': observed, 'complete': True, 'state': 'open', 'head_ref': 'agent/issue-1255',
+            'head_sha': 'a' * 40, 'base_ref': 'main',
+            'updated_at': ['2026-10-02T22:00:00Z'], 'comment_updated_at': [],
+            'review_updated_at': [], 'review_comment_updated_at': [],
+        }]
+        self.assertEqual(stale_claim_blockers(now=now, branch_name='agent/issue-1255',
+                                              activity_snapshot=snapshot), [])
+        snapshot['pull_requests'][0]['head_sha'] = 'b' * 40
+        self.assertIn('open-pr-does-not-match-claim-head', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+
+    def test_active_workflow_and_recent_pr_review_block_continuation(self):
+        now = datetime(2026, 10, 3, 0, 0, tzinfo=timezone.utc)
+        snapshot = self.make_snapshot(now)
+        snapshot['workflow_runs']['statuses'] = ['in_progress']
+        self.assertIn('relevant-workflow-active', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+        snapshot['workflow_runs']['statuses'] = []
+        snapshot['pull_requests'] = [{
+            'observed_at': snapshot['observed_at'], 'complete': True, 'state': 'open',
+            'head_ref': 'agent/issue-1255', 'head_sha': 'a' * 40, 'base_ref': 'main',
+            'updated_at': ['2026-10-02T22:00:00Z'], 'comment_updated_at': [],
+            'review_updated_at': ['2026-10-02T23:30:00Z'], 'review_comment_updated_at': [],
+        }]
+        self.assertIn('activity-within-one-hour:pull_requests[0].review_updated_at', stale_claim_blockers(
+            now=now, branch_name='agent/issue-1255', activity_snapshot=snapshot))
+
+    def test_ref_reservation_is_nonforced_compare_and_swap(self):
+        head = 'a' * 40
+        reservation = 'b' * 40
+        outputs = [
+            SimpleNamespace(returncode=0, stdout=f'{head}\trefs/heads/agent/issue-1255\n'),
+            SimpleNamespace(returncode=0, stdout=''),
+            SimpleNamespace(returncode=0, stdout='ok'),
+        ]
+        with patch('claim_recovery.subprocess.run', side_effect=outputs) as run:
+            reserve_same_ref(branch_name='agent/issue-1255', observed_head=head,
+                             reservation_commit=reservation)
+        push = run.call_args_list[-1].args[0]
+        self.assertEqual(push, ['git', 'push', '--porcelain', 'origin',
+                                f'{reservation}:refs/heads/agent/issue-1255'])
+        self.assertNotIn('--force', push)
+
+    def test_ref_move_or_rejected_push_means_contender_stops(self):
+        head = 'a' * 40
+        reservation = 'b' * 40
+        moved = SimpleNamespace(returncode=0, stdout=f'{"c" * 40}\trefs/heads/agent/issue-1255\n')
+        with patch('claim_recovery.subprocess.run', return_value=moved) as run:
+            with self.assertRaisesRegex(RuntimeError, 'ref moved'):
+                reserve_same_ref(branch_name='agent/issue-1255', observed_head=head,
+                                 reservation_commit=reservation)
+        self.assertEqual(run.call_count, 1)
+        outputs = [
+            SimpleNamespace(returncode=0, stdout=f'{head}\trefs/heads/agent/issue-1255\n'),
+            SimpleNamespace(returncode=0, stdout=''),
+            SimpleNamespace(returncode=1, stdout='', stderr='non-fast-forward'),
+        ]
+        with patch('claim_recovery.subprocess.run', side_effect=outputs):
+            with self.assertRaisesRegex(RuntimeError, 'reservation lost'):
+                reserve_same_ref(branch_name='agent/issue-1255', observed_head=head,
+                                 reservation_commit=reservation)
 
     def test_trusted_workflow_does_not_execute_candidate_code(self):
         workflow = (ROOT / '.github/workflows/agent-claim-gate.yml').read_text()
