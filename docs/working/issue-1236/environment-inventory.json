@@ -1,4 +1,115 @@
 {
+  "scope": "Statically discoverable environment references in active apps/, services/, and packages/ JavaScript, TypeScript, and PHP source. This includes tooling and test-only routes outside test directories. Unit-test files, generated output, archives, and apps/web/marketing-source are excluded. Dynamic property names and host-provided runtime variables are not inferred; this inventory is not a deployment-profile declaration.",
+  "templates": {
+    ".env.example": {
+      "active": [
+        "APP_BASE_URL",
+        "APP_ENCRYPTION_KEY",
+        "APP_PORT",
+        "APP_URL",
+        "AUTH_SECRET",
+        "DATABASE_DIALECT",
+        "DATABASE_URL",
+        "NODE_ENV",
+        "REDIS_URL",
+        "SQLITE_PATH",
+        "TITAN_COMPANY_DATA_ROOT",
+        "TITAN_DEPLOYMENT_PROFILE",
+        "VAPID_PRIVATE_KEY",
+        "VAPID_PUBLIC_KEY",
+        "VAPID_SUBJECT",
+        "WORKER_POLL_MS"
+      ],
+      "commented": [
+        "ANTHROPIC_API_KEY",
+        "BOOKING_ACCOUNT_ID",
+        "DATABASE_URL",
+        "OPENAI_API_KEY",
+        "POSTGRES_DB",
+        "POSTGRES_HOST",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_PORT",
+        "POSTGRES_USER",
+        "RECEIPT_PARSE_MODEL",
+        "S3_ACCESS_KEY",
+        "S3_BUCKET",
+        "S3_ENDPOINT",
+        "S3_REGION",
+        "S3_SECRET_KEY",
+        "SMS_GATEWAY_PASSWORD",
+        "SMS_GATEWAY_SIM_NUMBER",
+        "SMS_GATEWAY_URL",
+        "SMS_GATEWAY_USERNAME",
+        "SMTP_FROM",
+        "SMTP_HOST",
+        "SMTP_PASS",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SQUARE_WEBHOOK_URL"
+      ]
+    },
+    "infra/vps.env.example": {
+      "active": [
+        "APP_BASE_URL",
+        "APP_DOMAIN",
+        "APP_ENCRYPTION_KEY",
+        "APP_PORT",
+        "APP_TAG",
+        "APP_URL",
+        "AUTH_SECRET",
+        "DATABASE_DIALECT",
+        "DATABASE_URL",
+        "NODE_ENV",
+        "NO_TLS",
+        "REDIS_CONTAINER_MEMORY_LIMIT",
+        "REDIS_CONTAINER_MEMORY_RESERVATION",
+        "REDIS_MAXMEMORY",
+        "REDIS_URL",
+        "SECURE_COOKIES",
+        "SQLITE_PATH",
+        "TITAN_COMPANY_DATA_ROOT",
+        "TITAN_DEPLOYMENT_PROFILE",
+        "VAPID_PRIVATE_KEY",
+        "VAPID_PUBLIC_KEY",
+        "VAPID_SUBJECT",
+        "WORKER_POLL_MS",
+        "WORKFORCE_COMPANY_STORE_HOST_ROOT",
+        "WORKFORCE_DIRECTADMIN_NODE_ID",
+        "WORKFORCE_IDENTITY_SQLITE_HOST_PATH",
+        "WORKFORCE_SESSION_ALGORITHM",
+        "WORKFORCE_SESSION_ISSUER",
+        "WORKFORCE_SESSION_KEY_ID",
+        "WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH",
+        "WORKFORCE_UPSTREAM_SESSION_ALGORITHM",
+        "WORKFORCE_UPSTREAM_SESSION_AUDIENCE",
+        "WORKFORCE_UPSTREAM_SESSION_ISSUER",
+        "WORKFORCE_UPSTREAM_SESSION_KEY_ID",
+        "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH"
+      ],
+      "commented": [
+        "ANTHROPIC_API_KEY",
+        "BOOKING_ACCOUNT_ID",
+        "OPENAI_API_KEY",
+        "SMS_GATEWAY_PASSWORD",
+        "SMS_GATEWAY_SIM_NUMBER",
+        "SMS_GATEWAY_URL",
+        "SMS_GATEWAY_USERNAME",
+        "SMTP_HOST",
+        "SMTP_PASS",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE"
+      ]
+    },
+    "apps/marketing/nexjob/.env.example": {
+      "active": [
+        "VITE_APP_URL"
+      ],
+      "commented": [
+        "VITE_APP_URL"
+      ]
+    }
+  },
   "composeVariables": [
     "APP_PORT",
     "APP_TAG",
@@ -347,116 +458,6 @@
     "WORKFORCE_WEB_SQLITE_PATH": [
       "services/workforce/src/production-dependencies.ts"
     ]
-  },
-  "scope": "Statically discoverable environment references in active apps/, services/, and packages/ JavaScript, TypeScript, and PHP source. This includes tooling and test-only routes outside test directories. Unit-test files, generated output, archives, and apps/web/marketing-source are excluded. Dynamic property names and host-provided runtime variables are not inferred; this inventory is not a deployment-profile declaration.",
-  "templates": {
-    ".env.example": {
-      "active": [
-        "APP_BASE_URL",
-        "APP_ENCRYPTION_KEY",
-        "APP_PORT",
-        "APP_URL",
-        "AUTH_SECRET",
-        "DATABASE_DIALECT",
-        "DATABASE_URL",
-        "NODE_ENV",
-        "REDIS_URL",
-        "SQLITE_PATH",
-        "TITAN_COMPANY_DATA_ROOT",
-        "TITAN_DEPLOYMENT_PROFILE",
-        "VAPID_PRIVATE_KEY",
-        "VAPID_PUBLIC_KEY",
-        "VAPID_SUBJECT",
-        "WORKER_POLL_MS"
-      ],
-      "commented": [
-        "ANTHROPIC_API_KEY",
-        "BOOKING_ACCOUNT_ID",
-        "DATABASE_URL",
-        "OPENAI_API_KEY",
-        "POSTGRES_DB",
-        "POSTGRES_HOST",
-        "POSTGRES_PASSWORD",
-        "POSTGRES_PORT",
-        "POSTGRES_USER",
-        "RECEIPT_PARSE_MODEL",
-        "S3_ACCESS_KEY",
-        "S3_BUCKET",
-        "S3_ENDPOINT",
-        "S3_REGION",
-        "S3_SECRET_KEY",
-        "SMS_GATEWAY_PASSWORD",
-        "SMS_GATEWAY_SIM_NUMBER",
-        "SMS_GATEWAY_URL",
-        "SMS_GATEWAY_USERNAME",
-        "SMTP_FROM",
-        "SMTP_HOST",
-        "SMTP_PASS",
-        "SMTP_PORT",
-        "SMTP_USER",
-        "SQUARE_WEBHOOK_URL"
-      ]
-    },
-    "apps/marketing/nexjob/.env.example": {
-      "active": [
-        "VITE_APP_URL"
-      ],
-      "commented": [
-        "VITE_APP_URL"
-      ]
-    },
-    "infra/vps.env.example": {
-      "active": [
-        "APP_BASE_URL",
-        "APP_DOMAIN",
-        "APP_ENCRYPTION_KEY",
-        "APP_PORT",
-        "APP_TAG",
-        "APP_URL",
-        "AUTH_SECRET",
-        "DATABASE_DIALECT",
-        "DATABASE_URL",
-        "NODE_ENV",
-        "NO_TLS",
-        "REDIS_CONTAINER_MEMORY_LIMIT",
-        "REDIS_CONTAINER_MEMORY_RESERVATION",
-        "REDIS_MAXMEMORY",
-        "REDIS_URL",
-        "SECURE_COOKIES",
-        "SQLITE_PATH",
-        "TITAN_COMPANY_DATA_ROOT",
-        "TITAN_DEPLOYMENT_PROFILE",
-        "VAPID_PRIVATE_KEY",
-        "VAPID_PUBLIC_KEY",
-        "VAPID_SUBJECT",
-        "WORKER_POLL_MS",
-        "WORKFORCE_COMPANY_STORE_HOST_ROOT",
-        "WORKFORCE_DIRECTADMIN_NODE_ID",
-        "WORKFORCE_IDENTITY_SQLITE_HOST_PATH",
-        "WORKFORCE_SESSION_ALGORITHM",
-        "WORKFORCE_SESSION_ISSUER",
-        "WORKFORCE_SESSION_KEY_ID",
-        "WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH",
-        "WORKFORCE_UPSTREAM_SESSION_ALGORITHM",
-        "WORKFORCE_UPSTREAM_SESSION_AUDIENCE",
-        "WORKFORCE_UPSTREAM_SESSION_ISSUER",
-        "WORKFORCE_UPSTREAM_SESSION_KEY_ID",
-        "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH"
-      ],
-      "commented": [
-        "ANTHROPIC_API_KEY",
-        "BOOKING_ACCOUNT_ID",
-        "OPENAI_API_KEY",
-        "SMS_GATEWAY_PASSWORD",
-        "SMS_GATEWAY_SIM_NUMBER",
-        "SMS_GATEWAY_URL",
-        "SMS_GATEWAY_USERNAME",
-        "SMTP_HOST",
-        "SMTP_PASS",
-        "SMTP_PORT",
-        "SMTP_USER",
-        "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE"
-      ]
-    }
   }
 }
+
