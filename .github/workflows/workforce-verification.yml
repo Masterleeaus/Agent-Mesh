@@ -47,15 +47,6 @@ jobs:
       TITAN_SERVER_NODE_SOURCE_ROOT: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout published #1050 relay fixture
-        uses: actions/checkout@v4
-        with:
-          repository: Masterleeaus/Titan-Zero-Field-Service-Workforce
-          ref: 054c3651e6ee8c849add75ad6d10516bcd91c919
-          path: .ci/issue-1050-relay-fixture
-          sparse-checkout: apps/directadmin/workforce/tests/relay-host.integration.mjs
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
       - uses: pnpm/action-setup@v4
         with:
           version: 9.12.0
@@ -100,14 +91,7 @@ jobs:
             apps/directadmin/workforce/tests/*.test.mjs \
             apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
             apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
-      - name: Verify and stage the exact #1050 relay fixture
-        run: |
-          test "$(git -C .ci/issue-1050-relay-fixture rev-parse HEAD)" = '054c3651e6ee8c849add75ad6d10516bcd91c919'
-          install -D -m 0644 \
-            .ci/issue-1050-relay-fixture/apps/directadmin/workforce/tests/relay-host.integration.mjs \
-            apps/directadmin/workforce/tests/relay-host.integration.mjs
-          test "$(sha256sum apps/directadmin/workforce/tests/relay-host.integration.mjs | cut -d ' ' -f1)" = '408d7e4d18d9710e598ac5936eb4814a802d1485bcd1c36c15115515e59a5492'
-      - name: Run the #1050 RAW relay fixture at its published head
+      - name: Run the merged #1050 RAW relay fixture
         run: |
           pnpm --filter @titan-zero/workforce exec node --import tsx \
             ../../apps/directadmin/workforce/tests/relay-host.integration.mjs
