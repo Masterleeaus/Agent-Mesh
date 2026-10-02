@@ -201,9 +201,10 @@ function integration_expect_successful_key(string $html,string $expectedKey,stri
  integration_expect((fileperms($path)&0777)===0600,'authorized_keys must retain mode 0600');
 }
 
-function integration_expect_transport_rejected(string $html,string $case='invalid transport'):void{
+function integration_expect_transport_rejected(string $html,string $case='invalid transport',?string $expectedDiagnostic=null):void{
  integration_expect(strpos($html,'Request rejected: malformed or ambiguous form data.')!==false,$case.' must fail closed');
  integration_expect(strpos($html,'Exit code:')===false,$case.' must not execute a command');
+ if($expectedDiagnostic!==null) integration_expect(strpos($html,$expectedDiagnostic)!==false,$case.' must expose the expected allowlisted diagnostic without form contents');
 }
 
 integration_expect(count($argv)>=2,'pass the extracted final archive directory');
@@ -313,6 +314,84 @@ $rawPostEnvironment=$common+[
 ];
 [$html]=integration_run_role($root,'admin',$rawPostEnvironment);
 integration_expect_successful_pwd($html,$homeA);
+
+foreach(["\n","\r\n"] as $terminator){
+ $terminatedBody=$body.$terminator;
+ $terminatedStdinEnvironment=$common+[
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+  'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
+ ];
+ [$html]=integration_run_role($root,'admin',$terminatedStdinEnvironment,$terminatedBody);
+ integration_expect_successful_pwd($html,$homeA);
+
+ $terminatedRawEnvironment=$common+[
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+  'POST'=>$terminatedBody,'CONTENT_LENGTH'=>(string)strlen($body)
+ ];
+ [$html]=integration_run_role($root,'admin',$terminatedRawEnvironment);
+ integration_expect_successful_pwd($html,$homeA);
+}
+
+$doubleLfBody=$body."\n\n";
+$doubleLfEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
+];
+[$html]=integration_run_role($root,'admin',$doubleLfEnvironment,$doubleLfBody);
+$doubleLfDiagnostic='code=body_length_mismatch transport=stdin declared_bytes='.strlen($body).' body_bytes_read='.strlen($doubleLfBody);
+integration_expect_transport_rejected($html,'two trailing LF bytes outside CONTENT_LENGTH',$doubleLfDiagnostic);
+
+$missingPostEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
+ 'CONTENT_LENGTH'=>(string)strlen($body)
+];
+[$html]=integration_run_role($root,'admin',$missingPostEnvironment);
+integration_expect_transport_rejected($html,'missing DirectAdmin POST environment marker','code=raw_post_missing transport=unavailable');
+
+$invalidMarkerEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=false','CONTENT_LENGTH'=>(string)strlen($body)
+];
+[$html]=integration_run_role($root,'admin',$invalidMarkerEnvironment);
+integration_expect_transport_rejected($html,'invalid DirectAdmin POST marker','code=post_marker_invalid transport=marker');
+
+$invalidLengthEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>'12bytes'
+];
+[$html]=integration_run_role($root,'admin',$invalidLengthEnvironment,$body);
+integration_expect_transport_rejected($html,'malformed CONTENT_LENGTH','code=content_length_invalid transport=stdin declared_bytes=unknown');
+
+$invalidTypeEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
+];
+$invalidTypeEnvironment['CONTENT_TYPE']='application/json';
+[$html]=integration_run_role($root,'admin',$invalidTypeEnvironment,$body);
+integration_expect_transport_rejected($html,'unsupported DirectAdmin form content type','code=content_type_invalid transport=stdin');
+
+$queryFieldEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'csrf='.rawurlencode($token),
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
+];
+[$html]=integration_run_role($root,'admin',$queryFieldEnvironment,$body);
+integration_expect_transport_rejected($html,'form fields supplied through query','code=query_form_fields transport=query');
+
+$duplicateBody='csrf='.rawurlencode($token).'&csrf='.rawurlencode($token);
+$duplicateEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($duplicateBody)
+];
+[$html]=integration_run_role($root,'admin',$duplicateEnvironment,$duplicateBody);
+integration_expect_transport_rejected($html,'duplicate form fields','code=duplicate_field transport=stdin');
+
+$ambiguousBody=http_build_query($valid+['add_key'=>'1','public_key'=>'synthetic-invalid-key']);
+$ambiguousEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($ambiguousBody)
+];
+[$html]=integration_run_role($root,'admin',$ambiguousEnvironment,$ambiguousBody);
+integration_expect_transport_rejected($html,'multiple form actions','code=action_ambiguous transport=stdin');
 
 $gitRepo=$homeA.'/git-remote-policy';
 integration_init_git_repo($gitRepo,$homeA);
@@ -612,3 +691,4 @@ foreach(['admin','reseller','user'] as $role){
 integration_stop_web_server($webServer);
 
 echo "DirectAdmin role request integration tests passed (actual admin CLI environment/POST/stdin transports; reseller/user CLI and all-role cli-server GET plus valid-CSRF run/key mutation denial; read-only HOME snapshots; malformed, ambiguous, cross-HOME and command-policy cases).".PHP_EOL;
+
