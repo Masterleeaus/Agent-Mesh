@@ -102,7 +102,7 @@ export function selectForgeProvider(request: ForgeBuildRequest, providers: reado
   return eligible.find(p => p.kind === preferred) ?? native;
 }
 
-export async function buildForgeCandidate(input: { request: ForgeBuildRequest; plan?: ForgeBuildPlan; providers?: readonly ForgeProvider[]; generator?: ForgeGenerator; evidence?: readonly string[]; now?: () => string }): Promise<ForgeReleaseCandidate> {
+export async function buildForgeCandidate(input: { request: ForgeBuildRequest; plan?: ForgeBuildPlan; providers?: readonly ForgeProvider[]; generator?: ForgeGenerator; cleanup?: () => Promise<void> | void; evidence?: readonly string[]; now?: () => string }): Promise<ForgeReleaseCandidate> {
   const request = assertRequest(input.request); const plan = input.plan ?? planForgeBuild(request); const provider = selectForgeProvider(request, input.providers); const run = input.generator ?? provider.generate; const max = limits(request.permissions);
   const candidateId = `candidate:${sha({ request_id: request.request_id, idempotency_key: request.idempotency_key, plan: plan.plan_digest }).slice(0, 24)}`;
   let generated: readonly Readonly<{ path: string; media_type?: string; content: string }>[] = [];
@@ -118,7 +118,7 @@ export async function buildForgeCandidate(input: { request: ForgeBuildRequest; p
     const riskLevel = findings.some(f => f.severity === "CRITICAL") ? "CRITICAL" as const : findings.some(f => f.severity === "HIGH") ? "HIGH" as const : findings.some(f => f.severity === "MEDIUM") ? "MEDIUM" as const : "LOW" as const;
     const candidate = { schema: TITAN_FORGE_CONTRACT.candidate_schema, candidate_id: candidateId, request_id: request.request_id, company_id: request.company_id, package_id: request.package_id, package_version: request.package_version, status: blockers.length ? "REJECTED" as const : "REVIEW_REQUIRED" as const, artifacts, findings, sbom, provenance: { source_ref: request.source_ref, source_digest: request.source_digest, plan_digest: plan.plan_digest, input_digest: sha(request.inputs), generated_at: now() }, permissions: max, risk: { level: riskLevel, blocker_count: blockers.length, authority_effect: false as const }, test_results: [{ name: "native-forge-validation", status: blockers.length ? "failed" as const : "passed" as const, evidence_ref: `forge:test:${candidateId}` }], evidence_refs: [...(input.evidence ?? []), `forge:evidence:${candidateId}`], blockers, rollback: { supported: true as const, target_version: request.inputs.previous_version ? String(request.inputs.previous_version) : null }, authority_effect: false as const };
     return freeze(candidate);
-  } finally { generated = []; }
+  } finally { generated = []; await input.cleanup?.(); }
 }
 
 /** Idempotency/restart boundary. A durable caller-owned store makes completed builds recoverable after process restart. */
