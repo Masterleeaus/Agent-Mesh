@@ -68,3 +68,11 @@ export function createVisualChecklistProposal(i:{company_id:string;version:numbe
  if(!Number.isInteger(i.version)||i.version<1||!i.items.length)throw Error("visual_profile_invalid");
  return{proposal_id:"profile:"+key(i),company_id:i.company_id,version:i.version,items:i.items.map(x=>({...x})),source:i.source,review_state:"PENDING_REVIEW" as const,effective_company_policy:false as const};
 }
+
+export async function prepareVisitCloseoutVisualAssurance(i:{request:TitanVisualAnalysisRequest;checklist:CaptureChecklist;captured:readonly EvidenceRef[];before:EvidenceRef;after:EvidenceRef;provider:VisualProvider|null;online:boolean;source_revision_now:number}){
+ const guidance=createCaptureGuidance({checklist:i.checklist,company_id:i.request.company_id,subject_id:i.request.subject_id,captured:i.captured,offline:!i.online});
+ const comparison=pairBeforeAfter(i.before,i.after,i.request.company_id);
+ const result=await analyzeVisualEvidence({...i.request,offline:i.request.offline||!i.online},i.provider,{source_revision_now:i.source_revision_now});
+ const proposal=createVisualProposal({company_id:i.request.company_id,kind:"COMPLETION_ASSURANCE",result,evidence_refs:comparison?[comparison.before_ref,comparison.after_ref]:[],source_revision:i.source_revision_now});
+ return{guidance,comparison,result,proposal,review_required:guidance.quality!=="READY"||result.review_state==="HUMAN_REVIEW"||result.uncertainty==="HIGH"||result.uncertainty==="UNAVAILABLE",completion_asserted:false as const,authority_effect:false as const,mutation_requires_governed_execution:true as const};
+}
