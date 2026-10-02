@@ -391,8 +391,8 @@ function directadmin_git_read_pointer($file,$label,$base,$home,$expectDirectory)
  if($resolvedFile===false||!is_file($resolvedFile)||!path_within($resolvedFile,$home)) return null;
  $raw=@file_get_contents($resolvedFile,false,null,0,4097);
  if(!is_string($raw)||strlen($raw)>4096||strpos($raw,"\0")!==false) return null;
- if($label==='commondir'){
-  // Git stores a linked worktree's common-dir pointer as a bare relative path.
+ if(in_array($label,['commondir','worktree-gitdir'],true)){
+  // Git stores linked worktree commondir and reverse gitdir pointers as bare paths.
   $pattern='/\\A([^\\r\\n]+)(?:\\r?\\n)?\\z/D';
  }else{
   $pattern='/\\A'.preg_quote($label,'/').': ([^\\r\\n]+)(?:\\r?\\n)?\\z/D';
@@ -454,7 +454,7 @@ function directadmin_git_repository_context($requested){
    }
    $worktreePointer=$gitDirectory.'/gitdir';
    if(@lstat($worktreePointer)!==false){
-    $backPointer=directadmin_git_read_pointer($worktreePointer,'gitdir',$gitDirectory,$home,false);
+    $backPointer=directadmin_git_read_pointer($worktreePointer,'worktree-gitdir',$gitDirectory,$home,false);
     $expectedEntry=realpath($gitEntry);
     if($backPointer===null||$expectedEntry===false||$backPointer!==$expectedEntry) return null;
    }
