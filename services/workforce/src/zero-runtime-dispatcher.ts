@@ -1,14 +1,19 @@
+import { isDeepStrictEqual } from "node:util";
+import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
 import type {
   CompanyId,
   WorkId,
   WorkItem,
+  WorkCorrelation,
   WorkforceStore,
   WorkforceWorker,
   WorkforceWorkerStore,
   WorkerId,
 } from "./index.js";
 import { WorkforceService } from "./index.js";
+
+export type { AuthenticatedWorkIdentity as AuthenticatedDispatchIdentity } from "./index.js";
 
 export type ZeroRuntimeEvent = {
   event_id?: string;
@@ -33,7 +38,7 @@ export interface ZeroPersistentRuntimePort {
     agent_id: WorkerId;
     state: string;
   } | null>;
-  start(input: {
+  start(input: WorkCorrelation & {
     run_id?: string;
     company_id: CompanyId;
     actor_id: string;
@@ -49,7 +54,9 @@ export interface ZeroPersistentRuntimePort {
     company_id: CompanyId;
     run_id: string;
     input?: { role: string; content: string };
+    continuation?: WorkCorrelation & { client_message_id: string; fingerprint: string; interaction_id: string; correlation_id: string };
   }): Promise<ZeroRuntimeRun>;
+  cancel?(input: { company_id: CompanyId; run_id: string; reason?: string }): Promise<ZeroRuntimeRun>;
 }
 
 export type ZeroRuntimeRun = {
@@ -64,13 +71,13 @@ export type ZeroRuntimeRun = {
   error?: unknown;
 };
 
-export type ZeroWorkforceDispatchInput = {
+export type ZeroWorkforceDispatchInput = WorkCorrelation & {
   company_id: CompanyId;
   actor_id: string;
   conversation_id: string;
   interaction_id: string;
   client_message_id: string;
-  text: string;
+  text?: string;
   correlation_id: string;
   requested_agent_id?: WorkerId;
   continuation_token?: string;
@@ -177,7 +184,7 @@ export class ZeroWorkforceRuntimeDispatcher {
       conversation_id: required(input.conversation_id, "zero-conversation-id-required"),
       interaction_id: required(input.interaction_id, "zero-interaction-id-required"),
       client_message_id: required(input.client_message_id, "zero-client-message-id-required"),
-      text: required(input.text, "zero-text-required"),
+      text: input.continuation_token ? String(input.text ?? "").trim() : required(input.text, "zero-text-required"),
       correlation_id: required(input.correlation_id, "zero-correlation-id-required"),
       requested_agent_id: input.requested_agent_id?.trim() || undefined,
       continuation_token: input.continuation_token?.trim() || undefined,
@@ -194,15 +201,15 @@ export class ZeroWorkforceRuntimeDispatcher {
     // the same lifecycle, with automatic runtime wake disabled in the transaction.
     const work = await this.workTransaction(async (workforce, store) => {
       let work = await store.get(input.company_id, work_id);
-      if (work) this.assertOrigin(work, input);
+      if (work) { this.assertOrigin(work, input); this.assertReplay(work, input); }
       if (work && !['CREATED', 'READY', 'CLAIMED', 'IN_PROGRESS'].includes(work.state)) return work;
       const worker = await this.resolveWorker(input.company_id, work?.assignee ?? input.requested_agent_id, "getWorker" in store ? store as WorkforceStore & WorkforceWorkerStore : this.workers);
       if (!work) {
         try {
           work = await workforce.create({
-            company_id: input.company_id, work_id, objective: input.text,
+            company_id: input.company_id, work_id, objective: input.text!,
             description: 'Intent delegated by One through Zero.', creator: input.actor_id,
-            origin: { actor_id: input.actor_id, conversation_id: input.conversation_id, surface: 'zero', correlation_id: input.correlation_id },
+            origin: { actor_id: input.actor_id, conversation_id: input.conversation_id, surface: 'zero', correlation_id: input.correlation_id, ...this.correlation(input), dispatch_fingerprint: this.fingerprint(input) },
             team_id: worker.team_id, priority: 50, dependencies: [], required_capabilities: [], context_refs: [], evidence_refs: [],
           });
         } catch (error) {
@@ -210,6 +217,7 @@ export class ZeroWorkforceRuntimeDispatcher {
           work = await store.get(input.company_id, work_id);
           if (!work) throw error;
           this.assertOrigin(work, input);
+          this.assertReplay(work, input);
         }
       }
       if (work.state === 'CREATED') work = await workforce.refreshReadiness(input.company_id, work_id);
@@ -226,6 +234,7 @@ export class ZeroWorkforceRuntimeDispatcher {
           run_id: `zero-work:${work_id}`, company_id: input.company_id, actor_id: input.actor_id,
           agent_id: work.assignee, conversation_id: input.conversation_id, work_id,
           interaction_id: input.interaction_id, correlation_id: work.origin?.correlation_id ?? input.correlation_id,
+          ...this.correlation(work.origin ?? input),
           role: 'workforce-manager', messages: [{ role: 'user', content: work.objective }],
         });
       } catch (error) {
@@ -233,6 +242,7 @@ export class ZeroWorkforceRuntimeDispatcher {
         run = await lookup.call(this.runtime, { company_id: input.company_id, work_id }) as ZeroRuntimeRun | null;
       }
     }
+    if (run) this.assertRun(run, input.company_id, work_id, input.conversation_id, work.assignee!);
     if (run?.state === 'QUEUED') {
       try { run = await this.runtime.resume({ company_id: input.company_id, run_id: run.run_id }); }
       catch (error) {
@@ -254,19 +264,45 @@ export class ZeroWorkforceRuntimeDispatcher {
     this.assertOrigin(work, input);
     if (!work.assignee) throw new Error("zero-continuation-work-unassigned");
 
-    const recoverable = await this.runtime.findRecoverableByWork({ company_id: input.company_id, work_id: work.work_id });
+    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
+    const recoverable = await lookup.call(this.runtime, { company_id: input.company_id, work_id: work.work_id });
     if (!recoverable || recoverable.run_id !== continuation.run_id) throw new Error("zero-continuation-run-not-found");
     if (recoverable.agent_id !== work.assignee) throw new Error("zero-continuation-agent-conflict");
+    if (recoverable.company_id !== undefined && recoverable.company_id !== input.company_id) throw new Error("zero-runtime-company-conflict");
+    if (recoverable.conversation_id !== undefined && recoverable.conversation_id !== input.conversation_id) throw new Error("zero-runtime-conversation-conflict");
+    if (recoverable.work_id !== undefined && recoverable.work_id !== work.work_id) throw new Error("zero-runtime-work-conflict");
 
     const run = await this.runtime.resume({
       company_id: input.company_id,
       run_id: continuation.run_id,
-      input: { role: "user", content: input.text },
+      continuation: { ...this.correlation(input), client_message_id: input.client_message_id, fingerprint: this.fingerprint(input), interaction_id: input.interaction_id, correlation_id: input.correlation_id },
+      ...(input.text ? { input: { role: "user", content: input.text } } : {}),
     });
     this.assertRun(run, input.company_id, work.work_id, input.conversation_id, work.assignee);
     await this.syncWorkFromRun(run, runtimeEvents);
     const updated = (await this.store.get(input.company_id, work.work_id))!;
     return this.result(input, updated, runtimeEvents, run);
+  }
+
+  async cancel(input: WorkCorrelation & { company_id: CompanyId; actor_id: string; conversation_id: string; continuation_token: string; reason?: string }): Promise<ZeroWorkforceDispatchResult> {
+    const normalized = { ...input, company_id: required(input.company_id, "zero-company-id-required"), actor_id: required(input.actor_id, "zero-actor-id-required"), conversation_id: required(input.conversation_id, "zero-conversation-id-required") };
+    const continuation = decodeContinuation(required(input.continuation_token, "zero-continuation-required"));
+    const work = await this.store.get(normalized.company_id, continuation.work_id);
+    if (!work) throw new Error("zero-continuation-work-not-found");
+    this.assertOrigin(work, normalized as ZeroWorkforceDispatchInput);
+    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
+    const recoverable = await lookup.call(this.runtime, { company_id: normalized.company_id, work_id: work.work_id }) as ZeroRuntimeRun | null;
+    if (!recoverable || recoverable.run_id !== continuation.run_id) throw new Error("zero-continuation-run-not-found");
+    this.assertRun(recoverable, normalized.company_id, work.work_id, normalized.conversation_id, work.assignee!);
+    if (!this.runtime.cancel) throw new Error("zero-cancellation-unavailable");
+    const events: ZeroRuntimeEvent[] = [];
+    const unsubscribe = this.runtime.events.subscribe(event => { if (event.company_id === normalized.company_id && event.run_id === continuation.run_id) events.push(structuredClone(event)); });
+    try {
+      const run = await this.runtime.cancel({ company_id: normalized.company_id, run_id: continuation.run_id, reason: input.reason ?? "cancelled-by-client" });
+      this.assertRun(run, normalized.company_id, work.work_id, normalized.conversation_id, work.assignee!);
+      await this.syncWorkFromRun(run, events);
+      return this.result(normalized as ZeroWorkforceDispatchInput, (await this.store.get(normalized.company_id, work.work_id))!, events, run);
+    } finally { unsubscribe(); }
   }
 
   private async resolveWorker(company_id: CompanyId, requested?: WorkerId, workers: WorkforceWorkerStore = this.workers): Promise<WorkforceWorker> {
@@ -288,6 +324,29 @@ export class ZeroWorkforceRuntimeDispatcher {
     if (work.origin?.conversation_id !== input.conversation_id) throw new Error("zero-work-conversation-conflict");
     if (work.origin?.actor_id !== input.actor_id) throw new Error("zero-work-actor-conflict");
     if (work.origin?.surface !== "zero") throw new Error("zero-work-surface-conflict");
+    if (work.origin.authenticated_identity && !isDeepStrictEqual(work.origin.authenticated_identity, input.authenticated_identity)) {
+      throw new Error("zero-work-authenticated-identity-conflict");
+    }
+    for (const key of ["session_id", "context_revision"] as const) {
+      if (work.origin[key] !== undefined && work.origin[key] !== input[key]) throw new Error(`zero-work-${key}-conflict`);
+    }
+  }
+
+  private correlation(input: WorkCorrelation): WorkCorrelation {
+    return Object.fromEntries((["request_id", "operation_id", "trace_id", "idempotency_key", "session_id", "context_revision", "authenticated_identity"] as const)
+      .filter(key => input[key] !== undefined).map(key => [key, key === "authenticated_identity" ? Object.fromEntries(Object.entries(input.authenticated_identity!).sort(([a], [b]) => a.localeCompare(b))) : input[key]]));
+  }
+
+  private fingerprint(input: ZeroWorkforceDispatchInput): string {
+    return createHash("sha256").update(JSON.stringify({ text: input.text, interaction_id: input.interaction_id,
+      correlation_id: input.correlation_id, requested_agent_id: input.requested_agent_id ?? null,
+      ...this.correlation(input) })).digest("hex");
+  }
+
+  private assertReplay(work: WorkItem, input: ZeroWorkforceDispatchInput): void {
+    if (work.objective !== input.text || (work.origin?.dispatch_fingerprint
+      ? work.origin.dispatch_fingerprint !== this.fingerprint(input)
+      : work.origin?.correlation_id !== input.correlation_id)) throw new Error("zero-work-replay-conflict");
   }
 
   private assertRun(run: ZeroRuntimeRun, company_id: CompanyId, work_id: WorkId, conversation_id: string, agent_id: WorkerId): void {
@@ -341,6 +400,12 @@ export class ZeroWorkforceRuntimeDispatcher {
     events.push({
       id: `work:${work.work_id}:${work.updated_at}`,
       kind: "work.state",
+      actor_id: work.origin?.actor_id,
+      correlation_id: work.origin?.correlation_id,
+      request_id: work.origin?.request_id,
+      operation_id: work.origin?.operation_id,
+      trace_id: work.origin?.trace_id,
+      idempotency_key: work.origin?.idempotency_key,
       company_id: input.company_id,
       conversation_id: input.conversation_id,
       surface: "zero",

@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { createProductionRuntimeBootstrap } from './production-runtime-bootstrap.ts';
 import { SqliteWorkforceStore } from './sqlite-store.ts';
 import { assertAuthorityDecisionAllowsExecution } from '../../../packages/runtime/authority/authority-evaluator.mjs';
 import { SqliteAuthorityStore, AuthorityContextResolver, WorkerAccessResolver, SqliteWorkerAccessStore } from '../../../packages/runtime/authority/index.mjs';
 import { ExecutionGateway } from '../../../packages/tools/execution-gateway.mjs';
+import { AcceptedEvidenceLedger, rebuildJobProjection } from '../../../packages/tools/accepted-evidence-ledger.mjs';
 
 const CAPABILITY = 'crm.work_order.complete';
 const command = text => /^complete work order ([a-zA-Z0-9_-]+)$/i.exec(String(text).trim())?.[1] ?? null;
@@ -13,9 +15,33 @@ const one = async (storage, sql, params) => (await storage.query(sql, params)).r
  * Authority material is read, never issued here. The explicit command adapter is
  * deliberately limited; it is not a general language planner or another engine.
  */
-export async function createFieldServiceRuntime({ storage, workOrders } = {}) {
+export async function createFieldServiceRuntime({ storage, workOrders, revalidateIdentity } = {}) {
   if (!storage || storage.dialect !== 'sqlite') throw new Error('zero-sqlite-storage-required');
   for (const method of ['complete', 'read']) if (typeof workOrders?.[method] !== 'function') throw new Error(`production-runtime-port-required:workOrders.${method}`);
+  if (revalidateIdentity !== undefined && typeof revalidateIdentity !== 'function') throw new Error('production-runtime-port-required:revalidateIdentity');
+  // Same canonical control-state tables used by db/sqlite/001_canonical.sql.
+  // A standalone control store has no business companies table: company_id is
+  // resolved by authenticated ingress and the protected company storage map.
+  // Existing installations (including their foreign keys) are left intact.
+  await storage.query("CREATE TABLE IF NOT EXISTS authority_state (id TEXT PRIMARY KEY, company_id TEXT NOT NULL, subject_type TEXT NOT NULL, subject_id TEXT NOT NULL, level TEXT NOT NULL, envelope TEXT NOT NULL DEFAULT '{}', granted_by TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE(company_id,subject_type,subject_id))");
+  await storage.query("CREATE TABLE IF NOT EXISTS evidence (id TEXT PRIMARY KEY, company_id TEXT NOT NULL, subject_type TEXT NOT NULL, subject_id TEXT NOT NULL, evidence_type TEXT NOT NULL, provenance TEXT NOT NULL DEFAULT '{}', payload TEXT NOT NULL DEFAULT '{}', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+  await storage.query('CREATE INDEX IF NOT EXISTS idx_authority_company_subject ON authority_state(company_id,subject_type,subject_id)');
+  await storage.query('CREATE INDEX IF NOT EXISTS idx_evidence_company_subject ON evidence(company_id,subject_type,subject_id)');
+  // Apply only the existing authority/access owners' fixed, versioned SQL.
+  // Their complete statements end at line boundaries (trigger bodies included).
+  // This initializes schemas, never grants, approvals, autonomy or field proofs.
+  for (const migration of ['003_authority_persistence.sql', '004_worker_access.sql']) {
+    const sql = await readFile(new URL(`../../../db/sqlite/${migration}`, import.meta.url), 'utf8');
+    await storage.transaction(async tx => {
+      let statement = '';
+      for (const line of sql.split(/\r?\n/)) {
+        if (!line.trim() || line.trimStart().startsWith('--')) continue;
+        statement += line + '\n';
+        if (line.trimEnd().endsWith(';')) { await tx.query(statement); statement = ''; }
+      }
+      if (statement.trim()) throw new Error(`incomplete-owner-migration:${migration}`);
+    });
+  }
   const authorityStore = new SqliteAuthorityStore(storage);
   const accessResolver = new WorkerAccessResolver({ store: new SqliteWorkerAccessStore(storage) });
   const workers = new SqliteWorkforceStore(storage);
@@ -23,6 +49,7 @@ export async function createFieldServiceRuntime({ storage, workOrders } = {}) {
 
   async function authorize(input) {
     const { company_id, actor_id, agent_id, work_id, run_id } = input;
+    await revalidateIdentity?.({ company_id, actor_id, run_id, work_id });
     const work_order_id = input.input?.work_order_id;
     const row = await one(storage, 'SELECT envelope FROM authority_state WHERE company_id=$1 AND subject_type=$2 AND subject_id=$3', [company_id, 'worker_capability', `${agent_id}/${CAPABILITY}`]);
     const grant = row ? JSON.parse(row.envelope) : {};
@@ -70,10 +97,30 @@ export async function createFieldServiceRuntime({ storage, workOrders } = {}) {
     const businessInput = { company_id, actor_id: current.actor_id, work_order_id: current.work_order_id };
     const idempotency_key = JSON.stringify([CAPABILITY, current.work_order_id]);
     const toResult = evidence => ({ execution_id: evidence.execution_id, company_id, state: evidence.state, capability: CAPABILITY, evidence });
-    const evidenceSink = async evidence => {
-      await storage.query('INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,$3,$4,$5,$6,$7)',
-        [evidence.evidence_id, company_id, 'work', work_id, 'gateway_execution', JSON.stringify({ decision_id: current.decision_id, run_id, work_id, actor_id: current.actor_id, source_evidence_refs: current.evidence_refs }), JSON.stringify({ ...evidence, provenance: { actor_id: current.actor_id, source_evidence_refs: current.evidence_refs } })]);
-    };
+    const evidenceSink = async evidence => storage.transaction(async tx => {
+      // Rebuild through the canonical ledger inside the append transaction. The
+      // existing evidence table remains the durable owner; no parallel ledger.
+      const history = await tx.query("SELECT payload FROM evidence WHERE company_id=$1 AND subject_type='work' AND subject_id=$2 AND evidence_type='gateway_execution' ORDER BY rowid", [company_id, work_id]);
+      const ledger = new AcceptedEvidenceLedger();
+      for (const row of history.rows) {
+        const prior = JSON.parse(row.payload);
+        ledger.now = () => prior.accepted_evidence?.recorded_at ?? prior.finished_at;
+        ledger.append({ ...prior, ...prior.accepted_evidence });
+      }
+      ledger.now = () => evidence.finished_at;
+      const accepted_evidence = ledger.append(evidence);
+      const run = await one(tx, 'SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2', [company_id, run_id]);
+      const identity = run ? JSON.parse(run.payload) : {};
+      const provenance = { decision_id: current.decision_id, company_id, actor_id: current.actor_id,
+        run_id, work_id, conversation_id: identity.conversation_id ?? null,
+        request_id: identity.request_id ?? null, operation_id: identity.operation_id ?? null,
+        trace_id: identity.trace_id ?? null, correlation_id: identity.correlation_id ?? null,
+        interaction_id: identity.interaction_id ?? null,
+        idempotency_key: identity.idempotency_key ?? idempotency_key, execution_idempotency_key: idempotency_key,
+        source_evidence_refs: current.evidence_refs };
+      await tx.query('INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,$3,$4,$5,$6,$7)',
+        [evidence.evidence_id, company_id, 'work', work_id, 'gateway_execution', JSON.stringify(provenance), JSON.stringify({ ...evidence, provenance, accepted_evidence })]);
+    });
     const gateway = new ExecutionGateway({
       evidenceSink,
       idempotencyStore: {
@@ -93,6 +140,12 @@ export async function createFieldServiceRuntime({ storage, workOrders } = {}) {
       providers: [{
         id: 'native-assigned-work-order', executionClass: 'native', company_id, capabilities: [CAPABILITY],
         async execute() {
+          await revalidateIdentity?.({ company_id, actor_id: current.actor_id, run_id, work_id });
+          // Identity and authority reads can yield while cancellation commits.
+          // Re-read the canonical run at the last boundary before native effect.
+          const run = await bootstrap.runStore.get(company_id, run_id);
+          if (run?.state === 'CANCELLED') throw new Error('zero-run-cancelled');
+          if (!run || run.work_id !== work_id || !['RUNNING', 'WAITING_TOOL'].includes(run.state)) throw new Error('zero-run-not-executing');
           const result = await workOrders.complete(businessInput);
           if (result.kind !== 'ok') throw new Error(`work-order-${result.kind}:${result.message ?? 'completion rejected'}`);
           return { external_ref: current.work_order_id, result };
@@ -130,10 +183,21 @@ export async function createFieldServiceRuntime({ storage, workOrders } = {}) {
     const run = await bootstrap.runStore.findByWork(company_id, work_id);
     const id = run?.messages.filter(m => m.role === 'user').map(m => command(m.content)).find(Boolean);
     const business = id ? await workOrders.read({ company_id, actor_id, work_order_id: id }) : null;
-    const rows = await storage.query("SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND (subject_id=$2 OR id IN (SELECT value FROM json_each($3))) ORDER BY created_at,id", [company_id, work_id, JSON.stringify(work.evidence_refs)]);
+    const rows = await storage.query("SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND (subject_id=$2 OR id IN (SELECT value FROM json_each($3))) ORDER BY rowid", [company_id, work_id, JSON.stringify(work.evidence_refs)]);
     const evidence = rows.rows.map(row => JSON.parse(row.payload));
-    const verified = evidence.some(e => e.state === 'VERIFIED' && e.verification?.verified === true && e.verification.work_order_id === id);
-    return { work, run, business, evidence, outcome: verified && business?.status === 'completed' ? 'verified' : run?.state === 'FAILED' ? 'failed' : work.state.startsWith('WAITING') ? 'waiting' : 'unverified' };
+    // Legacy gateway rows are normalized on read, preserving existing history.
+    // New rows retain their accepted timestamp and sequence across restart.
+    const ledgers = new Map();
+    const accepted_evidence = evidence.map(event => {
+      let ledger = ledgers.get(event.work_id);
+      if (!ledger) { ledger = new AcceptedEvidenceLedger(); ledgers.set(event.work_id, ledger); }
+      ledger.now = () => event.accepted_evidence?.recorded_at ?? event.finished_at;
+      const normalized = ledger.append({ ...event, ...event.accepted_evidence });
+      return event.accepted_evidence ?? normalized;
+    });
+    const accepted_projections = [...new Set(accepted_evidence.map(e => e.work_id))].map(acceptedWorkId => rebuildJobProjection(accepted_evidence, { company_id, job_id: acceptedWorkId }));
+    const verified = accepted_projections.some(projection => projection.status === 'VERIFIED' && accepted_evidence.some(e => e.evidence_id === projection.provenance.terminal_evidence_id && e.verification?.verified === true && e.verification.work_order_id === id));
+    return { work, run, business, evidence, accepted_evidence, accepted_projections, outcome: verified && business?.status === 'completed' ? 'verified' : run?.state === 'FAILED' ? 'failed' : work.state.startsWith('WAITING') ? 'waiting' : 'unverified' };
   }
   return Object.freeze({ ...bootstrap, project });
 }

@@ -47,7 +47,7 @@ jobs:
       - name: SQLite Zero job acceptance
         run: |
           node --test tests/zero-verified-job-schema.test.mjs
-          pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../tests/zero-verified-job.test.ts ../../tests/zero-work-order-owner.test.ts ../../tests/zero-storage-concurrency.test.ts
+          pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../tests/zero-verified-job.test.ts ../../tests/zero-work-order-owner.test.ts ../../tests/zero-storage-concurrency.test.ts ../../tests/hosted-workforce-runtime.test.ts
 
       - name: Workforce behavioural tests
         run: pnpm --filter @titan-zero/workforce test

@@ -37,13 +37,13 @@ test("malformed request targets return 400 without terminating the workforce hos
     assert.match(response, /^HTTP\/1\.1 400 /);
     assert.match(response, /invalid_request_target/);
     assert.equal((await fetch(`${baseUrl}/health`)).status, 200);
-    assert.equal((await fetch(`${baseUrl}/ready`)).status, 200);
+    assert.equal((await fetch(`${baseUrl}/ready`)).status, 503);
   } finally {
     await host.close();
   }
 });
 
-test("workforce readiness checks the configured durable database and survives host restart", async () => {
+test("unconfigured runtime stays unready despite durable storage across host restart", async () => {
   const directory = await mkdtemp(join(tmpdir(), "titan-workforce-"));
   const databasePath = join(directory, "workforce.db");
 
@@ -59,11 +59,11 @@ test("workforce readiness checks the configured durable database and survives ho
     });
 
     const ready = await fetch(`${firstUrl}/ready`);
-    assert.equal(ready.status, 200);
+    assert.equal(ready.status, 503);
     assert.deepEqual(await ready.json(), {
-      status: "ok",
+      status: "degraded",
       service: "workforce",
-      checks: { storage: "ok" },
+      checks: { storage: "ok", runtime: "unconfigured", authentication: "fail", authority: "fail", provider: "fail", evidence: "fail" },
     });
 
     const method = await fetch(`${firstUrl}/ready`, { method: "POST" });
@@ -83,11 +83,11 @@ test("workforce readiness checks the configured durable database and survives ho
   const restartedUrl = await listen(restartedHost);
   try {
     const readyAfterRestart = await fetch(`${restartedUrl}/ready`);
-    assert.equal(readyAfterRestart.status, 200);
+    assert.equal(readyAfterRestart.status, 503);
     assert.deepEqual(await readyAfterRestart.json(), {
-      status: "ok",
+      status: "degraded",
       service: "workforce",
-      checks: { storage: "ok" },
+      checks: { storage: "ok", runtime: "unconfigured", authentication: "fail", authority: "fail", provider: "fail", evidence: "fail" },
     });
   } finally {
     await restartedHost.close();
