@@ -1,7 +1,5 @@
 import { executionEvidenceToBusinessEvidence } from "./business-evidence-adapter.mjs";
-import { foldJobReality } from "../titan-platform/.test-dist/src/business-evidence.js";
 
-const stableJson = value => JSON.stringify(value, Object.keys(value ?? {}).sort());
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 /**
@@ -10,7 +8,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
  * can be recovered by replaying the original gateway record.
  */
 export function createBusinessEvidenceExecutionSink({ store, projection_version = "execution-reality.v1" } = {}) {
-  if (!store || typeof store.append !== "function" || typeof store.get !== "function" || typeof store.acceptedForSubject !== "function") {
+  if (!store || typeof store.append !== "function" || typeof store.get !== "function") {
     throw new Error("business-evidence-store-required");
   }
 
@@ -52,10 +50,4 @@ export function createBusinessEvidenceExecutionSink({ store, projection_version 
       await appendIdempotently(fact);
     }
   };
-}
-
-/** Rebuild a company's job projection from durable accepted evidence after restart. */
-export async function rebuildBusinessJobReality(store, company_id, job_id, projection_version = "job-reality.v1") {
-  const rows = await store.acceptedForSubject(company_id, "job", job_id);
-  return foldJobReality(company_id, job_id, rows, projection_version);
 }
