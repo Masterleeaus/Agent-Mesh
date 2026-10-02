@@ -17,6 +17,19 @@ export function position(worker) {
   const labels = { worker: 'Worker', specialist: 'Specialist', manager: 'Manager', orchestrator: 'Orchestrator', supervisor: 'Manager (legacy supervisor)' };
   return labels[String(worker.role ?? worker.tier).toLowerCase()] ?? 'Position not supplied';
 }
+export function identityType(worker) {
+  return worker.kind === 'human' ? 'Human' : worker.kind === 'digital' ? 'AI / digital' : 'Unknown';
+}
+/** Derive memberships from the current company roster; this is not a second team registry. */
+export function teamMemberships(workers) {
+  const groups = new Map();
+  for (const worker of workers) {
+    const teamId = typeof worker.team_id === 'string' && worker.team_id.trim() ? worker.team_id : null;
+    if (!groups.has(teamId)) groups.set(teamId, []);
+    groups.get(teamId).push(worker);
+  }
+  return [...groups].map(([team_id, members]) => ({ team_id, members }));
+}
 export function verifiedOutcome(receipt) {
   // Never promote COMPLETED, provider acknowledgement, or agent self-report.
   return receipt?.state === 'VERIFIED' && receipt?.verification?.status === 'VERIFIED' &&
