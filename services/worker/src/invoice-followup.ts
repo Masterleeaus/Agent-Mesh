@@ -62,6 +62,6 @@ export async function emitInvoiceFollowup(client: DatabaseClient, invoice: Overd
 export async function processInvoiceFollowup(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
   const result:RunResult={automationId:automation.id,accountId:automation.account_id,sent:0,skipped:0,errors:0};
   const days=(automation.config.days_overdue as number[]|undefined)??DEFAULT_DAYS_OVERDUE;
-  for(const invoice of await findOverdueInvoices(client,automation)) for(const step of getCadenceSteps(invoice.due_date,days)) try { (await emitInvoiceFollowup(client,invoice,automation.id,step))?result.sent++:result.skipped++; } catch(error){result.errors++;logger.error("invoice-followup: failed",error,{invoiceId:invoice.id,step});}
+  for(const invoice of await findOverdueInvoices(client,automation)) for(const step of getCadenceSteps(invoice.due_date,days)) try { if (await emitInvoiceFollowup(client,invoice,automation.id,step)) result.sent++; else result.skipped++; } catch(error){result.errors++;logger.error("invoice-followup: failed",error,{invoiceId:invoice.id,step});}
   return result;
 }

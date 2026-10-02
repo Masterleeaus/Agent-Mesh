@@ -102,3 +102,5 @@ export * from "./counterfactual-branch.js";
 export * from "./titan-forge/runtime.js";
 
 export * from "./maps-intelligence/runtime.js";
+
+export * from "./signal/runtime.js";

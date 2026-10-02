@@ -7,4 +7,4 @@ RUN pnpm install --frozen-lockfile
 ENV NODE_ENV=production
 ENV WORKFORCE_PORT=3010
 EXPOSE 3010
-CMD ["pnpm", "--filter", "@titan-zero/workforce", "start"]
+CMD ["services/workforce/node_modules/.bin/tsx", "services/workforce/src/server.ts"]
