@@ -113,6 +113,21 @@ describe("fresh native-work-orders-v1 schema producer", () => {
     expect((await storage.query("SELECT name FROM sqlite_master WHERE name LIKE '%ready%'")).rows).toEqual([]);
   });
 
+  it("rejects repeated initialization without mutating the attested store", async () => {
+    const storage = memoryStore();
+    await initializeFreshCompanyNativeStore({ storage, placement, company_profile: companyProfile });
+    const before = (await storage.query<{ name: string; sql: string | null }>(
+      "SELECT name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY name",
+    )).rows;
+
+    await expect(initializeFreshCompanyNativeStore({ storage, placement, company_profile: companyProfile }))
+      .rejects.toMatchObject({ code: "company-native-schema-store-not-fresh" });
+    const after = (await storage.query<{ name: string; sql: string | null }>(
+      "SELECT name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY name",
+    )).rows;
+    expect(after).toEqual(before);
+  });
+
   it("rejects an existing mixed store without changing its historical schema or ledger", async () => {
     const storage = memoryStore();
     await storage.query("CREATE TABLE schema_migrations(filename TEXT PRIMARY KEY, applied_at TEXT NOT NULL)");
