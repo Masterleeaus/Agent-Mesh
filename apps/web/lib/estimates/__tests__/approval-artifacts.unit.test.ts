@@ -60,12 +60,14 @@ describe("createApprovalArtifacts", () => {
       userId: "user-1",
     });
 
-    expect(result.depositInvoiceId).toBe("dep-inv-1");
+    expect(result.depositInvoiceId).toMatch(/^[0-9a-f-]{36}$/);
     // Verify the invoice INSERT was called
     const insertCall = (client.query as ReturnType<typeof vi.fn>).mock.calls.find(
       (call: unknown[]) => typeof call[0] === "string" && (call[0] as string).includes("INSERT INTO invoices")
     );
     expect(insertCall).toBeDefined();
+    expect(insertCall![1][0]).toBe(result.depositInvoiceId);
+    expect(insertCall![0]).not.toMatch(/RETURNING/i);
   });
 
   it("puts the deposit on the job when the estimate already has one", async () => {
@@ -93,7 +95,7 @@ describe("createApprovalArtifacts", () => {
       (call: unknown[]) => typeof call[0] === "string" && (call[0] as string).includes("INSERT INTO invoices"),
     );
     const args = insertCall![1] as unknown[];
-    expect(args[2]).toBe("job-1");
+    expect(args.slice(1, 6)).toEqual(["acct-1", "c1", "job-1", "est-1", "p1"]);
   });
 
   it("is idempotent — skips deposit creation if one already exists", async () => {

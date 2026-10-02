@@ -1,0 +1,29 @@
+name: DirectAdmin bootstrap security slice
+
+on:
+  pull_request:
+    paths:
+      - 'packages/titan-platform/src/security-directadmin-bootstrap-*'
+      - 'packages/titan-platform/tests/security-directadmin-bootstrap-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Compile platform test modules
+        run: pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.test.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+      - name: Verify DirectAdmin bootstrap nonce and provider boundaries
+        run: pnpm --filter @titan-zero/titan-platform exec node --test tests/security-directadmin-bootstrap-nonces.test.mjs tests/security-directadmin-bootstrap-provider.test.mjs

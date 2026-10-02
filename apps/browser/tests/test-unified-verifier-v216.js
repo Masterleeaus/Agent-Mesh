@@ -4,7 +4,7 @@ const assert = require('assert');
 assert(fs.existsSync('package.json'), 'release must provide package.json');
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 assert.strictEqual(pkg.scripts?.test, 'node tools/verify-browser-node.mjs', 'npm test must run the Browser Node canonical verifier');
-assert.strictEqual(pkg.scripts?.['test:legacy'], 'node tools/verify-codee.mjs', 'legacy Titan Code verifier must remain explicitly available');
+assert.strictEqual(pkg.scripts?.['test:private-dev-legacy'], 'node tools/verify-codee.mjs', 'legacy Titan Code verifier must remain explicitly available');
 assert(fs.existsSync('tools/verify-browser-node.mjs'), 'Browser Node verifier must exist');
 assert(fs.existsSync('tools/verify-codee.mjs'), 'legacy verifier must remain available');
 assert(fs.existsSync('tools/generate-source-manifest.mjs'), 'source manifest generator must exist');

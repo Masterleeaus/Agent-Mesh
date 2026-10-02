@@ -81,6 +81,14 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
     );
     const newUser = rows[0];
 
+    // Session resolution requires an explicit active membership. Keep creation
+    // atomic so a membership failure cannot leave an unusable principal behind.
+    await client.query(
+      `INSERT INTO business_memberships (account_id, user_id, role, status)
+       VALUES ($1, $2, $3, 'active')`,
+      [session.accountId, newUser.id, role]
+    );
+
     await appendAuditLog(client, {
       account_id: session.accountId,
       entity_type: "user",

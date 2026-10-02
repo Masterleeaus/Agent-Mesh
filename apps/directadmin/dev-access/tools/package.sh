@@ -8,6 +8,13 @@ trap 'rm -rf "$TMP"' EXIT
 
 mkdir -p "$DIST"
 
+for item in plugin.conf README.md AGENTS.md admin reseller user hooks lib scripts; do
+  if [ -L "$ROOT/$item" ] || find "$ROOT/$item" ! -type f ! -type d -print -quit | grep -q .; then
+    echo "Developer Portal package failed: symlink or special source entry is not allowed: $item" >&2
+    exit 1
+  fi
+done
+
 php -l "$ROOT/lib/app.php" >/dev/null
 php -l "$ROOT/tools/request-integration-test.php" >/dev/null
 php "$ROOT/tools/security-test.php"
@@ -21,10 +28,12 @@ chmod 0755 \
   "$TMP/reseller/index.html" \
   "$TMP/user/index.html" \
   "$TMP/scripts/install.sh" \
+  "$TMP/scripts/update.sh" \
   "$TMP/scripts/uninstall.sh"
 
 chmod 0644 "$TMP/plugin.conf"
 find "$TMP/hooks" "$TMP/lib" -type f -exec chmod 0644 {} +
+find "$TMP" -type d -exec chmod 0755 {} +
 
 ARCHIVE="$DIST/titan_dev_access.tar.gz"
 rm -f "$ARCHIVE"
@@ -34,7 +43,7 @@ bash "$ROOT/tools/plugin-lab.sh" "$ARCHIVE"
 
 # Validate archive root and required files.
 tar -tzf "$ARCHIVE" | sed 's#^\./##' | grep -qx 'plugin.conf'
-for rel in admin/index.html reseller/index.html user/index.html scripts/install.sh scripts/uninstall.sh; do
+for rel in admin/index.html reseller/index.html user/index.html scripts/install.sh scripts/update.sh scripts/uninstall.sh; do
   tar -tzf "$ARCHIVE" | sed 's#^\./##' | grep -qx "$rel"
 done
 
@@ -59,6 +68,8 @@ test -x "$VERIFY/admin/index.html"
 test -x "$VERIFY/reseller/index.html"
 test -x "$VERIFY/user/index.html"
 test -x "$VERIFY/scripts/install.sh"
+test -x "$VERIFY/scripts/update.sh"
 test -x "$VERIFY/scripts/uninstall.sh"
+bash "$ROOT/tools/update-hook-test.sh" "$VERIFY"
 
 echo "Built and validated: $ARCHIVE"

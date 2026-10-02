@@ -29,7 +29,7 @@ jobs:
       - name: Validate the Server Node DirectAdmin package
         run: node scripts/validate-directadmin-plugin.mjs apps/directadmin/server-node
       - name: Test read-only health and dependency isolation
-        run: node --test apps/directadmin/server-node/runtime.test.mjs
+        run: node --test apps/directadmin/server-node/runtime.test.mjs apps/directadmin/server-node/runtime.security.test.mjs
       - name: Test deterministic DirectAdmin packaging
         run: node --test scripts/package-directadmin-plugin.test.mjs
       - name: Build and verify the plugin archive

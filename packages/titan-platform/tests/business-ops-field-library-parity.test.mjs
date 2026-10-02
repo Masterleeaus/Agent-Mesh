@@ -5,7 +5,7 @@ import {
   getTitanBusinessOpsAgentCommand,
   assessTitanBusinessOpsAgentCommand,
   materializeTitanBusinessOpsPath,
-} from "../.test-dist/src/business-ops.js";
+} from "../.test-dist/business-ops.js";
 
 test("Field donors converge onto the existing Job/Work Order/Visit command seam", () => {
   const expected = [

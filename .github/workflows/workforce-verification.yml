@@ -1,10 +1,21 @@
 name: Canonical Workforce Verification
 on:
   pull_request:
+    types: [opened, reopened, synchronize, edited]
     paths:
       - 'services/workforce/**'
       - 'packages/workforce/**'
+      - 'packages/storage/**'
+      - 'packages/titan-platform/**'
+      - 'packages/runtime/**'
+      - 'packages/tools/**'
+      - 'db/sqlite/**'
+      - 'apps/directadmin/workforce/**'
+      - 'apps/directadmin/server-node/**'
+      - 'scripts/package-directadmin-plugin.mjs'
+      - 'package.json'
       - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
       - '.github/workflows/workforce-verification.yml'
   workflow_dispatch:
 jobs:
@@ -19,6 +30,76 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @titan-zero/workforce typecheck
       - run: pnpm --filter @titan-zero/workforce test
+      - name: Focused company-native storage typecheck and tests
+        run: |
+          pnpm --filter @titan-zero/storage typecheck
+          pnpm --filter @titan-zero/storage test
+      - name: Focused company-storage web consumer test
+        run: pnpm --filter @titan-zero/web exec vitest run lib/company-storage/consumer.test.ts
+
+  directadmin-workforce:
+    name: DirectAdmin Workforce Consumer
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      TITAN_COCKPIT_SDK_MODULE: ${{ github.workspace }}/packages/titan-platform/.test-dist/directadmin-sdk.mjs
+      TITAN_HOST_SDK_MODULE: ${{ github.workspace }}/packages/titan-platform/.test-dist/directadmin-sdk.mjs
+      TITAN_BRIDGE_FIXTURE_MODULE: ${{ github.workspace }}/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs
+      TITAN_WORKFORCE_HOST_ROOT: ${{ github.workspace }}
+      TITAN_SERVER_NODE_SOURCE_ROOT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Compile the repository Cockpit SDK
+        run: pnpm --filter @titan-zero/titan-platform exec tsc -p tsconfig.test.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+      - name: Bundle the browser Cockpit SDK
+        run: |
+          node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/bin/esbuild \
+            packages/titan-platform/src/directadmin-plugin.ts \
+            --bundle --format=esm --platform=browser --target=es2022 \
+            --outfile=packages/titan-platform/.test-dist/directadmin-sdk.mjs
+      - name: Install the locked Chromium browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Export Chromium executable path
+        shell: bash
+        run: |
+          chromium_path="$(node --input-type=module -e 'import { chromium } from "@playwright/test"; process.stdout.write(chromium.executablePath())')"
+          test -x "$chromium_path"
+          printf 'PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=%s\n' "$chromium_path" >> "$GITHUB_ENV"
+      - name: Run shared DirectAdmin SDK regressions
+        run: |
+          pnpm --filter @titan-zero/titan-platform exec node --test \
+            tests/directadmin-plugin.test.mjs \
+            tests/directadmin-bridge.test.mjs \
+            tests/directadmin-workforce-handoff.test.mjs \
+            tests/directadmin-browser.browser.mjs
+      - name: Run Server Node security and lifecycle regressions
+        run: |
+          node --test \
+            apps/directadmin/server-node/runtime.test.mjs \
+            apps/directadmin/server-node/runtime.security.test.mjs \
+            apps/directadmin/server-node/directadmin-relay.test.mjs \
+            apps/directadmin/server-node/lifecycle.test.mjs
+      - name: Run Workforce consumer, browser, package, and contract regressions
+        run: |
+          node --test \
+            apps/directadmin/workforce/tests/*.test.mjs \
+            apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
+            apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
+      - name: Run the merged #1050 RAW relay fixture
+        run: |
+          pnpm --filter @titan-zero/workforce exec node --import tsx \
+            ../../apps/directadmin/workforce/tests/relay-host.integration.mjs

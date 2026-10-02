@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const recordDeliveryReceipt = vi.fn().mockResolvedValue(true);
+const { recordDeliveryReceipt } = vi.hoisted(() => ({
+  recordDeliveryReceipt: vi.fn().mockResolvedValue(true),
+}));
 vi.mock("@/lib/communications-log", () => ({ recordDeliveryReceipt }));
 import { executeGovernedOutbound, executeGovernedOutboundWithFallback } from "../outbound-orchestrator";
 

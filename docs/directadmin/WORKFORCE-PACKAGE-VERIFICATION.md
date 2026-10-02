@@ -1,0 +1,323 @@
+# Titan Workforce package verification
+
+This checklist verifies a **packaging candidate** in a local workspace or disposable staging directory. The archive is **not live-install-ready** and this checklist does not authorize copying it into DirectAdmin, enabling the plugin, creating credentials or changing a host.
+
+The v0.1.4 record and the first v0.1.5 hashes below are historical candidates.
+The latest v0.1.5 candidate uses app sources on the canonical `agent/issue-1050`
+branch and current main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf` after #1247
+merged. The DirectAdmin SDK and hosted Workforce/relay owner sources are unchanged
+from the previously tested `bfbb06a5` baseline. The DirectAdmin SDK source tree is
+unchanged from `8c1161f2` and includes #1243 session behavior. Current-source
+results and hashes are at the end.
+
+## Build the SDK and package
+
+For the current candidate, use the exact canonical SDK source from main
+`64561e4d077ec07a3cb40dfb43284b0e7dff4dbf` (including #1243 session replacement
+and registry-outage handling). Its DirectAdmin SDK paths are unchanged from
+`bfbb06a5`. No shared SDK implementation is copied into the Workforce source.
+Node 22.23.3 and the repository's locked dependencies were used.
+
+```sh
+work_area=/tmp/1050-sdk-current
+source_area=/tmp/1050-workforce-source
+rm -rf "$work_area" "$source_area" /tmp/1050-sdk-current.mjs
+mkdir -p "$work_area" "$source_area"
+source_ref=$(git rev-parse HEAD)
+git archive 64561e4d077ec07a3cb40dfb43284b0e7dff4dbf packages/titan-platform \
+  | tar -xf - -C "$work_area"
+ln -s "$PWD/packages/titan-platform/node_modules" \
+  "$work_area/packages/titan-platform/node_modules"
+node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/bin/esbuild \
+  "$work_area/packages/titan-platform/src/directadmin-plugin.ts" \
+  --bundle --format=esm --platform=browser --target=es2022 \
+  --outfile=/tmp/1050-sdk-current.mjs
+
+git archive "$source_ref" apps/directadmin/workforce | tar -xf - -C "$source_area"
+node apps/directadmin/workforce/tools/package.mjs \
+  --source-dir "$source_area/apps/directadmin/workforce" \
+  --sdk-module /tmp/1050-sdk-current.mjs \
+  --output-dir /tmp/1050-package-candidate
+
+sha256sum /tmp/1050-package-candidate/titan_workforce.tar.gz
+cat /tmp/1050-package-candidate/titan_workforce.tar.gz.sha256
+```
+
+The builder rejects symlinks, requires canonical browser session and package-validator exports, includes an explicit 19-file allowlist, writes normalized ownership/time/modes, extracts and compares the result, invokes the shared SDK package validator and runs the install preflight in a temporary staging copy.
+
+## Verify the final archive independently
+
+```sh
+set -eu
+archive=/tmp/1050-package-candidate/titan_workforce.tar.gz
+expected=$(awk '{print $1}' "$archive.sha256")
+actual=$(sha256sum "$archive" | awk '{print $1}')
+test "$actual" = "$expected"
+test "$(tar -tzf "$archive" | wc -l)" -eq 19
+stage=$(mktemp -d /tmp/titan-workforce-stage.XXXXXX)
+tar --same-permissions -xzf "$archive" -C "$stage"
+"$stage/scripts/install.sh"
+"$stage/scripts/update.sh"
+"$stage/scripts/uninstall.sh"
+test -x "$stage/admin/index.html"
+test -x "$stage/reseller/index.html"
+test -x "$stage/user/index.html"
+rm -rf "$stage"
+```
+
+The package test suite also verifies deterministic bytes, checksum sidecar, exact file list/modes, rejection of missing/symlinked inputs, failure for unsupported Node and asset conditions, install/update preflight, uninstall preserving business state, and rejection of an SDK without the current browser session.
+
+Run the integration suite against the compiled SDK:
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-current.mjs \
+  node --test apps/directadmin/workforce/tests/*.test.mjs \
+    apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
+    apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
+```
+
+The hosted test exercises the real #302 fixture credential issuer/registry and #1049 bridge through a fixture-only Workforce owner. It proves transport and consumer behavior, not a deployed hosted API. Live DirectAdmin, commissioning, Evolution, production install/update/rollback and credential delivery require their separate owner contracts and approval.
+
+## Previous artifact record — v0.1.4
+
+For this continuation, the package builder consumed the exact #1049 SDK source above and produced a 19-file **verification candidate** for plugin version **0.1.4** at:
+
+`/tmp/1050-package-candidate/titan_workforce.tar.gz`
+
+SHA256: `0ef7ce0d5b4d0a732d1869ec067ce117aae81879bf7fa123abc0fef6c23c0d8b`
+The same archive is recorded as Library item `libfile_72615f7136108191a0a2eada84474dba`, version 3, with candidate-only/not-live-install-ready metadata.
+
+
+Bundled SDK module SHA256: `c45d611fbdee263cd248e4c7f9736bbe64fa80d1b7cadb19c022e27fa970db95`.
+That previous candidate was rebuilt twice byte-for-byte from the canonical #1050 branch source and its exact #1049 source. It is not certified for a live DirectAdmin install.
+
+The `.sha256` sidecar records the same value; rebuild and refresh this record after any source change.
+
+## Approved host update and rollback procedure
+
+This is a procedure for a later, separately approved deployment; it has not been run.
+
+1. Retain the currently installed package archive and its verified SHA256 outside the plugin directory.
+2. Verify the candidate version in `plugin.conf` and compare the archive against its `.sha256` sidecar. Stage and run the checks above.
+3. After host authorization and live owner APIs are ready, update through DirectAdmin Plugin Manager and verify each role route in read-only/uncommissioned mode.
+4. If the package fails, restore the retained archive through DirectAdmin Plugin Manager and repeat read-only checks.
+5. Keep runtime state, company storage, credentials, revocations and evidence under their canonical owners throughout. Never use plugin rollback to restore or delete them.
+
+The role executable does not read DirectAdmin CGI stdin/environment values. The package test supplies hostile POST stdin and DA request environment values and verifies they do not appear in the rendered page; this is an isolation test, not proof of a working DirectAdmin transport. Installed Dev Access 1.1.3 has a reported POST CSRF failure; #1048 must certify its own Developer Portal form path, while Workforce separately needs #812/#1049 route wiring and live DirectAdmin transport/session tests.
+
+## Candidate validation (not live-install readiness)
+
+The owner-state paragraph immediately below is historical evidence from the
+`ccf8010a` snapshot; its PR statuses are not current. The 2026-10-02 record at
+the end reflects merged PR #1143, #1204 and #1211, main snapshot `468d42b1`
+(the source tip at build time), and the latest extracted test. Live main is now
+`23300c79`; its intervening changes do not touch the tested DirectAdmin Workforce,
+Server Node, hosted-owner or SDK paths.
+
+**Can execute now:** package build, deterministic archive/checksum validation, staged install/update/uninstall preflight, and each role script as a CLI renderer. DirectAdmin's documented `pipe_post=yes` mode supplies `POST=stdin=true` and POST bytes on stdin; the packaged role process has been exercised with these values and ignores request data safely. Install/update scripts only preflight and do not mutate a host. None of this makes the archive live-install-ready.
+
+**Historical owner state at `ccf8010a` (not current):** #811/#1201 was in that main snapshot with the company-filtered read-only projection owner and optional `/v1/directadmin/*` Fetch mount. The current projection has `controls: []`; proposed lifecycle intents are denied without state, event or receipt writes. That snapshot also includes #1183 credential/current-company session work, #1240 company-placement contracts, and #1048/#1209 Developer Portal hardening, but no verified upstream credentials or protected Workforce provisioning have been commissioned. #1050 imports #812's helper path and sends through the RAW endpoint. The extracted-package → RAW → #811 host run used the `c883304a` host snapshot, #812 `8cae7034` and #1049 SDK source `e428b67b`; it passed `ctx1_` validation, projection reads, company switch, isolated invalid-CSRF denial and cookie clearing, typed action 403 while preserving the valid session, and expiry handling without work/event writes. The Workforce controller revalidates after an intent-route denial; post-acceptance read failures remain cleared and direct the operator to inspect canonical history. This is disposable integration evidence, not commissioning. That historical snapshot contains #812 commit `89ff2427` with experimental relay config v2 and an Apache `:443` cookie-boundary marker/template; this run predates that contract and does not test or attest the marker. Independent contract review and real disposable Apache/DirectAdmin testing are required before adoption. Do not treat the marker as proof of cookie isolation. #1049 was then an open draft; PR #1204 later merged at `75cc7f02`. #812/PR #1211 is merged but its live-host commissioning remains unverified. No private token belongs in a URL.
+
+### Disposable extracted relay-to-host integration
+
+This test packages the exact pinned owner sources, extracts all three owner packages, and uses only temporary SQLite files, a generated localhost TLS certificate, and the actual #1049 signed identity test fixture. It is not live-host or production-session certification. The owner snapshots used for the original extracted v0.1.4 run were #1049 SDK source `e428b67b34779e49f4dbc8d3e80b193e8737eb13`, #811 host/runtime/storage snapshot `c883304a662738fe480ec1e5d044fdeb0c4c879e` (projection owner reviewed at `25005f4f4d860e2ec1dddb9f0a2c4aa152fd0488`; snapshot includes #1183/#1240 storage/session changes), and pre-v2 #812 head `8cae7034f6d2ec7c9063ac0c3aba40c6f41b3d89`. PR #1204 later merged the SDK implementation to main at `75cc7f02`. After that historical run, main advanced through `ccf8010a`, #1197 portfolio packaging, and #1048/#1209 Developer Portal hardening; these commits do not change the tested Workforce host route paths. Current main also contains merged #812 commit `89ff2427` with experimental config v2 and an Apache cookie-boundary marker/template; this test does not validate that new contract.
+
+```sh
+work_area=/tmp/1050-extracted-integration
+rm -rf "$work_area"
+mkdir -p "$work_area/host" "$work_area/server-node" "$work_area/sdk"
+git archive c883304a662738fe480ec1e5d044fdeb0c4c879e \
+  package.json services/workforce packages/storage packages/titan-platform \
+  packages/runtime packages/tools db/sqlite | tar -xf - -C "$work_area/host"
+git archive 8cae7034f6d2ec7c9063ac0c3aba40c6f41b3d89 \
+  apps/directadmin/server-node scripts/package-directadmin-plugin.mjs \
+  | tar -xf - -C "$work_area/server-node"
+git archive e428b67b34779e49f4dbc8d3e80b193e8737eb13 packages/titan-platform \
+  | tar -xf - -C "$work_area/sdk"
+ln -s "$PWD/packages/titan-platform/node_modules" \
+  "$work_area/sdk/packages/titan-platform/node_modules"
+
+node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/bin/esbuild \
+  "$work_area/sdk/packages/titan-platform/src/directadmin-plugin.ts" \
+  --bundle --format=esm --platform=browser --target=es2022 \
+  --outfile=/tmp/1050-sdk-e428.mjs
+
+TITAN_WORKFORCE_HOST_ROOT="$work_area/host" \
+TITAN_SERVER_NODE_SOURCE_ROOT="$work_area/server-node" \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-e428.mjs \
+TITAN_HOST_SDK_MODULE=/tmp/1050-sdk-e428.mjs \
+TITAN_BRIDGE_FIXTURE_MODULE="$work_area/sdk/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs" \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+node --import ./node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/loader.mjs \
+  apps/directadmin/workforce/tests/relay-host.integration.mjs
+```
+
+The extracted integration test passed using host/runtime/storage sources archived from main snapshot `c883304a` and the relay pinned to #812 `8cae7034`: missing relay config returned sanitized 503 before reaching #811; actual Workforce package/helper/RAW route read company A's canonical workers, work and evidence with controls empty; invalid CSRF was denied and cleared only the isolated test cookie; company switch exposed only company B; expiry cleared the client projection. A governed pause proposal passed #812's `ctx1_` validation, reached the actual #811 owner and returned #1049's sanitized 403 denial while preserving the valid browser session. SQLite work/events remained unchanged. Result: 14 RAW requests and 15 hosted routes. The test uses the #1049 signed identity/nonce fixture and inserts its CSRF meta value into disposable panel HTML only to exercise transport; the run includes #1183/#1240 host source but does not prove production issuer credentials, protected provisioning, the commissioned HTML bootstrap, cookie-port sharing or live DirectAdmin `HEADERS` path. Main later advanced to `ccf8010a`; the host integration was not rerun on that head. It predates merged #812 commit `89ff2427` and does not test that commit's config-v2/Apache cookie-boundary contract. The exact runtime setup used the official Node v22.23.3 tarball SHA256 `df450af89261115ef9f9e3830c3eeb2cc9213b63c720b1af623cb5dcbe2e02de`, the published `better-sqlite3@12.11.1` Node ABI 127 prebuild via `prebuild-install@7.1.3`, and a successful targeted `npm rebuild` reusing that prebuild; no node-gyp compile or supply-chain policy change was made.
+
+**Unavailable until owners commission and verify it:** the #302-backed #1049 production actor/company/CSRF bridge and trusted nonce bootstrap, approved audience-bound Workforce handoff, and real DirectAdmin admin/reseller/user installation, POST, Evolution theme, update, rollback and session tests. The package never injects caller identity or CSRF data. The CGI CLI parser in #1048 Developer Portal is specific to that plugin and does not supply Workforce identity or routes.
+
+## Previous candidate from main snapshot 468d42b1 — superseded
+
+The exact main source snapshot was
+`468d42b1a93401a2357f2da253f639694cb4a937`; live main now advances to
+`23300c79185f6dc7f8c4b6ab3ae11ac8aa114906`, with only mobile and the generic
+Titan CI workflow changed since the tested snapshot. The package builder consumed
+the shared #1049 SDK compiled from `468d42b1`; bundled `images/sdk.mjs`
+SHA256 is
+`57d4776fdaee9359aa669d0b756392614772051cb023cce71d05c9bafc269077`.
+The **candidate-only** v0.1.5 archive contains 19 files at
+`/tmp/1050-package-candidate-015/titan_workforce.tar.gz`, SHA256
+`0e7cdf5fae1bcb0b459c0aab2c557b442cbf6eb14ff6e9b1edbf70529e09ce31`.
+Two independent builds produced byte-identical archives. Its manifest and
+package report version 0.1.5. Independent extraction verified the checksum,
+included SDK hash, executable role entrypoints and staged install/update/
+uninstall preflight. Package source is not production data, and uninstall
+preserves canonical Workforce state.
+
+Against the SDK bundle from the tested main snapshot, the consumer/browser/
+hosted/package test command in the integration record passed **39/39**, including
+503 recovery without SDK
+session invalidation versus revoked-session 401 invalidation, and the exact
+read-only explanation/no-intent behavior for `controls: []`.
+
+The extracted relay-to-host run used exact #811, #812 and #1049 source archives
+from the tested main snapshot. It extracted Server Node **0.3.0**, configured its v2 parser
+using a temporary synthetic test-only `cookie_boundary` marker, and passed the
+company switch, projection/evidence, 401/403, expiry and no-write scenarios
+(14 RAW requests, 15 hosted routes). The marker does not install or prove an
+Apache filter and this run does not exercise a real Apache/DirectAdmin host.
+The parent-confirmed duplicate physical `Cookie` header fail-open in #812's
+experimental Apache `:443` filter remains a release blocker; `:2222` RAW parser
+checks are a different boundary. Do not install or commission until #812 fixes
+the fail-open and a disposable authorized Apache/DirectAdmin host verifies the
+cookie-name-only isolation behavior.
+
+Still unavailable are verified #302 production issuer credentials/protected
+provisioning, trusted HTML CSRF bootstrap and the approved audience-bound
+Workforce exchange; configured #811 production dependencies/private origin;
+actual DirectAdmin CGI `HEADERS`, POST-stdin and `Set-Cookie` behavior; and a
+supported host Node runtime. No credentials, live package, service, firewall,
+DNS, or security setting was changed. This remains a package verification
+candidate, not a commissioned plugin or mission completion claim.
+
+## Pre-#1245-merge candidate — main 8c1161f2 (historical)
+
+The canonical `agent/issue-1050` branch normally merged current main
+`8c1161f291d07ecf344ae062b2349c2a13280410` at
+`a1d364828991289254b04cdc1e16e0f92a5c1458` after #1242/#1244. The shared SDK
+source remains unchanged from `d508a269`; #1242's production host composition
+now requires canonical company-placement registry and store-opener ports. The
+exact #1049 SDK source from main was bundled using Node v22.23.3. The official
+Node archive SHA256 is
+`df450af89261115ef9f9e3830c3eeb2cc9213b63c720b1af623cb5dcbe2e02de`; bundled
+`images/sdk.mjs` SHA256 is
+`9d94cb80dbb0e7df15388efb1de2262e6c26af041f66a1c5d4944045fc491c9a`.
+
+Two builds of the 19-file v0.1.5 verification candidate from the then-current
+claim-branch source and this SDK were byte-identical. Candidate:
+`/tmp/1050-package-current-final-a/titan_workforce.tar.gz`. Archive SHA256:
+`618072346eb3b80b38010ed0a6a13f1a9b13d16d48ca87b30469334b7f8ae5da`; the
+sidecar matches. Independent extraction verified the 19-file count, bundled
+SDK hash, executable role/lifecycle entrypoints, and staged install/update/
+uninstall preflight. Uninstall preserves hosted business state. No DirectAdmin
+server is modified by these checks.
+
+On this exact 8c main SDK bundle, the Node 22.23.3 Workforce consumer/browser/
+hosted-session/package suite passed **39/39** and the shared bridge suite passed
+**83/83**. The extracted relay-to-host harness passed **14 requests / 15 routes**
+against main `8c1161f2` and the then-unmerged #812 PR #1245 source. The former
+production default returned sanitized 503 `relay_not_configured`; the PR draft's
+returned sanitized 503 `cookie_boundary_unverified`. The fixture supplied #1242
+placement ports through canonical SQLite adapters and disposable test records.
+Forwarding was enabled only by in-process test injection; no configuration file,
+CGI override, production RAW process, Apache boundary, or DirectAdmin commissioning
+was involved. This run predates the #1245 merge and is historical evidence.
+
+The 39/39 cockpit result was local evidence. The separate secretless Node 22
+hosted CI job remains with #1157 and was not changed here. #1050 remains open.
+
+## Prior current-source v0.1.5 record — main bfbb06a5
+
+At this run, main was `bfbb06a5a22591100e2c0101e6598bee9c6f4589`, which merges #1246;
+#1245 merged earlier at `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`. The #1049
+SDK source tree is unchanged from main `8c1161f2`; its bundle compiled from
+exact `bfbb06a5` source using Node v22.23.3 has SHA256
+`540f2cef873dd51bcdf7bea75c3ac519630cdc3345128f38f0f396957d31a448`. Two builds
+of the 19-file v0.1.5 package from the finalized app source and this bundle were
+byte-identical at `/tmp/1050-package-current-bfbb-a/titan_workforce.tar.gz` and
+`/tmp/1050-package-current-bfbb-b/titan_workforce.tar.gz`. Archive SHA256:
+`9a7f1223b66fe3f475764344abae8f14d9d19635155627770bbe153fb6e9f2ba`.
+Independent extraction verified the matching sidecar, file allowlist/count,
+SDK hash, role/lifecycle modes and staged install/update/uninstall preflight.
+Uninstall preserves hosted business state. No DirectAdmin server was modified.
+
+Against the exact current-main SDK bundle, the Workforce consumer/browser/hosted-session/
+package suite passed **39/39**, shared bridge **83/83**, and package-script tests
+**3/3**. The extracted relay-to-host test used exact main `bfbb06a5` source and
+passed **14 requests / 15 hosted routes**. Its production RAW default returned
+sanitized 503 `cookie_boundary_unverified` without upstream requests; the test
+then injected its fixture loader directly into the extracted module. Current
+main includes the merged #1245 change that removed the experimental Apache
+`:443` filter but intentionally leaves production forwarding disabled. The
+fixture also supplied #1242's required company-placement registry and store
+opener using canonical SQLite adapters and disposable records. These are local
+compatibility checks, not Apache, DirectAdmin CGI, or commissioning evidence.
+No dedicated hosted Workforce CI ran these entrypoints; that work remains with
+#1157. #1050 remains open.
+
+## Latest current-source v0.1.5 candidate — main 64561e4d (2026-10-02)
+
+Main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf` merges #1247. Its changed
+authority/runtime files do not touch the DirectAdmin SDK, hosted Workforce owner,
+Server Node relay, Workforce app or their tests. The SDK was rebuilt from the
+exact main archive using Node v22.23.3 and has SHA256
+`5d266ad5233d3a816d1c4fd839ea901a7ee632591872558813834d2d791c989d`.
+
+Two builds of the 19-file v0.1.5 candidate from the current claim-branch app
+source and that exact-main SDK were byte-identical at
+`/tmp/1050-package-current-main645-a/titan_workforce.tar.gz` and
+`/tmp/1050-package-current-main645-b/titan_workforce.tar.gz`. Archive SHA256:
+`022be439598b90fb433b6138efefd70bc226d9c479384464186342e5b758b176`.
+The matching sidecar, file count, SDK inclusion, executable role/lifecycle
+modes and staged install/update/uninstall preflight passed. Uninstall preserved
+hosted business state; no DirectAdmin server was modified.
+
+On this SDK bundle, the consumer/browser/hosted-session/package suite passed
+**39/39**, shared bridge **83/83**, and DirectAdmin package-script tests **3/3**.
+The extracted relay-to-host test used a full source archive from exact main
+`64561e4d` and passed **14 requests / 15 hosted routes**. Production RAW returned
+sanitized `503 cookie_boundary_unverified` with no upstream request. Fixture
+forwarding used an in-process injected loader and canonical SQLite placement
+adapters with disposable records; no production RAW process, CGI config, Apache,
+DirectAdmin host or real cookie boundary was exercised. The host still publishes
+`controls: []`, and typed governed-action denial produced no business DB/event
+writes. These are local compatibility checks, not commissioning evidence.
+
+The independent security reviewer found no issue in the fixture seam or package
+provenance; the final documentation-only baseline update does not change those
+boundaries. Hosted Workforce CI remains with #1157. #1050 is partial and open.
+
+Exact bounded commands on Node v22.23.3:
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+  /tmp/1050-node22-dist/bin/node --test \
+  apps/directadmin/workforce/tests/*.test.mjs \
+  apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
+  apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
+
+/tmp/1050-node22-dist/bin/node --test packages/titan-platform/tests/directadmin-bridge.test.mjs
+/tmp/1050-node22-dist/bin/node --test scripts/package-directadmin-plugin.test.mjs
+
+TITAN_WORKFORCE_HOST_ROOT=/tmp/1050-extracted-main645/host \
+TITAN_SERVER_NODE_SOURCE_ROOT=/tmp/1050-extracted-main645/host \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+TITAN_HOST_SDK_MODULE=/tmp/1050-sdk-main645.mjs \
+TITAN_BRIDGE_FIXTURE_MODULE=/tmp/1050-extracted-main645/host/packages/titan-platform/tests/fixtures/directadmin-bridge-fixture.mjs \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
+  /tmp/1050-node22-dist/bin/node \
+  --import /workspace/Titan-Zero-Field-Service-Workforce/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/loader.mjs \
+  apps/directadmin/workforce/tests/relay-host.integration.mjs
+```

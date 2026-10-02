@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   getTitanBusinessOpsAgentCommand,
   assessTitanBusinessOpsAgentCommand,
-} from "../.test-dist/src/business-ops.js";
+} from "../.test-dist/business-ops.js";
 
 test("CRM and booking donors converge onto canonical host routes", () => {
   assert.equal(getTitanBusinessOpsAgentCommand("clients.list")?.path, "/api/v1/clients");

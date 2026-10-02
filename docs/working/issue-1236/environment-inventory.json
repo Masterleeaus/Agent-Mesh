@@ -1,0 +1,465 @@
+{
+  "composeVariables": [
+    "APP_PORT",
+    "APP_TAG",
+    "REDIS_MAXMEMORY",
+    "REDIS_URL",
+    "SECURE_COOKIES",
+    "TZ_DATA_ROOT",
+    "TZ_ENV_FILE",
+    "WORKFORCE_COMPANY_STORE_HOST_ROOT",
+    "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE",
+    "WORKFORCE_DIRECTADMIN_NODE_ID",
+    "WORKFORCE_IDENTITY_SQLITE_HOST_PATH",
+    "WORKFORCE_PORT",
+    "WORKFORCE_SESSION_ALGORITHM",
+    "WORKFORCE_SESSION_ISSUER",
+    "WORKFORCE_SESSION_KEY_ID",
+    "WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH",
+    "WORKFORCE_UPSTREAM_SESSION_ALGORITHM",
+    "WORKFORCE_UPSTREAM_SESSION_AUDIENCE",
+    "WORKFORCE_UPSTREAM_SESSION_ISSUER",
+    "WORKFORCE_UPSTREAM_SESSION_KEY_ID",
+    "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH"
+  ],
+  "consumers": {
+    "ANTHROPIC_API_KEY": [
+      "apps/web/app/api/v1/estimates/ai-interview/route.ts",
+      "apps/web/app/api/v1/estimates/ai-tm-briefing/route.ts",
+      "apps/web/app/api/v1/expenses/[id]/parse-line-items/route.ts",
+      "apps/web/app/api/v1/expenses/scan-receipt/route.ts",
+      "apps/web/lib/day-review/interpret-day-draft.ts",
+      "apps/web/lib/estimates/ai-draft.ts",
+      "apps/web/lib/estimates/item-suggester.ts",
+      "apps/web/lib/estimates/materials-generator.ts",
+      "apps/web/lib/estimates/review.ts",
+      "apps/web/lib/estimates/scope.ts",
+      "apps/web/lib/estimates/task-decomposer.ts",
+      "apps/web/lib/estimates/tm-briefing.ts",
+      "apps/web/lib/sms/classify.ts"
+    ],
+    "APP_ENCRYPTION_KEY": [
+      "apps/web/lib/crypto.ts"
+    ],
+    "APP_PORT": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "APP_URL": [
+      "apps/web/app/api/v1/estimates/[id]/respond/route.ts",
+      "apps/web/lib/email/mailer.ts",
+      "apps/web/next.config.mjs",
+      "services/worker/src/mailer.ts"
+    ],
+    "BOOKING_ACCOUNT_ID": [
+      "apps/web/app/api/booking/route.ts",
+      "apps/web/app/api/health/route.ts"
+    ],
+    "BUF_BIGINT_DISABLE": [
+      "packages/titan-platform/src/ported/titan-zero-chat-background.compat.ts",
+      "packages/titan-platform/src/ported/titan-zero-chat-content.compat.ts",
+      "packages/titan-platform/src/ported/titan-zero-chat-runtime.compat.ts"
+    ],
+    "BUSINESS_TZ": [
+      "apps/web/lib/operations/business-day.ts"
+    ],
+    "CHROMIUM_BIN": [
+      "packages/titan-platform/src/ported/scripts/workforce-browser-live-smoke.ts"
+    ],
+    "CI": [
+      "apps/web/vitest.integration.config.ts",
+      "services/worker/vitest.integration.config.ts"
+    ],
+    "CODEE_VERIFY_JOBS": [
+      "apps/browser/tools/verify-codee.mjs"
+    ],
+    "CONTENT_LENGTH": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "CONTENT_TYPE": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "DATABASE_DIALECT": [
+      "apps/web/lib/db/dialect.ts",
+      "services/worker/src/db-runtime.ts"
+    ],
+    "DATABASE_URL": [
+      "services/worker/src/db-runtime.ts",
+      "services/worker/src/index.ts"
+    ],
+    "DB_DIALECT": [
+      "apps/web/lib/db/dialect.ts"
+    ],
+    "DEBUG": [
+      "packages/titan-platform/src/ported/titan-zero-chat-background.compat.ts",
+      "packages/titan-platform/src/ported/titan-zero-chat-content.compat.ts",
+      "packages/titan-platform/src/ported/titan-zero-chat-runtime.compat.ts"
+    ],
+    "E2E_DISABLE_LOGIN_RATE_LIMIT": [
+      "apps/web/app/api/v1/auth/login/route.ts"
+    ],
+    "E2E_SKIP_EMAIL_DELIVERY": [
+      "apps/web/app/api/v1/estimates/[id]/send/route.ts"
+    ],
+    "FORCE_COLOR": [
+      "packages/titan-platform/src/ported/titan-zero-chat-content.compat.ts"
+    ],
+    "HOME": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "LOCATION_INTERNAL_KEY": [
+      "apps/web/app/api/internal/arrival-prompt/route.ts",
+      "apps/web/app/api/internal/day-review-prompt/route.ts",
+      "apps/web/app/api/internal/location/route.ts",
+      "apps/web/app/api/internal/push/day-review-reminder/route.ts",
+      "apps/web/app/api/internal/start-day-prompt/route.ts"
+    ],
+    "LOCATION_PERSON_MAP": [
+      "apps/web/app/api/internal/location/route.ts"
+    ],
+    "LOG_LEVEL": [
+      "packages/log/src/index.ts"
+    ],
+    "NEXT_PHASE": [
+      "apps/web/lib/env.ts"
+    ],
+    "NEXT_PUBLIC_APP_URL": [
+      "apps/web/app/app/clients/[id]/page.tsx",
+      "apps/web/app/app/estimates/[id]/page.tsx",
+      "apps/web/app/app/invoices/[id]/page.tsx"
+    ],
+    "NEXT_PUBLIC_SITE_URL": [
+      "apps/web/app/sitemap.ts"
+    ],
+    "NODE_ENV": [
+      "apps/llm-plugin/baseUrl.ts",
+      "apps/web/app/ServiceWorkerRegistrar.tsx",
+      "apps/web/app/api/v1/portal/auth/confirm/route.ts",
+      "apps/web/lib/auth/session.ts",
+      "apps/web/lib/env.ts",
+      "apps/web/lib/portal/session.ts"
+    ],
+    "NODE_OPTIONS": [
+      "apps/browser/tools/verify-browser-node.mjs",
+      "apps/browser/tools/verify-codee.mjs"
+    ],
+    "OPENAI_API_KEY": [
+      "services/worker/src/process-captures.ts"
+    ],
+    "PATH": [
+      "apps/directadmin/dev-access/lib/app.php",
+      "apps/directadmin/dev-access/tools/request-integration-test.php",
+      "apps/directadmin/dev-access/tools/security-test.php"
+    ],
+    "POST": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "QUERY_STRING": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "RECEIPT_PARSE_MODEL": [
+      "apps/web/lib/expenses/receipt-line-items.ts"
+    ],
+    "REQUEST_METHOD": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "RESEND_API_KEY": [
+      "apps/marketing/tradepilot/app/api/waitlist/route.ts"
+    ],
+    "SECURE_COOKIES": [
+      "apps/web/lib/auth/session.ts",
+      "apps/web/lib/portal/session.ts"
+    ],
+    "SMS_GATEWAY_PASSWORD": [
+      "apps/web/lib/sms/gateway.ts"
+    ],
+    "SMS_GATEWAY_SIM_NUMBER": [
+      "apps/web/lib/sms/gateway.ts"
+    ],
+    "SMS_GATEWAY_URL": [
+      "apps/web/lib/sms/gateway.ts"
+    ],
+    "SMS_GATEWAY_USERNAME": [
+      "apps/web/lib/sms/gateway.ts"
+    ],
+    "SMTP_FROM": [
+      "apps/web/lib/email/mailer.ts",
+      "services/worker/src/mailer.ts"
+    ],
+    "SMTP_HOST": [
+      "apps/web/lib/email/mailer.ts",
+      "services/worker/src/mailer.ts"
+    ],
+    "SMTP_PASS": [
+      "apps/web/lib/email/mailer.ts",
+      "services/worker/src/mailer.ts"
+    ],
+    "SMTP_PORT": [
+      "apps/web/lib/email/mailer.ts",
+      "services/worker/src/mailer.ts"
+    ],
+    "SMTP_USER": [
+      "apps/web/lib/email/mailer.ts",
+      "services/worker/src/mailer.ts"
+    ],
+    "SOURCE_DATE_EPOCH": [
+      "apps/browser/tools/generate-source-manifest.mjs"
+    ],
+    "SQLITE_PATH": [
+      "apps/web/lib/zero/production-runtime.ts",
+      "packages/storage/src/sqlite-client.ts",
+      "services/worker/src/db-runtime.ts"
+    ],
+    "SQUARE_WEBHOOK_URL": [
+      "apps/web/app/api/webhooks/square/route.ts"
+    ],
+    "TDA_TEST_HOME_EMPTY": [
+      "apps/directadmin/dev-access/tools/request-integration-test.php"
+    ],
+    "TDA_TEST_HOME_EXISTING": [
+      "apps/directadmin/dev-access/tools/request-integration-test.php"
+    ],
+    "TDA_TEST_PLUGIN_ROOT": [
+      "apps/directadmin/dev-access/tools/request-integration-test.php"
+    ],
+    "TEST_BASE_URL": [
+      "apps/web/vitest.integration.config.ts"
+    ],
+    "TEST_DATABASE_URL": [
+      "apps/web/vitest.integration.config.ts",
+      "services/worker/vitest.integration.config.ts"
+    ],
+    "TITAN_CHATGPT_HOST_TOKEN": [
+      "apps/llm-plugin/lib/titan/context.ts"
+    ],
+    "TITAN_DEPLOYMENT_PROFILE": [
+      "apps/web/lib/env.ts"
+    ],
+    "TITAN_MCP_CAPABILITY_TOOL_MAP": [
+      "apps/llm-plugin/lib/titan/catalogue.ts"
+    ],
+    "TITAN_MCP_DISPATCH_TOOL": [
+      "apps/llm-plugin/lib/titan/catalogue.ts"
+    ],
+    "TITAN_MCP_TOKEN": [
+      "apps/llm-plugin/lib/titan/mcp-client.ts"
+    ],
+    "TITAN_MCP_URL": [
+      "apps/llm-plugin/lib/titan/gateway.ts",
+      "apps/llm-plugin/lib/titan/mcp-client.ts"
+    ],
+    "TITAN_NODE_AUTH_TOKEN": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "TITAN_NODE_PORT": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "TITAN_NODE_STORE_PATH": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "TITAN_SERVER_NODE_BIND": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "TITAN_SERVER_NODE_DEPENDENCIES": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "TITAN_SERVER_NODE_PORT": [
+      "apps/directadmin/server-node/runtime.mjs"
+    ],
+    "TITAN_SESSION_CONTEXT_URL": [
+      "apps/llm-plugin/lib/titan/context.ts"
+    ],
+    "TITAN_ZERO_DEVTOOLS": [
+      "apps/desktop/electron/main.cjs"
+    ],
+    "TITAN_ZERO_PORT": [
+      "apps/desktop/electron/main.cjs"
+    ],
+    "USER": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "USERNAME": [
+      "apps/directadmin/dev-access/lib/app.php"
+    ],
+    "VERCEL_BRANCH_URL": [
+      "apps/llm-plugin/baseUrl.ts"
+    ],
+    "VERCEL_ENV": [
+      "apps/llm-plugin/baseUrl.ts"
+    ],
+    "VERCEL_PROJECT_PRODUCTION_URL": [
+      "apps/llm-plugin/baseUrl.ts"
+    ],
+    "VERCEL_URL": [
+      "apps/llm-plugin/baseUrl.ts"
+    ],
+    "WORKER_DB_POOL_SIZE": [
+      "services/worker/src/db-runtime.ts"
+    ],
+    "WORKER_POLL_MS": [
+      "services/worker/src/index.ts"
+    ],
+    "WORKFORCE_COMPANY_STORE_ROOT": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_DEPENDENCIES_MODULE": [
+      "services/workforce/src/server.ts"
+    ],
+    "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_DIRECTADMIN_NODE_ID": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_IDENTITY_SQLITE_PATH": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_PORT": [
+      "apps/directadmin/server-node/runtime.mjs",
+      "services/workforce/src/server.ts"
+    ],
+    "WORKFORCE_SESSION_ALGORITHM": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_SESSION_ISSUER": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_SESSION_KEY_ID": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_SESSION_PUBLIC_KEY_PATH": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_SQLITE_PATH": [
+      "services/workforce/src/server.ts"
+    ],
+    "WORKFORCE_UPSTREAM_SESSION_ALGORITHM": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_UPSTREAM_SESSION_AUDIENCE": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_UPSTREAM_SESSION_ISSUER": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_UPSTREAM_SESSION_KEY_ID": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_PATH": [
+      "services/workforce/src/production-dependencies.ts"
+    ],
+    "WORKFORCE_WEB_SQLITE_PATH": [
+      "services/workforce/src/production-dependencies.ts"
+    ]
+  },
+  "scope": "Statically discoverable environment references in active apps/, services/, and packages/ JavaScript, TypeScript, and PHP source. This includes tooling and test-only routes outside test directories. Unit-test files, generated output, archives, and apps/web/marketing-source are excluded. Dynamic property names and host-provided runtime variables are not inferred; this inventory is not a deployment-profile declaration.",
+  "templates": {
+    ".env.example": {
+      "active": [
+        "APP_BASE_URL",
+        "APP_ENCRYPTION_KEY",
+        "APP_PORT",
+        "APP_URL",
+        "AUTH_SECRET",
+        "DATABASE_DIALECT",
+        "DATABASE_URL",
+        "NODE_ENV",
+        "REDIS_URL",
+        "SQLITE_PATH",
+        "TITAN_COMPANY_DATA_ROOT",
+        "TITAN_DEPLOYMENT_PROFILE",
+        "VAPID_PRIVATE_KEY",
+        "VAPID_PUBLIC_KEY",
+        "VAPID_SUBJECT",
+        "WORKER_POLL_MS"
+      ],
+      "commented": [
+        "ANTHROPIC_API_KEY",
+        "BOOKING_ACCOUNT_ID",
+        "DATABASE_URL",
+        "OPENAI_API_KEY",
+        "POSTGRES_DB",
+        "POSTGRES_HOST",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_PORT",
+        "POSTGRES_USER",
+        "RECEIPT_PARSE_MODEL",
+        "S3_ACCESS_KEY",
+        "S3_BUCKET",
+        "S3_ENDPOINT",
+        "S3_REGION",
+        "S3_SECRET_KEY",
+        "SMS_GATEWAY_PASSWORD",
+        "SMS_GATEWAY_SIM_NUMBER",
+        "SMS_GATEWAY_URL",
+        "SMS_GATEWAY_USERNAME",
+        "SMTP_FROM",
+        "SMTP_HOST",
+        "SMTP_PASS",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SQUARE_WEBHOOK_URL"
+      ]
+    },
+    "apps/marketing/nexjob/.env.example": {
+      "active": [
+        "VITE_APP_URL"
+      ],
+      "commented": [
+        "VITE_APP_URL"
+      ]
+    },
+    "infra/vps.env.example": {
+      "active": [
+        "APP_BASE_URL",
+        "APP_DOMAIN",
+        "APP_ENCRYPTION_KEY",
+        "APP_PORT",
+        "APP_TAG",
+        "APP_URL",
+        "AUTH_SECRET",
+        "DATABASE_DIALECT",
+        "DATABASE_URL",
+        "NODE_ENV",
+        "NO_TLS",
+        "REDIS_CONTAINER_MEMORY_LIMIT",
+        "REDIS_CONTAINER_MEMORY_RESERVATION",
+        "REDIS_MAXMEMORY",
+        "REDIS_URL",
+        "SECURE_COOKIES",
+        "SQLITE_PATH",
+        "TITAN_COMPANY_DATA_ROOT",
+        "TITAN_DEPLOYMENT_PROFILE",
+        "VAPID_PRIVATE_KEY",
+        "VAPID_PUBLIC_KEY",
+        "VAPID_SUBJECT",
+        "WORKER_POLL_MS",
+        "WORKFORCE_COMPANY_STORE_HOST_ROOT",
+        "WORKFORCE_DIRECTADMIN_NODE_ID",
+        "WORKFORCE_IDENTITY_SQLITE_HOST_PATH",
+        "WORKFORCE_SESSION_ALGORITHM",
+        "WORKFORCE_SESSION_ISSUER",
+        "WORKFORCE_SESSION_KEY_ID",
+        "WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH",
+        "WORKFORCE_UPSTREAM_SESSION_ALGORITHM",
+        "WORKFORCE_UPSTREAM_SESSION_AUDIENCE",
+        "WORKFORCE_UPSTREAM_SESSION_ISSUER",
+        "WORKFORCE_UPSTREAM_SESSION_KEY_ID",
+        "WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH"
+      ],
+      "commented": [
+        "ANTHROPIC_API_KEY",
+        "BOOKING_ACCOUNT_ID",
+        "OPENAI_API_KEY",
+        "SMS_GATEWAY_PASSWORD",
+        "SMS_GATEWAY_SIM_NUMBER",
+        "SMS_GATEWAY_URL",
+        "SMS_GATEWAY_USERNAME",
+        "SMTP_HOST",
+        "SMTP_PASS",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE"
+      ]
+    }
+  }
+}

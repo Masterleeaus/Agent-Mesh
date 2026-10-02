@@ -54,6 +54,7 @@ async function postCapture(item: PendingCapture): Promise<"ok" | "auth" | "fail"
   if (!item.audio && !spoken) return "fail";
   const form = new FormData();
   form.append("client_id", item.id);
+  form.append("company_id", item.company_id);
   if (item.audio && item.audioName) form.append("audio", item.audio, item.audioName);
   if (item.photo) form.append("photo", item.photo, item.photoName || "photo.jpg");
   if (spoken) form.append("transcript", spoken);
@@ -67,7 +68,7 @@ async function postCapture(item: PendingCapture): Promise<"ok" | "auth" | "fail"
   }
 }
 
-export function CaptureRecorder() {
+export function CaptureRecorder({ companyId }: { companyId: string }) {
   const [mic, setMic] = useState<MicState>("starting");
   const [record, setRecord] = useState<RecordState>("idle");
   const [status, setStatus] = useState("Starting microphone…");
@@ -99,7 +100,7 @@ export function CaptureRecorder() {
   }, [photo]);
 
   const flushPending = useCallback(async () => {
-    const pending = await listPending();
+    const pending = await listPending(companyId);
     if (pending.length === 0) {
       setFailedCount(0);
       return;
@@ -109,7 +110,7 @@ export function CaptureRecorder() {
     for (const item of pending) {
       const result = await postCapture(item);
       if (result === "ok") {
-        await removePending(item.id);
+        await removePending(companyId, item.id);
       } else if (result === "auth") {
         remaining += 1;
         window.location.replace(LOGIN_NEXT);
@@ -122,13 +123,13 @@ export function CaptureRecorder() {
     if (remaining > 0) {
       setStatus("Couldn't save. Tap retry — the recording is still on this phone.");
     }
-  }, []);
+  }, [companyId]);
 
   const saveItem = useCallback(async (item: PendingCapture, spoken: string) => {
     await savePending(item);
     const result = await postCapture(item);
     if (result === "ok") {
-      await removePending(item.id);
+      await removePending(companyId, item.id);
       setPhoto(null);
       setNeedTyped(false);
       setTypedDraft("");
@@ -145,7 +146,7 @@ export function CaptureRecorder() {
     setFailedCount((count) => count + 1);
     setRecordState("idle");
     setStatus("Couldn't save. Tap retry — the recording is still on this phone.");
-  }, [flushPending]);
+  }, [companyId, flushPending]);
 
   useEffect(() => {
     let cancelled = false;
@@ -208,13 +209,14 @@ export function CaptureRecorder() {
     await saveItem(
       {
         id: crypto.randomUUID(),
+        company_id: companyId,
         photo: photoRef.current ?? undefined,
         photoName: photoRef.current?.name,
         transcript: spoken,
       },
       spoken,
     );
-  }, [saveItem]);
+  }, [companyId, saveItem]);
 
   const stopAndSave = useCallback(() => {
     if (speechOnlyRef.current) {
@@ -289,6 +291,7 @@ export function CaptureRecorder() {
       await saveItem(
         {
           id: crypto.randomUUID(),
+          company_id: companyId,
           audio: blob.size > 0 ? blob : undefined,
           audioName: blob.size > 0 ? `capture.${extensionForMime(blob.type)}` : undefined,
           photo: photoRef.current ?? undefined,
@@ -318,7 +321,7 @@ export function CaptureRecorder() {
       setRecordState("idle");
       setStatus("Could not start recording.");
     }
-  }, [mic, saveItem, startSpeechOnly]);
+  }, [companyId, mic, saveItem, startSpeechOnly]);
 
   function onPointerDown(event: PointerEvent<HTMLButtonElement>) {
     if (mic !== "ready") return;
@@ -421,6 +424,7 @@ export function CaptureRecorder() {
             void saveItem(
               {
                 id: crypto.randomUUID(),
+          company_id: companyId,
                 photo: photoRef.current ?? undefined,
                 photoName: photoRef.current?.name,
                 transcript: spoken,

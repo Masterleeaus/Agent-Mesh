@@ -92,7 +92,7 @@ export async function countUnreadAttentionEvents(
   const predicate = client.dialect === "sqlite"
     ? "created_at >= datetime('now', $2)"
     : client.dialect === "mysql"
-      ? "created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)"
+      ? "created_at >= DATE_SUB(NOW(), INTERVAL $2 DAY)"
       : "created_at >= now() - ($2::text || ' days')::interval";
   const params = client.dialect === "mysql"
     ? [accountId, ATTENTION_RETENTION_DAYS]
@@ -109,7 +109,7 @@ export async function countUnreadAttentionEvents(
 }
 
 export async function loadAttentionSummary(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<AttentionSummary> {
   const [requestsCount, invoicesCount, estimatesCount, unreadEventCount] =

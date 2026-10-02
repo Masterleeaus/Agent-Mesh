@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:titan_zero_mobile/screens/titan_shell_screen.dart';
-import 'package:titan_zero_mobile/titan/core/titan_session.dart';
+import 'package:titan_zero_mobile/titan/core/mobile_bootstrap_config.dart';
 import 'package:titan_zero_mobile/titan/services/http_titan_surface_transport.dart';
 import 'package:titan_zero_mobile/titan/services/titan_gateway.dart';
 
@@ -14,48 +14,67 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  TitanGateway _productionGateway() {
-    const companyId = String.fromEnvironment('TITAN_COMPANY_ID');
-    const actorId = String.fromEnvironment('TITAN_ACTOR_ID');
-    const deviceId = String.fromEnvironment('TITAN_DEVICE_ID');
-    const surface = String.fromEnvironment('TITAN_SURFACE', defaultValue: 'zero');
-    const projectionUrl = String.fromEnvironment('TITAN_SURFACE_PROJECTION_URL');
-    const commandUrl = String.fromEnvironment('TITAN_SURFACE_COMMAND_URL');
-    const token = String.fromEnvironment('TITAN_AUTH_TOKEN');
-    if ([companyId, actorId, deviceId, projectionUrl, commandUrl].any((v) => v.isEmpty)) {
-      throw StateError('titan-mobile-runtime-configuration-required');
+  String? _bootstrapError;
+
+  TitanGateway _productionGateway(MobileBootstrapConfig config) =>
+      SurfaceSdkTitanGateway(
+        config.session,
+        HttpTitanSurfaceTransport(
+          projectionEndpoint: config.projectionEndpoint,
+          commandEndpoint: config.commandEndpoint,
+          bearerToken: config.bearerToken,
+        ),
+      );
+
+  Future<void> _openProduction() async {
+    try {
+      final config = await MobileBootstrapConfig.fromEnvironment();
+      if (!mounted) return;
+      await Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => TitanShellScreen(gateway: _productionGateway(config)),
+        ),
+        (_) => false,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _bootstrapError =
+          'Titan could not establish a secure session. Check your connection or sign in again.');
     }
-    final session = TitanSession(companyId: companyId, actorId: actorId, deviceId: deviceId, surface: surface);
-    return SurfaceSdkTitanGateway(session, HttpTitanSurfaceTransport(
-      projectionEndpoint: Uri.parse(projectionUrl),
-      commandEndpoint: Uri.parse(commandUrl),
-      bearerToken: token.isEmpty ? null : token,
-    ));
   }
 
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 500), () {
-      if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => TitanShellScreen(gateway: _productionGateway())),
-        (_) => false,
-      );
-    });
+    Timer(const Duration(milliseconds: 500), () => unawaited(_openProduction()));
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.change_history_rounded, size: 72),
-            SizedBox(height: 12),
-            Text('TITAN ZERO', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+            const Icon(Icons.change_history_rounded, size: 72),
+            const SizedBox(height: 12),
+            const Text(
+              'TITAN ZERO',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            if (_bootstrapError != null) ...[
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(_bootstrapError!, textAlign: TextAlign.center),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: _openProduction,
+                child: const Text('Retry'),
+              ),
+            ],
           ],
         ),
       ),

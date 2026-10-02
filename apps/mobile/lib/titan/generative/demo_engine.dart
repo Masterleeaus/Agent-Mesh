@@ -4,7 +4,7 @@ import '../models/generative_item.dart';
 List<TitanGenerativeItem> demoGenerativeResponse(String input) {
   final q = input.toLowerCase();
   if (q.contains('job') || q.contains('today') || q.contains('tomorrow')) {
-    return const [TitanGenerativeItem(type: TitanGenerativeType.job, title: 'Smith Residence', subtitle: 'Cleaning', fields: {'When': 'Tomorrow · 9:00 AM', 'Worker': 'John', 'Status': 'Scheduled', 'Value': r'$180'}, actions: ['Open job', 'Map', 'Navigate', 'Evidence', 'Reschedule'], context: {'job_id':'job-101','latitude':-37.7984,'longitude':144.9783,'address':'Fitzroy, VIC'}];
+    return const [TitanGenerativeItem(type: TitanGenerativeType.job, title: 'Smith Residence', subtitle: 'Cleaning', fields: {'When': 'Tomorrow · 9:00 AM', 'Worker': 'John', 'Status': 'Scheduled', 'Value': r'$180'}, actions: ['Open job', 'Map', 'Navigate', 'Evidence', 'Reschedule'], context: {'job_id':'job-101','latitude':-37.7984,'longitude':144.9783,'address':'Fitzroy, VIC'})];
   }
   if (q.contains('customer') || q.contains('smith')) {
     return const [TitanGenerativeItem(type:TitanGenerativeType.customer,title:'Smith Residence',subtitle:'Customer',fields:{'Phone':'+61 400 000 000','Email':'smith@example.com','Jobs':'12 completed'},actions:['Open customer','Call','Message'],context:{'customer_id':'customer-101'})];

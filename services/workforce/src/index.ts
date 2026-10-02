@@ -4,10 +4,24 @@ export type WorkerId = string;
 
 export type WorkerKind = "digital" | "human";
 export type WorkState = "CREATED" | "READY" | "CLAIMED" | "IN_PROGRESS" | "BLOCKED" | "WAITING" | "WAITING_APPROVAL" | "WAITING_EXTERNAL" | "COMPLETED" | "FAILED" | "CANCELLED";
-export interface WorkOrigin { actor_id: string; conversation_id: string; surface?: "zero" | "go" | "hub" | "system"; correlation_id?: string; }
-export interface WorkforceWorker { company_id: CompanyId; worker_id: WorkerId; kind: WorkerKind; team_id?: string; manager_id?: WorkerId; capabilities: string[]; active: boolean; }
+import type { SessionSourceReference } from "../../../packages/titan-platform/src/security-boundary.js";
+export const AUTHENTICATED_SESSION_PROOF_TYPE = {
+ direct: "titan.workforce.session/v1",
+ sourceDerived: "titan.workforce.source-session/v1",
+} as const;
+export type AuthenticatedSessionProofType = typeof AUTHENTICATED_SESSION_PROOF_TYPE[keyof typeof AUTHENTICATED_SESSION_PROOF_TYPE];
+export interface AuthenticatedWorkIdentity {
+ provider: string; subject: string; session_id: string; device_id: string; session_revision: number;
+ audience: string; company_id: string; actor_id: string; context_revision: string; surface: string;
+ credential_expires_at?: string; source_session?: SessionSourceReference; source_session_required?: boolean;
+ /** New identities persist the proof class; absence is legacy stored identity data. */
+ session_proof_type?: AuthenticatedSessionProofType;
+}
+export interface WorkCorrelation { authenticated_identity?: AuthenticatedWorkIdentity; request_id?: string; operation_id?: string; trace_id?: string; idempotency_key?: string; session_id?: string; context_revision?: string | number; }
+export interface WorkOrigin extends WorkCorrelation { actor_id: string; conversation_id: string; surface?: "zero" | "go" | "hub" | "system"; correlation_id?: string; dispatch_fingerprint?: string; }
+export interface WorkforceWorker { company_id: CompanyId; worker_id: WorkerId; kind: WorkerKind; team_id?: string; manager_id?: WorkerId; capabilities: string[]; active: boolean; /** Exact current actor_id from a verified company session; optional legacy rows remain unbound. */ human_identity_ref?: string; }
 export interface WorkItem { company_id: CompanyId; work_id: WorkId; parent_work_id?: WorkId; objective: string; description?: string; creator: string; origin?: WorkOrigin; assignee?: WorkerId; team_id?: string; priority: number; state: WorkState; dependencies: WorkId[]; required_capabilities: string[]; authority_requirement?: string; context_refs: string[]; evidence_refs: string[]; result?: unknown; escalation?: { reason: string; target?: WorkerId; at: string }; recurrence?: { rule: string; next_at?: string }; lease?: { worker_id: WorkerId; expires_at: string }; created_at: string; updated_at: string; }
-export interface WorkforceEvent { company_id: CompanyId; type: `work.${"created"|"ready"|"claimed"|"started"|"delegated"|"blocked"|"waiting"|"escalated"|"approval_required"|"resumed"|"completed"|"failed"|"cancelled"}` | `worker.${"woken"|"started"|"waiting"|"completed"}`; work_id: WorkId; at: string; actor?: string; data?: Record<string, unknown>; }
+export interface WorkforceEvent { company_id: CompanyId; type: `work.${"created"|"ready"|"claimed"|"started"|"delegated"|"reassigned"|"blocked"|"waiting"|"escalated"|"approval_required"|"resumed"|"completed"|"failed"|"cancelled"}` | `worker.${"woken"|"started"|"waiting"|"completed"}`; work_id: WorkId; at: string; actor?: string; data?: Record<string, unknown>; }
 export interface WorkforceStore { create?(item: WorkItem): Promise<boolean>; get(companyId: CompanyId, workId: WorkId): Promise<WorkItem | undefined>; put(item: WorkItem): Promise<void>; list(companyId: CompanyId): Promise<WorkItem[]>; appendEvent(event: WorkforceEvent): Promise<void>; }
 export interface WorkforceWorkerStore { getWorker(companyId: CompanyId, workerId: WorkerId): Promise<WorkforceWorker | undefined>; putWorker(worker: WorkforceWorker): Promise<void>; listWorkers(companyId: CompanyId): Promise<WorkforceWorker[]>; }
 export interface AgentRuntimeAdapter { wake(input: { company_id: CompanyId; worker_id: WorkerId; work_id: WorkId; origin?: WorkOrigin }): Promise<void>; }

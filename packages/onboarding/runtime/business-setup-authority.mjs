@@ -1,4 +1,4 @@
-import { normalizeCompanyContext } from '../../packages/titan-platform/src/ported/titan-local/kernel/company-context.js';
+import { normalizeCompanyContext } from '@titan-zero/storage/company-context';
 
 const MODULE_ID = 'titan-onboarding';
 const PROFILE_COLLECTION = 'business-profile';

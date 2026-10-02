@@ -56,7 +56,7 @@ test('provider acknowledgement without verification cannot enter the verified pr
   const result = await gateway.execute({ ...base, execution_id: 'execution-2', idempotency_key: 'complete-job-2' });
   const projection = ledger.projectJob('company-a', 'job-1');
 
-  assert.equal(result.state, 'FAILED');
+  assert.equal(result.state, 'UNCERTAIN');
   assert.equal(projection.status, 'UNKNOWN');
   assert.deepEqual(projection.provenance.evidence_ids, []);
 });
@@ -65,15 +65,15 @@ test('company scope and supersession are enforced during projection rebuild', ()
   const ledger = new AcceptedEvidenceLedger();
   ledger.append({
     evidence_id: 'event-a', company_id: 'company-a', work_id: 'job-1', state: 'VERIFIED',
-    final_outcome: 'verified', observed_result: { status: 'complete' },
+    final_outcome: 'verified', verification: { verified: true, method: 'canonical-reread' }, observed_result: { status: 'complete' },
   });
   ledger.append({
     evidence_id: 'event-b', company_id: 'company-a', work_id: 'job-1', state: 'VERIFIED',
-    final_outcome: 'verified', supersedes_evidence_id: 'event-a', observed_result: { status: 'reopened' },
+    final_outcome: 'verified', verification: { verified: true, method: 'canonical-reread' }, supersedes_evidence_id: 'event-a', observed_result: { status: 'reopened' },
   });
   ledger.append({
     evidence_id: 'event-other', company_id: 'company-b', work_id: 'job-1', state: 'VERIFIED',
-    final_outcome: 'verified', observed_result: { status: 'complete' },
+    final_outcome: 'verified', verification: { verified: true, method: 'canonical-reread' }, observed_result: { status: 'complete' },
   });
 
   const projection = ledger.projectJob('company-a', 'job-1');
@@ -93,3 +93,15 @@ test('factual history is immutable and simulated evidence is rejected', () => {
   assert.throws(() => ledger.append({ evidence_id: 'event-immutable', company_id: 'company-a' }), /duplicate-evidence-id/);
 });
 
+test('unverified records cannot assert a verified business outcome', () => {
+  const ledger = new AcceptedEvidenceLedger();
+  assert.throws(() => ledger.append({
+    evidence_id: 'event-unverified', company_id: 'company-a', work_id: 'job-1',
+    state: 'VERIFIED', final_outcome: 'verified', observed_result: { status: 'complete' },
+  }), /verified-evidence-requires-independent-verification/);
+  assert.throws(() => ledger.append({
+    evidence_id: 'event-conflicting-state', company_id: 'company-a', work_id: 'job-1',
+    state: 'PROVIDER_ACKNOWLEDGED', final_outcome: 'verified', verification: { verified: true },
+  }), /verified-evidence-requires-independent-verification/);
+  assert.equal(ledger.projectJob('company-a', 'job-1').status, 'UNKNOWN');
+});

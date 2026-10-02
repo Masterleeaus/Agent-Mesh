@@ -1,3 +1,5 @@
+import { standaloneNavigationHref } from "@/lib/navigation/standalone-navigation";
+
 /**
  * Resolve where to send the user after a successful login.
  *
@@ -12,11 +14,11 @@ const OFFICE_ROOT = "/app";
 const FIELD_ROOT = "/app/my-work";
 export const CAPTURE_PATH = "/app/capture";
 
-/** Open-redirect allowlist: honor `next` only when it is exactly /app/capture. */
+/** Reuse the canonical same-origin, reachable-page navigation allowlist. */
 export function allowlistedPostLoginNext(
   next: string | null | undefined,
 ): string | null {
-  return next === CAPTURE_PATH ? CAPTURE_PATH : null;
+  return standaloneNavigationHref(next);
 }
 
 export function loginRedirectForPath(pathname: string | null | undefined): string {
@@ -56,7 +58,8 @@ export function readWorkspaceModeCookie(
   if (!cookieSource) return null;
   const m = cookieSource.match(new RegExp(`(?:^|; )${COOKIE_MODE}=([^;]*)`));
   if (!m) return null;
-  const v = decodeURIComponent(m[1]);
+  let v: string;
+  try { v = decodeURIComponent(m[1]); } catch { return null; }
   return v === "field" || v === "office" ? v : null;
 }
 

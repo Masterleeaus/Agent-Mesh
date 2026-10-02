@@ -15,7 +15,96 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  slice-check:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR and base
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check patch hygiene
+        run: git diff --check origin/main...HEAD
+      - name: Validate repository guardrails
+        run: |
+          test -f AGENTS.md
+          test -f package.json
+          test -f pnpm-lock.yaml
+          ! git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- . ':!*.zip'
+      - name: Validate mission claim checker
+        run: |
+          python3 -m unittest discover -s .github/scripts/tests -p 'test_validate_agent_claim.py' -v
+          python3 .github/scripts/tests/test_slice_ci_contract.py
+
+  mobile:
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: stable
+      - name: Install mobile dependencies
+        working-directory: apps/mobile
+        run: flutter pub get
+      - name: Parse changed Dart files
+        working-directory: apps/mobile
+        run: dart format --output=none lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
+      - name: Analyze mobile transport
+        working-directory: apps/mobile
+        run: dart analyze lib/titan/services/hosted_conversation_transport.dart test/hosted_conversation_transport_test.dart
+      - name: Run hosted transport test
+        working-directory: apps/mobile
+        run: flutter test test/hosted_conversation_transport_test.dart
+      - name: Run mobile context and audience tests
+        working-directory: apps/mobile
+        run: >-
+          flutter test
+          test/titan/mobile_audience_guard_test.dart
+          test/titan/mobile_bootstrap_config_test.dart
+          test/titan/mobile_context_scope_test.dart
+          test/titan/mobile_session_context_test.dart
+          test/titan/scoped_offline_queue_test.dart
+          test/titan_conversation_gateway_test.dart
+          test/titan_shell_conversation_test.dart
+      - name: Analyze mobile bootstrap and context isolation
+        working-directory: apps/mobile
+        run: >-
+          dart analyze
+          lib/main.dart
+          lib/screens/splash_screen.dart
+          lib/screens/titan_shell_screen.dart
+          lib/titan/core/mobile_audience_guard.dart
+          lib/titan/core/mobile_bootstrap_config.dart
+          lib/titan/core/mobile_context_scope.dart
+          lib/titan/core/mobile_session_context.dart
+          lib/titan/generative/demo_engine.dart
+          lib/titan/models/generative_item.dart
+          lib/titan/models/titan_command.dart
+          lib/titan/services/http_titan_surface_transport.dart
+          lib/titan/services/offline_command_queue.dart
+          lib/titan/services/titan_gateway.dart
+          lib/titan/storage/secure_store.dart
+      - name: Report legacy full mobile analysis and test baseline
+        working-directory: apps/mobile
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          flutter analyze
+          ANALYZE_STATUS=$?
+          flutter test
+          TEST_STATUS=$?
+          if [ "$ANALYZE_STATUS" -ne 0 ] || [ "$TEST_STATUS" -ne 0 ]; then
+            echo "Flutter analysis exit: $ANALYZE_STATUS; full test exit: $TEST_STATUS"
+            exit 1
+          fi
   validate:
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical repository
@@ -38,6 +127,7 @@ jobs:
             exit 1
           fi
           python3 .github/scripts/validate-agent-claim.py --self-test
+          python3 .github/scripts/check-evidence-ledger-ownership.py
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -106,6 +196,10 @@ jobs:
           else
             echo "::warning::Web typecheck still contains recorded Merge84 baseline debt; no regression detected."
           fi
+
+      - name: Install Chromium for PWA browser tests
+        if: ${{ hashFiles('apps/pwa/tests/browser-regression.test.mjs') != '' }}
+        run: pnpm --filter @titan-zero/pwa exec playwright install --with-deps chromium
 
       - name: Strict tests for clean packages
         run: pnpm -r --filter '!@titan-zero/titan-platform' --filter '!@titan-zero/worker' --filter '!@titan-zero/web' --if-present test
