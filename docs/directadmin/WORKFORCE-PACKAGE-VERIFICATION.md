@@ -5,35 +5,38 @@ This checklist verifies a **packaging candidate** in a local workspace or dispos
 The v0.1.4 record and the first v0.1.5 hash below are historical candidates.
 The current v0.1.5 candidate was rebuilt from the app changes on the canonical
 `agent/issue-1050` branch against current main
-`d508a2695fccc36e039f18e60cb96adfbe318813` after #1243 updated the shared
-session bridge. Current-source results and hashes are recorded at the end.
+`8c1161f291d07ecf344ae062b2349c2a13280410` after #1242/#1244 merged. The
+DirectAdmin SDK source is unchanged from `d508a269` and still includes #1243's
+session bridge behavior. Current-source results and hashes are recorded at the
+end.
 
 ## Build the SDK and package
 
 For the current candidate, use the exact canonical SDK source from main
-`d508a2695fccc36e039f18e60cb96adfbe318813` (including #1243 session replacement
-and registry-outage handling). No shared SDK implementation is copied into the
-Workforce source. Node 22.23.3 and the repository's locked dependencies were used.
+`8c1161f291d07ecf344ae062b2349c2a13280410` (including #1243 session replacement
+and registry-outage handling). Its `packages/titan-platform` tree is unchanged
+from `d508a269`. No shared SDK implementation is copied into the Workforce
+source. Node 22.23.3 and the repository's locked dependencies were used.
 
 ```sh
-work_area=/tmp/1050-sdk-d508
+work_area=/tmp/1050-sdk-8c1161
 source_area=/tmp/1050-workforce-source
-rm -rf "$work_area" "$source_area" /tmp/1050-sdk-d508.mjs
+rm -rf "$work_area" "$source_area" /tmp/1050-sdk-8c1161.mjs
 mkdir -p "$work_area" "$source_area"
 source_ref=$(git rev-parse HEAD)
-git archive d508a2695fccc36e039f18e60cb96adfbe318813 packages/titan-platform \
+git archive 8c1161f291d07ecf344ae062b2349c2a13280410 packages/titan-platform \
   | tar -xf - -C "$work_area"
 ln -s "$PWD/packages/titan-platform/node_modules" \
   "$work_area/packages/titan-platform/node_modules"
 node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/bin/esbuild \
   "$work_area/packages/titan-platform/src/directadmin-plugin.ts" \
   --bundle --format=esm --platform=browser --target=es2022 \
-  --outfile=/tmp/1050-sdk-d508.mjs
+  --outfile=/tmp/1050-sdk-8c1161.mjs
 
 git archive "$source_ref" apps/directadmin/workforce | tar -xf - -C "$source_area"
 node apps/directadmin/workforce/tools/package.mjs \
   --source-dir "$source_area/apps/directadmin/workforce" \
-  --sdk-module /tmp/1050-sdk-d508.mjs \
+  --sdk-module /tmp/1050-sdk-8c1161.mjs \
   --output-dir /tmp/1050-package-candidate
 
 sha256sum /tmp/1050-package-candidate/titan_workforce.tar.gz
@@ -68,7 +71,7 @@ Run the integration suite against the compiled SDK:
 
 ```sh
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
-TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-d508.mjs \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-8c1161.mjs \
   node --test apps/directadmin/workforce/tests/*.test.mjs \
     apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
     apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
@@ -198,44 +201,42 @@ supported host Node runtime. No credentials, live package, service, firewall,
 DNS, or security setting was changed. This remains a package verification
 candidate, not a commissioned plugin or mission completion claim.
 
-## Current-source v0.1.5 candidate — main d508a269
+## Current-source v0.1.5 candidate — main 8c1161f2
 
-The branch was fast-forwarded from its claimed base `c46774cc` to exact current
-main `d508a2695fccc36e039f18e60cb96adfbe318813` after #1243. The exact shared
-#1049 SDK source from `d508a269` was bundled using Node v22.23.3; the official
+The canonical `agent/issue-1050` branch normally merged current main
+`8c1161f291d07ecf344ae062b2349c2a13280410` at
+`a1d364828991289254b04cdc1e16e0f92a5c1458` after #1242/#1244. The shared SDK
+source remains unchanged from `d508a269`; #1242's production host composition
+now requires canonical company-placement registry and store-opener ports. The
+exact #1049 SDK source from main was bundled using Node v22.23.3. The official
 Node archive SHA256 is
-`df450af89261115ef9f9e3830c3eeb2cc9213b63c720b1af623cb5dcbe2e02de` and bundled
+`df450af89261115ef9f9e3830c3eeb2cc9213b63c720b1af623cb5dcbe2e02de`; bundled
 `images/sdk.mjs` SHA256 is
 `9d94cb80dbb0e7df15388efb1de2262e6c26af041f66a1c5d4944045fc491c9a`.
 
-Two builds of the 19-file v0.1.5 verification candidate from the changed claim
-branch source and this SDK produced byte-identical archives. Candidate path:
-`/tmp/1050-package-current-a/titan_workforce.tar.gz`. Archive SHA256:
-`cb3b5f0c46b53a12867db16972dfd8161dbb98fe53e7278999c5cb26b96ab132`. The
-sidecar matches. Independent extraction verified the archive hash, 19-file
-count, bundled SDK hash, executable admin/reseller/user routes and lifecycle
-scripts, and staged install/update/uninstall preflight. Uninstall preserves
-canonical hosted business state. No DirectAdmin server was modified.
+Two builds of the 19-file v0.1.5 verification candidate from the finalized
+claim-branch source and this SDK were byte-identical. Candidate:
+`/tmp/1050-package-current-final-a/titan_workforce.tar.gz`. Archive SHA256:
+`618072346eb3b80b38010ed0a6a13f1a9b13d16d48ca87b30469334b7f8ae5da`; the
+sidecar matches. Independent extraction verified the 19-file count, bundled
+SDK hash, executable role/lifecycle entrypoints, and staged install/update/
+uninstall preflight. Uninstall preserves hosted business state. No DirectAdmin
+server is modified by these checks.
 
-The Node 22.23.3 Workforce command
-`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-d508.mjs node --test apps/directadmin/workforce/tests/*.test.mjs apps/directadmin/workforce/tests/sdk-contract.integration.mjs apps/directadmin/workforce/tests/hosted-sdk.integration.mjs`
-passed **39/39**. `packages/titan-platform/tests/directadmin-bridge.test.mjs`
-passed **83/83** from the same main source, including #1243 rejected replacement
-session versus registry outage handling. The extracted relay-to-host run from
-exact main `d508a269` sources passed 14 relay-module requests / 15 hosted
-routes. With no relay configuration, the extracted module's production default
-returned sanitized 503 `relay_not_configured`; fixture forwarding injected a
-fake config loader into the module in-process. It used no config file or CGI
-environment setting to enable forwarding and did not spawn the production RAW
-executable. The same test passed against the unmerged #812 draft PR #1245 source
-at exact head `589658ef10cf4c66af5ebb574799f281b126ced5`, where the production
-default returned sanitized 503 `cookie_boundary_unverified`. This is candidate
-compatibility evidence only, not an Apache, DirectAdmin CGI, production
-identity or commissioning proof.
+On this exact main SDK bundle, the Node 22.23.3 Workforce consumer/browser/
+hosted-session/package suite passed **39/39** and the shared bridge suite passed
+**83/83**. The extracted relay-to-host harness passed **14 requests / 15 routes**
+against current main and the unmerged #812 draft PR #1245. Current-main's
+production default returned sanitized 503 `relay_not_configured`; the draft's
+returned sanitized 503 `cookie_boundary_unverified`. The current-main fixture
+provides #1242's required company-placement ports with canonical SQLite adapters
+and disposable test records. Forwarding is enabled only by in-process test
+injection; no configuration file, CGI environment override, production RAW
+process, Apache boundary, or DirectAdmin commissioning is involved.
 
 Current main still contains the experimental Apache `:443` filter, which fails
 open when the Titan cookie is split across duplicate physical `Cookie` headers.
-Draft PR #1245 removes the filter and disables production forwarding; it is not
-merged and offers no working production relay contract. The 39/39 cockpit
-result is local evidence; the secretless Node 22 hosted CI job belongs with
-active #1157 owner `agent/issue-1157` and was not edited here.
+Draft PR #1245 removes the filter and disables production forwarding, so it
+offers no working production relay. The 39/39 cockpit result is local evidence;
+the secretless Node 22 hosted CI job belongs with the active #1157 owner and was
+not edited here. #1050 remains open.

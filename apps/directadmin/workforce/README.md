@@ -54,7 +54,11 @@ port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
 The current extracted relay-to-host run used Server Node 0.3.0 and the hosted
-owner from main `d508a2695fccc36e039f18e60cb96adfbe318813`. It exercises the
+owner from main `8c1161f291d07ecf344ae062b2349c2a13280410`, including #811's
+merged production dependency composition. The disposable host fixture supplies
+the required company-placement registry/opener through canonical SQLite storage
+adapters; those temporary placements are test-only, and no company business
+store is opened because the published controls remain empty. The test exercises the
 extracted relay module's production default loader with no config and observes
 its sanitized 503, then injects a fake config loader directly into that module
 in-process for disposable fixture forwarding. It uses no relay config file or
