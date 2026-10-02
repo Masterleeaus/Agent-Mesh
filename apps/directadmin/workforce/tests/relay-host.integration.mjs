@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, rm, symlink } from 'node:fs/promises';
+import { lstat, mkdtemp, mkdir, readFile, rm, symlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -27,6 +27,7 @@ const browserPackage = join(scratch, 'workforce-extracted');
 const workforceArchiveRoot = join(scratch, 'workforce-package');
 const certPath = join(scratch, 'panel.crt');
 const keyPath = join(scratch, 'panel.key');
+const lifecycleCallbacks = [];
 let host;
 let panel;
 let browser;
@@ -206,7 +207,10 @@ try {
 
   for (const relative of ['', 'packages/titan-platform', 'packages/storage', 'services/workforce']) {
     const target = join(upstreamRoot, relative, 'node_modules');
-    if (!existsSync(target)) {
+    let targetExists = false;
+    try { await lstat(target); targetExists = true; }
+    catch (error) { if (error?.code !== 'ENOENT') throw error; }
+    if (!targetExists) {
       await mkdir(dirname(target), { recursive: true });
       await symlink(join(repo, relative, 'node_modules'), target, 'dir');
     }
@@ -215,9 +219,11 @@ try {
   const upstreamServerTs = pathToFileURL(join(upstreamRoot, 'services/workforce/src/server.ts')).href;
   const upstreamStorageTs = pathToFileURL(join(upstreamRoot, 'packages/storage/src/index.ts')).href;
   const upstreamStoreTs = pathToFileURL(join(upstreamRoot, 'services/workforce/src/sqlite-store.ts')).href;
-  const [{ createWorkforceServer }, { createSqliteStorage }, { SqliteWorkforceStore }] = await Promise.all([
+  const [{ createWorkforceServer }, storageApi, { SqliteWorkforceStore }] = await Promise.all([
     import(upstreamServerTs), import(upstreamStorageTs), import(upstreamStoreTs),
   ]);
+  const { createSqliteStorage, initializeSqliteCompanyPlacementRegistry,
+    createSqliteCompanyPlacementRegistry, createSqliteCompanyStoreOpener } = storageApi;
   const dbPath = join(scratch, 'workforce.db');
   const seedStorage = createSqliteStorage(dbPath);
   const store = new SqliteWorkforceStore(seedStorage);
@@ -233,16 +239,39 @@ try {
   }
   await seedStorage.close();
 
-  const lifecycleCallbacks = [];
   const bridgeFixture = await import(pathToFileURL(bridgeFixturePath).href);
   const auth = await bridgeFixture.fixture({ after: cleanupFn => lifecycleCallbacks.push(cleanupFn) }, {
     origin: panelOrigin, provider: `directadmin:${panelOrigin}`,
   });
   panel.fixtureCsrf = bridgeFixture.csrf;
   const { createDirectAdminGateway } = await import(pathToFileURL(hostSdkModulePath).href);
+  // #811's current hosted runtime requires the canonical company-placement
+  // ports even though this read-only projection fixture never opens a company
+  // business store. The registry records below exist only in this disposable
+  // test database; the canonical SQLite adapter owns their schema and reads.
+  const identityStoragePath = join(scratch, 'identity.db');
+  const placementRegistryStorage = createSqliteStorage(identityStoragePath);
+  cleanup.push(() => placementRegistryStorage.close());
+  await initializeSqliteCompanyPlacementRegistry({ storage: placementRegistryStorage, storage_role: 'GLOBAL_REGISTRY' });
+  for (const [company_id, placement_id] of [['company-a', 'fixture-placement-a'], ['company-b', 'fixture-placement-b']]) {
+    await placementRegistryStorage.query(
+      `INSERT INTO titan_company_storage_placements
+        (company_id, placement_id, placement_revision, provider, schema_version, status)
+       VALUES ($1, $2, 1, 'sqlite', 'native-fsm/1', 'READY')`,
+      [company_id, placement_id],
+    );
+  }
+  const companyPlacementRegistry = await createSqliteCompanyPlacementRegistry({ storage: placementRegistryStorage, storage_role: 'GLOBAL_REGISTRY' });
+  const companyStoreRoot = join(scratch, 'company-stores');
+  await mkdir(companyStoreRoot, { recursive: true, mode: 0o700 });
+  const companyStoreOpener = createSqliteCompanyStoreOpener({ companyStoreRoot });
+  assert.equal((await companyPlacementRegistry.findByCompanyId('company-a'))?.company_id, 'company-a');
+  assert.equal(await companyPlacementRegistry.findByCompanyId('unrelated-company'), null, 'placement lookup fails closed for unknown company IDs');
   const hostDeps = {
-    identityStoragePath: join(scratch, 'identity.db'),
+    identityStoragePath,
     credentialVerifier: { async verify() { throw new Error('not-used-by-directadmin-fixture'); } },
+    companyPlacementRegistry,
+    companyStoreOpener,
     workOrders: { async read() { throw new Error('not-used-by-read-only-projection'); }, async complete() { throw new Error('not-used-by-read-only-projection'); } },
     readiness: async () => ({ authentication: true, authority: true, provider: true, evidence: true }),
     directAdmin: {
@@ -275,8 +304,8 @@ try {
   await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
   assert.equal(relayObservations.length, 1, `real relay received the initial context request; panel=${JSON.stringify(panelObservations)} page=${JSON.stringify(pageErrors)}`);
   assert.equal(relayObservations[0].status, 503, 'the extracted relay production default fails closed without configuration');
-  assert.ok(['relay_not_configured', 'cookie_boundary_unverified'].includes(relayObservations[0].code),
-    'the current-main and #812 draft defaults both expose a sanitized unavailable response');
+  assert.equal(relayObservations[0].code, 'cookie_boundary_unverified',
+    'the current production loader reports the unverified-cookie boundary explicitly');
   assert.equal(hostedObservations.length, 0, 'missing relay config refuses before calling the hosted owner');
   assert.equal(await page.getByRole('navigation').count(), 0, 'missing config exposes no company views');
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'missing config exposes no controls');
@@ -422,5 +451,6 @@ try {
   await host?.close().catch(() => {});
   if (panel) { panel.closeAllConnections(); await new Promise(resolve => panel.close(resolve)).catch(() => {}); }
   for (const close of cleanup) await Promise.resolve(close()).catch(() => {});
+  for (const close of lifecycleCallbacks) await Promise.resolve(close()).catch(() => {});
   await rm(scratch, { recursive: true, force: true });
 }
