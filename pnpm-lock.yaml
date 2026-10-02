@@ -431,7 +431,11 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  apps/pwa: {}
+  apps/pwa:
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.49.1
+        version: 1.58.2
 
 packages:
 

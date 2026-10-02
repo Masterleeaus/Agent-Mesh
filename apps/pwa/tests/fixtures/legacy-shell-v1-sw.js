@@ -1,5 +1,4 @@
-const CACHE_PREFIX = "titan-pwa-shell-";
-const CACHE = `${CACHE_PREFIX}__TITAN_PWA_SHELL_VERSION__`;
+const CACHE = "titan-pwa-shell-v1";
 const SHELL = ["/", "/index.html", "/app.mjs", "/styles.css", "/manifest.webmanifest", "/icon.svg"];
 const PRIVATE = /^\/(?:api|auth|signin|signout|portal|company|app)(?:\/|$)/;
 
@@ -7,7 +6,7 @@ self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("titan-pwa-shell-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
 });
 self.addEventListener("fetch", event => {
   const request = event.request;

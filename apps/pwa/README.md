@@ -6,6 +6,8 @@ This is the repository-owned, separately installable PWA shell. It is not `apps/
 
 The installable shell and its safe client boundaries are implemented. The PWA intentionally shows no sample company records and does not claim a production connection. It has no business API bootstrap yet, no durable private offline database, no encrypted evidence staging, no command submission/replay, and no deployed DirectAdmin endpoint. The service worker caches only the public application shell; it never caches API or company routes. Do not represent this package as production-ready until the dependent hosted services and evidence in #1171 exist.
 
+The build derives a shell cache identifier from every public shell asset, so an app-only release changes the service-worker script and replaces the old shell cache. The header reports browser connectivity only; it does not probe Workforce availability or authenticate a session. Until a hosted API is commissioned, every mode reports Workforce as not configured.
+
 ## Invariants
 
 - A verified server session resolves `company_id`; client-supplied company identifiers never grant membership or authority.
@@ -16,7 +18,7 @@ The installable shell and its safe client boundaries are implemented. The PWA in
 
 ## Commands
 
-From the repository root: `pnpm --filter @titan-zero/pwa build`, `pnpm --filter @titan-zero/pwa test`, and `pnpm --filter @titan-zero/pwa typecheck`.
+From the repository root: `pnpm install --filter @titan-zero/pwa`, `pnpm --filter @titan-zero/pwa exec playwright install chromium`, then `pnpm --filter @titan-zero/pwa typecheck`, `pnpm --filter @titan-zero/pwa build`, and `pnpm --filter @titan-zero/pwa test`. The test suite includes Chromium checks for an app-only stale-cache upgrade, the versioned update path, offline reload, mode URL persistence, and private-route cache exclusion.
 
 ## Remaining #1171 gates
 
