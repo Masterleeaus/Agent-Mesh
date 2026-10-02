@@ -38,12 +38,12 @@ export function assessCaptureQuality(i:{company_id:string;evidence:EvidenceRef;w
  if(i.duplicate_of){reasons.push("DUPLICATE_IMAGE");guidance.push("Capture a distinct view of the required evidence.");}
  return{company_id:i.company_id,evidence_ref:i.evidence.evidence_id+":"+i.evidence.revision,policy_revision:i.policy.revision,quality:reasons.length?"RETAKE":"ACCEPTABLE",reasons,guidance,source_ref:i.evidence.evidence_id+":"+i.evidence.revision,authority_effect:false};
 }
-export function createCaptureGuidance(i:{checklist:CaptureChecklist;company_id:string;subject_id:string;captured:readonly EvidenceRef[];offline:boolean;low_quality_refs?:readonly string[]}):CaptureGuidance{
+export function createCaptureGuidance(i:{checklist:CaptureChecklist;company_id:string;subject_id:string;captured:readonly EvidenceRef[];offline:boolean;low_quality_refs?:readonly string[];quality_reports?:readonly CaptureQualityAssessment[]}):CaptureGuidance{
  if(i.checklist.company_id!==i.company_id)throw Error("visual_checklist_company_mismatch");
  const mine=i.captured.filter(e=>e.accepted&&e.company_id===i.company_id&&e.subject_id===i.subject_id&&e.subject_type===i.checklist.subject_type);
  const have=new Set(mine.map(e=>e.evidence_id));
  const missing=i.checklist.items.filter(x=>x.required&&!have.has(x.id)).map(x=>x.id);
- const low=new Set((i.low_quality_refs??[]).filter(ref=>have.has(ref)));
+ const low=new Set((i.low_quality_refs??[]).filter(ref=>have.has(ref)));for(const report of i.quality_reports??[]){if(report.company_id!==i.company_id)throw Error("visual_cross_company_quality_report");if(have.has(report.evidence_ref.split(":")[0])&&report.quality==="RETAKE")low.add(report.evidence_ref.split(":")[0]);}
  return{checklist_id:i.checklist.id,checklist_revision:i.checklist.revision,company_id:i.company_id,subject_id:i.subject_id,missing_items:missing,quality:low.size?"LOW_QUALITY":missing.length?"INCOMPLETE":"READY",offline_queued:i.offline,source_refs:mine.map(e=>e.evidence_id+":"+e.revision),authority_effect:false};
 }
 export function pairBeforeAfter(before:EvidenceRef,after:EvidenceRef,company_id:string){
@@ -85,8 +85,8 @@ export function createVisualChecklistProposal(i:{company_id:string;version:numbe
  return{proposal_id:"profile:"+key(i),company_id:i.company_id,version:i.version,items:i.items.map(x=>({...x})),source:i.source,review_state:"PENDING_REVIEW" as const,effective_company_policy:false as const};
 }
 
-export async function prepareVisitCloseoutVisualAssurance(i:{request:TitanVisualAnalysisRequest;checklist:CaptureChecklist;captured:readonly EvidenceRef[];before:EvidenceRef;after:EvidenceRef;provider:VisualProvider|null;online:boolean;source_revision_now:number}){
- const guidance=createCaptureGuidance({checklist:i.checklist,company_id:i.request.company_id,subject_id:i.request.subject_id,captured:i.captured,offline:!i.online});
+export async function prepareVisitCloseoutVisualAssurance(i:{request:TitanVisualAnalysisRequest;checklist:CaptureChecklist;captured:readonly EvidenceRef[];before:EvidenceRef;after:EvidenceRef;quality_reports?:readonly CaptureQualityAssessment[];provider:VisualProvider|null;online:boolean;source_revision_now:number}){
+ const guidance=createCaptureGuidance({checklist:i.checklist,company_id:i.request.company_id,subject_id:i.request.subject_id,captured:i.captured,offline:!i.online,quality_reports:i.quality_reports});
  const comparison=pairBeforeAfter(i.before,i.after,i.request.company_id);
  const result=await analyzeVisualEvidence({...i.request,offline:i.request.offline||!i.online},i.provider,{source_revision_now:i.source_revision_now});
  const proposal=createVisualProposal({company_id:i.request.company_id,kind:"COMPLETION_ASSURANCE",result,evidence_refs:[comparison.before_ref,comparison.after_ref],source_revision:i.request.source_revision});
