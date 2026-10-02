@@ -138,8 +138,10 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
       }
     }
   } catch (error) {
-    await identityStorage?.close();
-    await storage.close();
+    try { await identityStorage?.close(); } catch { /* preserve the original startup error */ }
+    try { await storage.close(); } catch { /* preserve the original startup error */ }
+    try { await dependencies?.close?.({ signal: AbortSignal.timeout(1000) }); }
+    catch { /* preserve the original startup error */ }
     throw error;
   }
   let running = true;
@@ -219,7 +221,8 @@ export async function createWorkforceServer(options: WorkforceServerOptions = {}
       json(response, ready ? 200 : 503, { status: ready ? "ok" : "degraded", service: "workforce", checks: status });
     })().catch(error => {
       // Internal provider/database errors may contain credentials. Only bounded protocol codes leave the host.
-      const code = error instanceof Error && /^(conversation|zero)-[a-z-]+$/.test(error.message) ? error.message : "conversation-failed";
+      const code = error instanceof Error && (/^(conversation|zero)-[a-z-]+$/.test(error.message)
+        || error.message === "identity-registry-unavailable") ? error.message : "conversation-failed";
       json(response, conversationHttpStatus(code), { error: code });
     }).finally(() => { active.delete(task); });
     active.add(task);
@@ -258,7 +261,10 @@ export async function loadWorkforceDependencies(modulePath = process.env.WORKFOR
   const module = await import(pathToFileURL(modulePath).href);
   if (typeof module.createWorkforceDependencies !== "function") throw new Error("workforce-dependencies-factory-required");
   const dependencies = await module.createWorkforceDependencies();
-  if (!dependencies || typeof dependencies.credentialVerifier?.verify !== "function" || typeof dependencies.workOrders?.read !== "function" ||
+  if (!dependencies || typeof dependencies.credentialVerifier?.verify !== "function"
+    || typeof dependencies.companyPlacementRegistry?.findByCompanyId !== "function"
+    || typeof dependencies.companyStoreOpener?.open !== "function"
+    || typeof dependencies.workOrders?.read !== "function" ||
     typeof dependencies.workOrders?.complete !== "function" || typeof dependencies.readiness !== "function" ||
     (dependencies.directAdmin !== undefined && (typeof dependencies.directAdmin.publicOrigin !== "string" ||
       typeof dependencies.directAdmin.createGateway !== "function"))) throw new Error("workforce-dependencies-invalid");
