@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:titan_zero_mobile/titan/models/evidence_item.dart';
 import 'package:titan_zero_mobile/titan/models/generative_item.dart';
+import 'package:titan_zero_mobile/titan/generative/demo_engine.dart';
 import 'package:titan_zero_mobile/titan/screens/capture_screen.dart';
 import 'package:titan_zero_mobile/titan/services/titan_gateway.dart';
 
@@ -19,6 +20,12 @@ class _CaptureGateway implements TitanGateway {
 }
 
 void main() {
+  test('job evidence action retains its job context', () {
+    final item = demoGenerativeResponse('show my jobs today').single;
+    expect(item.type, TitanGenerativeType.job);
+    expect(item.context['job_id'], 'job-101');
+  });
+
   testWidgets('capture screen keeps provider-neutral visual guidance optional',
       (tester) async {
     TitanEvidenceItem? offered;
