@@ -54,15 +54,16 @@ port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
 The current extracted relay-to-host run used Server Node 0.3.0 and the hosted
-owner from main `d508a2695fccc36e039f18e60cb96adfbe318813`. It exercises the
-extracted relay module's production default loader with no config and observes
-its sanitized 503, then injects a fake config loader directly into that module
-in-process for disposable fixture forwarding. It uses no relay config file or
-CGI environment variable to enable traffic and does not spawn the production
-RAW executable. The same test passed against the unmerged #812 draft PR #1245
-head `589658ef10cf4c66af5ebb574799f281b126ced5`, whose production default is
-`503 cookie_boundary_unverified`; this is compatibility evidence for a draft,
-not current main or commissioning. Neither run exercises Apache, DirectAdmin
+owner from main `64561e4d077ec07a3cb40dfb43284b0e7dff4dbf`, including #811's
+merged production dependency composition and #1245's disabled RAW default. The
+disposable host fixture supplies the required company-placement registry/opener
+through canonical SQLite storage adapters; those temporary placements are
+test-only, and no company business store is opened because the published
+controls remain empty. The production default returns sanitized 503
+`cookie_boundary_unverified` without an upstream request; the test then injects
+a fake config loader directly into the extracted module in-process for fixture
+forwarding. It uses no relay config file or CGI environment variable and does
+not spawn the production RAW executable. It does not exercise Apache, DirectAdmin
 CGI, or a live cookie boundary.
 
 **Commissioning blocker:** merged #812 follow-up PR #1245 removed the experimental
@@ -71,8 +72,8 @@ sanitized 503 `cookie_boundary_unverified` before forwarding. There is no
 production relay contract to commission yet. DirectAdmin `:2222` RAW parsing,
 private transport and cookie behavior remain unverified. Do not install or enable
 forwarding until the replacement boundary is independently verified on an
-authorized disposable Apache/DirectAdmin host using cookie-name-only evidence. See the exact
-run limits and remaining host inputs in
+authorized disposable Apache/DirectAdmin host using cookie-name-only evidence.
+See the exact run limits and remaining host inputs in
 `docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md`.
 
 The UI displays canonical roster/worker identity, hierarchy relationships, work
