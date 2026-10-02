@@ -1,0 +1,180 @@
+{
+  "schema": "titan.web-accessibility-coverage.v1",
+  "scope": "apps/web",
+  "standard": "WCAG 2.2 AA plus field legibility",
+  "automated_checks": [
+    "landmarks",
+    "names_roles_values",
+    "form_labels_and_error_association",
+    "keyboard_focusability",
+    "focus_order",
+    "dialog_focus_entry_and_return",
+    "status_semantics",
+    "reduced_motion_css_contract",
+    "responsive_overflow_smoke"
+  ],
+  "manual_checks": [
+    "keyboard_only_completion",
+    "screen_reader_announcements",
+    "contrast_in_context",
+    "44px_touch_targets",
+    "narrow_viewport_field_legibility",
+    "zoom_and_text_spacing",
+    "loading_and_connection_recovery"
+  ],
+  "routes": [
+    {
+      "id": "auth.company-context",
+      "audiences": [
+        "owner",
+        "admin",
+        "office",
+        "technician",
+        "customer"
+      ],
+      "routePatterns": [
+        "/login",
+        "/select-company"
+      ],
+      "checks": [
+        "landmarks",
+        "form_labels_and_error_association",
+        "keyboard_focusability",
+        "focus_order",
+        "status_semantics"
+      ]
+    },
+    {
+      "id": "customer-property",
+      "audiences": [
+        "owner",
+        "admin",
+        "office",
+        "technician"
+      ],
+      "routePatterns": [
+        "/customers",
+        "/customers/:id",
+        "/properties/:id"
+      ],
+      "checks": [
+        "landmarks",
+        "names_roles_values",
+        "form_labels_and_error_association",
+        "responsive_overflow_smoke"
+      ]
+    },
+    {
+      "id": "request-booking",
+      "audiences": [
+        "customer",
+        "office"
+      ],
+      "routePatterns": [
+        "/requests",
+        "/bookings",
+        "/portal/*"
+      ],
+      "checks": [
+        "form_labels_and_error_association",
+        "dialog_focus_entry_and_return",
+        "status_semantics",
+        "responsive_overflow_smoke"
+      ]
+    },
+    {
+      "id": "scheduling-dispatch",
+      "audiences": [
+        "owner",
+        "admin",
+        "office"
+      ],
+      "routePatterns": [
+        "/schedule",
+        "/dispatch"
+      ],
+      "checks": [
+        "keyboard_focusability",
+        "focus_order",
+        "names_roles_values",
+        "status_semantics",
+        "responsive_overflow_smoke"
+      ]
+    },
+    {
+      "id": "field-visit-closeout",
+      "audiences": [
+        "technician"
+      ],
+      "routePatterns": [
+        "/my-work",
+        "/visits/:id",
+        "/jobs/:id"
+      ],
+      "checks": [
+        "keyboard_focusability",
+        "form_labels_and_error_association",
+        "status_semantics",
+        "responsive_overflow_smoke"
+      ]
+    },
+    {
+      "id": "estimate-quote",
+      "audiences": [
+        "office",
+        "customer"
+      ],
+      "routePatterns": [
+        "/estimates",
+        "/quotes"
+      ],
+      "checks": [
+        "names_roles_values",
+        "form_labels_and_error_association",
+        "dialog_focus_entry_and_return"
+      ]
+    },
+    {
+      "id": "invoice-payment",
+      "audiences": [
+        "owner",
+        "office",
+        "customer"
+      ],
+      "routePatterns": [
+        "/invoices",
+        "/payments",
+        "/portal/invoices"
+      ],
+      "checks": [
+        "names_roles_values",
+        "form_labels_and_error_association",
+        "status_semantics",
+        "responsive_overflow_smoke"
+      ]
+    },
+    {
+      "id": "customer-portal",
+      "audiences": [
+        "customer"
+      ],
+      "routePatterns": [
+        "/portal/*"
+      ],
+      "checks": [
+        "landmarks",
+        "keyboard_focusability",
+        "form_labels_and_error_association",
+        "status_semantics",
+        "responsive_overflow_smoke"
+      ]
+    }
+  ],
+  "ownership": {
+    "sharedShell": "apps/web/components/ui and shared layout",
+    "baseWeb": "#1156",
+    "nativeFsm": "#809",
+    "workspaceCi": "#648"
+  },
+  "completionRule": "Do not mark this inventory as certified until automated results and linked manual evidence exist for every listed route."
+}

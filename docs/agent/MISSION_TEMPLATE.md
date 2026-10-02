@@ -45,7 +45,7 @@ Cross-boundary edits are allowed only when required to achieve the outcome; stat
 - Turn a coordination owner into a blocking dependency.
 - Bypass governed execution, company isolation, evidence, privacy, idempotency, or verification.
 - Declare completion from prose, mocks, provider acknowledgements, or unexecuted tests.
-- Create child issues for implementation steps that belong inside this mission. Create another issue only for a genuinely independent outcome with no valid existing canonical owner.
+- Do not split work merely to evade a check or hide a defect. Split this mission into linked issues whenever independently reviewable outcomes can ship separately; keep this issue as the parent tracker until integration/certification is complete.
 
 ## Required implementation
 1. <behavior/change>
@@ -62,10 +62,24 @@ Cross-boundary edits are allowed only when required to achieve the outcome; stat
 <one objective stopping condition; no open-ended “improve/continue/audit more” wording>
 
 ## Verification
-Run the root `AGENTS.md` requirements for the declared tier plus targeted tests for the changed owner. Record exact commands and results.
+Run focused checks for each slice. Schedule broad cross-system, live-host and release verification after the sub-product is assembled, in a separate integration/certification milestone. Record exact commands and results.
 
 ## Branch discipline
-Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-number>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
+
+Use a short-lived branch from current `main`; `agent/issue-<number>` is a suggested name, not a lock. A bounded child issue or recovery may use its own branch. Preserve reachable commits and coordinate only actual file or contract conflicts. Keep the same branch through review when practical. Branch naming and claim comments do not block a merge.
+
+
+## Mission closure evidence
+
+Merge independently reviewable slices with focused verification and keep the parent
+issue open. Use `Refs #<parent>` for partial work. Do not wait for full parent
+acceptance or live-host certification to merge unrelated slices.
+
+Use `Closes #<issue>` only when the complete linked issue is implemented and
+verified. A closing PR must include a `mission-evidence` JSON record mapping every
+acceptance/Done requirement to implementation paths and executed checks. The
+closure gate enforces the record's structure; human review confirms semantic
+sufficiency. See [Mission closure evidence](MISSION_CLOSURE_EVIDENCE.md).
 
 ## Completion report
 Return:

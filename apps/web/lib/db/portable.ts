@@ -1,5 +1,5 @@
 import type { PoolClient } from "pg";
-import type { PoolConnection } from "mysql2/promise";
+import type { ExecuteValues, PoolConnection } from "mysql2/promise";
 import { getDatabaseDialect, getPool } from "@/lib/db";
 import { getMysqlPool } from "./mysql";
 import { getSqliteClient, withSqliteTransaction } from "./sqlite";
@@ -7,11 +7,14 @@ import { rewriteNumberedParamsForMysql, type DbClient, type DbQueryResult } from
 import type { SessionPayload } from "@/lib/auth/session";
 import { requireTenantAccountId } from "./contracts";
 
+// Keep the portable unknown[] contract at this driver boundary. mysql2 validates
+// parameter values at execution; do not detach execute/query from their receivers.
 function mysqlClient(connection: PoolConnection): DbClient {
   return {
+    dialect: "mysql",
     async query<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<DbQueryResult<T>> {
       const rewritten = rewriteNumberedParamsForMysql(text, params);
-      const [result] = await connection.query(rewritten.sql, rewritten.params);
+      const [result] = await connection.execute(rewritten.sql, rewritten.params as ExecuteValues[]);
       if (Array.isArray(result)) return { rows: result as T[], rowCount: result.length };
       const packet = result as { affectedRows?: number; insertId?: number };
       return { rows: [], rowCount: packet.affectedRows ?? 0 };
@@ -19,19 +22,19 @@ function mysqlClient(connection: PoolConnection): DbClient {
   };
 }
 
-export async function portableQuery<T extends Record<string, unknown> = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T[]> {
+export async function portableQuery<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T[]> {
   const dialect = getDatabaseDialect();
   if (dialect === "sqlite") return (await getSqliteClient().query<T>(text, params)).rows;
   if (dialect === "mysql") {
     const rewritten = rewriteNumberedParamsForMysql(text, params);
-    const [rows] = await getMysqlPool().query(rewritten.sql, rewritten.params);
+    const [rows] = await getMysqlPool().execute(rewritten.sql, rewritten.params as ExecuteValues[]);
     return rows as T[];
   }
-  const result = await getPool().query<T>(text, params);
-  return result.rows;
+  const result = await getPool().query(text, params);
+  return result.rows as T[];
 }
 
-export async function portableQueryOne<T extends Record<string, unknown> = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T | null> {
+export async function portableQueryOne<T = Record<string, unknown>>(text: string, params: unknown[] = []): Promise<T | null> {
   const rows = await portableQuery<T>(text, params);
   return rows[0] ?? null;
 }

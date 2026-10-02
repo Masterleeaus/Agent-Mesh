@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101820">
+    <meta name="description" content="One Titan workforce app with Zero, Go and Hub modes.">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Titan Zero · Workforce</title>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar"><a class="brand" href="/" aria-label="Titan Zero home"><span class="mark">T</span><span>TITAN ZERO</span></a><span id="network" class="network" role="status">Checking browser network</span></header>
+      <section class="workspace" aria-labelledby="title">
+        <p class="eyebrow">AI workforce · field service</p>
+        <h1 id="title">Your workforce, in your pocket.</h1>
+        <p class="lede">One app. Choose the view that fits your work.</p>
+        <nav class="modes" aria-label="Choose Titan mode">
+          <button type="button" data-mode="zero" aria-pressed="true"><strong>Zero</strong><span>Owner · decisions and workforce</span></button>
+          <button type="button" data-mode="go" aria-pressed="false"><strong>Go</strong><span>Field · assigned work and capture</span></button>
+          <button type="button" data-mode="hub" aria-pressed="false"><strong>Hub</strong><span>Customer · service and support</span></button>
+        </nav>
+        <section class="status-card" aria-live="polite">
+          <div class="status-mark" aria-hidden="true">!</div>
+          <div><h2 id="mode-title">Zero · Workforce not configured</h2><p id="connection-copy">This shell has no authenticated Workforce connection. Company data and actions remain unavailable.</p><p id="installation-status" class="installation-status" role="status" hidden></p></div>
+        </section>
+        <p class="safety-note">No sample company data is shown. This app does not store business records or queue actions on this device yet.</p>
+      </section>
+      <footer>Company access is verified by Titan services. A selected mode never grants permission.</footer>
+    </main>
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>

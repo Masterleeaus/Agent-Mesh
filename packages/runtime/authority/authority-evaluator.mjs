@@ -12,12 +12,54 @@ const RISK_CAPS=Object.freeze({none:100,low:85,medium:70,high:50,critical:0});
 const text=v=>v==null?null:String(v).trim()||null;
 const list=v=>Array.isArray(v)?[...new Set(v.map(x=>String(x).trim()).filter(Boolean))].sort():[];
 
+function operationalLimitCheck(limits={},usage={}){
+  const reasons=[]; const constraints=[];
+  const currency=String(usage?.currency??"").trim().toUpperCase();
+  const requireNumber=(field,reason)=>{
+    const n=Number(usage?.[field]);
+    if(!Number.isFinite(n)||n<0){reasons.push(`${reason}_usage_missing`);return null;}
+    return n;
+  };
+  const requireInteger=(field,reason)=>{
+    const n=requireNumber(field,reason);
+    if(n!=null&&!Number.isInteger(n)){reasons.push(`${reason}_usage_invalid`);return null;}
+    return n;
+  };
+  if(limits.max_amount!=null){
+    constraints.push(`max_amount:${limits.currency}:${limits.max_amount}`);
+    const n=requireNumber("amount","amount_limit");
+    if(!currency)reasons.push("amount_limit_currency_missing");
+    else if(currency!==limits.currency)reasons.push("amount_limit_currency_mismatch");
+    if(n!=null&&n>limits.max_amount)reasons.push("amount_limit_exceeded");
+  }
+  if(limits.max_provider_cost!=null){
+    constraints.push(`max_provider_cost:${limits.currency}:${limits.max_provider_cost}`);
+    const n=requireNumber("provider_cost","provider_cost_limit");
+    if(!currency)reasons.push("provider_cost_limit_currency_missing");
+    else if(currency!==limits.currency)reasons.push("provider_cost_limit_currency_mismatch");
+    if(n!=null&&n>limits.max_provider_cost)reasons.push("provider_cost_limit_exceeded");
+  }
+  if(limits.max_messages!=null){
+    constraints.push(`max_messages:${limits.max_messages}`);
+    const n=requireInteger("messages","message_limit");
+    if(n!=null&&n>limits.max_messages)reasons.push("message_limit_exceeded");
+  }
+  if(limits.max_recipients!=null){
+    constraints.push(`max_recipients:${limits.max_recipients}`);
+    const n=requireInteger("recipients","recipient_limit");
+    if(n!=null&&n>limits.max_recipients)reasons.push("recipient_limit_exceeded");
+  }
+  return Object.freeze({allowed:reasons.length===0,reasons:Object.freeze(reasons),constraints:Object.freeze(constraints)});
+}
+
 function decisionBase({input,company_id,worker,requirement,reason_codes=[],constraints=[],decision,effective=null,approval=null,evidence_refs=[]}){
   return Object.freeze({
     schema_version:'1.0',
     authority_decision_id:String(input.authority_decision_id??'').trim()||`authority:${String(input.operation_id??input.action_id??'unknown')}`,
     company_id,
+    ...(text(input.actor_id)?{actor_id:text(input.actor_id)}:{}),
     operation_id:text(input.operation_id),action_id:text(input.action_id),worker_id:worker.worker_id,
+    worker_type:worker.worker_type,surface:worker.surface,
     capability:requirement.capability,variant:requirement.variant,workflow:requirement.workflow,context_ref:requirement.context_ref,operation:requirement.operation,effect:requirement.effect,
     protected_action:isProtectedAction(requirement),decision,
     effective_authority_score:effective?.effective_score??0,
@@ -73,6 +115,12 @@ export function evaluateWorkerAuthorityDecision(input){
   if(input.assurance_allows!==true){
     reason_codes.push('assurance_not_satisfied');
     return decisionBase({input,company_id,worker,requirement,decision:'ESCALATE',reason_codes,approval,evidence_refs});
+  }
+  const limitCheck=operationalLimitCheck(requirement.limits,input.usage);
+  constraints.push(...limitCheck.constraints);
+  if(!limitCheck.allowed){
+    reason_codes.push(...limitCheck.reasons);
+    return decisionBase({input,company_id,worker,requirement,decision:'DENY',reason_codes,approval,evidence_refs,constraints});
   }
   if(risk==='critical'){
     reason_codes.push('critical_risk');

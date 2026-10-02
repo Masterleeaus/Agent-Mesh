@@ -1,0 +1,6 @@
+{
+  "number": 1168,
+  "title": "[P1][CODEX] Commission a Business Node plugin",
+  "state": "open",
+  "body": "## Mission\nDeliver an installed, governed plugin, not just a contract or projection.\n\n## Acceptance\n- Install the plugin on the commissioned Business Node.\n- Project governed state without becoming a parallel runtime.\n- Observe a real plugin operation and retain verified evidence.\n\n## Done condition\nThe installed plugin passes live-host certification.\n"
+}

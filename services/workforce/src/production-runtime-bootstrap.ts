@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { RuntimeEventBus, TitanAgentRuntime } from "../../../packages/runtime/agent-runtime/index.mjs";
 import { SqliteRunStore } from "../../../packages/runtime/agent-runtime/sqlite-run-store.mjs";
-import { AuthorityContextResolver, RuntimeAuthorityGateway, SqliteAuthorityStore } from "../../../packages/runtime/authority/index.mjs";
+import { AuthorityContextResolver, CapabilityRequirementResolver, RuntimeAuthorityGateway, SqliteAuthorityStore, SqliteWorkerAccessStore, WorkerAccessResolver } from "../../../packages/runtime/authority/index.mjs";
 import { WorkforceService } from "./index.js";
 import { WorkforceRuntimeAdapter } from "./runtime-adapter.js";
 import { SqliteWorkforceStore } from "./sqlite-store.js";
@@ -17,15 +17,20 @@ function buildAuthorityGateway(storage,ports){
   }
 
   requiredMethod(ports?.executionGateway,"execute","executionGateway");
-  for(const name of ["requirementResolver","accessResolver","governanceResolver","evidenceResolver","riskResolver","connectivityResolver"]){
+  for(const name of ["governanceResolver","evidenceResolver","riskResolver","connectivityResolver"]){
     requiredMethod(ports?.[name],"resolve",name);
   }
+  const requirementResolver=ports?.requirementResolver??new CapabilityRequirementResolver({registryProvider:ports?.capabilityRegistryProvider});
+  requiredMethod(requirementResolver,"resolve","requirementResolver");
 
   const authorityStore=new SqliteAuthorityStore(storage);
+  const workerAccessStore=new SqliteWorkerAccessStore(storage);
+  const accessResolver=ports?.accessResolver??new WorkerAccessResolver({store:workerAccessStore});
+  requiredMethod(accessResolver,"resolve","accessResolver");
   const authorityContextResolver=new AuthorityContextResolver({
     authorityStore,
-    requirementResolver:ports.requirementResolver,
-    accessResolver:ports.accessResolver,
+    requirementResolver,
+    accessResolver,
     governanceResolver:ports.governanceResolver,
     evidenceResolver:ports.evidenceResolver,
     riskResolver:ports.riskResolver,
@@ -36,7 +41,7 @@ function buildAuthorityGateway(storage,ports){
     executionGateway:ports.executionGateway,
     authorityStore,
   });
-  return {authorityGateway,authorityStore,authorityContextResolver};
+  return {authorityGateway,authorityStore,authorityContextResolver,workerAccessStore,accessResolver,requirementResolver};
 }
 
 export async function createProductionRuntimeBootstrap({storage,ports,eventBus}={}){
@@ -63,7 +68,20 @@ export async function createProductionRuntimeBootstrap({storage,ports,eventBus}=
   });
   const runtimeAdapter=new WorkforceRuntimeAdapter(runtime);
   const workforce=new WorkforceService(workforceStore,runtimeAdapter,undefined,workforceStore);
-  const zeroDispatcher=new ZeroWorkforceRuntimeDispatcher(workforce,workforceStore,workforceStore,runtime);
+
+  // One canonical Zero -> Workforce -> persistent-runtime bridge. Keep dispatch as
+  // a compatibility alias so existing composition roots do not gain a second path.
+  const zeroDispatcher=new ZeroWorkforceRuntimeDispatcher(
+    workforce,
+    workforceStore,
+    workforceStore,
+    runtime,
+    (fn) => storage.transaction(async (tx) => {
+      const store = new SqliteWorkforceStore(tx);
+      // Lifecycle preparation must not auto-wake a second runtime.
+      return fn(new WorkforceService(store, undefined, undefined, store), store);
+    }),
+  );
   const dispatch=(input)=>zeroDispatcher.dispatch(input);
 
   return Object.freeze({
@@ -71,5 +89,8 @@ export async function createProductionRuntimeBootstrap({storage,ports,eventBus}=
     authorityGateway:authority.authorityGateway,
     authorityStore:authority.authorityStore,
     authorityContextResolver:authority.authorityContextResolver,
+    workerAccessStore:authority.workerAccessStore??null,
+    accessResolver:authority.accessResolver??null,
+    requirementResolver:authority.requirementResolver??null,
   });
 }

@@ -1,23 +1,30 @@
 import { SignJWT, jwtVerify } from "jose";
+import { z } from "zod";
 import { cookies } from "next/headers";
 import { roleSchema, type Role } from "@titan-zero/domain";
 import { portableQueryOne } from "../db/portable";
+import { getDatabaseDialect } from "../db/dialect";
 import { getEnv } from "../env";
 
 const COOKIE_NAME = "fsm_session";
 const EXPIRY = "7d";
 
-/**
- * Legacy base-web session payload.
- * accountId is a compatibility/provider-local business account context, NOT the
- * canonical Titan company_id. Canonical runtime calls must resolve/bind an
- * explicit company_id before authority/execution.
- */
 export interface SessionPayload {
   userId: string;
   accountId: string;
   role: Role;
 }
+
+// These remain opaque IDs: SQLite compatibility IDs need not be UUIDs.
+// Reject ambiguous/empty/control-character context before any identity query.
+const identityId = z.string().min(1).refine(
+  (value) => value === value.trim() && !/[\u0000-\u001f\u007f]/.test(value),
+);
+const sessionPayloadSchema = z.object({
+  userId: identityId,
+  accountId: identityId,
+  role: roleSchema,
+});
 
 type UserSessionRow = {
   id: string;
@@ -40,8 +47,12 @@ export async function createSession(payload: SessionPayload): Promise<string> {
 
 export async function verifySession(token: string): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, getSecret());
-    return payload as unknown as SessionPayload;
+    const { payload } = await jwtVerify(token, getSecret(), {
+      algorithms: ["HS256"],
+      requiredClaims: ["exp", "iat"],
+    });
+    const parsed = sessionPayloadSchema.safeParse(payload);
+    return parsed.success ? parsed.data : null;
   } catch {
     return null;
   }
@@ -56,9 +67,11 @@ export async function getSession(): Promise<SessionPayload | null> {
   if (!verified) return null;
 
   const user = await portableQueryOne<UserSessionRow>(
-    `SELECT u.id,
-            m.account_id AS account_id,
-            m.role AS role
+    getDatabaseDialect() === "sqlite"
+      ? `SELECT id, company_id AS account_id, role FROM users WHERE id=$1 AND company_id=$2`
+      : `SELECT u.id,
+            m.account_id,
+            m.role
        FROM users u
        JOIN business_memberships m
          ON m.user_id = u.id
@@ -67,7 +80,10 @@ export async function getSession(): Promise<SessionPayload | null> {
       WHERE u.id = $1`,
     [verified.userId, verified.accountId],
   );
-  if (!user) return null;
+  // No users.account_id/role fallback: a deleted or revoked membership must
+  // never recreate company access. Missing legacy memberships require explicit
+  // recovery; new PostgreSQL users create their membership transactionally.
+  if (!user || user.id !== verified.userId || user.account_id !== verified.accountId) return null;
 
   const role = roleSchema.safeParse(user.role);
   if (!role.success) return null;

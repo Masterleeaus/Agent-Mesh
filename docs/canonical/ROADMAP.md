@@ -1,3 +1,7 @@
+> **Titan Zero architecture supersedes the historical roadmap below.** This document is retained as historical Dovetails/legacy delivery context. Its product scope, phase status, deployment target, and persistence assumptions do not define Titan Zero work. The active Titan Zero mission queue and architecture live in [Blueprint v3](../architecture/TITAN-ZERO-BLUEPRINT-V3.md), [Canonical Rules](../architecture/CANONICAL-RULES.md), and the repository's open CODEX missions. In particular, `apps/web` is the full native TypeScript FSM and runs without Frappe; Frappe/ERPNext is an optional provider for deliberately delegated facets; company data remains isolated per company; and provisioning precedes onboarding.
+
+---
+
 # Roadmap
 
 ## North Star

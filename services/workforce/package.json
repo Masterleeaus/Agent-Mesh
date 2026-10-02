@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "tsx --test src/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "test": "tsx --tsconfig ../../apps/web/tsconfig.json --test src/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx --tsconfig ../../apps/web/tsconfig.json src/server.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -3,6 +3,8 @@ import '../models/generative_item.dart';
 import '../models/titan_command.dart';
 import '../generative/demo_engine.dart';
 import 'offline_command_queue.dart';
+import 'hosted_conversation_transport.dart';
+import '../core/mobile_audience_guard.dart';
 
 /// Authority-neutral mobile boundary mirroring the canonical TypeScript
 /// Surface SDK. Production transports obtain projections and receipts from
@@ -21,12 +23,30 @@ abstract class TitanSurfaceTransport {
   Future<Map<String, dynamic>> submitCommand(Map<String, dynamic> intent);
 }
 
+/// Hosted Workforce conversation boundary. The deployed host must derive
+/// actor/company authority from its authenticated session and validate these
+/// IDs as context only. No route shape is assumed by the native app.
+abstract class TitanConversationTransport {
+  Future<Map<String, dynamic>> send(
+    Map<String, dynamic> request, {
+    Duration timeout = const Duration(seconds: 30),
+  });
+}
+
 class SurfaceSdkTitanGateway implements TitanGateway {
   final TitanSession session;
   final TitanSurfaceTransport transport;
+  final TitanConversationTransport? conversationTransport;
+  final HostedConversationTransport? hostedConversationTransport;
+  final String Function()? idFactory;
+  final Map<String, String> _messageRequestIds = {};
+  final Map<String, String> _conversationIdsByMessage = {};
+  String? _conversationId;
+  String? _lastAcceptedMessage;
   Map<String, dynamic>? _projection;
 
-  SurfaceSdkTitanGateway(this.session, this.transport);
+  SurfaceSdkTitanGateway(this.session, this.transport,
+      {this.conversationTransport, this.hostedConversationTransport, this.idFactory});
 
   Future<Map<String, dynamic>> refreshProjection() async {
     final projection = await transport.getProjection(
@@ -45,6 +65,8 @@ class SurfaceSdkTitanGateway implements TitanGateway {
     if (projection['actor_id'] != session.actorId) {
       throw StateError('surface-projection-actor-mismatch');
     }
+    const MobileAudienceGuard().validate(
+      surface: session.surface, actorId: session.actorId, projection: projection);
     if ((projection['revision']?.toString().trim().isEmpty ?? true)) {
       throw StateError('surface-projection-revision-required');
     }
@@ -90,8 +112,75 @@ class SurfaceSdkTitanGateway implements TitanGateway {
   }
 
   @override
-  Future<List<TitanGenerativeItem>> converse(String message) {
-    throw StateError('production-conversation-transport-required');
+  Future<List<TitanGenerativeItem>> converse(String message) async {
+    if (hostedConversationTransport != null) return hostedConversationTransport!.send(message);
+    final text = message.trim();
+    if (text.isEmpty) throw ArgumentError.value(message, 'message', 'message-required');
+    if (text.length.compareTo(20000) == 1) {
+      throw ArgumentError.value(message, 'message', 'message-too-large');
+    }
+    final conversation = conversationTransport;
+    if (conversation == null) throw StateError('production-conversation-transport-required');
+
+    final projection = _projection ?? await refreshProjection();
+    final expiresAt = DateTime.tryParse(projection['expires_at']?.toString() ?? '');
+    if (expiresAt == null || !expiresAt.isAfter(DateTime.now().toUtc())) {
+      _projection = null;
+      throw StateError('surface-projection-expired');
+    }
+    final requestId = _messageRequestIds.putIfAbsent(text, _newId);
+    final conversationId = _conversationIdsByMessage.putIfAbsent(text, () {
+      if (_conversationId != null && _lastAcceptedMessage == text) return _newId();
+      return _conversationId ?? _newId();
+    });
+    final request = <String, dynamic>{
+      'schema_version': '1.0',
+      'company_id': session.companyId,
+      'surface': session.surface,
+      'actor_id': session.actorId,
+      'device_id': session.deviceId,
+      'conversation_id': conversationId,
+      'request_id': requestId,
+      'correlation_id': requestId,
+      'trace_id': requestId,
+      'idempotency_key': requestId,
+      'operation_id': requestId,
+      'context_revision': projection['revision'],
+      'text': text,
+    };
+    final response = await conversation.send(request);
+    _validateConversationResponse(response,
+        expectedConversationId: conversationId, expectedRequestId: requestId);
+    _conversationId = conversationId;
+    _lastAcceptedMessage = text;
+    _messageRequestIds.remove(text);
+    _conversationIdsByMessage.remove(text);
+    final rawItems = response['items'];
+    if (rawItems is! List || rawItems.length > 100) {
+      throw const FormatException('conversation-items-invalid');
+    }
+    return rawItems.map((item) {
+      if (item is! Map) throw const FormatException('conversation-item-invalid');
+      return TitanGenerativeItem.fromJson(Map<String, dynamic>.from(item));
+    }).toList(growable: false);
+  }
+
+  String _newId() => (idFactory?.call() ??
+          '${session.deviceId}-${DateTime.now().toUtc().microsecondsSinceEpoch}')
+      .trim();
+
+  void _validateConversationResponse(Map<String, dynamic> response,
+      {required String expectedConversationId, required String expectedRequestId}) {
+    if (response['accepted'] != true ||
+        response['authority_neutral'] != true ||
+        response['company_id'] != session.companyId ||
+        response['surface'] != session.surface ||
+        response['actor_id'] != session.actorId ||
+        response['conversation_id'] != expectedConversationId ||
+        response['request_id'] != expectedRequestId ||
+        (response['context_revision']?.toString().trim().isEmpty ?? true)) {
+      throw StateError('conversation-response-context-mismatch');
+    }
   }
 
   @override

@@ -68,7 +68,7 @@ async function emitReviewRequest(client: DatabaseClient, job: EligibleJob, autom
 export async function processReviewRequests(client: DatabaseClient, automation: AutomationRow): Promise<RunResult> {
   const result: RunResult = { automationId: automation.id, accountId: automation.account_id, sent: 0, skipped: 0, errors: 0 };
   for (const job of await findEligibleJobs(client, automation)) {
-    try { (await emitReviewRequest(client, job, automation.id)) ? result.sent++ : result.skipped++; }
+    try { if (await emitReviewRequest(client, job, automation.id)) result.sent++; else result.skipped++; }
     catch (error) { result.errors++; logger.error("review-request: failed to emit", error, { jobId: job.id }); }
   }
   return result;

@@ -91,7 +91,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         [id, session.accountId]
       );
 
-      if (existingFinal.rowCount !== null && existingFinal.rowCount > 0) {
+      if (existingFinal.rows.length > 0) {
         // Already converted — return existing final invoice (idempotent)
         return {
           invoice_id: existingFinal.rows[0].id,
@@ -188,7 +188,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
           estimate.travel_snapshot_id ? "estimated" : null,
         ]
       );
-      const invoiceId = invoiceResult.rows[0]!.id;
+      const invoiceId = invoiceResult.rows[0].id;
 
       // Carry travel snapshot forward (do not recalculate — rate/charge frozen at estimate time)
       if (estimate.travel_snapshot_id) {

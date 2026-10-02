@@ -67,13 +67,61 @@ test("production bootstrap refuses incomplete provider ports", async()=>{
   await storage.close();
 });
 
+test("completed replay retains the durable run identity after bootstrap restart", async () => {
+  const storage = createSqliteStorage(":memory:");
+  try {
+    const first = await createProductionRuntimeBootstrap({ storage, ports: ports() });
+    await registerManager(first);
+    const input = { company_id, actor_id: "owner-1", conversation_id: "replay", interaction_id: "int", client_message_id: "msg", text: "Inspect", correlation_id: "corr" };
+    const initial = await first.dispatch(input);
+    const runId = initial.events.find((e: any) => e.kind === "run.started")?.run_id;
+    assert.ok(runId);
+    const restarted = await createProductionRuntimeBootstrap({ storage, ports: ports() });
+    const replay = await restarted.dispatch(input);
+    assert.equal(replay.events.find((e: any) => e.kind === "work.state")?.run_id, runId);
+  } finally { await storage.close(); }
+});
+
+test("production continuation resumes once with the authenticated user's input", async () => {
+  const storage = createSqliteStorage(":memory:");
+  try {
+    const seen: any[] = [];
+    const configured = ports();
+    configured.modelRouter = { async next(input: any) {
+      seen.push(structuredClone(input));
+      return seen.length === 1 ? { wait: { state: "WAITING_USER" } } : { final: "handled" };
+    } } as any;
+    const bootstrap = await createProductionRuntimeBootstrap({ storage, ports: configured });
+    await registerManager(bootstrap);
+    const input = { company_id, actor_id: "owner-1", conversation_id: "resume", interaction_id: "int", client_message_id: "msg", text: "Inspect", correlation_id: "corr" };
+    const waiting = await bootstrap.dispatch(input);
+    assert.ok(waiting.continuation_token);
+    await assert.rejects(() => bootstrap.dispatch({ ...input, company_id: "company-b", continuation_token: waiting.continuation_token }), /work-not-found/);
+    const done = await bootstrap.dispatch({ ...input, client_message_id: "reply", text: "Continue with this answer", continuation_token: waiting.continuation_token });
+    assert.equal(seen.length, 2);
+    assert.equal(seen[1].messages.at(-1).content, "Continue with this answer");
+    assert.equal(done.events.at(-1)?.state, "COMPLETED");
+    const runs = await storage.query("SELECT run_id FROM agent_runs WHERE company_id=$1", [company_id]);
+    assert.equal(runs.rowCount, 1);
+  } finally { await storage.close(); }
+});
+
+test("concurrent Zero delivery creates only one WorkItem and persistent run", async () => {
+ const storage=createSqliteStorage(':memory:');
+ try {
+  const bootstrap=await createProductionRuntimeBootstrap({storage,ports:ports()});await registerManager(bootstrap);
+  const input={company_id,actor_id:'owner',conversation_id:'parallel',interaction_id:'int',client_message_id:'message',correlation_id:'corr',text:'Inspect'};
+  await Promise.all([bootstrap.dispatch(input),bootstrap.dispatch(input)]);
+  assert.equal((await storage.query('SELECT run_id FROM agent_runs WHERE company_id=$1 AND work_id=$2',[company_id,'zero:parallel:message'])).rowCount,1);
+ }finally{await storage.close();}
+});
 
 test("production bootstrap composes canonical authority gateway and refuses incomplete resolver ports", async()=>{
   const storage=createSqliteStorage(":memory:");
   const base=ports();
   await assert.rejects(
     ()=>createProductionRuntimeBootstrap({storage,ports:{modelRouter:base.modelRouter,capabilities:base.capabilities,contextProvider:base.contextProvider,executionGateway:{async execute(){return {state:"VERIFIED",verified:true};}}} as any}),
-    /production-runtime-port-required:requirementResolver.resolve/,
+    /production-runtime-port-required:governanceResolver.resolve/,
   );
   await storage.close();
 });

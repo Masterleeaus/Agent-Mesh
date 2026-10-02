@@ -2,9 +2,10 @@ import { getSession } from "@/lib/auth/session";
 import { getPortalSession } from "@/lib/portal/session";
 import { queryForSession, query, queryOne } from "@/lib/db";
 import { buildBusinessRuntimeContext, type Surface } from "./business-context";
+import type { AttentionEventRow } from "@/lib/attention/types";
 
 type Row = Record<string, unknown>;
-type AttentionRow = Record<string, unknown> & {id:string;account_id:string;type:string;entity_type:string;entity_id:string;title:string;summary:string|null;href:string|null;dedupe_key:string|null;created_at:string;read_at:string|null};
+
 
 export async function loadLiveInterfaceContext(surface: Surface) {
   if (surface === "hub") return loadHubContext();
@@ -17,7 +18,7 @@ export async function loadLiveInterfaceContext(surface: Surface) {
   const params = surface === "go" && session.role === "tech" ? [accountId,session.userId] : [accountId];
   const [activeJobs, attention] = await Promise.all([
     queryForSession<Row>(session, jobSql, params),
-    surface === "zero" ? queryForSession<AttentionRow>(session, `SELECT id,account_id,type,entity_type,entity_id,title,summary,href,dedupe_key,created_at,read_at FROM attention_events WHERE account_id=$1 AND read_at IS NULL ORDER BY created_at DESC LIMIT 30`, [accountId]) : Promise.resolve([]),
+    surface === "zero" ? queryForSession<AttentionEventRow & Record<string, unknown>>(session, `SELECT id,account_id,type,entity_type,entity_id,title,summary,href,dedupe_key,created_at,read_at FROM attention_events WHERE account_id=$1 AND read_at IS NULL ORDER BY created_at DESC LIMIT 30`, [accountId]) : Promise.resolve([]),
   ]);
   return buildBusinessRuntimeContext({company_id:accountId,surface,activeJobs,attention,decisions:[]});
 }

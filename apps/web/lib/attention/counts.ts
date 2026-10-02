@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import { ATTENTION_RETENTION_DAYS, type AttentionSummary } from "./types";
 
 /** Open funnel — matches BOOKING_REQUEST_OPEN_STATUSES / default Requests list. */
@@ -46,11 +46,11 @@ export const ESTIMATE_ATTENTION_WHERE = `
 `;
 
 export async function countRequestQueue(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
-    `SELECT COUNT(*)::text AS count
+    `SELECT COUNT(*) AS count
      FROM booking_requests
      WHERE account_id = $1
        AND status IN ${REQUEST_QUEUE_STATUSES_SQL}`,
@@ -60,11 +60,11 @@ export async function countRequestQueue(
 }
 
 export async function countInvoiceAttention(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
-    `SELECT COUNT(*)::text AS count
+    `SELECT COUNT(*) AS count
      FROM invoices
      WHERE ${INVOICE_ATTENTION_WHERE}`,
     [accountId],
@@ -73,11 +73,11 @@ export async function countInvoiceAttention(
 }
 
 export async function countEstimateAttention(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
   const r = await client.query<{ count: string }>(
-    `SELECT COUNT(*)::text AS count
+    `SELECT COUNT(*) AS count
      FROM estimates
      WHERE ${ESTIMATE_ATTENTION_WHERE}`,
     [accountId],
@@ -86,22 +86,30 @@ export async function countEstimateAttention(
 }
 
 export async function countUnreadAttentionEvents(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<number> {
+  const predicate = client.dialect === "sqlite"
+    ? "created_at >= datetime('now', $2)"
+    : client.dialect === "mysql"
+      ? "created_at >= DATE_SUB(NOW(), INTERVAL $2 DAY)"
+      : "created_at >= now() - ($2::text || ' days')::interval";
+  const params = client.dialect === "mysql"
+    ? [accountId, ATTENTION_RETENTION_DAYS]
+    : [accountId, `-${ATTENTION_RETENTION_DAYS} days`];
   const r = await client.query<{ count: string }>(
-    `SELECT COUNT(*)::text AS count
+    `SELECT COUNT(*) AS count
      FROM attention_events
      WHERE account_id = $1
        AND read_at IS NULL
-       AND created_at >= now() - ($2::text || ' days')::interval`,
-    [accountId, String(ATTENTION_RETENTION_DAYS)],
+       AND ${predicate}`,
+    params,
   );
   return parseInt(r.rows[0]?.count ?? "0", 10);
 }
 
 export async function loadAttentionSummary(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
 ): Promise<AttentionSummary> {
   const [requestsCount, invoicesCount, estimatesCount, unreadEventCount] =

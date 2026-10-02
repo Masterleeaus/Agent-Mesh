@@ -23,5 +23,5 @@
     "db:seed": "bash scripts/db-seed.sh"
   },
   "engines": { "node": ">=20.9.0" },
-  "devDependencies": { "@playwright/test": "^1.49.1", "better-sqlite3": "^12.2.0", "typescript": "^5.7.2" }
+  "devDependencies": { "@playwright/test": "^1.49.1", "better-sqlite3": "^12.2.0", "esbuild": "0.28.1", "typescript": "^5.7.2" }
 }

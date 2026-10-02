@@ -1,0 +1,50 @@
+name: Canonical environment defaults
+
+on:
+  pull_request:
+    paths:
+      - '.env.example'
+      - 'infra/vps.env.example'
+      - 'infra/compose.vps.yml'
+      - 'apps/**'
+      - 'services/**'
+      - 'packages/**'
+      - 'scripts/vps/**'
+      - 'scripts/environment-inventory.mjs'
+      - 'scripts/canonical-env-defaults.test.mjs'
+      - 'docs/working/issue-1236/environment-inventory.json'
+      - 'docs/deployment/README-VPS.md'
+      - '.github/workflows/canonical-environment.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.env.example'
+      - 'infra/vps.env.example'
+      - 'infra/compose.vps.yml'
+      - 'apps/**'
+      - 'services/**'
+      - 'packages/**'
+      - 'scripts/vps/**'
+      - 'scripts/environment-inventory.mjs'
+      - 'scripts/canonical-env-defaults.test.mjs'
+      - 'docs/working/issue-1236/environment-inventory.json'
+      - 'docs/deployment/README-VPS.md'
+      - '.github/workflows/canonical-environment.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate canonical defaults and bootstrap
+        run: node --test scripts/canonical-env-defaults.test.mjs
+      - name: Check whole-tree environment inventory at subproduct gate
+        if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
+        run: node scripts/environment-inventory.mjs --check

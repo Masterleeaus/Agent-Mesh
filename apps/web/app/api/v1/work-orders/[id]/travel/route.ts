@@ -76,11 +76,11 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
         `SELECT id, client_id, property_id, job_id FROM work_orders WHERE id = $1 AND account_id = $2`,
         [workOrderId, session.accountId]
       );
-      if (!wo.rowCount) return { response: NextResponse.json({ error: { code: "NOT_FOUND", message: "Work order not found", traceId: session.traceId } }, { status: 404 }) };
+      if (!wo.rowCount) return NextResponse.json({ error: { code: "NOT_FOUND", message: "Work order not found", traceId: session.traceId } }, { status: 404 });
       const row = wo.rows[0];
       const propertyId = data.property_id ?? row.property_id;
       const clientId = data.client_id ?? row.client_id;
-      if (!propertyId) return { response: NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "Work order has no property — assign a property to calculate travel", traceId: session.traceId } }, { status: 422 }) };
+      if (!propertyId) return NextResponse.json({ error: { code: "VALIDATION_ERROR", message: "Work order has no property — assign a property to calculate travel", traceId: session.traceId } }, { status: 422 });
 
       const calc = await calculateTravelForAccount(client, session.accountId, {
         property_id: propertyId, client_id: clientId, charge_mode: data.charge_mode,
@@ -101,7 +101,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       await appendAuditLog(client, { account_id: session.accountId, entity_type: "work_order", entity_id: workOrderId, action: "update", actor_id: session.userId, trace_id: session.traceId, new_value: { travel_snapshot_id: snapshot.id, total_travel_charge_cents: snapshot.total_travel_charge_cents, policy_tier: snapshot.policy_tier } });
       return { snapshot, calc };
     });
-    if ("response" in result) return result.response;
+    if (result instanceof NextResponse) return result;
     return NextResponse.json({ data: { snapshot: result.snapshot, calculation: result.calc.calculation } });
   } catch (error) {
     logger.error("POST /api/v1/work-orders/[id]/travel", error, { traceId: session.traceId });

@@ -88,7 +88,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       await appendAuditLog(client, { account_id: session.accountId, entity_type: "estimate", entity_id: estimateId, action: "update", actor_id: session.userId, trace_id: session.traceId, new_value: { travel_snapshot_id: snapshot.id, charge_mode: data.charge_mode, total_travel_charge_cents: snapshot.total_travel_charge_cents } });
       return { snapshot, calc };
     });
-    if ("response" in result) return result.response;
+    if ("response" in result && result.response) return result.response;
     return NextResponse.json({ data: { snapshot: result.snapshot, calculation: result.calc.calculation, origin_address: result.calc.origin_address, destination_address: result.calc.destination_address, geocode_failed: result.calc.geocode_failed } });
   } catch (error) {
     logger.error("POST /api/v1/estimates/[id]/travel", error, { traceId: session.traceId });

@@ -50,6 +50,16 @@ describe("readWorkspaceModeCookie", () => {
 });
 
 describe("Business Ops post-login deep links", () => {
+  it.each(["//evil.example/app", "/app/../login", "/app/%2f%2fevil.example", "/app\\evil", "javascript:alert(1)", "https://evil.example/app/invoices"]) (
+    "rejects unsafe navigation target %s", (next) => {
+      expect(resolvePostLoginHref("owner", { next })).toBe("/app");
+    },
+  );
+
+  it("ignores malformed workspace cookies without crashing login", () => {
+    expect(readWorkspaceModeCookie("dv_ws_mode=%E0%A4%A")).toBeNull();
+  });
+
   it("preserves safe standalone app destinations", () => {
     expect(
       resolvePostLoginHref("owner", {

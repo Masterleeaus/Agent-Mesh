@@ -1,0 +1,32 @@
+name: Mission Evidence Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/scripts/validate-agent-claim.py"
+      - ".github/scripts/tests/**"
+      - ".github/workflows/agent-claim-gate.yml"
+      - ".github/workflows/mission-evidence-tests.yml"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - ".github/pull_request_template.md"
+      - "docs/agent/**"
+      - "AGENTS.md"
+
+permissions:
+  contents: read
+
+jobs:
+  candidate-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Candidate code runs only on pull_request, with no secrets, writable token,
+      # persisted credentials, privileged cache or artifacts used by trusted jobs.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exercise candidate claim-policy tests
+        run: |
+          python3 -m unittest discover -s .github/scripts/tests -p 'test_validate_agent_claim.py' -v
+          python3 .github/scripts/tests/test_slice_ci_contract.py

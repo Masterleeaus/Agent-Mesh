@@ -201,7 +201,7 @@ export default function TermsPage() {
           <div className="flex gap-6 text-sm">
             <Link href="/privacy" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Privacy</Link>
             <Link href="/terms" style={{ color: '#E8352A' }} className="font-medium">Terms</Link>
-            <Link href="/support" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Support</Link>
+            <a href="/support" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Support</a>
             <a href="mailto:hello@fldwrk.ai" className="hover:opacity-80 transition-opacity" style={{ color: '#555' }}>Contact</a>
           </div>
         </div>

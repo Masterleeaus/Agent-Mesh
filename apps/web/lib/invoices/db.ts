@@ -3,11 +3,12 @@ import { withPortableTransaction } from "../db/portable";
 import type { SessionPayload } from "../auth/session";
 
 /**
- * Native Titan FSM invoice persistence boundary.
- * Preserve invoice-numbering, transaction and finance behavior. Improve storage
- * portability and canonical company/context boundaries without migrating this
- * capability to Frappe by default. #1051 is an optional extension provider only
- * when a finance capability/facet is deliberately delegated.
+ * Compatibility transaction wrapper for the legacy base-web invoice store.
+ *
+ * Canonical finance/domain ownership is #263/#1054 with operational
+ * materialization through #1051 where mapped. This wrapper must not be treated
+ * as the long-term invoice system of record or tenant-isolation authority.
+ * New business-domain writes should use Titan Domain/provider contracts.
  */
 export async function withInvoiceContext<T>(
   session: SessionPayload,
@@ -48,4 +49,21 @@ export async function generateInvoiceNumber(
     if (Number.isFinite(n) && n > max) max = n;
   }
   return `INV-${String(max + 1).padStart(4, "0")}`;
+}
+
+export async function loadCreditedInvoicesForEstimate(
+  client: DbClient,
+  estimateId: string,
+  accountId: string,
+): Promise<Array<{ invoice_number: string; total_cents: number; status: string }>> {
+  const result = await client.query<{ invoice_number: string; total_cents: number; status: string }>(
+    `SELECT invoice_number, total_cents, status
+     FROM invoices
+     WHERE estimate_id = $1
+       AND account_id = $2
+       AND invoice_kind IN ('deposit', 'progress')
+     ORDER BY created_at ASC, id ASC`,
+    [estimateId, accountId],
+  );
+  return result.rows;
 }

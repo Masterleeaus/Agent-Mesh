@@ -1230,8 +1230,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1075,
-      "sha256": "cd93db5cc7c3095420fc23e5583604d268c5df602635239772008ee124e5aea2"
+      "bytes": 1135,
+      "sha256": "9757c9fdc907b33e0b62abb6073c4d852df732cabdaa496c6496ada8d6aac10d"
     },
     {
       "path": "public/branding/codee-logo.png",
@@ -5120,8 +5120,8 @@
     },
     {
       "path": "tests/test-unified-verifier-v216.js",
-      "bytes": 1317,
-      "sha256": "451f51ab0cc3daed50aedcbe12e567b7ad2cffe8ee89a8805bf7a268200a9c6c"
+      "bytes": 1329,
+      "sha256": "9837d94a072e536ba43b45c535e42f70830718a63d4475a45532615f5d062cec"
     },
     {
       "path": "tests/test-unsupported-navigation-guard.js",

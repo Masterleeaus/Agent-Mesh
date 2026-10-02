@@ -10,17 +10,16 @@ scripts/vps directly would bypass that deployment model and could apply database
 changes without a safe release handoff.
 
 To upgrade:
-  1. Create a PostgreSQL backup with scripts/vps/backup-vps.sh (or the installed copy).
+  1. Create a SQLite backup with scripts/vps/backup-vps.sh (or the installed copy).
   2. Obtain the exact new Titan Zero repository ZIP.
   3. Run the new release's scripts/vps/install-vps.sh with the same --app-domain,
-     --email and install root. The installer preserves the shared environment/data,
+     and install root. The installer preserves the shared environment/data,
      builds before migration, validates health/TLS, and only then moves current.
 
 Example:
   sudo bash scripts/vps/install-vps.sh \
     --source /root/titan-zero.zip \
-    --app-domain app.example.com \
-    --email owner@example.com
+    --app-domain app.example.com
 EOF
 
 exit 2

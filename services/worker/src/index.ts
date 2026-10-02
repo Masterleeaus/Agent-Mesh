@@ -9,6 +9,7 @@ import { runVehicleMaintenanceReminders } from "./vehicle-maintenance-reminder.j
 import { processCaptures } from "./process-captures.js";
 import { createWorkerDatabaseClient, type WorkerDatabaseClient } from "./db-runtime.js";
 import { logger } from "./logger.js";
+import { singleFlight } from "./single-flight.js";
 
 const pollMs = Number(process.env.WORKER_POLL_MS ?? "30000");
 const databaseUrl = process.env.DATABASE_URL;
@@ -57,7 +58,8 @@ async function run() {
   let client = await createWorkerDatabaseClient(databaseUrl);
   logger.info("worker started", { pollMs, dialect: client.dialect });
 
-  async function tick() {
+  // Every operation shares this connection, so guard the entire poll and reconnect.
+  const tick = singleFlight(async () => {
     try {
       await runPollIteration(client);
     } catch (err) {
@@ -68,10 +70,10 @@ async function run() {
         logger.info("worker db reconnected", { dialect: client.dialect });
       }
     }
-  }
+  });
 
   await tick();
-  setInterval(() => { void tick(); }, pollMs);
+  setInterval(() => { void tick().catch(error => logger.error("worker tick failed", error)); }, pollMs);
 }
 
 run().catch((error) => {

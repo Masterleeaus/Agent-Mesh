@@ -1,7 +1,8 @@
 name: Agent Claim Gate
 
 on:
-  pull_request:
+  # Run policy from the trusted base, never a PR checkout or PR-controlled script.
+  pull_request_target:
     branches: [main]
     types: [opened, reopened, synchronize, edited, ready_for_review]
   push:
@@ -9,6 +10,7 @@ on:
     paths:
       - "roadmap/**"
       - ".github/scripts/validate-agent-claim.py"
+      - ".github/scripts/tests/**"
       - ".github/workflows/agent-claim-gate.yml"
   workflow_dispatch:
 
@@ -17,20 +19,30 @@ permissions:
   issues: read
   pull-requests: read
 
+concurrency:
+  group: mission-claim-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
+    name: Mission Closure Evidence Gate
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Checkout repository
+      - name: Checkout trusted policy
         uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
 
       - name: Validate roadmap and claim
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
         shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "$EVENT_NAME" = "pull_request_target" ]; then
             python3 .github/scripts/validate-agent-claim.py
           else
             python3 .github/scripts/validate-agent-claim.py --self-test
