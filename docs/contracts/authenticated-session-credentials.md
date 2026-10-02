@@ -155,8 +155,13 @@ surface selection and end-to-end native execution remain with #811/#812.
 ## Web migration surface and limits
 
 `apps/web/lib/auth/current-session.ts` is an opt-in server adapter over this service.
-It projects current `{userId, accountId, role}` for existing web callers and a
-selected-company-only operation scope. Unsupported web roles and legacy JWTs fail
+It projects current `{userId, accountId, role}` for existing web callers through
+a required trusted `resolveLegacyAccountId(company_id)` compatibility mapping;
+there is no assumption that a canonical company ID equals a legacy account ID.
+Unknown, malformed or throwing mappings fail closed with sanitized errors.
+The adapter revalidates the exact credential/context after an asynchronous mapping
+lookup, so a concurrent switch or revocation cannot return a stale projection. Operation scope remains the canonical
+selected company, even when its legacy account ID differs. Unsupported web roles and legacy JWTs fail
 closed. It never falls back to `users.account_id` or reconstructs missing membership.
 Real SQLite tests exercise issue/switch/revoke/restart and legacy-token denial.
 
