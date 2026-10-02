@@ -187,14 +187,26 @@ function LegacyNavbar() {
 
 function SiteLink({ item, closeMenu = () => {} }) {
   const href = item.href || ''
-  const active = href.startsWith('/') && (window.location.pathname === href || (href === '/' && window.location.pathname === '/'))
+  const active = href.startsWith('/') && window.location.pathname === href
   const className = `block whitespace-nowrap px-3 py-2 rounded-lg text-sm transition-colors ${active ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`
-  if (item.action && (item.disabled || !href || !APP_ACCESS_AVAILABLE)) {
-    const unavailable = !href || !APP_ACCESS_AVAILABLE
-    return <button type="button" disabled aria-disabled="true" aria-label={unavailable ? `${item.label} unavailable` : item.label} title={unavailable ? 'Unavailable in this review preview' : undefined} className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
-  }
-  if (item.external || href.startsWith('https://')) return <a href={href || '#'} onClick={closeMenu} className={className}>{item.label}</a>
-  return <Link to={href || '/'} onClick={closeMenu} className={className}>{item.label}</Link>
+  const childLinks = item.children || []
+  const parent = item.action && (item.disabled || !href || !APP_ACCESS_AVAILABLE)
+    ? <button type="button" disabled aria-disabled="true" aria-label={`${item.label} unavailable`} title="Unavailable in this review preview" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
+    : item.external || href.startsWith('https://')
+      ? <a href={href || '#'} onClick={closeMenu} className={className}>{item.label}</a>
+      : <Link to={href || '/'} onClick={closeMenu} className={className}>{item.label}{childLinks.length > 0 && <ChevronDown size={14} aria-hidden="true" className="ml-1 inline-block" />}</Link>
+
+  return <div className={childLinks.length > 0 ? 'relative group' : undefined}>
+    {parent}
+    {childLinks.length > 0 && <>
+      <div className="hidden xl:block absolute left-0 top-full mt-1 w-64 rounded-xl border border-nx-border bg-nx-bg/95 backdrop-blur-xl p-2 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity">
+        {childLinks.map((child) => <Link key={child.label} to={child.href} onClick={closeMenu} className="block px-3 py-2.5 rounded-lg text-sm text-nx-muted hover:text-nx-text hover:bg-white/5">{child.label}</Link>)}
+      </div>
+      <div className="xl:hidden ml-5 mt-1 mb-2 border-l border-nx-border pl-2">
+        {childLinks.map((child) => <Link key={child.label} to={child.href} onClick={closeMenu} className="block px-3 py-2 rounded-lg text-sm text-nx-muted hover:text-nx-text">{child.label}</Link>)}
+      </div>
+    </>}
+  </div>
 }
 
 function ConfiguredNavbar({ context }) {
