@@ -29,6 +29,11 @@ test('executable cockpit renders safely, submits bounded controls, and clears on
     await page.getByText('Current hosted projection', { exact: true }).waitFor();
     assert.equal(await page.locator('#titan-workforce img').count(), 0);
     assert.equal(await page.getByRole('button', { name: '<img src=x onerror=alert(1)>' }).count(), 1);
+    await page.getByRole('button', { name: 'Work', exact: true }).click();
+    await page.getByLabel('Filter work').selectOption('verified');
+    assert.equal(await page.getByText('Fixture job', { exact: true }).count(), 0);
+    await page.getByLabel('Filter work').selectOption('all');
+    assert.equal(await page.getByText('Fixture job', { exact: true }).count(), 1);
     await page.getByRole('button', { name: 'Controls', exact: true }).click();
     assert.equal(await page.locator('option[value="shell"]').count(), 0);
     await page.getByLabel('Reason', { exact: true }).fill('Fixture pause request');

@@ -67,3 +67,29 @@ test('unsupported VERIFIED receipt never renders verified outcome', async () => 
   assert.match(receiptState({ state: 'VERIFIED' }), /unproven/);
   assert.match(receiptState({ state: 'VERIFIED', verification: { status: 'VERIFIED' }, evidence_refs: [] }), /unproven/);
 });
+test('SDK summary is authority-neutral and clears evidence after denial', async () => {
+  const { workforceContribution } = await import('../images/presentation.mjs');
+  const ready = workforceContribution({ phase: 'ready', status: { work: [{ evidence_refs: ['fixture-evidence'] }] } }, 'reseller');
+  assert.deepEqual(ready.widgets[0].permitted_actions, []);
+  assert.deepEqual(ready.widgets[0].evidence_refs, ['fixture-evidence']);
+  assert.equal(ready.navigation[0].route, '/CMD_PLUGINS_RESELLER/titan_workforce');
+  const denied = workforceContribution({ phase: 'denied', status: { work: [{ evidence_refs: ['stale-evidence'] }] } });
+  assert.deepEqual(denied.widgets[0].evidence_refs, []);
+  assert.equal(denied.widgets[0].status, 'permission-denied');
+});
+test('malformed projection cannot masquerade as empty authorised roster', async () => {
+  for (const discovery of [{ company_id: 'company-a' }, { company_id: 'company-a', workers: [{ worker_id: 'unscoped', kind: 'digital' }] }, { company_id: 'company-a', workers: [{ company_id: 'company-a', worker_id: 'ambiguous', kind: 'provider' }] }]) {
+    const api = fixture(); api.discover = async () => discovery;
+    const model = new WorkforceController(api); await model.connect();
+    assert.notEqual(model.state.phase, 'ready'); assert.equal(model.state.discovery, null);
+  }
+});
+test('context without a session revision is denied', async () => {
+  const api = fixture(); api.context = async () => ({ company_id: 'company-a', actor_id: 'actor-a' });
+  const model = new WorkforceController(api); await model.connect(); assert.equal(model.state.phase, 'denied');
+});
+test('malformed evidence references cannot label an outcome verified', () => {
+  for (const evidence_refs of [[null], [''], ['   '], [{}], ['valid', null]]) {
+    assert.equal(verifiedOutcome({ state: 'VERIFIED', verification: { status: 'VERIFIED' }, evidence_refs }), false);
+  }
+});

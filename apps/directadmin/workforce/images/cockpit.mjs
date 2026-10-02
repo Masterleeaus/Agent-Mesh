@@ -1,11 +1,12 @@
 import * as SDK from 'titan-sdk';
 import { WorkforceController } from 'workforce-controller';
-import { boundedText, position, workState, receiptState } from 'workforce-presentation';
+import { boundedText, position, workState, receiptState, verifiedOutcome } from 'workforce-presentation';
 
 const root = document.getElementById('titan-workforce');
 const role = root.dataset.role;
 let tab = 'Roster';
 let selectedAgent = null;
+let workFilter = 'all';
 const node = (tag, text, attrs = {}) => {
   const element = document.createElement(tag);
   if (text !== undefined) element.textContent = boundedText(text);
@@ -70,7 +71,16 @@ function render(state) {
     table(view, ['Participant', 'Kind / position', 'Reports to', 'Team'], workers.map(worker => [worker.worker_id, position(worker), worker.manager_id ?? 'Not supplied', worker.team_id ?? 'Not supplied']));
     unavailable(view, 'Mission overlays, delegation paths and staffing recommendations');
   } else if (tab === 'Work') {
-    table(view, ['Work / run', 'Objective', 'Agent', 'State', 'Context / evidence'], work.map(item => [item.work_id + (item.run_id ? ` / ${item.run_id}` : ''), item.objective, item.assignee ?? 'Unassigned', workState(item.state), [...(item.context_refs ?? []), ...(item.evidence_refs ?? [])].join(', ')]));
+    const label = node('label', 'Filter work'); const filter = node('select');
+    for (const [value, text] of [['all', 'All work'], ['active', 'Active'], ['waiting', 'Waiting / blocked'], ['approval', 'Approval needed'], ['verified', 'Verified with evidence'], ['failed', 'Failed / uncertain']]) filter.append(node('option', text, { value }));
+    filter.value = workFilter; filter.addEventListener('change', () => { workFilter = filter.value; render(controller.state); }); label.append(filter); view.append(label);
+    const filtered = work.filter(item => workFilter === 'all' ||
+      (workFilter === 'active' && ['CLAIMED', 'IN_PROGRESS', 'RUNNING', 'EXECUTING'].includes(item.state)) ||
+      (workFilter === 'waiting' && ['CREATED', 'READY', 'BLOCKED', 'WAITING', 'WAITING_EXTERNAL', 'WAITING_TOOL', 'WAITING_USER', 'SUSPENDED'].includes(item.state)) ||
+      (workFilter === 'approval' && item.state === 'WAITING_APPROVAL') ||
+      (workFilter === 'verified' && verifiedOutcome(item)) ||
+      (workFilter === 'failed' && ['FAILED', 'DENIED', 'UNKNOWN', 'EXPIRED'].includes(item.state)));
+    table(view, ['Work / run', 'Objective', 'Agent', 'State', 'Context / evidence'], filtered.map(item => [item.work_id + (item.run_id ? ` / ${item.run_id}` : ''), item.objective, item.assignee ?? 'Unassigned', workState(item.state), [...(item.context_refs ?? []), ...(item.evidence_refs ?? [])].join(', ')]));
     view.append(node('p', 'Run completion and provider acknowledgement are separate from verified business outcomes.', { class: 'notice' }));
   } else if (tab === 'Controls') {
     renderControls(view, state, workers, work);
@@ -112,5 +122,6 @@ const api = typeof SDK.createDirectAdminWorkforceClient === 'function'
   : { context: async () => { throw new Error('shared-sdk-bridge-unavailable'); } };
 const controller = new WorkforceController(api, render);
 window.addEventListener('pagehide', () => controller.invalidate());
+window.addEventListener('pageshow', event => { if (event.persisted) void controller.connect(); });
 window.addEventListener('titan-context-changed', () => { controller.invalidate(); void controller.connect(); });
 void controller.connect();

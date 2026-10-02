@@ -22,12 +22,24 @@ export class WorkforceController {
     try {
       const context = await this.api.context();
       if (epoch !== this.#epoch) return;
-      if (!context?.company_id || !context.actor_id) throw new Error('workforce-context-denied');
+      if (!context?.company_id || !context.actor_id || !context.session_revision) throw new Error('workforce-context-denied');
       const [discovery, status] = await Promise.all([this.api.discover(context), this.api.status(context)]);
       if (epoch !== this.#epoch) return;
       for (const value of [discovery, status]) { scoped(value, context.company_id); assertNestedCompany(value, context.company_id); }
+      this.#validateProjection(discovery, status, context.company_id);
       this.#set({ phase: 'ready', context, discovery, status, receipt: null });
     } catch (error) { if (epoch === this.#epoch) this.#fail(error); }
+  }
+  #validateProjection(discovery, status, companyId) {
+    if (!Array.isArray(discovery?.workers) || !Array.isArray(status?.work)) throw new Error('workforce-projection-invalid');
+    for (const worker of discovery.workers) {
+      scoped(worker, companyId);
+      if (typeof worker.worker_id !== 'string' || !worker.worker_id || !['digital', 'human'].includes(worker.kind)) throw new Error('workforce-projection-invalid');
+    }
+    for (const item of status.work) {
+      scoped(item, companyId);
+      if (typeof item.work_id !== 'string' || !item.work_id || typeof item.state !== 'string') throw new Error('workforce-projection-invalid');
+    }
   }
   #fail(error) {
     this.#epoch++;
@@ -57,6 +69,7 @@ export class WorkforceController {
       const status = await this.api.status(current);
       if (epoch !== this.#epoch) return;
       scoped(status, context.company_id); assertNestedCompany(status, context.company_id);
+      this.#validateProjection(this.state.discovery, status, context.company_id);
       this.#pending = null;
       this.#set({ phase: 'ready', status });
     } catch (error) {
