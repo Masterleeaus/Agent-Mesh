@@ -37,18 +37,61 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
   }
 
   void _quickAsk(String text) {
+    final lower = text.toLowerCase();
+    if (lower.contains('photo') || lower.contains('scan') ||
+        lower.contains('signature') || lower.contains('evidence')) {
+      _showUnavailable('Evidence capture needs a server-scoped job before it can open.');
+      return;
+    }
+    if (lower.contains('schedule') || lower.contains('dispatch') ||
+        lower.contains('calendar') || lower.contains('reschedule')) {
+      _showUnavailable('Schedule and dispatch are unavailable until the hosted projection is loaded.');
+      return;
+    }
+    if (lower.contains('map') || lower.contains('where are') ||
+        lower.contains('route') || lower.contains('navigate')) {
+      _showUnavailable('The jobs map needs a hosted, audience-scoped job projection.');
+      return;
+    }
     _composer.text = text;
     _send();
   }
 
   void _handleGeneratedAction(String action, TitanGenerativeItem item) {
-    // Generated labels are presentation data, not object references or
-    // authority. Ask the server-backed conversation to resolve the intent.
-    _quickAsk('$action ${item.title}');
+    final lower = action.toLowerCase();
+    final jobId = item.context['job_id']?.toString();
+    if (lower.contains('customer')) {
+      _showUnavailable('Customer details require a hosted relationship-checked projection.');
+      return;
+    }
+    if ((lower.contains('quote') || lower.contains('invoice') ||
+        lower.contains('payment') || lower.contains('paid')) &&
+        (jobId == null || jobId.isEmpty)) {
+      _showUnavailable('Commercial actions require a hosted, audience-scoped job reference.');
+      return;
+    }
+    if (lower.contains('evidence')) {
+      _showUnavailable('Evidence capture needs a hosted, audience-scoped job projection.');
+      return;
+    }
+    if (lower.contains('schedule') || lower.contains('reschedule') ||
+        lower.contains('dispatch')) {
+      _showUnavailable('Schedule and dispatch are unavailable until the hosted projection is loaded.');
+      return;
+    }
+    if (lower.contains('map') || lower.contains('navigate')) {
+      _showUnavailable('The jobs map needs a hosted, audience-scoped job projection.');
+      return;
+    }
+    _quickAsk(action + ' ' + item.title);
+  }
+
+  void _showUnavailable(String message) {
+    setState(() => _sendError = message);
   }
 
   @override Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Titan Zero'), actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none)), IconButton(onPressed: () {}, icon: const Icon(Icons.person_outline))]),
+    appBar: AppBar(title: const Text('Titan Zero'), actions: [IconButton(onPressed: () => _showUnavailable('Notifications require a hosted attention projection.'), icon: const Icon(Icons.notifications_none)), IconButton(onPressed: () => _showUnavailable('Profile and company context require authenticated hosted session state.'), icon: const Icon(Icons.person_outline))]),
     body: SafeArea(child: Column(children: [
       if (MediaQuery.viewInsetsOf(context).bottom == 0)
         _ContextCards(onTap: _quickAsk),
@@ -65,7 +108,7 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
         child: Text(_sendError!, key: const Key('conversation-send-error'),
             style: TextStyle(color: Theme.of(context).colorScheme.error)),
       ),
-      _Composer(controller: _composer, onSend: _send, sending: _sending),
+      _Composer(controller: _composer, onSend: _send, onUnavailable: () => _showUnavailable('Attachments and voice input require a hosted capability and permission state.'), sending: _sending),
     ])),
   );
 }
@@ -142,4 +185,4 @@ class _ContextCard extends StatelessWidget {
 }
 
 class _EmptySurface extends StatelessWidget { const _EmptySurface(); @override Widget build(BuildContext context) => Center(child: Padding(padding: const EdgeInsets.all(28), child: Column(mainAxisSize: MainAxisSize.min, children:[Icon(Icons.auto_awesome,size:42,color:Theme.of(context).colorScheme.primary),const SizedBox(height:14),Text('What do you need?',style:Theme.of(context).textTheme.headlineSmall),const SizedBox(height:8),const Text('Ask naturally. Titan returns the job, customer, schedule, invoice or action you need — not another screen.',textAlign:TextAlign.center)]))); }
-class _Composer extends StatelessWidget { final TextEditingController controller; final VoidCallback onSend; final bool sending; const _Composer({required this.controller,required this.onSend,this.sending=false}); @override Widget build(BuildContext context)=>Padding(padding:const EdgeInsets.fromLTRB(12,8,12,12),child:Row(children:[IconButton(onPressed:(){},icon:const Icon(Icons.add_circle_outline)),Expanded(child:TextField(controller:controller,minLines:1,maxLines:5,textInputAction:TextInputAction.send,onSubmitted:(_)=>onSend(),decoration:const InputDecoration(hintText:'Ask Titan…',border:OutlineInputBorder()))),IconButton(onPressed:(){},icon:const Icon(Icons.mic_none)),IconButton(onPressed:sending?null:onSend,icon:sending?const SizedBox(width:20,height:20,child:CircularProgressIndicator(strokeWidth:2)):const Icon(Icons.arrow_upward))])); }
+class _Composer extends StatelessWidget { final TextEditingController controller; final VoidCallback onSend; final VoidCallback onUnavailable; final bool sending; const _Composer({required this.controller,required this.onSend,required this.onUnavailable,this.sending=false}); @override Widget build(BuildContext context)=>Padding(padding:const EdgeInsets.fromLTRB(12,8,12,12),child:Row(children:[IconButton(onPressed:onUnavailable,icon:const Icon(Icons.add_circle_outline)),Expanded(child:TextField(controller:controller,minLines:1,maxLines:5,textInputAction:TextInputAction.send,onSubmitted:(_)=>onSend(),decoration:const InputDecoration(hintText:'Ask Titan…',border:OutlineInputBorder()))),IconButton(onPressed:onUnavailable,icon:const Icon(Icons.mic_none)),IconButton(onPressed:sending?null:onSend,icon:sending?const SizedBox(width:20,height:20,child:CircularProgressIndicator(strokeWidth:2)):const Icon(Icons.arrow_upward))])); }
