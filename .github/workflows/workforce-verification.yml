@@ -1,6 +1,7 @@
 name: Canonical Workforce Verification
 on:
   pull_request:
+    types: [opened, reopened, synchronize, edited]
     paths:
       - 'services/workforce/**'
       - 'packages/workforce/**'
