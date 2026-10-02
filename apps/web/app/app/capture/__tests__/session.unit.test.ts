@@ -7,10 +7,10 @@ import {
 } from "@/lib/auth/post-login-destination";
 
 describe("capture post-login allowlist", () => {
-  it("honors next only when it is exactly /app/capture", () => {
+  it("honors capture and reachable app destinations while rejecting external URLs", () => {
     expect(allowlistedPostLoginNext("/app/capture")).toBe("/app/capture");
     expect(allowlistedPostLoginNext("/app/capture/")).toBeNull();
-    expect(allowlistedPostLoginNext("/app")).toBeNull();
+    expect(allowlistedPostLoginNext("/app")).toBe("/app");
     expect(allowlistedPostLoginNext("https://evil.example/app/capture")).toBeNull();
     expect(allowlistedPostLoginNext("//evil.example")).toBeNull();
   });
@@ -21,7 +21,7 @@ describe("capture post-login allowlist", () => {
     ).toBe("/app/capture");
     expect(
       resolvePostLoginHref("admin", { next: "/app/jobs" }),
-    ).toBe("/app");
+    ).toBe("/app/jobs");
   });
 
   it("sends unauthenticated /app/capture to login with next", () => {

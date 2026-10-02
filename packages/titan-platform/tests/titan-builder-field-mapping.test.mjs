@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import {builderFieldTargets,suggestBuilderFieldMap,validateBuilderFieldMap} from "../dist/titan-builder/field-mapping.js";
+import {builderFieldTargets,suggestBuilderFieldMap,validateBuilderFieldMap} from "../.test-dist/titan-builder/field-mapping.js";
 assert(builderFieldTargets("job-list").includes("customer"));
 const map=suggestBuilderFieldMap("job-list",["id","reference","status","scheduled_at","site_summary","customer_summary"]);
 assert.equal(map.title,"reference"); assert.equal(map.time,"scheduled_at"); assert.equal(map.customer,"customer_summary");
