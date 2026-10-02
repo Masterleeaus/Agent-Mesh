@@ -53,19 +53,26 @@ private token in a URL, or assume Apache 443 can install a handler on DirectAdmi
 port 2222. See the install-readiness checklist in
 `docs/directadmin/WORKFORCE-PACKAGE-VERIFICATION.md`.
 
-The earlier extracted relay run used #812's pre-v2 source head
-`8cae7034f6d2ec7c9063ac0c3aba40c6f41b3d89`. The current local rerun extracted
-Server Node 0.3.0 and the hosted owner from main
-`d508a2695fccc36e039f18e60cb96adfbe318813` and supplied the v2 config shape
-with a synthetic marker in a `NODE_ENV=test` fixture. This exercised the RAW
-relay and hosted route fixtures; it did not run Apache, DirectAdmin CGI, or the
-`:443` cookie filter. The marker alone does not prove cookie isolation.
+The current extracted relay-to-host run used Server Node 0.3.0 and the hosted
+owner from main `d508a2695fccc36e039f18e60cb96adfbe318813`. It exercises the
+extracted relay module's production default loader with no config and observes
+its sanitized 503, then injects a fake config loader directly into that module
+in-process for disposable fixture forwarding. It uses no relay config file or
+CGI environment variable to enable traffic and does not spawn the production
+RAW executable. The same test passed against the unmerged #812 draft PR #1245
+head `589658ef10cf4c66af5ebb574799f281b126ced5`, whose production default is
+`503 cookie_boundary_unverified`; this is compatibility evidence for a draft,
+not current main or commissioning. Neither run exercises Apache, DirectAdmin
+CGI, or a live cookie boundary.
 
-**Commissioning blocker:** the experimental #812 Apache `:443` cookie filter
-fails open when the Titan cookie is split across duplicate physical `Cookie`
-headers. The `:2222` RAW parser's duplicate-header behavior is a separate boundary
-and does not repair or verify that filter. Do not commission or install until #812
-fixes this failure and the behavior is independently verified on an authorized
+**Commissioning blocker:** current main still contains the experimental #812
+Apache `:443` cookie filter, which fails open when the Titan cookie is split
+across duplicate physical `Cookie` headers. The unmerged #812 draft PR #1245
+removes that filter and disables production RAW forwarding with a sanitized 503;
+it supplies no working production relay contract. The `:2222` RAW parser's
+duplicate-header behavior is a separate boundary and does not repair or verify
+the Apache filter. Do not commission or install until the cookie boundary and
+the replacement private transport are independently verified on an authorized
 disposable Apache/DirectAdmin host using cookie-name-only evidence. See the exact
 run limits and remaining host inputs in
 `docs/directadmin/WORKFORCE-COCKPIT-INTEGRATION.md`.

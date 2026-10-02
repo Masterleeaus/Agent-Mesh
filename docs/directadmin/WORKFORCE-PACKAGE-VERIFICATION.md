@@ -210,8 +210,8 @@ Node archive SHA256 is
 
 Two builds of the 19-file v0.1.5 verification candidate from the changed claim
 branch source and this SDK produced byte-identical archives. Candidate path:
-`/tmp/1050-package-final-a/titan_workforce.tar.gz`. Archive SHA256:
-`dba818f4a2988fbeeee676933029732a2876577fca2cb48ea244b79e7a77766f`. The
+`/tmp/1050-package-current-a/titan_workforce.tar.gz`. Archive SHA256:
+`cb3b5f0c46b53a12867db16972dfd8161dbb98fe53e7278999c5cb26b96ab132`. The
 sidecar matches. Independent extraction verified the archive hash, 19-file
 count, bundled SDK hash, executable admin/reseller/user routes and lifecycle
 scripts, and staged install/update/uninstall preflight. Uninstall preserves
@@ -222,10 +222,20 @@ The Node 22.23.3 Workforce command
 passed **39/39**. `packages/titan-platform/tests/directadmin-bridge.test.mjs`
 passed **83/83** from the same main source, including #1243 rejected replacement
 session versus registry outage handling. The extracted relay-to-host run from
-the exact main `d508a269` sources passed 14 RAW requests / 15 hosted routes, but
-used a synthetic test-only config marker and is not Apache, DirectAdmin CGI,
-production identity or commissioning proof. The duplicate physical `Cookie`
-header fail-open in the experimental Apache `:443` filter remains an
-unresolved release blocker. The 39/39 cockpit result is local evidence; the
-secretless Node 22 hosted CI job belongs with active #1157 owner
-`agent/issue-1157` and was not edited here.
+exact main `d508a269` sources passed 14 relay-module requests / 15 hosted
+routes. With no relay configuration, the extracted module's production default
+returned sanitized 503 `relay_not_configured`; fixture forwarding injected a
+fake config loader into the module in-process. It used no config file or CGI
+environment setting to enable forwarding and did not spawn the production RAW
+executable. The same test passed against the unmerged #812 draft PR #1245 source
+at exact head `589658ef10cf4c66af5ebb574799f281b126ced5`, where the production
+default returned sanitized 503 `cookie_boundary_unverified`. This is candidate
+compatibility evidence only, not an Apache, DirectAdmin CGI, production
+identity or commissioning proof.
+
+Current main still contains the experimental Apache `:443` filter, which fails
+open when the Titan cookie is split across duplicate physical `Cookie` headers.
+Draft PR #1245 removes the filter and disables production forwarding; it is not
+merged and offers no working production relay contract. The 39/39 cockpit
+result is local evidence; the secretless Node 22 hosted CI job belongs with
+active #1157 owner `agent/issue-1157` and was not edited here.
