@@ -44,6 +44,13 @@ Request-facing consumers must use that service rather than constructing raw proo
 The low-level trusted registry primitives below remain commissioning/internal APIs.
 Production issuer/host commissioning and historical migration remain unconfigured.
 
+The fixed DA → Workforce/Zero derivation is an additive operation on the existing
+`titan_security_sessions` rows. Its signed source reference is tied to the exact
+deterministic child session ID, so lineage survives restart without a new table or
+stored bearer. Resolution checks both source and child revisions and expires the
+child no later than the source bearer/current session. Derived contexts expose
+only their selected company and cannot switch independently.
+
 ## Authentication and provisioning trust boundary
 
 Registry lookup is not credential verification. Before issuing, resolving or
@@ -106,6 +113,30 @@ the new revision through its existing authentication owner.
 reissued. Every subsequent lookup observes current persisted revocation; no
 long-lived token role/company snapshot or cached identity grants continued access.
 
+`withCurrentSessionFence` requires a verified child proof containing its signed
+source reference and bearer expiry. At entry it creates one 500 ms monotonic
+deadline before queueing for the GLOBAL_REGISTRY SQLite transaction. The storage
+wrapper includes same-connection queue time and native `BEGIN IMMEDIATE`
+acquisition in that budget by applying only the remaining time as a temporary
+connection-local `busy_timeout`; ordinary transactions retain the configured
+5-second timeout. Acquisition expiry returns
+`storage-transaction-acquire-timeout` without invoking the transaction callback.
+After acquisition, the registry samples its trusted clock and revalidates source
+and child. The callback receives the same absolute deadline plus an AbortSignal
+for the remaining budget. Workforce passes that unchanged deadline to the
+control-store transaction, so it cannot obtain a fresh 500 ms lock wait. Keep
+other registry transactions free of network waits. Lock order is identity
+registry → Workforce control store → company/business store. Do not run readiness
+work or re-enter the registry from the callback, and do not hold these locks
+through a long adapter/network lifecycle.
+
+On timeout the transaction releases and the callback may still run if it ignores
+abort. A consumer must retain `UNCERTAIN`, avoid replay and await observed outcome;
+the fence cannot cancel an already admitted external effect. A source switch or
+revoke that commits first denies the callback. If the callback acquires the fence
+first, it is admitted against the then-current identity and a later switch/revoke
+does not roll back that in-flight effect.
+
 ## Consumer projections
 
 The authority-neutral result contains canonical company/actor/device/session IDs,
@@ -124,6 +155,11 @@ persisted or returned.
   company, actor, device, session and `context_revision` after current lookup.
   Canonical surface selection (`zero`/`go`/`hub`) remains a separate governed
   transport concern, not an inference from identity or a DA role.
+- #811 Workforce/Zero exchange path: retain `source_session` and
+  `credential_expires_at` in the authenticated identity proof, call the canonical
+  effect fence at its final effect boundary, and keep independent authority and
+  UNCERTAIN handling. Source-bound `allowed_company_ids` contains only the
+  selected company.
 - #1049/#1204 DirectAdmin: project actor, current company IDs/selected company,
   stringified `session_revision`, and parsed expiry. Entitlement and effective
   authority must come from their independent canonical owners. Do not fabricate

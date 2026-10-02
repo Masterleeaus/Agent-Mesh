@@ -1,6 +1,7 @@
 import type { StorageClient } from '@titan-zero/storage';
+import { createHash } from 'node:crypto';
 import {
-  createSessionBinding, requireSecurityId, requireSecurityRevision,
+  createSessionBinding, requireSecurityId, requireSecurityRevision, securityTimestamp,
   validateSession, type SessionBinding,
 } from './security-boundary.js';
 
@@ -18,6 +19,17 @@ type ExternalIdentity = Readonly<{ provider: string; subject: string }>;
  * Registry IDs, a DA role, and caller-supplied headers are not authentication. */
 export type VerifiedSessionIdentity = ExternalIdentity & Readonly<{
   session_id: string; device_id: string; session_revision: number;
+  /** Present only when a canonical session was derived from a signed source session. */
+  source_session?: SessionSourceReference;
+  /** Expiry of the verified bearer. Required with source_session for effect fences. */
+  credential_expires_at?: string;
+}>;
+export type SessionSourceReference = Readonly<{
+  schema: 'titan.session-source/v1';
+  provider: string; subject: string; issuer: string; audience: string;
+  session_id: string; session_revision: number; context_revision: string;
+  company_id: string; actor_id: string; device_id: string;
+  expires_at: string; node_id: string; csrf_sha256: string;
 }>;
 export type ExpectedSessionContext = Readonly<{
   audience: string; company_id: string; actor_id?: string; context_revision?: string;
@@ -40,6 +52,45 @@ type CurrentIdentity = {
   binding: ExternalBinding & { revision: number };
   role: string; generation: string; allowedCompanyIds: readonly string[];
 };
+
+const workforceZeroFenceTimeoutMs = 500;
+
+function validateSourceReference(source: SessionSourceReference): void {
+  const keys = ['schema','provider','subject','issuer','audience','session_id','session_revision','context_revision',
+    'company_id','actor_id','device_id','expires_at','node_id','csrf_sha256'];
+  if (!source || typeof source !== 'object' || Object.keys(source).length !== keys.length
+    || keys.some(key => !(key in source))) throw new Error('session-source-invalid');
+  const fields = ['provider','subject','issuer','audience','session_id','context_revision',
+    'company_id','actor_id','device_id','node_id','csrf_sha256'] as const;
+  for (const field of fields) requireSecurityId(source[field], field);
+  if (source.schema !== 'titan.session-source/v1') throw new Error('session-source-invalid');
+  requireSecurityRevision(source.session_revision);
+  securityTimestamp(source.expires_at);
+  if (!/^[A-Za-z0-9_-]{43}$/.test(source.csrf_sha256)) throw new Error('session-source-invalid');
+}
+
+function sourceProof(source: SessionSourceReference): VerifiedSessionIdentity {
+  return { provider: source.provider, subject: source.subject, session_id: source.session_id,
+    session_revision: source.session_revision, device_id: source.device_id };
+}
+
+/** Stable across source-token re-signing; the source session/revision and every
+ * identity/context binding are immutable parts of the derived child's identity. */
+function workforceZeroSessionId(source: SessionSourceReference): string {
+  const stableReference = [source.schema, source.provider, source.subject, source.issuer,
+    source.audience, source.session_id, source.session_revision, source.context_revision,
+    source.company_id, source.actor_id, source.device_id, source.node_id, source.csrf_sha256,
+    'workforce', 'zero'];
+  const digest = createHash('sha256').update(JSON.stringify(stableReference)).digest('hex');
+  return `workforce-zero-${digest}`;
+}
+
+function sameSourceContext(source: SessionSourceReference, current: CurrentSessionContext): boolean {
+  return source.session_id === current.session_id && source.session_revision === current.session_revision
+    && source.context_revision === current.context_revision && source.company_id === current.company_id
+    && source.actor_id === current.actor_id && source.device_id === current.device_id
+    && source.audience === current.audience;
+}
 
 const schemaV1 = [
   `CREATE TABLE titan_security_actors (
@@ -115,11 +166,15 @@ function context(row: SessionRow, identity: CurrentIdentity): CurrentSessionCont
   });
 }
 
+function selectedCompanyOnly(current: CurrentSessionContext): CurrentSessionContext {
+  return Object.freeze({ ...current, allowed_company_ids: Object.freeze([current.company_id]) });
+}
+
 /** Canonical #302 store. Provisioning methods are trusted control-plane operations,
  * not public request handlers. Callers must protect them with existing governance.
  * No credentials, bearer tokens, business records or authority grants are stored. */
 export class IdentitySessionRegistry {
-  constructor(private readonly storage: StorageClient) {}
+  constructor(private readonly storage: StorageClient, private readonly clock: () => Date = () => new Date()) {}
 
   private async put(table: string, values: Record<string, string>, keys: readonly string[], immutable: readonly string[], expected: number | null): Promise<number> {
     for (const [key, value] of Object.entries(values)) requireSecurityId(value, key);
@@ -208,6 +263,78 @@ export class IdentitySessionRegistry {
     });
   }
 
+  /** Idempotently derive the fixed Workforce/Zero child from a current DA
+   * session. The durable child row is also the replay boundary; there is no
+   * second lineage table and a revoked/expired child is never recreated. */
+  async issueWorkforceZeroSession(
+    sourceProof: VerifiedSessionIdentity,
+    sourceExpected: ExpectedSessionContext,
+    source: SessionSourceReference,
+    lifetimeSeconds: number,
+    now: string,
+  ): Promise<CurrentSessionContext> {
+    validateSourceReference(source);
+    if (!Number.isSafeInteger(lifetimeSeconds) || lifetimeSeconds < 1 || lifetimeSeconds > 900) {
+      throw new Error('credential-lifetime-invalid');
+    }
+    if (sourceProof.provider !== source.provider || sourceProof.subject !== source.subject
+      || sourceProof.session_id !== source.session_id || sourceProof.session_revision !== source.session_revision
+      || sourceProof.device_id !== source.device_id || sourceExpected.audience !== source.audience
+      || sourceExpected.company_id !== source.company_id || sourceExpected.actor_id !== source.actor_id
+      || sourceExpected.context_revision !== source.context_revision) throw new Error('session-source-mismatch');
+
+    return this.storage.transaction(async tx => {
+      const sourceResolved = await this.resolve(tx, sourceProof, sourceExpected, now);
+      if (!sameSourceContext(source, sourceResolved.current)) throw new Error('session-source-stale');
+      const at = securityTimestamp(now);
+      const sourceExpiry = Math.min(securityTimestamp(source.expires_at), securityTimestamp(sourceResolved.row.expires_at));
+      const cap = Math.floor(Math.min(sourceExpiry, at + lifetimeSeconds * 1000) / 1000) * 1000;
+      if (cap <= at) throw new Error('session-source-expired');
+      const desiredExpiry = new Date(cap).toISOString();
+      const sessionId = workforceZeroSessionId(source);
+      const existing = (await tx.query<SessionRow>('SELECT * FROM titan_security_sessions WHERE session_id=$1', [sessionId])).rows[0];
+
+      if (existing) {
+        if (existing.revoked !== 0 || existing.audience !== 'workforce'
+          || existing.company_id !== source.company_id || existing.actor_id !== source.actor_id
+          || existing.device_id !== source.device_id || existing.binding_id !== sourceResolved.current.external_binding_id) {
+          throw new Error('session-derived-child-conflict');
+        }
+        // A retry can tighten expiry when its source credential expires sooner,
+        // but can never extend or reactivate the deterministic child.
+        const tightenExpiry = Date.parse(desiredExpiry) < Date.parse(existing.expires_at);
+        const childRow = tightenExpiry
+          ? { ...existing, expires_at: desiredExpiry, revision: nextRevision(existing.revision) } : existing;
+        if (childRow.expires_at !== existing.expires_at) {
+          const updated = await tx.query('UPDATE titan_security_sessions SET expires_at=$1,revision=$2 WHERE session_id=$3 AND revision=$4 AND revoked=0',
+            [desiredExpiry, childRow.revision, sessionId, existing.revision]);
+          if (updated.rowCount !== 1) throw new Error('session-revision-conflict');
+        }
+        validateSession(bindingFromRow(childRow), source.company_id, now);
+        const identity = await this.identity(tx, sourceProof, source.company_id, source.device_id);
+        if (identity.binding.binding_id !== childRow.binding_id || identity.binding.binding_id !== sourceResolved.current.external_binding_id
+          || identity.generation !== childRow.context_generation) {
+          throw new Error('session-context-stale');
+        }
+        return selectedCompanyOnly(context(childRow, identity));
+      }
+
+      const identity = await this.identity(tx, sourceProof, source.company_id, source.device_id);
+      if (identity.binding.binding_id !== sourceResolved.current.external_binding_id) throw new Error('session-source-binding-mismatch');
+      const binding = createSessionBinding({ session_id: sessionId, actor_id: identity.binding.actor_id,
+        company_id: source.company_id, device_id: source.device_id, issued_at: now,
+        expires_at: desiredExpiry, revoked: false });
+      validateSession(binding, source.company_id, now);
+      const row: SessionRow = { ...binding, revoked: 0, binding_id: identity.binding.binding_id,
+        audience: 'workforce', context_generation: identity.generation };
+      await tx.query(`INSERT INTO titan_security_sessions
+        (session_id,company_id,actor_id,device_id,issued_at,expires_at,revoked,revision,binding_id,audience,context_generation)
+        VALUES ($1,$2,$3,$4,$5,$6,0,1,$7,'workforce',$8)`,
+        [row.session_id,row.company_id,row.actor_id,row.device_id,row.issued_at,row.expires_at,row.binding_id,row.context_generation]);
+      return selectedCompanyOnly(context(row, identity));
+    });
+  }
+
   private async resolve(tx: StorageClient, proof: VerifiedSessionIdentity, expected: ExpectedSessionContext, now: string): Promise<{ row: SessionRow; current: CurrentSessionContext }> {
     validateIdentity(proof);
     requireSecurityId(proof.session_id, 'session_id');
@@ -226,7 +353,26 @@ export class IdentitySessionRegistry {
     if (identity.generation !== row.context_generation) throw new Error('session-context-stale');
     const current = context(row, identity);
     if (expected.context_revision !== undefined && expected.context_revision !== current.context_revision) throw new Error('session-context-stale');
-    return { row, current };
+    if (proof.source_session !== undefined) {
+      const source = proof.source_session;
+      validateSourceReference(source);
+      if (expected.audience !== 'workforce' || row.session_id !== workforceZeroSessionId(source)
+        || proof.provider !== source.provider || proof.subject !== source.subject
+        || row.company_id !== source.company_id || row.actor_id !== source.actor_id || row.device_id !== source.device_id
+        || current.company_id !== source.company_id || current.actor_id !== source.actor_id || current.device_id !== source.device_id
+        || proof.credential_expires_at === undefined) throw new Error('session-source-mismatch');
+      const credentialExpiry = securityTimestamp(proof.credential_expires_at);
+      if (credentialExpiry <= securityTimestamp(now)
+        || credentialExpiry > securityTimestamp(row.expires_at)
+        || credentialExpiry > securityTimestamp(source.expires_at)) throw new Error('session-source-expired');
+      const sourceExpected: ExpectedSessionContext = { audience: source.audience, company_id: source.company_id,
+        actor_id: source.actor_id, context_revision: source.context_revision };
+      const sourceCurrent = await this.resolve(tx, sourceProof(source), sourceExpected, now);
+      if (!sameSourceContext(source, sourceCurrent.current)
+        || sourceCurrent.current.external_binding_id !== current.external_binding_id
+        || credentialExpiry > securityTimestamp(sourceCurrent.row.expires_at)) throw new Error('session-source-stale');
+    }
+    return { row, current: proof.source_session === undefined ? current : selectedCompanyOnly(current) };
   }
 
   /** Rereads current identity on every call; no cached JWT role/company authority. */
@@ -235,6 +381,7 @@ export class IdentitySessionRegistry {
   }
 
   async switchCompany(proof: VerifiedSessionIdentity, expected: ExpectedSessionContext, companyId: string, now: string): Promise<CurrentSessionContext> {
+    if (proof.source_session !== undefined) throw new Error('derived-session-company-switch-denied');
     return this.storage.transaction(async tx => {
       const { row } = await this.resolve(tx, proof, expected, now);
       const identity = await this.identity(tx, proof, companyId, row.device_id);
@@ -248,6 +395,69 @@ export class IdentitySessionRegistry {
     });
   }
 
+  /** Revalidates a Workforce/Zero derivation under the GLOBAL_REGISTRY SQLite
+   * writer lock immediately before the effect boundary. The bounded callback
+   * receives an abort signal. On timeout it may still be running; consumers must
+   * mark the execution UNCERTAIN and must not claim cancellation or retry it. */
+  async withCurrentSessionFence<T>(
+    proof: VerifiedSessionIdentity,
+    expected: ExpectedSessionContext,
+    options: Readonly<{ signal?: AbortSignal }> = {},
+    effect: (current: CurrentSessionContext, signal: AbortSignal, acquireDeadlineMs: number) => Promise<T> | T,
+  ): Promise<T> {
+    if (proof.source_session === undefined) throw new Error('session-source-required');
+    if (options.signal?.aborted) throw new Error('session-fence-aborted');
+    const acquireDeadlineMs = performance.now() + workforceZeroFenceTimeoutMs;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let removeAbortListener = () => {};
+    try {
+      return await this.storage.transaction(async tx => {
+        // Sample the registry-owned clock after BEGIN IMMEDIATE succeeds, so
+        // queue or cross-process writer contention cannot use a stale timestamp.
+        const { current } = await this.resolve(tx, proof, expected, this.clock().toISOString());
+        const remainingMs = acquireDeadlineMs - performance.now();
+        if (remainingMs <= 0) throw new Error('session-fence-timeout');
+        const controller = new AbortController();
+        let rejectAbort!: (error: Error) => void;
+        let rejectTimeout!: (error: Error) => void;
+        const aborted = new Promise<never>((_resolve, reject) => { rejectAbort = reject; });
+        const timedOut = new Promise<never>((_resolve, reject) => { rejectTimeout = reject; });
+        const abort = () => {
+          const error = new Error('session-fence-aborted');
+          controller.abort(error);
+          rejectAbort(error);
+        };
+        if (options.signal?.aborted) abort();
+        else if (options.signal) {
+          options.signal.addEventListener('abort', abort, { once: true });
+          removeAbortListener = () => options.signal?.removeEventListener('abort', abort);
+        }
+        timer = setTimeout(() => {
+          const error = new Error('session-fence-timeout');
+          controller.abort(error);
+          rejectTimeout(error);
+        }, remainingMs);
+        controller.signal.throwIfAborted();
+        const running = Promise.resolve().then(() => {
+          controller.signal.throwIfAborted();
+          return effect(current, controller.signal, acquireDeadlineMs);
+        });
+        // A non-cooperative effect can finish after this fence rejects. Consume
+        // its late rejection; the consumer owns UNCERTAIN reconciliation.
+        void running.catch(() => undefined);
+        return await Promise.race([running, aborted, timedOut]);
+      }, { acquireDeadlineMs });
+    } catch (error) {
+      if (error instanceof Error && error.message === 'storage-transaction-acquire-timeout') {
+        throw new Error('session-fence-timeout', { cause: error });
+      }
+      throw error;
+    } finally {
+      if (timer !== undefined) clearTimeout(timer);
+      removeAbortListener();
+    }
+  }
+
   async revokeSession(sessionId: string, expectedRevision: number): Promise<void> {
     requireSecurityId(sessionId, 'session_id');
     const revision = nextRevision(expectedRevision);
@@ -258,9 +468,11 @@ export class IdentitySessionRegistry {
 
 /** Pass the separately configured canonical identity/control-plane connection.
  * Never pass a company-business connection or infer a path from request fields. */
-export async function createIdentitySessionRegistry(input: { storage: StorageClient; storage_role: 'GLOBAL_REGISTRY' }): Promise<IdentitySessionRegistry> {
+export async function createIdentitySessionRegistry(input: {
+  storage: StorageClient; storage_role: 'GLOBAL_REGISTRY'; now?: () => Date;
+}): Promise<IdentitySessionRegistry> {
   if (input.storage_role !== 'GLOBAL_REGISTRY') throw new Error('identity-storage-role-required');
   if (input.storage.dialect !== 'sqlite') throw new Error('identity-storage-dialect-unsupported');
   await migrate(input.storage);
-  return new IdentitySessionRegistry(input.storage);
+  return new IdentitySessionRegistry(input.storage, input.now);
 }

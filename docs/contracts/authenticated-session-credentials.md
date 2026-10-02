@@ -32,6 +32,14 @@ sessions and tokens expire no later than their upstream assertion (itself at mos
 An expired session needs a fresh authenticated upstream assertion. This bounded
 five-minute authentication slice is not a long-lived browser session rollout.
 
+A DirectAdmin session service may additionally configure `workforce_zero_exchange`
+with a target issuer/key and lifetime. That configuration has no audience or
+surface field: the owner fixes these to `workforce` and `zero`. The source is the
+service's configured DirectAdmin session trust plus its exact
+`directadmin:<https-origin>` provider and `directadmin.node_id`; the method accepts
+only a verified `titan-session+jwt`, never a `titan-login+jwt` assertion or a
+request-selected target.
+
 The signing/verification pair is checked before issuance or switch mutates state.
 Post-commit delivery/signing failure still fails closed: do not roll back a session
 revision or consume the same assertion again. Reauthenticate with a new assertion.
@@ -49,6 +57,7 @@ without credential, cryptographic or database diagnostics.
 | --- | --- | --- |
 | Upstream login assertion | `typ: titan-login+jwt`, configured `alg`, `kid` | `iss`, `sub`, `aud`, `jti`, `company_id`, `device_id`, `iat`, `exp` |
 | Canonical session | `typ: titan-session+jwt`, configured `alg`, `kid` | `iss`, `sub`, `aud`, `identity_provider`, `session_id`, `device_id`, `actor_id`, `company_id`, `session_revision`, `context_revision`, `iat`, `exp` |
+| Workforce/Zero child | `typ: titan-session+jwt`, fixed Workforce target `alg`, `kid` | canonical-session claims plus `surface: zero` and signed `source_session` reference |
 
 The upstream provider must authenticate the actual human/session, bind the device
 and selected company, and emit a fresh unguessable `jti` for one exchange. A DA
@@ -97,6 +106,63 @@ current authentication and compare-and-update; it never treats an ID as bearer p
 The exact selected operation scope is `[context.company_id]`.
 `allowed_company_ids` remains only switch choices, never operation scope.
 
+## DirectAdmin → Workforce/Zero exchange
+
+```ts
+const child = await directAdminSessions.exchangeWorkforceZero(daSessionCredential, {
+  company_id: expectedCompany,
+  device_id: expectedDevice,
+});
+```
+
+The optional expectation only narrows the already authenticated source context.
+The caller cannot choose audience, surface, actor, subject or company mapping.
+The service verifies the configured DirectAdmin session signature, issuer,
+audience, algorithm, key ID, type, node and signed channel binding; resolves its
+current provider/subject/session revision through GLOBAL_REGISTRY; then derives
+the Workforce/Zero target from that resolved context. The child carries a signed
+`source_session` reference binding provider, subject, source issuer/audience,
+session ID/revision/context revision, actor, company, device, source-token expiry,
+DirectAdmin node and CSRF hash. It contains no bearer token.
+
+The child expiry is capped by the source token expiry, current source registry
+session expiry and configured child lifetime. Its `titan_security_sessions`
+primary key is a deterministic hash of the stable source reference and fixed
+`workforce/zero` target. Repeating exchange for one source revision reuses the
+same child; source re-signing cannot create another child, a revoked/expired child
+is never reactivated, and changing a source reference cannot be swapped onto a
+different child. A retry may only tighten child expiry; that advances its session
+revision and invalidates credentials signed against the longer expiry. No schema,
+table or second identity store is added. Source
+switch/revoke, actor/company/membership/device changes and expiry make the child
+fail current resolution, including after registry restart. The child exposes only
+its selected company in `allowed_company_ids`; it cannot switch company itself.
+
+## Effect-time source fence
+
+`IdentitySessionRegistry.withCurrentSessionFence(proof, expected, { signal },
+callback)` is the reusable owner API for consumers. The proof includes the signed
+source reference and verified child bearer expiry. At entry, the registry creates
+one 500 ms monotonic deadline before queueing for its SQLite
+`BEGIN IMMEDIATE` transaction. Storage includes same-connection queue time and
+native writer-lock acquisition by setting a temporary connection-local
+`busy_timeout` to the remaining budget; ordinary transactions keep the
+configured five-second timeout. If lock acquisition expires,
+`storage-transaction-acquire-timeout` is returned and the transaction callback
+does not run. After acquisition, the registry samples its trusted clock and
+re-resolves child and source. It passes the same absolute deadline and an
+AbortSignal for the remaining budget to the effect boundary. Workforce passes
+that unchanged deadline to its control-store transaction. Keep registry
+transactions free of network waits. Lock order is GLOBAL_REGISTRY → Workforce
+control store → company/business store; the callback must not re-enter the
+registry. Readiness probes stay outside the fence.
+
+The fence covers admission/immediate bounded effect work only, never a 120-second
+adapter lifecycle. On timeout it releases the registry lock and rejects as
+`session-fence-timeout`. The callback may still be running if it ignores abort;
+consumers must preserve `UNCERTAIN`, avoid replay and wait for observed outcome.
+This does not claim logout/company switch can cancel an effect already admitted.
+
 This service exposes no principal/company/membership/device provisioning methods.
 Those existing registry primitives remain protected commissioning/governance
 operations, not HTTP endpoints. Ordinary authenticated sessions cannot mint new
@@ -107,7 +173,7 @@ permission to provision. No automatic historical mapping/backfill is authorized.
 
 ## #1049 DirectAdmin adapter reconciliation
 
-Inspected PR #1204 at `51b22e92569b2d76ce97078fe3975ce7be091590`.
+Inspected PR #1204 at `12261fd020e41d5cc4580b4ccd3d8faf63d84cf4`.
 Its provisional hand-written `titan-da-session+jwt` verifier must be replaced by
 this canonical service before commissioning. No implicit acceptance of that old
 type or legacy tokens is supplied. #1049 owns its bridge/plugin/gateway files;
@@ -130,27 +196,31 @@ The SDK must never expose the credential to browser JavaScript/logs.
 
 ## #811 hosted runtime consumption
 
-Inspected PR #1201 at `99cd1bf86fa75c4c0a4e2ec45b39e9baccbe16fd`.
+Inspected PR #1201 at `aa4345c58a00078fa4065fee0224195639dcf8c6`.
 `HostedWorkforceDependencies.credentialVerifier.verify` can use
 `createSessionCredentialVerifier(config)` on a public-key-only host. That wrapper
 exposes only `authenticate` and `resolve`, no signing or registry mutation.
 Configure its audience as `workforce`. After `authenticate(token)`, project:
 
 ```ts
-const { context: c, provider, subject } = await verifier.authenticate(token);
+const authenticated = await verifier.authenticate(token);
+const { context: c, provider, subject, source_session, credential_expires_at } = authenticated;
 return { provider, subject, session_id: c.session_id, device_id: c.device_id,
   session_revision: c.session_revision, audience: c.audience,
-  surface: commissionedSurface };
+  source_session, credential_expires_at, surface: authenticated.surface };
 ```
 
-`commissionedSurface` must be the host's independently validated canonical
-`zero`/`go`/`hub` selection, not inferred from a DA role. The current hosted owner
-then rereads the registry for request company/actor/context and again before
-native effects. Keep those checks. A DA-audience token cannot be relabelled or
-forwarded to workforce. Issue a separately authenticated assertion for a
-commissioned workforce service/audience; no cross-audience token exchange is
-implemented here. Actual host wiring, queued expiry semantics, commissioned
-surface selection and end-to-end native execution remain with #811/#812.
+For the DirectAdmin exchange path, preserve the verified `source_session` and
+`credential_expires_at` in the durable authenticated-identity proof; missing
+lineage is a denial for this commissioned path. Before the final
+effect boundary, #811 calls `withCurrentSessionFence`; keep its independent
+authority fence. Acquire locks in identity → Workforce control → business order,
+and do not re-enter the registry while holding later stores. Keep slow readiness
+and long adapters outside the 500 ms fence. If timeout/abort is not cooperative,
+retain `UNCERTAIN`; do not report cancellation or verified completion. A
+DirectAdmin-audience token itself is never relabelled or forwarded as Workforce.
+Actual host wiring, queued expiry semantics and end-to-end native execution
+remain with #811/#812.
 
 ## Web migration surface and limits
 
