@@ -379,11 +379,11 @@ export async function readBoundedBody(stream, { declaredLength, maxBytes = MAX_R
   });
 }
 
-async function pinnedLookup(url) {
+async function pinnedLookup(url, resolveAddresses = dns.lookup) {
   const host = url.hostname.replace(/^\[|\]$/g, "");
   if (net.isIP(host)) return undefined;
   let addresses;
-  try { addresses = await dns.lookup(host, { all: true, verbatim: true }); }
+  try { addresses = await resolveAddresses(host, { all: true, verbatim: true }); }
   catch { throw relayError(502, "workforce_unreachable"); }
   if (!addresses.length || addresses.some((entry) => !isPrivateAddress(entry.address))) {
     throw relayError(502, "workforce_target_not_private");
@@ -476,64 +476,76 @@ function requestHeadersForUpstream(envelope, config, body) {
 
 export async function forwardRequest(config, envelope, body, {
   timeoutMs = UPSTREAM_TIMEOUT_MS, maxResponseBytes = MAX_RESPONSE_BODY_BYTES,
+  resolveAddresses = dns.lookup,
 } = {}) {
-  const lookup = await pinnedLookup(config.upstreamUrl);
   const transport = config.upstreamUrl.protocol === "https:" ? https : http;
   const headers = requestHeadersForUpstream(envelope, config, body);
   return new Promise((resolve, reject) => {
     let settled = false;
+    let request;
     const finish = (error, result) => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
       if (error) reject(error); else resolve(result);
     };
-    const host = config.upstreamUrl.hostname.replace(/^\[|\]$/g, "");
-    const options = {
-      hostname: host,
-      port: config.upstreamUrl.port ? Number(config.upstreamUrl.port) : undefined,
-      method: envelope.route.method,
-      path: envelope.route.path,
-      headers,
-      agent: false,
-      ...(lookup ? { lookup } : {}),
-    };
-    const request = transport.request(options, (response) => {
-      const status = response.statusCode ?? 502;
-      if (status >= 300 && status < 400) {
-        response.destroy();
-        finish(relayError(502, "workforce_redirect_refused"));
-        return;
-      }
-      let approvedHeaders;
-      try { approvedHeaders = collectUpstreamHeaders(response); }
-      catch (error) { response.destroy(); finish(error); return; }
-      const chunks = [];
-      let size = 0;
-      response.on("data", (chunk) => {
-        size += chunk.length;
-        if (size > maxResponseBytes) {
-          response.destroy();
-          finish(relayError(502, "workforce_response_too_large"));
-          return;
-        }
-        chunks.push(chunk);
-      });
-      response.once("aborted", () => finish(relayError(502, "workforce_response_incomplete")));
-      response.once("error", () => finish(relayError(502, "workforce_response_incomplete")));
-      response.once("end", () => finish(null, {
-        status,
-        headers: approvedHeaders,
-        body: Buffer.concat(chunks, size),
-      }));
-    });
     const timer = setTimeout(() => {
-      request.destroy();
       finish(relayError(504, "workforce_timeout"));
+      request?.destroy();
     }, timeoutMs);
-    request.once("error", () => finish(relayError(502, "workforce_unreachable")));
-    if (body.length) request.write(body);
-    request.end();
+    void (async () => {
+      try {
+        const lookup = await pinnedLookup(config.upstreamUrl, resolveAddresses);
+        // DNS resolvers do not expose cancellation. The overall deadline still
+        // settles the RAW request and prevents a late resolution from opening
+        // an upstream connection after the caller has timed out.
+        if (settled) return;
+        const host = config.upstreamUrl.hostname.replace(/^\[|\]$/g, "");
+        const options = {
+          hostname: host,
+          port: config.upstreamUrl.port ? Number(config.upstreamUrl.port) : undefined,
+          method: envelope.route.method,
+          path: envelope.route.path,
+          headers,
+          agent: false,
+          ...(lookup ? { lookup } : {}),
+        };
+        request = transport.request(options, (response) => {
+          const status = response.statusCode ?? 502;
+          if (status >= 300 && status < 400) {
+            response.destroy();
+            finish(relayError(502, "workforce_redirect_refused"));
+            return;
+          }
+          let approvedHeaders;
+          try { approvedHeaders = collectUpstreamHeaders(response); }
+          catch (error) { response.destroy(); finish(error); return; }
+          const chunks = [];
+          let size = 0;
+          response.on("data", (chunk) => {
+            size += chunk.length;
+            if (size > maxResponseBytes) {
+              finish(relayError(502, "workforce_response_too_large"));
+              response.destroy();
+              return;
+            }
+            chunks.push(chunk);
+          });
+          response.once("aborted", () => finish(relayError(502, "workforce_response_incomplete")));
+          response.once("error", () => finish(relayError(502, "workforce_response_incomplete")));
+          response.once("end", () => finish(null, {
+            status,
+            headers: approvedHeaders,
+            body: Buffer.concat(chunks, size),
+          }));
+        });
+        request.once("error", () => finish(relayError(502, "workforce_unreachable")));
+        if (body.length) request.write(body);
+        request.end();
+      } catch (error) {
+        finish(error?.status ? error : relayError(502, "workforce_unreachable"));
+      }
+    })();
   });
 }
 

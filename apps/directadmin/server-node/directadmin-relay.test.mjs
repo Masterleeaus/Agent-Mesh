@@ -9,7 +9,11 @@ import { once } from "node:events";
 import { fileURLToPath } from "node:url";
 import { createDirectAdminRelayFetch } from "./images/directadmin-relay-client.mjs";
 import { packagePlugin } from "../../../scripts/package-directadmin-plugin.mjs";
-import { readBoundedBody, DIRECTADMIN_SESSION_COOKIE } from "./directadmin-relay.mjs";
+import {
+  forwardRequest,
+  readBoundedBody,
+  DIRECTADMIN_SESSION_COOKIE,
+} from "./directadmin-relay.mjs";
 
 const sourceRoot = path.dirname(fileURLToPath(import.meta.url));
 const controlOrigin = "https://panel.example.test:2222";
@@ -92,6 +96,10 @@ async function fixture(t, responseMode = "normal") {
       response.setHeader("x-frame-options", "SAMEORIGIN");
       if (responseMode === "set-cookie") response.setHeader("set-cookie", setCookie("new-session-fixture"));
       if (responseMode === "clear-cookie") response.setHeader("set-cookie", setCookie(""));
+      if (responseMode === "duplicate-cookie") response.setHeader("set-cookie", [setCookie("first-session"), setCookie("second-session")]);
+      if (responseMode === "malformed-cookie") {
+        response.setHeader("set-cookie", DIRECTADMIN_SESSION_COOKIE + "=bad value; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=120");
+      }
       if (responseMode === "busy") {
         response.statusCode = 503;
         response.end(JSON.stringify({ error: "directadmin-busy", read_only: true }));
@@ -101,6 +109,10 @@ async function fixture(t, responseMode = "normal") {
         response.statusCode = 302;
         response.setHeader("location", "https://attacker.invalid/");
         response.end("{}");
+        return;
+      }
+      if (responseMode === "large-response") {
+        response.end(Buffer.alloc(1024 * 1024 + 1, "x"));
         return;
       }
       response.end(JSON.stringify({ ok: true }));
@@ -295,6 +307,26 @@ test("invalid and uncommissioned configuration fails closed without logging requ
   const nonPrivateHttps = await spawnRaw(f.rawPath, request.env, request.input);
   assert.equal(parseRaw(nonPrivateHttps.stdout).status, 503);
   assert.equal(f.requests.length, 1);
+
+  const symlinkPath = path.join(f.dir, "relay-config-link.json");
+  fs.symlinkSync(f.configPath, symlinkPath);
+  const linkedConfig = cgi(f, {
+    route: "context",
+    extraEnv: { TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: symlinkPath },
+  });
+  const symlinkConfig = await spawnRaw(f.rawPath, linkedConfig.env, linkedConfig.input);
+  assert.equal(parseRaw(symlinkConfig.stdout).status, 503);
+  assert.equal(f.requests.length, 1);
+
+  f.writeConfig();
+  for (const mode of [0o620, 0o602]) {
+    fs.chmodSync(f.configPath, mode);
+    const writableConfig = await spawnRaw(f.rawPath, request.env, request.input);
+    assert.equal(parseRaw(writableConfig.stdout).status, 503, mode.toString(8));
+    assert.equal(f.requests.length, 1);
+  }
+
+  f.writeConfig();
   fs.unlinkSync(f.configPath);
   const absent = await spawnRaw(f.rawPath, request.env, request.input);
   assert.equal(parseRaw(absent.stdout).status, 503);
@@ -317,6 +349,107 @@ test("busy gateway backpressure and redirects are handled without following them
   const refused = await spawnRaw(redirect.rawPath, redirectRequest.env, redirectRequest.input);
   assert.equal(parseRaw(refused.stdout).status, 502);
   assert.equal(redirect.requests.length, 1);
+});
+
+test("duplicate and malformed upstream Set-Cookie headers fail closed", async (t) => {
+  for (const mode of ["duplicate-cookie", "malformed-cookie"]) {
+    const f = await fixture(t, mode);
+    const request = cgi(f, { route: "context" });
+    const result = await spawnRaw(f.rawPath, request.env, request.input);
+    const response = parseRaw(result.stdout);
+    assert.equal(response.status, 502, mode);
+    assert.equal(response.body.toString(), '{"error":"workforce_response_invalid","read_only":true}');
+    assert.equal(f.requests.length, 1);
+    assert.equal(result.stdout.toString().includes("first-session"), false);
+    assert.equal(result.stdout.toString().includes("bad value"), false);
+  }
+});
+
+test("oversized Workforce responses exceed the 1 MiB cap and are not relayed", async (t) => {
+  const f = await fixture(t, "large-response");
+  const request = cgi(f, { route: "context" });
+  const result = await spawnRaw(f.rawPath, request.env, request.input);
+  const response = parseRaw(result.stdout);
+  assert.equal(response.status, 502);
+  assert.equal(response.body.toString(), '{"error":"workforce_response_too_large","read_only":true}');
+  assert.equal(response.body.length < 1024, true);
+  assert.equal(f.requests.length, 1);
+});
+
+test("the overall Workforce deadline includes DNS and blocks a connection after late resolution", async (t) => {
+  const upstreamRequests = [];
+  const upstream = createServer((request, response) => {
+    upstreamRequests.push(request.url);
+    response.end("{}");
+  });
+  upstream.listen(0, "127.0.0.1");
+  await once(upstream, "listening");
+  t.after(async () => {
+    upstream.closeAllConnections();
+    await new Promise((resolve) => upstream.close(resolve));
+  });
+  const config = {
+    publicHost: "panel.example.test:2222",
+    publicOrigin: controlOrigin,
+    // This direct unit seam bypasses config policy only to observe a would-be
+    // connection on loopback if an expired lookup were allowed to continue.
+    upstreamUrl: new URL("http://workforce.internal:" + upstream.address().port),
+  };
+  const envelope = {
+    route: { method: "GET", path: "/v1/directadmin/context" },
+    cookie: DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+    csrf,
+    accept: "application/json",
+    referer: controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html",
+  };
+  let lookupStarted = false;
+  let resolveLookup;
+  const startedAt = Date.now();
+  await assert.rejects(
+    forwardRequest(config, envelope, Buffer.alloc(0), {
+      timeoutMs: 35,
+      resolveAddresses: () => {
+        lookupStarted = true;
+        return new Promise((resolve) => { resolveLookup = resolve; });
+      },
+    }),
+    (error) => error.status === 504 && error.code === "workforce_timeout",
+  );
+  assert.equal(lookupStarted, true);
+  assert.equal(Date.now() - startedAt < 300, true);
+  resolveLookup([{ address: "127.0.0.1", family: 4 }]);
+  await new Promise((resolve) => setTimeout(resolve, 40));
+  assert.deepEqual(upstreamRequests, []);
+});
+
+test("mixed private and public DNS answers are rejected before connecting", async () => {
+  const config = {
+    publicHost: "panel.example.test:2222",
+    publicOrigin: controlOrigin,
+    upstreamUrl: new URL("https://workforce.internal:3010"),
+  };
+  const envelope = {
+    route: { method: "GET", path: "/v1/directadmin/context" },
+    cookie: DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret",
+    csrf,
+    accept: "application/json",
+    referer: controlOrigin + "/CMD_PLUGINS/titan-server-node/admin/index.html",
+  };
+  let lookupOptions;
+  await assert.rejects(
+    forwardRequest(config, envelope, Buffer.alloc(0), {
+      timeoutMs: 200,
+      resolveAddresses: async (_host, options) => {
+        lookupOptions = options;
+        return [
+          { address: "10.20.30.40", family: 4 },
+          { address: "203.0.113.10", family: 4 },
+        ];
+      },
+    }),
+    (error) => error.status === 502 && error.code === "workforce_target_not_private",
+  );
+  assert.deepEqual(lookupOptions, { all: true, verbatim: true });
 });
 
 test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW errors", async (t) => {
@@ -357,4 +490,3 @@ test("bounded body reader rejects stalled streams", async () => {
   const result = readBoundedBody(stream, { timeoutMs: 20 });
   await assert.rejects(result, (error) => error.code === "request_body_timeout");
 });
-
