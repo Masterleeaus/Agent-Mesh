@@ -84,6 +84,18 @@ Rules:
 
 GitHub refs, commits, checks, PRs, merges, and issue state are the coordination and lifecycle record. Do not maintain a second Agent Mesh ledger.
 
+### Slice-first delivery and merge policy
+
+This policy controls merge readiness for implementation slices and takes precedence over any broader-mission wording below.
+
+- Break large missions into small, independently deliverable issues and PRs. A parent issue tracks the whole sub-product; it does not require every slice to wait for the parent’s full acceptance run.
+- A partial PR may merge with `Refs #<issue>` once its own change is reviewable and its directly relevant checks pass. Full-mission evidence, live-host certification, end-to-end workflows, and the full repository gate are not prerequisites for merging an isolated slice.
+- For each slice, run focused tests, typecheck, lint, or build checks that cover the changed behavior. Record broader checks as deferred and run them when the sub-product is integrated, then before release.
+- An unrelated baseline failure, unrelated workflow failure, or pending full-product certification does not block a slice merge. Create or link a small follow-up issue when the failure is real and independently actionable.
+- Do not require a slice PR to prove criteria owned by other issues. Keep the parent issue open until its sub-product integration and acceptance checks are complete.
+- Keep security, company isolation, authorization, data integrity, and irreversible financial safeguards intact. A check that directly protects behavior changed by the slice remains in scope; unrelated certification is deferred.
+- Claim branches and evidence templates are coordination aids, not reasons to hold an otherwise ready slice. If a mechanical policy check rejects valid slice evidence, correct the template or validator promptly; do not expand the slice to satisfy full-mission closure requirements.
+
 ## 6. Verification contract
 
 Verification is risk-based and cumulative.
