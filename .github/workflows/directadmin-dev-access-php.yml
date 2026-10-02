@@ -187,5 +187,91 @@ jobs:
           extracted="$RUNNER_TEMP/developer-portal-current"
           mkdir -p "$extracted"
           tar -xzf "$candidate" -C "$extracted"
-          grep -qx 'version=1.3.3' "$extracted/plugin.conf"
+          grep -qx 'version=1.3.4' "$extracted/plugin.conf"
           php "$root/tools/request-integration-test.php" "$extracted"
+
+      - name: Prepare exact v1.3.4 review artifact and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="$RUNNER_TEMP/developer-portal-package/titan_dev_access.tar.gz"
+          release="$RUNNER_TEMP/developer-portal-v1.3.4"
+          mkdir -p "$release"
+          cp "$candidate" "$release/titan_dev_access.tar.gz"
+          (
+            cd "$release"
+            sha256sum titan_dev_access.tar.gz > titan_dev_access.tar.gz.sha256
+          )
+          python3 - "$release" "$GITHUB_SHA" "$GITHUB_RUN_ID" <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import sys
+          import tarfile
+          import subprocess
+
+          release = pathlib.Path(sys.argv[1])
+          archive = release / "titan_dev_access.tar.gz"
+          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+          php = subprocess.run(
+              ["php", "-r", "echo PHP_VERSION;"], check=True, capture_output=True, text=True
+          ).stdout.strip()
+          manifest = None
+          packaged_files = {}
+          with tarfile.open(archive, "r:gz") as bundle:
+              for member in bundle.getmembers():
+                  name = member.name
+                  while name.startswith("./"):
+                      name = name[2:]
+                  name = name.rstrip("/")
+                  if not member.isfile():
+                      continue
+                  if name in packaged_files:
+                      raise SystemExit(f"duplicate packaged file: {name}")
+                  with bundle.extractfile(member) as stream:
+                      payload = stream.read()
+                  packaged_files[name] = hashlib.sha256(payload).hexdigest()
+                  if name == "plugin.conf":
+                      manifest = payload.decode("utf-8")
+          if manifest is None or "name=Developer Portal\n" not in manifest or "version=1.3.4\n" not in manifest:
+              raise SystemExit("candidate archive manifest does not identify Developer Portal v1.3.4")
+          provenance = {
+              "schema": "titan.directadmin-plugin.provenance.v1",
+              "plugin_id": "titan_dev_access",
+              "display_name": "Developer Portal",
+              "version": "1.3.4",
+              "source_commit": sys.argv[2],
+              "workflow_run_id": int(sys.argv[3]),
+              "php_cli": php,
+              "archive": {
+                  "file": "titan_dev_access.tar.gz",
+                  "sha256": digest,
+                  "packaged_file_sha256": packaged_files,
+              },
+              "verification": {
+                  "status": "hosted_php_and_final_archive_gates_passed",
+                  "live_directadmin": "not_tested",
+                  "independent_security_review": "pending",
+                  "library_publication": "not_performed",
+              },
+              "compatibility": {
+                  "stable_plugin_id": "titan_dev_access",
+                  "persistent_migration": False,
+                  "installed_1_1_3_rollback_verified": False,
+                  "v1_3_2_is_historical": True,
+                  "v1_3_3_is_not_safe_to_install": True,
+              },
+          }
+          (release / "provenance.json").write_text(
+              json.dumps(provenance, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          print(f"Prepared v1.3.4 candidate SHA-256 {digest} from {sys.argv[2]}")
+          PY
+
+      - name: Upload review-only v1.3.4 candidate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: developer-portal-v1.3.4-${{ github.sha }}
+          path: ${{ runner.temp }}/developer-portal-v1.3.4
+          if-no-files-found: error
+          retention-days: 14
