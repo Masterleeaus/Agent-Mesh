@@ -17,7 +17,7 @@ function expect_rejected(callable $action,string $message):void{
  try{$action();}catch(Throwable $e){return;}
  expect_true(false,$message);
 }
-function run_security_git_fixture(array $arguments,string $cwd,string $home):bool{
+function run_security_git_fixture(array $arguments,string $home):bool{
  $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
  $environment=[
   'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
@@ -26,7 +26,7 @@ function run_security_git_fixture(array $arguments,string $cwd,string $home):boo
   'GIT_CONFIG_GLOBAL'=>'/dev/null',
   'GIT_TERMINAL_PROMPT'=>'0'
  ];
- $process=@proc_open(array_merge(['git'],$arguments),$descriptors,$pipes,$cwd,$environment,['bypass_shell'=>true]);
+ $process=@proc_open(array_merge(['git'],$arguments),$descriptors,$pipes,$home,$environment,['bypass_shell'=>true]);
  if(!is_resource($process)) return false;
  fclose($pipes[0]);
  $stdout=(string)stream_get_contents($pipes[1]);
