@@ -4,7 +4,14 @@
   "ownership_critical_paths": [
     "packages/tools/execution-gateway.mjs",
     "services/workforce/src/field-service-runtime.mjs",
-    "packages/offline/restart-checkpoint.mjs"
+    "packages/offline/restart-checkpoint.mjs",
+    "packages/titan-platform/src/ported/titan-revenue-journey/booking-job-origin-evidence.ts",
+    "packages/titan-platform/src/ported/titan-revenue-journey/continuation-evidence.ts",
+    "packages/titan-platform/src/ported/titan-revenue-journey/invoice-payment-evidence.ts",
+    "packages/titan-platform/src/ported/titan-revenue-journey/lead-opportunity-evidence.ts",
+    "packages/titan-platform/src/ported/titan-revenue-journey/quote-lifecycle-evidence.ts",
+    "packages/titan-platform/src/ported/titan-revenue-journey/canonical-reconciliation.ts",
+    "packages/titan-platform/src/ported/titan-revenue-journey/revenue-journey-projection.ts"
   ],
   "inventory": [
     {
@@ -37,6 +44,62 @@
       "scope": "Operational restart checkpoint creation and recovery coordination; checkpoint state is not an accepted business outcome.",
       "durability": "Delegates to the restart-evidence persistence contract.",
       "consumers": ["packages/offline/restart-evidence-ledger.mjs"]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/booking-job-origin-evidence.ts",
+      "role": "donor-history-compatibility",
+      "scope": "Builds a revenue-journey origin observation from caller-supplied canonical references; it does not read or persist canonical job facts.",
+      "durability": "Pure builder in the ported Titan revenue-journey set.",
+      "consumers": ["apps/web/lib/revenue-journey/booking-job-origin-evidence.ts"],
+      "limitations": ["The web path is a re-export shim; no production callsite was found in the current source scan.", "Not the accepted factual ledger."]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/continuation-evidence.ts",
+      "role": "donor-history-compatibility",
+      "scope": "Builds a continuation/rebooking candidate observation from supplied lifecycle input; it does not persist or certify a business outcome.",
+      "durability": "Pure builder in the ported Titan revenue-journey set.",
+      "consumers": ["apps/web/lib/revenue-journey/continuation-evidence.ts"],
+      "limitations": ["The web path is a re-export shim; no production callsite was found in the current source scan.", "Not the accepted factual ledger."]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/invoice-payment-evidence.ts",
+      "role": "donor-history-compatibility",
+      "scope": "Builds invoice/payment lifecycle observations from supplied canonical references; it does not read or persist payment truth.",
+      "durability": "Pure builder in the ported Titan revenue-journey set.",
+      "consumers": ["apps/web/lib/revenue-journey/invoice-payment-evidence.ts"],
+      "limitations": ["The web path is a re-export shim; no production callsite was found in the current source scan.", "Not the accepted factual ledger."]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/lead-opportunity-evidence.ts",
+      "role": "donor-history-compatibility",
+      "scope": "Builds lead/opportunity lifecycle observations from supplied input; it does not own or persist CRM truth.",
+      "durability": "Pure builder in the ported Titan revenue-journey set.",
+      "consumers": ["apps/web/lib/revenue-journey/lead-opportunity-evidence.ts"],
+      "limitations": ["The web path is a re-export shim; no production callsite was found in the current source scan.", "Not the accepted factual ledger."]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/quote-lifecycle-evidence.ts",
+      "role": "donor-history-compatibility",
+      "scope": "Builds quote lifecycle observations from supplied input; it does not own or persist quote truth.",
+      "durability": "Pure builder in the ported Titan revenue-journey set.",
+      "consumers": ["apps/web/lib/revenue-journey/quote-lifecycle-evidence.ts"],
+      "limitations": ["The web path is a re-export shim; no production callsite was found in the current source scan.", "Not the accepted factual ledger."]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/canonical-reconciliation.ts",
+      "role": "derived-value-analytics",
+      "scope": "Maps supplied revenue-journey observations to declared CRM/Field owner domains and marks the result as derived with no authority or mutation power.",
+      "durability": "Pure derived reconciliation contract.",
+      "consumers": ["apps/web/lib/revenue-journey/canonical-reconciliation.ts"],
+      "limitations": ["No production callsite was found in the current source scan; it does not read canonical domain stores.", "Not accepted factual history."]
+    },
+    {
+      "path": "packages/titan-platform/src/ported/titan-revenue-journey/revenue-journey-projection.ts",
+      "role": "derived-value-analytics",
+      "scope": "Builds deterministic, company-scoped owner/workforce/customer journey projections from supplied domain observations; the projection declares that it owns no store or domain truth.",
+      "durability": "Pure derived projection with a content-based projection ID.",
+      "consumers": ["apps/web/lib/revenue-journey/canonical-reconciliation.ts"],
+      "limitations": ["No production callsite was found in the current source scan; inputs are not fetched from canonical domain owners here.", "Not accepted factual history."]
     },
     {
       "path": "packages/offline/restart-evidence-ledger.mjs",
