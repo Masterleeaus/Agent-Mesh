@@ -31,6 +31,9 @@ function populatedPreLedgerDatabase(databasePath) {
   db.prepare(`INSERT INTO authority_decisions
     (company_id,authority_decision_id,worker_id,capability,decision,evaluated_at,payload)
     VALUES (?,?,?,?,?,?,?)`).run('company-a', 'authority-a', 'worker-a', 'work.complete', 'ALLOW', '2026-01-01T00:00:00Z', '{}');
+  db.prepare(`INSERT INTO operational_events
+    (id,company_id,event_type,aggregate_type,aggregate_id,payload,occurred_at)
+    VALUES (?,?,?,?,?,?,?)`).run('execution-a', 'company-a', 'execution.verified', 'job', 'job-a', '{"verification_id":"verification-a"}', '2026-01-01T00:00:01Z');
   const insertEvidence = db.prepare(`INSERT INTO evidence
     (id,company_id,subject_type,subject_id,evidence_type,provenance,payload,created_at)
     VALUES (?,?,?,?,?,?,?,?)`);
@@ -74,6 +77,11 @@ test('business evidence migration preserves populated history, immutability, cle
   assert.throws(() => db.prepare("DELETE FROM evidence WHERE id='legacy-a'").run(), /business-evidence-immutable/);
   assert.throws(() => db.prepare("UPDATE authority_decisions SET payload='{}' WHERE authority_decision_id='authority-a'").run(), /authority-history-immutable/);
   assert.equal(db.prepare("SELECT payload FROM authority_decisions WHERE authority_decision_id='authority-a'").get().payload, '{}');
+  assert.equal(db.prepare("SELECT event_type FROM operational_events WHERE id='execution-a'").get().event_type, 'execution.verified');
+  db.prepare(`INSERT INTO operational_events
+    (id,company_id,event_type,aggregate_type,aggregate_id,payload)
+    VALUES ('execution-b','company-b','execution.verified','job','job-b','{}')`).run();
+  assert.equal(db.prepare("SELECT count(*) AS n FROM operational_events WHERE company_id='company-b'").get().n, 1);
   assert.equal(db.prepare('SELECT count(*) AS n FROM sqlite_master WHERE type=? AND name=?').get('trigger', 'evidence_no_update').n, 1);
   assert.equal(db.prepare('SELECT count(*) AS n FROM sqlite_master WHERE type=? AND name=?').get('trigger', 'evidence_no_delete').n, 1);
   const applied = db.prepare('SELECT filename FROM schema_migrations ORDER BY filename').all().map(row => row.filename);
