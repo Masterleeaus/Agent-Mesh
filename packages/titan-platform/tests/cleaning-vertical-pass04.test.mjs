@@ -122,6 +122,12 @@ test('adapter uses the real cleaning bundle and retained runtime contract',async
   assert.equal(otherCompany.recurrence.enabled,false);
   const restartedAuthority=createCleaningServiceSetupAuthority({database,cleaningBundle});
   assert.deepEqual((await restartedAuthority.read({company_id:'company-a'})).recurrence,view.recurrence);
+  await assert.rejects(restartedAuthority.save({company_id:'company-a'},{company_id:'company-a',selections:[payload.selections[0]]}),/recurring cleaning job type deep_clean is not selected/);
+  const selectionOnly={company_id:'company-a',selections:payload.selections};
+  await restartedAuthority.save({company_id:'company-a'},{...selectionOnly,expected_revision:1});
+  assert.deepEqual((await restartedAuthority.read({company_id:'company-a'})).recurrence,view.recurrence);
+  await restartedAuthority.save({company_id:'company-a'},{...selectionOnly,recurrence:{enabled:false,supported_frequencies:[],default_frequency:null,supported_job_type_ids:[]},expected_revision:2});
+  assert.equal((await restartedAuthority.read({company_id:'company-a'})).recurrence.enabled,false);
   await assert.rejects(restartedAuthority.save({company_id:'company-a'},{...payload,expected_revision:0}),/cleaning setup revision mismatch/);
 });
 

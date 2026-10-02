@@ -125,9 +125,12 @@ export function createCleaningServiceSetupAuthority({ database, cleaningBundle, 
     if (!raw.length) throw new Error('at least one cleaning service selection is required');
     const normalized = raw.map(item => normalizeSelection(item, byId));
     if (new Set(normalized.map(item=>item.job_type_id)).size !== normalized.length) throw new Error('duplicate cleaning job type selection');
-    const recurrence = normalizeRecurrence(input.recurrence, byId, new Set(normalized.map(item=>item.job_type_id)));
     const prior = await database.getRecord(context, locator());
     const priorVersion = Number(prior?.version || 0);
+    const recurrenceInput = Object.prototype.hasOwnProperty.call(input,'recurrence')
+      ? input.recurrence
+      : prior?.data?.recurrence || { enabled:false, supported_frequencies:[], default_frequency:null, supported_job_type_ids:[] };
+    const recurrence = normalizeRecurrence(recurrenceInput, byId, new Set(normalized.map(item=>item.job_type_id)));
     if (input.expected_revision != null && Number(input.expected_revision) !== priorVersion) throw new Error('cleaning setup revision mismatch');
     const updated_at = Number(clock());
     const stored = await database.putRecord(context, {
