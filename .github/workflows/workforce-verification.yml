@@ -35,6 +35,7 @@ jobs:
 
   directadmin-workforce:
     name: DirectAdmin Workforce Consumer
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
