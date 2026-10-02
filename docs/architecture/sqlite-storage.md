@@ -48,6 +48,19 @@ The full native FSM schema is **not** represented by `db/sqlite/001_canonical.sq
 
 Therefore do not create a reduced per-company schema by copying the current four SQLite migrations. First classify the mature migration history and preserve its active semantics in an owner-specific portable COMPANY_NATIVE_FSM migration family.
 
+The currently implemented `packages/storage` native manifest remains an explicitly
+bounded bootstrap profile, not that complete mature migration family. Its immutable
+`company-native-work-orders-v1` profile stays available to verify existing stores
+and backups; the additive `company-native-work-orders-visits-v2` profile adds only
+the canonical visit-to-`work_order_tasks` plan relation. Fresh placements use v2.
+There is no implicit in-place v1 upgrade: existing v1 stores remain v1 until a
+placement owner publishes a maintenance-gated migration coordinator. A consumer
+must declare the schema version its operation needs and verify the matching
+company/placement/revision marker, manifest digest, migration ledger and live
+schema before invoking business work. A registry `READY` row alone is not a
+company-store schema attestation. This bounded slice does not certify the full
+native FSM schema or its feature parity.
+
 ## Migration ownership
 
 Every migration must declare one primary storage owner:
