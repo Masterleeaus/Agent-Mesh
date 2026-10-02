@@ -28,6 +28,18 @@ test("portfolio packaging emits a flat named archive, mode-safe entrypoint, and 
   assert.equal(fs.existsSync(result.provenance), true);
 }));
 
+test("portfolio packaging refuses to replace an existing archive with different bytes", (t) => fixture(({ source, output }) => {
+  const tarCheck = spawnSync("tar", ["--sort=name", "--version"], { encoding: "utf8" });
+  if (tarCheck.status !== 0 && /not supported|unknown option/i.test(tarCheck.stderr)) return t.skip("GNU tar deterministic options unavailable");
+  const plugin = { id: "titan_dev_access", source: path.relative(path.resolve("scripts/.."), source), files: ["plugin.conf", "admin"] };
+  const first = packagePortfolio({ outputDir: output, plugins: [plugin] });
+  const archive = first.artifacts[0].archive;
+  const original = fs.readFileSync(archive);
+  fs.writeFileSync(path.join(source, "admin/index.html"), "<html>changed</html>\n");
+  assert.throws(() => packagePortfolio({ outputDir: output, plugins: [plugin] }), /refusing to overwrite existing archive/);
+  assert.deepEqual(fs.readFileSync(archive), original);
+}));
+
 test("portfolio packaging rejects symlinked package input", (t) => fixture(({ source, output }) => {
   try { fs.symlinkSync("plugin.conf", path.join(source, "escape")); } catch (error) { if (error.code === "EPERM") return t.skip("symlink creation unavailable"); throw error; }
   assert.throws(() => packagePortfolio({ outputDir: output, plugins: [{ id: "titan_dev_access", source: path.relative(path.resolve("scripts/.."), source), files: ["plugin.conf", "escape"] }] }), /symlink/);
