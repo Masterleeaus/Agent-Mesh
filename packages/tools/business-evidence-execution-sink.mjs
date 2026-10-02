@@ -1,6 +1,37 @@
 import { executionEvidenceToBusinessEvidence } from "./business-evidence-adapter.mjs";
 
-const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const stable = value => {
+  if (Array.isArray(value)) return value.map(stable);
+  if (value && typeof value === "object") return Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])]));
+  return value;
+};
+const persisted = row => ({
+  evidence_id: row.evidence_id ?? row.id,
+  evidence_version: row.evidence_version ?? 1,
+  company_id: row.company_id,
+  event_type: row.event_type ?? row.evidence_type,
+  subject_type: row.subject_type,
+  subject_id: row.subject_id,
+  classification: row.classification ?? "factual",
+  acceptance_state: row.acceptance_state ?? "accepted",
+  source_type: row.source_type,
+  source_id: row.source_id,
+  actor_id: row.actor_id ?? null,
+  agent_id: row.agent_id ?? null,
+  correlation_id: row.correlation_id,
+  causation_id: row.causation_id ?? null,
+  decision_id: row.decision_id ?? null,
+  authority_decision_id: row.authority_decision_id ?? null,
+  execution_id: row.execution_id ?? null,
+  verification_id: row.verification_id ?? null,
+  projection_version: row.projection_version,
+  supersedes_evidence_id: row.supersedes_evidence_id ?? null,
+  occurred_at: row.occurred_at,
+  accepted_at: row.accepted_at,
+  provenance: row.provenance ?? {},
+  payload: row.payload ?? {},
+});
+const same = (a, b) => JSON.stringify(stable(persisted(a))) === JSON.stringify(stable(persisted(b)));
 
 /**
  * Bridges ExecutionGateway lifecycle records into the company-scoped canonical
