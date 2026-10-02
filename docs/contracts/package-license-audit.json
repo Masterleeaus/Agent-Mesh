@@ -83,7 +83,7 @@
       "name": "titan-zero",
       "private": true,
       "license": "NOASSERTION",
-      "sha256": "441d374e9a1f1b015ce65e47907fe041aa9cf929aae88fa9ed42bc601d1b911e"
+      "sha256": "246885bdba6143a0a6f8141874d5974abadf94b34cfd98c85f9fd503f76ecceb"
     },
     {
       "path": "packages/domain/package.json",
