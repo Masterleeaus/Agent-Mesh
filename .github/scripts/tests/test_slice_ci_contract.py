@@ -21,7 +21,8 @@ class SliceCIGateTests(unittest.TestCase):
 
     def test_broad_jobs_are_opt_in_at_subproduct_completion(self):
         workflow = (ROOT / ".github/workflows/titan-ci.yml").read_text()
-        self.assertIn("contains(github.event.pull_request.body, '**Subproduct gate:** run')", workflow)
+        self.assertIn("contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')", workflow)
+        self.assertNotIn("**Subproduct gate:** run", workflow)
         self.assertIn("github.event_name == 'workflow_dispatch'", workflow)
 
     def test_candidate_policy_workflow_avoids_global_test_discovery(self):
