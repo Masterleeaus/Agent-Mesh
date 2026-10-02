@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { queryOne, query, getPool } from "@/lib/db";
+import { queryOne, query, getPool, getDatabaseDialect } from "@/lib/db";
+import { appendAuditLog } from "@/lib/db/audit";
 import { createJobFromEstimate, getAccountOwnerUserId } from "@/lib/estimates/create-job-db";
 import { createApprovalArtifacts } from "@/lib/estimates/approve";
 import { logger } from "@/lib/logger";
@@ -86,24 +87,6 @@ export async function POST(
 ) {
   const { token } = await params;
 
-  const estimate = await queryOne<{
-    id: string;
-    status: string;
-    account_id: string;
-  } & Record<string, unknown>>(
-    `SELECT id, status, account_id FROM estimates WHERE share_token = $1`,
-    [token]
-  );
-
-  if (!estimate) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  if (!["sent", "approved", "declined"].includes(estimate.status)) {
-    return NextResponse.json(
-      { error: "This estimate cannot be responded to in its current state" },
-      { status: 422 }
-    );
-  }
-
   const body = await request.json().catch(() => null);
   const parsed = respondBody.safeParse(body);
   if (!parsed.success) {
@@ -123,16 +106,55 @@ export async function POST(
   try {
     await dbClient.query("BEGIN");
 
-    await dbClient.query(
+    // The existing public token persistence owner supplies the row. Re-read and
+    // lock it on this transaction: preflight state cannot authorize a response.
+    const { rows } = await dbClient.query<{ id: string; status: string; account_id: string }>(
+      `SELECT id, status, account_id FROM estimates WHERE share_token = $1 FOR UPDATE`,
+      [token],
+    );
+    const estimate = rows[0];
+    if (!estimate) {
+      await dbClient.query("ROLLBACK");
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    if (estimate.status !== "sent") {
+      await dbClient.query("ROLLBACK");
+      return NextResponse.json({ error: "This estimate cannot be responded to in its current state" }, { status: 422 });
+    }
+    if (!estimate.account_id) throw new Error("Estimate company context is required");
+
+    // Compatibility RLS context comes from the token-bound row, never the body.
+    // This does not issue a session or make the anonymous responder an owner.
+    if (getDatabaseDialect() === "postgres") {
+      await dbClient.query("SELECT set_config('app.current_account_id', $1, true)", [estimate.account_id]);
+    }
+
+    const updated = await dbClient.query(
       `UPDATE estimates
        SET status = $1,
            client_approved_name = $2,
            client_signature_svg = $3,
            responded_at = now(),
            updated_at = now()
-       WHERE id = $4`,
-      [newStatus, name ?? null, signature_svg ?? null, estimate.id]
+       WHERE id = $4 AND account_id = $5 AND share_token = $6 AND status = 'sent'`,
+      [newStatus, name ?? null, signature_svg ?? null, estimate.id, estimate.account_id, token]
     );
+
+    if (updated.rowCount !== 1) throw new Error("Estimate response did not update exactly one row");
+
+    // A bearer-link response has no authenticated Titan principal. Preserve
+    // that provenance honestly and make its audit record part of the same
+    // transaction as the estimate transition. Never include the token or raw
+    // signature in audit metadata.
+    await appendAuditLog(dbClient, {
+      account_id: estimate.account_id,
+      entity_type: "estimate",
+      entity_id: estimate.id,
+      action: "update",
+      actor_id: null,
+      old_value: { status: "sent" },
+      new_value: { status: newStatus, via: "portal" },
+    });
 
     // On approval: set RLS context then create job + deposit invoice artifacts,
     // matching the behavior of the admin transition and email respond paths.
@@ -142,7 +164,7 @@ export async function POST(
       const ownerId = await getAccountOwnerUserId(dbClient, estimate.account_id);
       if (ownerId) {
         // Set RLS session context so INSERT policies on jobs/invoices pass.
-        await dbClient.query(
+        if (getDatabaseDialect() === "postgres") await dbClient.query(
           `SELECT set_config('app.current_user_id', $1, true),
                   set_config('app.current_account_id', $2, true),
                   set_config('app.current_role', 'owner', true)`,

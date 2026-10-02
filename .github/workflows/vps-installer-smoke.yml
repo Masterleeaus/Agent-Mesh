@@ -34,6 +34,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads"
           export TZ_ENV_FILE="$PWD/.env.vps"
           export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
+          printf 'TZ_ENV_FILE=%s\nTZ_DATA_ROOT=%s\n' "$TZ_ENV_FILE" "$TZ_DATA_ROOT" >> "$GITHUB_ENV"
           docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
           if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
             echo 'PostgreSQL leaked into canonical VPS topology' >&2
