@@ -1,7 +1,7 @@
 # Web gate repair evidence — issue 1152
 
-Partial, blocked; no merge or product-completion claim. Canonical branch: `agent/issue-1152`.
-The current branch includes the public audit implementation, the email-response evidence fix `fdaf0920`, and the merged #1179 foundation (`main` merge `df52782d26e0387608351b254c785911f99a20e9`). Exact post-sync verification is recorded below after running it on this branch.
+The web regression gate is at baseline or better; the overall issue remains blocked on restricted-role public-link company resolution. No product-completion claim. Canonical branch: `agent/issue-1152`.
+The branch includes the public audit implementation, the email-response evidence fix `fdaf0920`, and the merged #1179 foundation (`main` merge `df52782d26e0387608351b254c785911f99a20e9`). Exact post-merge verification is recorded below.
 
 ## Provenance and integration
 
@@ -9,7 +9,7 @@ Claim created atomically from main `ee1a3ee3709b9201fc728fc162067d9a5ab78e45`, a
 
 Prerequisite #1179 commit `743e70789b85571fa0eafb1029630f0cbc6b7eb6` was merged with ancestry retained in `1a6b0804`. The sole conflict was main's Maps timestamp assertion versus the reviewed prerequisite's stronger ISO/offset equivalence assertion; the reviewed prerequisite version was retained. No platform implementation/export/compiler repair was recreated. Worker #1149/#1219 and session issuance #302/#1183 were not edited. Platform #1153 remains separately owned.
 
-PR #1179 is merged. Its Nexus export/config repair, lockfile/compiler convergence, production build foundation, and migration-prefix guard are inherited from `main`; no shared platform repair was recreated. This branch was synced by merging `df52782d` so the #1152 claim ref and review history remain intact. The two source changes in this follow-up are confined to the web email responder and its integration test; current-main capture behavior and tests are retained.
+PR #1179 is merged. Its Nexus export/config repair, lockfile/compiler convergence, production build foundation, and migration-prefix guard are inherited from `main`; no shared platform repair was recreated. This branch was synced by merging `df52782d` so the #1152 claim ref and review history remain intact. Compared with current `main`, this follow-up changes the email responder and its integration test, adds a regression assertion for the known public-link RLS ordering defect, and records the resolution boundary. Current-main capture behavior and tests are retained.
 
 ## Changes and reasons
 
@@ -28,20 +28,18 @@ Fresh prerequisite+main before repairs: **1943 passed /105 failed**, 38 failed f
 
 Before the approved audit repair, source head `fc6bd2bb` had **2002 passed /86 failed**, with 86 named failures and no suite-load failures. It had 22 removed names and one new/unallowed name: `lib/estimates/__tests__/public-acceptance.contract.test.ts > public estimate acceptance contract > records the public response in the audit trail`.
 
-After the approved public audit repair, the branch ran **2004 passed /85 failed**, 28 failed files, **85 named failures**, and no suite-load failures. The unchanged exact-name checker passed: zero new names, and the previously allowed deposit-invoice failure was absent. A newer exact post-merge result is recorded below. No baseline was edited. See `failure-comparison.json` for the current main baseline names and log hashes.
+At merged source head `6bd5e2b4180bcfd29d169084e58127c37d712a09`, the full web suite ran **2009 passed /85 failed**, 28 failed files, **85 named failures**, and no suite-load failures. The unchanged exact-name checker passed: zero new names, and the previously allowed deposit-invoice failure was absent. No baseline was edited. `failure-comparison.json` records all exact current and allowed names, the runtime, source/base heads and log hashes.
 
 ## Verification executed
 
 - Frozen/offline `pnpm install --frozen-lockfile --offline --store-dir /tmp/titan1152-pnpm-store`: passed. Cache paths were redirected into `/tmp`; initial native dependency install failed on a read-only home cache, then succeeded without changing dependencies or suppressing build scripts.
-- `pnpm --filter @titan-zero/web test` on Node22.23.3 / pnpm9.12.0: **2004 passed /85 failed**. `python3 .github/scripts/check-web-test-baseline.py --baseline .github/ci/web-test-baseline.json --log /tmp/titan1152-web-full.log --command-status 1`: passed exact-name comparison (85 current /86 allowed; zero new; one allowed failure removed).
-- `pnpm --filter @titan-zero/web typecheck`: strict Next typegen + TypeScript passed after the final test source changes.
-- `pnpm --filter @titan-zero/web lint`: passed with existing warnings; no new lint warning from the audit change.
-- Broad targeted selection:186 passed/1 failed; the failure is the unchanged allowed `response endpoint does not require PostgreSQL RETURNING or set_config` test. Initial repaired harness/vocabulary/environment selection72/72; capture/session selection35/35; IndexedDB/change-order selection5/5. Final full suite includes all new unit tests.
-- PostgreSQL16 disposable integration:4/4 passed on Node22.23.3 / pnpm9.12.0. It loads the committed audit table DDL plus trace migration, applies migration189, preserves an existing named actor, writes the anonymous portal audit, proves transaction rollback on audit failure, serializes concurrent responses to one200/one422, preserves the other company, and retains the account FK. MySQL8 disposable integration:1/1 passed on the same toolchain; it loads the committed `db/mysql/002_auth_clients_portable.sql` audit table definition, applies migration020, preserves `CHAR(36)`, existing actor, account FK and indexes, and accepts an anonymous row. Each test creates and drops an isolated test schema/database. No live company migration was run.
-- Email-response evidence: PostgreSQL16 disposable integration passed3/3 on Node22.23.3 / pnpm9.12.0. Actual audit/workflow insert trigger failures roll back both quote status and prior evidence writes and return the error redirect; the same signed token can retry, and concurrent replay does not duplicate audit, workflow or attention effects. Invalid token is rejected before a DB connection. The audit records `actor_id = NULL`, true old/new status and `via: email_link`. The test schema applies committed audit DDL and migration189 only locally; no live migration, email delivery or production credential was used.
-- `pnpm gate:fast` and `pnpm gate`: both stop at five existing worker no-unused-expressions lint errors, owned by #1149. Later full-matrix stages were not passed. No worker changes made.
-- `NODE_OPTIONS=--max-old-space-size=1536 pnpm --filter @titan-zero/web build`: full production build passed after the route change, including strict types, route/page generation and build traces.
-- `git diff --check`: passed.
+- `pnpm --filter @titan-zero/web test` at the merged source head on Node22.23.3 / pnpm9.12.0: **2009 passed /85 failed**. `check-web-test-baseline.py` passed exact-name comparison (85 current /86 allowed; zero new; one allowed failure removed). The full Vitest log hash is recorded in `failure-comparison.json`.
+- Web strict typecheck, non-web workspace typechecks, and full web lint passed. Lint reported existing warnings in unrelated files.
+- Broad targeted selection:186 passed/1 failed; the failure is the unchanged allowed `response endpoint does not require PostgreSQL RETURNING or set_config` test. Initial repaired harness/vocabulary/environment selection72/72; capture/session selection35/35; IndexedDB/change-order selection5/5. The full run includes all new unit tests.
+- PostgreSQL16 disposable portal integration:4/4 passed. It loads the committed audit table DDL plus trace migration, applies migration189, preserves an existing named actor, writes the anonymous portal audit, proves transaction rollback on audit failure, serializes concurrent responses to one200/one422, preserves the other company's estimate, and retains the account FK. MySQL8 disposable migration integration:1/1 passed; it loads `db/mysql/002_auth_clients_portable.sql`, applies migration020, preserves `CHAR(36)`, existing actors, account FK and indexes, and accepts an anonymous row. These tests use isolated throwaway databases; no live company migration was run.
+- Email-response evidence: PostgreSQL16 disposable integration passed3/3 on Node22.23.3 / pnpm9.12.0. Audit/workflow insert trigger failures roll back quote status and earlier evidence writes and return the error redirect; the same signed token can retry. Concurrent replay leaves exactly one audit, one workflow event and one attention call. Invalid token is rejected before a DB connection. The audit records `actor_id = NULL`, true old/new status and `via: email_link`. No email delivery or production credential was used.
+- `NODE_OPTIONS=--max-old-space-size=1536 pnpm --filter @titan-zero/web build`: full production build passed, including strict types, route/page generation and build traces.
+- `git diff --check`: passed. No worker files, shared platform implementation or session issuance routes changed in the issue-specific diff.
 
 ## Critical correction and blocker
 
