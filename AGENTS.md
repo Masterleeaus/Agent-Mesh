@@ -30,6 +30,8 @@ Before editing:
 - Establish the smallest coherent change set that completes the issue.
 - Assume concurrent agents may have changed adjacent files; re-read immediately before mutation.
 
+If a required source or tool is temporarily unavailable, do not abandon the mission. Use the recovery paths in “Execution recovery paths” below and continue with work that can be done safely.
+
 During work:
 - Stay inside the claimed mission. Fix directly caused breakage, but do not opportunistically redesign unrelated systems.
 - Prefer modifying canonical owners over adding adapters that duplicate business logic.
@@ -75,16 +77,15 @@ The only implementation claim lock is the exact GitHub branch ref:
 `agent/issue-<issue-number>`
 
 Rules:
-1. Immediately before claiming, fetch the issue, current `main` SHA, live `agent/*` refs, dependencies, and relevant PRs.
-2. Atomically create the exact mission claim branch `agent/issue-<issue-number>` from the required current `main`.
-3. If it already exists, another agent owns the claim. Do not create a suffix, timestamp, worker-name branch, or alternate prefix.
-4. Post a claim comment with workspace/agent identity, issue, subgoal, branch, and base SHA.
-5. One implementation claim per agent/workspace unless a Manager issue explicitly authorizes otherwise.
-6. Use the same branch through implementation, verification, PR, fixes, and handoff.
-7. Never open a second branch because the first branch conflicts. Rebase/merge/fix the existing claim branch.
-8. The canonical PR targets `main`. Use `Closes #<issue>` only when the full mission closure gate below is satisfied; partial or unverified work must use `Refs #<issue>`.
-9. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
-10. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
+1. Immediately before implementation, fetch the issue, current `main` SHA, live `agent/*` refs, dependencies, and relevant PRs.
+2. Use the exact mission branch `agent/issue-<issue-number>` from the required current `main` when it is available.
+3. An existing mission branch is not by itself a reason to stop. Inspect its commits, diff, issue comments, and linked PRs; preserve all existing work and continue on that branch when no active conflicting owner is evident. If another active implementation is evident, coordinate around the shared branch, partition work by files/criteria, and continue on non-overlapping work while preserving their changes. Pause only the conflicting edits until they can be integrated safely.
+4. Do not create suffix, timestamp, worker-name, or alternate-prefix branches for the same mission.
+5. Record branch/base/subgoal context in the issue or PR when starting new implementation work; do not post duplicate claim comments when a valid claim is already recorded. Keep one active implementation claim per agent/workspace by default; when a claim is externally blocked, keep it open and continue only with an independent issue that does not modify the same files or depend on the blocked work.
+6. Use the same mission branch through implementation, verification, PR, fixes, and handoff.
+7. The canonical PR targets `main`. Use `Closes #<issue>` only when the full mission closure gate below is satisfied; partial or unverified work must use `Refs #<issue>`.
+8. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
+9. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
 
 GitHub refs, commits, checks, PRs, merges, and issue state are the coordination and lifecycle record. Do not maintain a second Agent Mesh ledger.
 
@@ -121,6 +122,18 @@ If an environment prevents a required gate, record:
 - exact blocker,
 - what narrower checks did run,
 - residual risk.
+
+### Execution recovery paths
+
+These fallbacks keep work moving while preserving the gates above:
+
+- **Git CLI, proxy, or local clone unavailable:** use the connected GitHub read/write tools to inspect the exact base commit, branch, issue, and PR, and to update the existing canonical branch without force-pushing. If remote writes are unavailable, finish safe local changes and verification, keep the issue open, and provide the patch and exact sync steps.
+- **Local checkout behind current `main`:** compare the checkout SHA with the live `main` SHA. Continue analysis and edits that do not conflict; before publishing, apply them to the current base and re-run checks affected by intervening changes. If the full current source cannot be obtained, do not claim the remote branch is updated or close the issue.
+- **An active branch owner or overlapping edits:** coordinate through existing issue/PR records, preserve their commits, and take non-overlapping files or acceptance criteria on the same canonical branch. Integrate and re-verify before publishing. Do not overwrite or force-update concurrent work.
+- **Missing runtime, database, Docker, credentials, or dependency access:** run the strongest available static and disposable checks, document exact failed/unavailable gates and residual risk, and continue implementation that does not require the missing resource. Leave completion status open until every required criterion is verified.
+- **External dependency or live-host access unavailable:** complete the independent acceptance criteria, record the precise dependency and evidence needed to resume, and keep the issue open. Do not replace a required live verification with a mock or documentation claim.
+
+Recovery paths do not lower security, tenant isolation, data-safety, or acceptance requirements. They allow independent work to continue and make blocked evidence explicit; they never authorize a false pass or premature issue closure.
 
 ## 7. Definition of done
 
