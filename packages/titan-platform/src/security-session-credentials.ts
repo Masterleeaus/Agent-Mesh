@@ -43,7 +43,7 @@ function trust(input: Trust): Trust {
   if (input.algorithm === 'HS256' && (!(key instanceof Uint8Array) || key.byteLength < 32)) throw new Error('credential-key-invalid');
   if (input.algorithm !== 'HS256' && key instanceof Uint8Array) throw new Error('credential-key-invalid');
   return Object.freeze({ issuer: input.issuer, audience: input.audience, key_id: input.key_id,
-    algorithm: input.algorithm, verification_key: key instanceof Uint8Array ? key.slice() : key });
+    algorithm: input.algorithm, verification_key: key instanceof Uint8Array ? new Uint8Array(key) : key });
 }
 
 function id(payload: JWTPayload, field: string): string {
@@ -72,7 +72,7 @@ export function createSessionCredentialService(options: SessionCredentialOptions
   const clock = options.now ?? (() => new Date());
   const lifetime = options.lifetime_seconds ?? 300;
   if (!Number.isSafeInteger(lifetime) || lifetime < 1 || lifetime > 900) throw new Error('credential-lifetime-invalid');
-  const signingKey = options.signing_key instanceof Uint8Array ? options.signing_key.slice() : options.signing_key;
+  const signingKey = options.signing_key instanceof Uint8Array ? new Uint8Array(options.signing_key) : options.signing_key;
   if (signingKey !== undefined && policy.algorithm === 'HS256' && (!(signingKey instanceof Uint8Array) || signingKey.byteLength < 32)) throw new Error('credential-key-invalid');
   if (signingKey !== undefined && policy.algorithm !== 'HS256' && signingKey instanceof Uint8Array) throw new Error('credential-key-invalid');
 

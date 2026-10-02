@@ -263,3 +263,14 @@ test('only authenticate permits omitted expectation at JavaScript boundaries', a
   await denied(f.service.revoke(old.credential,undefined));
   assert.equal((await f.service.authenticate(old.credential)).context.session_revision,1);
 });
+
+test('configured symmetric key snapshots are detached even for Node Buffer inputs', async t => {
+  const key = Buffer.from(crypto.getRandomValues(new Uint8Array(32)));
+  const f = await fixture(t,{algorithm:'HS256',signing_key:key,verification_key:key});
+  const original = key.toString('hex');
+  key.fill(0);
+  const issued = await f.service.issue(await f.login(),expectation);
+  const { jwtVerify } = await import('jose');
+  assert.equal((await jwtVerify(issued.credential,Buffer.from(original,'hex'),{currentDate:new Date(epoch)})).payload.company_id,'company-a');
+  await assert.rejects(jwtVerify(issued.credential,key,{currentDate:new Date(epoch)}));
+});
