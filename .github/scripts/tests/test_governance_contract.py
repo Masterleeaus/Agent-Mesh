@@ -84,15 +84,19 @@ class GovernanceContractTests(unittest.TestCase):
             history_writer = root / 'apps/web/status-history.ts'
             history_writer.parent.mkdir(parents=True)
             history_writer.write_text('await db.query("INSERT INTO status_history (id) VALUES (?)")')
+            recovery_writer = root / 'packages/recovery-store.mjs'
+            recovery_writer.parent.mkdir(parents=True)
+            recovery_writer.write_text('await db.query("INSERT INTO execution_lifecycle_events (id) VALUES (?)")')
             ui = root / 'apps/web/status-form.tsx'
             ui.write_text('// Update status after save')
             builder = root / 'packages/evidence-presentation.ts'
-            builder.parent.mkdir(parents=True)
+            builder.parent.mkdir(parents=True, exist_ok=True)
             builder.write_text('export function buildEvidenceView(input) { return input }')
             found = guard.active_evidence_sources(root)
         self.assertIn('services/workforce/evidence-store.ts', found)
         self.assertIn('services/workforce/outcome-store.ts', found)
         self.assertIn('apps/web/status-history.ts', found)
+        self.assertIn('packages/recovery-store.mjs', found)
         self.assertNotIn('apps/web/status-form.tsx', found)
         self.assertNotIn('packages/evidence-presentation.ts', found)
 
