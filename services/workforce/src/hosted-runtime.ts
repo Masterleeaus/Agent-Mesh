@@ -1,13 +1,14 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { StorageClient } from "../../../packages/storage/src/index.js";
 import type { CompanyPlacementRegistry, CompanyStoreOpener } from "../../../packages/storage/src/company-storage-resolver.js";
-import { IdentitySessionRegistry, type CurrentSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
+import { IdentitySessionRegistry, type CurrentSessionContext, type ExpectedSessionContext, type SessionSourceReference, type VerifiedSessionIdentity } from "../../../packages/titan-platform/src/security-boundary.js";
 // Existing native composition owns authority, provider verification and evidence.
 // @ts-expect-error Native runtime owner is JavaScript.
 import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
 // @ts-expect-error Canonical execution boundary is JavaScript.
 import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mjs";
-import type { ConversationAuth, ConversationSurface } from "./conversation-api.js";
+import type { ConversationAuth, ConversationRequest, ConversationSurface } from "./conversation-api.js";
+import type { WorkforceZeroBridgeContext } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
 import { AUTHENTICATED_SESSION_PROOF_TYPE, type AuthenticatedWorkIdentity } from "./index.js";
 import { createCompanyScopedWorkOrders, type HostedCompanyWorkOrderOperations } from "./company-scoped-work-orders.js";
@@ -289,6 +290,35 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
       } catch (error) { throw authBoundaryFailure(error); }
     },
   };
+  async function resolveWorkforceZeroIdentity(credential: string, child: WorkforceZeroBridgeContext) {
+    if (typeof credential !== "string" || credential.length < 1 || credential.length > 16_384 ||
+        child?.schema !== "titan.workforce-zero.session/v1" || child.audience !== "workforce" || child.surface !== "zero" ||
+        !child.company_id || !child.actor_id || !child.device_id || !child.session_id || !child.context_revision ||
+        !Array.isArray(child.company_ids) || child.company_ids.length !== 1 || child.company_ids[0] !== child.company_id ||
+        !Number.isSafeInteger(child.session_revision) || !Number.isFinite(child.expires_at)) {
+      throw new Error("runtime-authentication-required");
+    }
+    const request = {
+      company_id: child.company_id, actor_id: child.actor_id, device_id: child.device_id,
+      surface: child.surface, session_id: child.session_id, context_revision: child.context_revision,
+    } as ConversationRequest;
+    const authenticated = await auth.resolve({ request, authorization: `Bearer ${credential}` });
+    const identity = authenticated.authenticated_identity as AuthenticatedWorkIdentity | undefined;
+    const credentialExpiresAt = Date.parse(String(identity?.credential_expires_at ?? ""));
+    if (authenticated.company_id !== child.company_id || authenticated.actor_id !== child.actor_id ||
+        authenticated.device_id !== child.device_id || authenticated.surface !== "zero" ||
+        authenticated.session_id !== child.session_id || authenticated.context_revision !== child.context_revision ||
+        identity?.session_revision !== child.session_revision || identity?.source_session_required !== true ||
+        !identity.source_session || !Number.isFinite(credentialExpiresAt) || credentialExpiresAt > child.expires_at) {
+      throw new Error("runtime-authentication-required");
+    }
+    const proof: VerifiedSessionIdentity = {
+      provider: identity.provider, subject: identity.subject, session_id: identity.session_id,
+      device_id: identity.device_id, session_revision: identity.session_revision,
+      credential_expires_at: identity.credential_expires_at, source_session: identity.source_session,
+    };
+    return proof;
+  }
   // Only these public provider ports cross the hosted boundary. In particular,
   // never forward the legacy same-store transaction port from an adapter object.
   const runtime = await createFieldServiceRuntime({ storage, workOrders: companyWorkOrders, timeoutMs, signal, sessionAdmission,
@@ -306,6 +336,31 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
   const recover = runtime.recover;
   const surfacedRuntime = Object.freeze({
     ...runtime,
+    async verifyWorkforceZeroSession(credential: string, child: WorkforceZeroBridgeContext): Promise<void> {
+      await resolveWorkforceZeroIdentity(credential, child);
+    },
+    async withWorkforceZeroSessionFence<T>(
+      credential: string,
+      child: WorkforceZeroBridgeContext,
+      options: { signal?: AbortSignal } | undefined,
+      effect: (signal: AbortSignal) => Promise<T> | T,
+    ): Promise<T> {
+      const proof = await resolveWorkforceZeroIdentity(credential, child);
+      const expected: ExpectedSessionContext = {
+        audience: "workforce", company_id: child.company_id, actor_id: child.actor_id,
+        context_revision: child.context_revision,
+      };
+      return registry.withCurrentSessionFence(proof, expected, { signal: options?.signal }, async (current, signal) => {
+        if (current.session_id !== child.session_id || current.session_revision !== child.session_revision ||
+            current.context_revision !== child.context_revision || current.company_id !== child.company_id ||
+            current.actor_id !== child.actor_id || current.device_id !== child.device_id ||
+            Date.parse(current.expires_at) !== child.expires_at || current.allowed_company_ids.length !== 1 ||
+            current.allowed_company_ids[0] !== child.company_id) {
+          throw new Error("runtime-authentication-required");
+        }
+        return effect(signal);
+      });
+    },
     async dispatch(input: Parameters<typeof dispatch>[0]) {
       const scope: { failure?: string; effectAdmitted?: boolean } = {};
       const result = await requestIdentityFailure.run(scope, () => dispatch(input));
