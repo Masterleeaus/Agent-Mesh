@@ -224,7 +224,7 @@ expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
 
 expect_true(directadmin_git_parse_divergence("1\t2")===['ahead'=>1,'behind'=>2],'Git divergence parser must read bounded ahead/behind counts');
-foreach(['','1 2',"01\t2","1\t02",'1\t2 extra','99999999999\t1','-1\t0'] as $invalidDivergence){
+foreach(['','1 2',"01\t2","1\t02","1\t2 extra","99999999999\t1","-1\t0"] as $invalidDivergence){
  expect_true(directadmin_git_parse_divergence($invalidDivergence)===null,'malformed or oversized Git divergence must fail closed');
 }
 foreach(['git rev-list --left-right --count HEAD...@{u}','git rev-parse --symbolic-full-name @{u}'] as $internalOnlyGitCommand){
