@@ -83,7 +83,7 @@ function buildCanonicalWorkforceSdk(temporaryDir) {
 }
 
 function runCanonicalPluginPackager({ plugin, source, sdkModulePath, temporaryDir }) {
-  const packageOutput = path.join(temporaryDir, "workforce-package");
+  const packageOutput = path.join(temporaryDir, `${plugin.id}-package`);
   fs.mkdirSync(packageOutput);
   const packager = path.join(ROOT, plugin.packager);
   const result = spawnSync(process.execPath, [packager, "--source-dir", source, "--sdk-module", sdkModulePath, "--output-dir", packageOutput], { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
