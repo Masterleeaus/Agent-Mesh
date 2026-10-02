@@ -172,7 +172,7 @@ test("portfolio refuses to replace a previously emitted Workforce archive", (t) 
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const sdkModule = path.join(root, "canonical-sdk.mjs");
   const outputDir = path.join(root, "portfolio");
-  const sdkSource = "export class DirectAdminCockpitSession {}\nexport const validateDirectAdminPluginPackage = () => ({ valid: true });\nexport const assertPluginCanBeInstalled = () => true;\n";
+  const sdkSource = "export class DirectAdminCockpitSession {}\nexport const mountDirectAdminProjection = () => {};\nexport const validateDirectAdminPluginPackage = () => ({ valid: true });\nexport const assertPluginCanBeInstalled = () => true;\n";
   fs.writeFileSync(sdkModule, sdkSource);
   const first = packagePortfolio({ outputDir, workforceSdkModulePath: sdkModule });
   const archive = first.artifacts.find((artifact) => artifact.plugin_id === "titan_workforce").archive;

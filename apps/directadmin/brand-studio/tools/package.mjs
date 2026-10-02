@@ -83,7 +83,9 @@ export async function buildPackage({ sourceDir = resolve(dirname(fileURLToPath(i
       const source = file === 'images/sdk.mjs' ? sdkModulePath : join(sourceDir, file);
       if (!(await lstat(source)).isFile()) throw new Error(`Required file is not regular: ${file}`);
       const destination = join(stage, file); await mkdir(dirname(destination), { recursive: true, mode: 0o755 });
-      await copyFile(source, destination); await chmod(destination, executable(file) ? 0o755 : 0o644);
+      const contents = await readFile(source, 'utf8');
+      await writeFile(destination, contents.replace(/\r\n/g, '\n'), { mode: executable(file) ? 0o755 : 0o644 });
+      await chmod(destination, executable(file) ? 0o755 : 0o644);
     }
     const tar = createPackageTar(await Promise.all(packageFiles.map(async path => ({ path, bytes: await readFile(join(stage, path)), mode: executable(path) ? 0o755 : 0o644 }))));
     const bytes = gzipSync(tar, { level: 9 }), candidate = join(temporary, 'titan_web.tar.gz'); await writeFile(candidate, bytes);
