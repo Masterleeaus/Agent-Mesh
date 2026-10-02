@@ -6,6 +6,8 @@ on:
     paths:
       - "apps/mobile/pubspec.yaml"
       - "apps/mobile/lib/titan/screens/capture_screen.dart"
+      - "apps/mobile/lib/titan/generative/demo_engine.dart"
+      - "apps/mobile/lib/titan/services/titan_gateway.dart"
       - "apps/mobile/test/visual_evidence_capture_adapter_test.dart"
 
 permissions:
