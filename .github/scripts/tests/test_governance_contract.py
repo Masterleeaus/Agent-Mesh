@@ -17,10 +17,9 @@ class GovernanceContractTests(unittest.TestCase):
         lower = (ROOT / '.github/pull_request_template.md').read_text()
         self.assertEqual(upper, lower)
         self.assertIn('**Linked issue:** Refs #', upper)
-        self.assertIn('any short-lived branch', upper)
         self.assertIn('focused commands and actual results', upper)
         self.assertIn('does not need a full parent-criteria map', upper)
-        self.assertIn('only when closing the entire linked issue', upper)
+        self.assertIn('For a PR that closes an issue', upper)
         self.assertNotRegex(upper, r'```mission-evidence')
 
     def test_titan_ci_defers_broad_gates_to_product_milestone(self):
