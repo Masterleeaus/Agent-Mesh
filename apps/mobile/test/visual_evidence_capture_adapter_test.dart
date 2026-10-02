@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:titan_zero_mobile/titan/models/evidence_item.dart';
 import 'package:titan_zero_mobile/titan/models/generative_item.dart';
 import 'package:titan_zero_mobile/titan/screens/capture_screen.dart';
 import 'package:titan_zero_mobile/titan/services/titan_gateway.dart';
