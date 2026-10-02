@@ -407,3 +407,27 @@ export function reconcileBrandRendererObservation(publication:BrandPublication,p
  if(!observation.reachable)return Object.freeze({status:"degraded",reason:"renderer-unreachable"});
  return Object.freeze({status:"verified"});
 }
+
+/** Verifies the known-good publication after a delegated rollback request.
+ * An ACK alone remains pending; this never mutates publication or release state. */
+export function reconcileBrandRollbackObservation(intent:BrandRollbackIntent,providerAck:unknown,observation:unknown):BrandRendererReconciliation {
+ try {
+  if(!record(intent))throw new Error("rollback-intent-invalid");
+  exactKeys(intent,["schema","company_id","site_id","source_publication_id","source_version","target_publication_id","target_version","target_snapshot_hash","target_routes","surface_intent","state","authority_granted"],["schema","company_id","site_id","source_publication_id","source_version","target_publication_id","target_version","target_snapshot_hash","target_routes","surface_intent","state","authority_granted"]);
+  if(intent.schema!=="titan.brand-rollback-intent/v1"||intent.state!=="proposed"||intent.authority_granted!==false||
+     typeof intent.company_id!=="string"||!intent.company_id.trim()||typeof intent.site_id!=="string"||!intent.site_id.trim()||
+     !Number.isInteger(intent.source_version)||!Number.isInteger(intent.target_version)||Number(intent.target_version)<1||Number(intent.target_version)>=Number(intent.source_version)||
+     typeof intent.source_publication_id!=="string"||!intent.source_publication_id.trim()||typeof intent.target_publication_id!=="string"||!intent.target_publication_id.trim()||
+     typeof intent.target_snapshot_hash!=="string"||!intent.target_snapshot_hash.trim()||!Array.isArray(intent.target_routes)||intent.target_routes.length===0)throw new Error("rollback-intent-invalid");
+  const surface=intent.surface_intent;
+  if(!record(surface))throw new Error("rollback-surface-intent-invalid");
+  exactKeys(surface,["surface_id","company_id","intent","authorityGranted","delegated_to"],["surface_id","company_id","intent","authorityGranted","delegated_to"]);
+  if(surface.surface_id!==intent.site_id||surface.company_id!==intent.company_id||surface.intent!=="rollback"||surface.authorityGranted!==false||surface.delegated_to!=="deployment-owner")throw new Error("rollback-surface-intent-invalid");
+  const routes=intent.target_routes.map(safeRoute);
+  if(new Set(routes).size!==routes.length)throw new Error("rollback-routes-invalid");
+  const target:BrandPublication=Object.freeze({schema:"titan.brand-publication.v1",publication_id:intent.target_publication_id,company_id:intent.company_id,site_id:intent.site_id,version:Number(intent.target_version),source_snapshot_hash:intent.target_snapshot_hash,environment:"live",status:"published",route_manifest:Object.freeze(routes),created_at:"1970-01-01T00:00:00.000Z"});
+  return reconcileBrandRendererObservation(target,providerAck,observation);
+ }catch{
+  return Object.freeze({status:"degraded",reason:"observed-publication-mismatch"});
+ }
+}
