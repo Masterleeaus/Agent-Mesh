@@ -38,6 +38,16 @@ authority grant or successful provider fallback ships. Missing configuration
 prevents launcher startup. Library callers without dependencies can inspect
 liveness/storage, but readiness stays 503 and conversation ingress stays disabled.
 
+The production dependency factory optionally loads the absolute
+`WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE`. That operator-owned module exports
+`createWorkforceDirectAdminDependencies()` and returns the existing
+`{ publicOrigin, createGateway(owners) }` mount seam. It must compose the canonical
+#1049 gateway with the #302 identity/credential producer. If omitted, the
+DirectAdmin routes remain disabled; if configured but invalid, startup fails.
+The module must be included in the reviewed image or mounted read-only through
+an operator Compose override; the base Compose file does not mount this optional
+file. The Workforce host does not supply an assertion issuer or nonce store.
+
 Use `createWorkforceSessionCredentialVerifier` from
 `services/workforce/src/session-credential-verifier.ts` for canonical #302 signed
 sessions. It wraps `createSessionCredentialVerifier` with fixed audience
@@ -65,10 +75,20 @@ checks the incoming Host against that origin, forwards only the headers the
 shared SDK consumes, and never forwards the Workforce `Authorization` token.
 Without the separate bridge composition, DirectAdmin paths return read-only
 503. No audience or issuer is synthesized by the Workforce host.
-The optional mount does not exchange a DirectAdmin browser session into the
-`workforce` credential used by `POST /v1/workforce/conversations`; no such
-handoff route is available until #302 publishes and verifies the derived-session
-contract.
+The #1049 bootstrap provider contract is in open PR #1252. The #302 producer is
+published as draft PR #1263: it authenticates the supplied DirectAdmin Cookie
+against the configured `/api/session`, then calls an injected
+`DirectAdminBootstrapNonceConsumer` with the verified issuer/effective subject,
+presentation role, login-as provenance and nonce. That consumer must atomically
+return the current selected company/device. PR #1263's tests use an in-memory
+`Set`; it does not provide the production durable nonce consumer. The #812 RAW
+relay core accepts only the `__Host-titan-da-session` cookie and drops other
+cookie names; its production loader currently fails closed with
+`cookie_boundary_unverified`. The producer needs the authenticated
+pre-authentication DirectAdmin `/api/session` cookie, so the existing relay
+contract and disabled production path do not yet complete bootstrap together.
+Keep the optional module unset until the durable consumer and authenticated
+proof transport are both supplied by their owners.
 
 The Workforce gateway owner builds
 `GET /v1/directadmin/titan_workforce/projection` from company-filtered canonical
