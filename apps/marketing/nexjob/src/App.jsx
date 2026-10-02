@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-do
 import { APP_ACCESS_AVAILABLE } from './config'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Home from './pages/Home'
 import Features from './pages/Features'
 import Pricing from './pages/Pricing'
 import Industries from './pages/Industries'
@@ -15,7 +14,6 @@ import Architecture from './pages/Architecture'
 import CostSovereignty from './pages/CostSovereignty'
 import EnvironmentalSystems from './pages/EnvironmentalSystems'
 import Compare from './pages/Compare'
-import IndustryHome, { industryConfigs } from './pages/IndustryHome'
 import CatalogueIndustryHome from './pages/CatalogueIndustryHome'
 import ScrollToTop from './components/ScrollToTop'
 import PageMeta from './components/PageMeta'
@@ -46,10 +44,10 @@ function IndustryHostLanding({ site }) {
 }
 
 function SiteRoot({ context }) {
-  if (context.kind === 'preview') return <><PageMeta /><Home /></>
+  if (context.kind === 'preview') return <PlatformHubHome />
   if (context.kind === 'hub') return <PlatformHubHome />
   if (context.kind === 'industry') return <IndustryHostLanding site={context.site} />
-  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title="Site not found" description="This Titan Zero site host is not configured." /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">This site is not configured.</h1><p className="text-nx-muted">Use the Titan Zero platform or managed-services site.</p><div className="flex justify-center gap-5 mt-6"><a href="https://titanzero.io/" className="text-sm text-nx-purple-light">Titan Zero platform</a><a href="https://titanzero.pro/" className="text-sm text-nx-purple-light">Titan Zero Managed Services</a></div></div></main>
+  return <main className="pt-32 pb-24 px-6 text-center"><PageMeta title="Site not found" description="This Titan Zero site host is not configured." /><div className="max-w-3xl mx-auto"><h1 className="text-4xl font-extrabold mb-4">This site is not configured.</h1><p className="text-nx-muted">Only the Titan Zero Cleaning product site is configured for this launch.</p><div className="flex justify-center gap-5 mt-6"><a href="https://titanzero.io/" className="text-sm text-nx-purple-light">Titan Zero Cleaning</a></div></div></main>
 }
 
 function LegacyIndustryPath({ context }) {
@@ -63,9 +61,8 @@ function LegacyIndustryPath({ context }) {
 function IndustryPath({ context }) {
   const { industry } = useParams()
   if (context.kind !== 'preview') return <LegacyIndustryPath context={context} />
-  if (industryConfigs[industry]) return <IndustryHome />
   const site = getVerticalSiteForLegacyPath(industry)
-  if (site) return <IndustryHostLanding site={site} />
+  if (site?.moduleId === 'cleaning') return <IndustryHostLanding site={site} />
   return <Navigate to="/industries" replace />
 }
 
@@ -83,7 +80,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<SiteRoot context={siteContext} />} />
         <Route path="/your-zero" element={<><PageMeta title="Your Zero" description="Meet Your Zero: your personal digital working intelligence that learns you, your role and authorised context while coordinating specialist capabilities under governed human authority." /><YourZero /></>} />
-        <Route path="/ai-workforce" element={<><PageMeta title="AI Workforce" description="See how each person's Zero can coordinate appropriate specialist AI workforce capabilities across customer service, operations, finance and field-service work." /><Workforce /></>} />
+        <Route path="/ai-workforce" element={<><PageMeta title="Cleaning AI Workforce" description="See how Titan Zero is modelling cleaning enquiry, quote, scheduling, crew, job quality and follow-up workflows." /><Workforce /></>} />
         <Route path="/intelligence-decisions" element={<><PageMeta title="Intelligence & Decisions" description="Explore Titan Zero evidence, uncertainty, investigation, multiple reasoning perspectives and governed decision support." /><IntelligenceDecisions /></>} />
         <Route path="/continuous-evolution" element={<><PageMeta title="Continuous Evolution" description="See how personal Zeros and the connected business system can learn from meaningful change and evolve without confusing learning with authority." /><ContinuousEvolution /></>} />
         <Route path="/existing-systems" element={<><PageMeta title="Existing Systems & Integrations" description="Keep the business software that works, connect it through Titan Zero and fill genuine software gaps where required." /><ExistingSystems /></>} />
@@ -91,14 +88,14 @@ export default function App() {
         <Route path="/apps" element={<><PageMeta title="Command, Go & Hub" description="Explore Command for owner and manager Zeros, Go for staff and field Zeros, and Hub for customer Zeros in one governed business environment." /><Apps /></>} />
         <Route path="/security-recovery" element={<><PageMeta title="Security, Evidence & Recovery" description="Explore Titan Zero Shield, evidence provenance, protected intelligence and Rewind recovery principles." /><SecurityRecovery /></>} />
         <Route path="/measured-outcomes" element={<><PageMeta title="Measured Outcomes" description="Measure personal experience and shared business outcomes without collapsing them into one memory, so Titan Zero can learn from real results." /><MeasuredOutcomes /></>} />
-        <Route path="/features" element={<><PageMeta title="Capabilities" description="Explore personal Zeros, managed workforce, field operations, integration, private intelligence and software gap-filling capabilities of Titan Zero Field Services." /><Features /></>} />
+        <Route path="/features" element={<><PageMeta title="Cleaning SaaS Features" description="Explore Titan Zero capabilities for cleaning workflows, the AI workforce, connected systems, privacy and governed operations." /><Features /></>} />
         <Route path="/investment" element={siteContext.kind === 'preview' ? <><PageMeta title="Investment" description="Illustrative Titan Zero Field Services investment examples and the launch offer for managed implementation and ongoing system management." /><Pricing /></> : <Navigate to="/pricing" replace />} />
         <Route path="/pricing" element={siteContext.kind === 'preview' ? <Navigate to="/investment" replace /> : <PlatformPricing />} />
         <Route path="/works-everywhere" element={<WorksEverywhere />} />
         <Route path="/resources" element={<Resources />} />
-        <Route path="/industries" element={<><PageMeta title="Industries" description="Explore Titan Zero Field Services for cleaning, landscaping, pools, pressure washing, pest control, window cleaning, property maintenance, mobile services, handyman, plumbing, electrical, HVAC, construction, roofing, tiling, concreting, painting, plastering and renovations." /><Industries /></>} />
+        <Route path="/industries" element={<Industries />} />
         <Route path="/industries/:industry" element={<IndustryPath context={siteContext} />} />
-        <Route path="/fully-managed" element={<><PageMeta title="Fully Managed" description="See how Titan Zero configures personal Zeros and continuously manages the governed Advanced Intelligence workforce and systems behind them." /><ManagedSystem /></>} />
+        <Route path="/fully-managed" element={<><PageMeta title="Managed Service for Cleaning Businesses" description="Titan Zero can help cleaning businesses implement and manage the connected system around their people, software and workflows." /><ManagedSystem /></>} />
         <Route path="/privacy-architecture" element={<><PageMeta title="Privacy & Architecture" description="Explore Titan Zero privacy, local intelligence, customer-controlled edge nodes, governed access and company-scoped architecture." /><Architecture /></>} />
         <Route path="/cost-sovereignty" element={<><PageMeta title="Cost Sovereignty" description="Use customer-owned providers, API keys, local models and compute where suitable, with Titan-managed services available when useful." /><CostSovereignty /></>} />
         <Route path="/environmental-systems" element={<><PageMeta title="Environmental Systems" description="Connect environmental assessment, auditing, evidence, compliance, resource improvement and qualified professional review to business operations." /><EnvironmentalSystems /></>} />
