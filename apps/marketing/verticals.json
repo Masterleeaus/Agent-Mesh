@@ -1,12 +1,13 @@
 {
   "brand": "Titan Zero",
-  "status": "planning-only; parent confirmation is required before host configuration, indexing, or deployment",
+  "status": "cleaning-only-launch-plan; host configuration, indexing and deployment remain pending",
   "hostPlan": {
     "productHub": "https://titanzero.io",
-    "managedServices": "https://titanzero.pro",
+    "publicCleaningSite": "https://cleaning.titanzero.io",
+    "managedServicePage": "https://titanzero.io/fully-managed",
+    "cleaningFranchiseSite": "https://titanzero.pro",
     "canonicalApplication": "https://app.titanzero.io",
-    "dedicatedPwa": "https://pwa.titanzero.io",
-    "industryPattern": "https://<slug>.titanzero.io"
+    "dedicatedPwa": "https://pwa.titanzero.io"
   },
   "sources": {
     "sharedHubAndIndustryBuild": "marketing/nexjob",
@@ -23,18 +24,22 @@
   "verticalCatalogue": {
     "sourceOfTruth": "marketing/nexjob/src/data/verticalCatalogue.js",
     "expectedProfiles": 20,
-    "hostPolicy": "One canonical subdomain per profile, rendered by one shared marketing build. No copied per-vertical backend, login, or business store."
+    "hostPolicy": "One shared marketing build and backend. Cleaning is the only public launch profile; the remaining canonical profiles are internal and unpublished for this launch.",
+    "publicLaunchProfiles": [
+      "cleaning"
+    ]
   },
   "sourceCaveats": {
     "tradepilot": "Use layout only. Do not carry over unverified metrics, live/demo claims, signup forms, integrations, login links, or media with unresolved provenance.",
-    "personalServices": "Use as the source for the .pro managed-service design. Its current one-page donor is not the final multi-page site; verify or omit customer stories, metrics, third-party contact/payment/booking paths, tracking and form behavior.",
+    "personalServices": "The legacy Personal Services donor is excluded. titanzero.pro is planned for a separate Cleaning franchise site; do not deploy this donor as-is.",
     "otherDonors": "FieldCrew and older donor pages are excluded from this host plan unless separately reviewed and approved."
   },
   "sharedBoundaries": [
     "Marketing websites remain separate from apps/web and never become runtime dependencies.",
     "All marketing login links target the canonical app host and contain no bearer credentials.",
-    "Do not share cookies indiscriminately between .io and .pro.",
     "Marketing content must match catalogue evidence; planned workflows are labeled and unavailable workflows are not presented as functional.",
-    "Review builds remain noindex until the parent approves the complete deployment plan and host-specific sitemap/robots strategy."
+    "Review builds remain noindex until the parent approves the complete deployment plan and host-specific sitemap/robots strategy.",
+    "The managed-service offer is an internal titanzero.io page; titanzero.pro is reserved for the future Cleaning franchise site.",
+    "Only Cleaning is public in this launch; other catalogue profiles remain unpublished."
   ]
 }
