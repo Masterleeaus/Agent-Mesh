@@ -2,7 +2,6 @@ import * as SDK from 'titan-sdk';
 
 const root = document.getElementById('titan-brand-studio');
 const status = root?.querySelector('[role="status"]');
-const text = (value) => typeof value === 'string' ? value.slice(0, 160) : '';
 
 function summarize({ company_id, data }) {
   if (!data || data.schema !== 'titan.brand-studio.projection/v1' || data.company_id !== company_id ||
@@ -14,9 +13,7 @@ function summarize({ company_id, data }) {
     surface.health?.staleProjection === true || surface.health?.verificationFailed === true).length;
   const pending = data.surfaces.filter((surface) => ['UNKNOWN', 'DECLARED', 'DRAFT', 'STAGED'].includes(surface.state)).length;
   const live = data.surfaces.filter((surface) => surface.state === 'LIVE').length;
-  const latest = data.publications[0];
-  const summary = `${data.surfaces.length} surfaces · ${live} live · ${attention} need attention · ${pending} awaiting verification`;
-  return latest ? `${summary}. Latest publication: ${text(latest.status)} (${text(latest.environment)}), version ${Number.isSafeInteger(latest.version) ? latest.version : 'unknown'}.` : `${summary}. No publication supplied.`;
+  return `${data.surfaces.length} surfaces · ${live} live · ${attention} need attention · ${pending} awaiting verification · ${data.publications.length} recorded publications`;
 }
 
 async function start() {
