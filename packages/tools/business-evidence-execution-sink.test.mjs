@@ -13,7 +13,12 @@ function memoryStore({ failOnceFor } = {}) {
       if (entry.evidence_id === failOnceFor && !failed) { failed = true; throw new Error("simulated-append-interruption"); }
       const key = `${entry.company_id}:${entry.evidence_id}`;
       if (rows.has(key)) throw new Error("duplicate-primary-key");
-      rows.set(key, structuredClone(entry));
+      const row = structuredClone(entry);
+      row.id = row.evidence_id;
+      delete row.evidence_id;
+      row.evidence_type = row.event_type;
+      row.created_at = row.accepted_at;
+      rows.set(key, row);
       return rows.get(key);
     },
     async acceptedForSubject(company_id, subject_type, subject_id) {
