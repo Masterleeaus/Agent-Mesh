@@ -64,7 +64,6 @@ jobs:
           lib/titan/models/titan_command.dart
           lib/titan/services/http_titan_surface_transport.dart
           lib/titan/services/offline_command_queue.dart
-          lib/titan/services/offline_replay_service.dart
           lib/titan/services/titan_gateway.dart
           lib/titan/storage/secure_store.dart
       - name: Report legacy full mobile analysis and test baseline

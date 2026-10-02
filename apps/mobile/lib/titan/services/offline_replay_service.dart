@@ -13,7 +13,6 @@ import 'offline_replay_transport.dart';
 import 'mobile_operation_journal.dart';
 import 'offline_deterministic_replay_planner.dart';
 import '../models/mobile_operation_journal_entry.dart';
-import '../core/mobile_session_context.dart';
 
 class OfflineReplayService {
   final OfflineCommandQueue queue;
@@ -23,7 +22,6 @@ class OfflineReplayService {
   final OfflineAuthorityService authorityService;
   final TitanMobileOperationJournal? operationJournal;
   final OfflineDeterministicReplayPlanner replayPlanner;
-  final MobileSessionContext? sessionContext;
 
   const OfflineReplayService({
     required this.queue,
@@ -33,7 +31,6 @@ class OfflineReplayService {
     this.authorityService=const OfflineAuthorityService(),
     this.operationJournal,
     this.replayPlanner=const OfflineDeterministicReplayPlanner(),
-    this.sessionContext,
   });
 
   Future<TitanOfflineReplayReport> replayPending() async{
@@ -56,20 +53,6 @@ class OfflineReplayService {
     var authenticationRequired=false;
 
     for(final queued in commands){
-      final context = sessionContext;
-      if (context != null) {
-        try {
-          context.assertReplayAllowed(queued.scope);
-        } catch (error) {
-          attempted++;
-          blocked++;
-          await _recordConflict(
-            queued,
-            reason: 'mobile_replay_scope_rejected: $error');
-          await queue.remove(queued.id);
-          continue;
-        }
-      }
       if(blockedKeys.contains(queued.conflictKey)){
         blocked++;
         continue;
