@@ -305,6 +305,12 @@ function renderMicroweberNode(node:BuilderNode,depth=0,state={count:0}):string {
   case "text":return `<p>${text("text",String(props.content??props.label??""))}${children}</p>`;
   case "article-header":return `<header><h1>${text("title",String(props.text??""))}</h1>${children}</header>`;
   case "article-body":return `<div>${text("text",String(props.content??""))}${children}</div>`;
+  case "image":{
+   const src=props.src,alt=props.alt??"";
+   if(typeof src!=="string"||!src.startsWith("/")||src.startsWith("//")||src.length>2048||/[\u0000-\u0020\\]/.test(src)||typeof alt!=="string")throw new Error("microweber-image-source-invalid");
+   try{safeRoute(src);}catch{throw new Error("microweber-image-source-invalid");}
+   return `<img src=\"${escapeHtml(src)}\" alt=\"${escapeHtml(alt)}\" loading=\"lazy\">`;
+  }
   case "button":{
    const href=props.href;
    if(typeof href!=="string"||!href.trim())throw new Error("microweber-static-link-required");
@@ -329,6 +335,53 @@ export async function compileMicroweberPageDraft(value:unknown,verification:{ver
  if(!title||title.length>512||/[\u0000-\u001f\u007f]/.test(title))throw new Error("microweber-page-title-invalid");
  const content_html=renderMicroweberNode(document.root);
  return Object.freeze({schema:"titan.microweber-page-draft/v1",company_id:request.company_id,publication_id:request.publication_id,site_id:request.site_id,version:request.version,route,title,content_html,source_snapshot_hash:request.source.snapshot_hash,authority_granted:false});
+}
+export type MicroweberSiteDraft=Readonly<{
+ schema:"titan.microweber-site-draft/v1";company_id:string;publication_id:string;site_id:string;version:number;environment:"preview"|"live";
+ routes:readonly string[];pages:readonly MicroweberPageDraft[];source_snapshot_hash:string;authority_granted:false;
+}>;
+/** Compiles a bounded set of independently verified Builder page snapshots into one deterministic site draft. */
+export async function compileMicroweberSiteDraft(values:readonly unknown[],verification:{verifyApproval?:(approval:BrandPublicationApproval,snapshot:BuilderDocument)=>Promise<boolean>;verifyCurrentSnapshot:BrandSnapshotCurrentVerifier}):Promise<MicroweberSiteDraft> {
+ if(!Array.isArray(values)||values.length===0||values.length>100)throw new Error("microweber-site-page-limit");
+ const requests=await Promise.all(values.map(value=>assertBrandRendererRequest(value,verification.verifyApproval,verification.verifyCurrentSnapshot)));
+ const first=requests[0];
+ if(first.renderer!=="microweber")throw new Error("microweber-renderer-request-required");
+ for(const request of requests){
+  if(request.renderer!=="microweber"||request.company_id!==first.company_id||request.publication_id!==first.publication_id||request.site_id!==first.site_id||request.version!==first.version||request.environment!==first.environment)throw new Error("microweber-site-scope-mismatch");
+ }
+ const pages=(await Promise.all(requests.map(request=>compileMicroweberPageDraft(request,verification)))).sort((a,b)=>a.route.localeCompare(b.route));
+ const routes=pages.map(page=>page.route);
+ if(new Set(routes).size!==routes.length)throw new Error("microweber-site-duplicate-route");
+ const identity=JSON.stringify(pages.map(page=>[page.route,page.title,page.content_html,page.source_snapshot_hash]));
+ const digest=new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256",new TextEncoder().encode(identity)));
+ const source_snapshot_hash=`sha256:${[...digest].map(byte=>byte.toString(16).padStart(2,"0")).join("")}`;
+ return Object.freeze({schema:"titan.microweber-site-draft/v1",company_id:first.company_id,publication_id:first.publication_id,site_id:first.site_id,version:first.version,environment:first.environment,routes:Object.freeze(routes),pages:Object.freeze(pages),source_snapshot_hash,authority_granted:false});
+}
+export type MicroweberSitemapDraft=Readonly<{schema:"titan.microweber-seo-draft/v1";company_id:string;site_id:string;version:number;environment:"preview"|"live";sitemap_xml:string;robots_txt:string;authority_granted:false}>;
+/** Derives safe crawl metadata from an already verified site draft; never writes or publishes it. */
+export function createMicroweberSitemapDraft(value:unknown,canonical_origin:string):MicroweberSitemapDraft {
+ if(!record(value)||Object.keys(value).some(key=>!["schema","company_id","publication_id","site_id","version","environment","routes","pages","source_snapshot_hash","authority_granted"].includes(key)))throw new Error("microweber-sitemap-site-invalid");
+ if(value.schema!=="titan.microweber-site-draft/v1"||value.authority_granted!==false)throw new Error("microweber-sitemap-site-invalid");
+ const company_id=req(value.company_id,"company_id"),site_id=req(value.site_id,"site_id");
+ if(!Number.isInteger(value.version)||Number(value.version)<1||!["preview","live"].includes(String(value.environment)))throw new Error("microweber-sitemap-site-invalid");
+ if(!Array.isArray(value.routes)||value.routes.length===0||value.routes.length>100||!Array.isArray(value.pages)||value.pages.length!==value.routes.length)throw new Error("microweber-sitemap-site-invalid");
+ const routes=value.routes.map(safeRoute);
+ if(new Set(routes).size!==routes.length)throw new Error("microweber-sitemap-duplicate-route");
+ const pageRoutes=value.pages.map(page=>{
+  if(!record(page))throw new Error("microweber-sitemap-site-invalid");
+  if(page.company_id!==company_id)throw new Error("microweber-sitemap-company-mismatch");
+  if(page.site_id!==site_id||page.publication_id!==value.publication_id||page.version!==value.version||page.authority_granted!==false)throw new Error("microweber-sitemap-site-invalid");
+  return safeRoute(page.route);
+ });
+ if(pageRoutes.length!==routes.length||pageRoutes.some(route=>!routes.includes(route)))throw new Error("microweber-sitemap-site-invalid");
+ if(typeof canonical_origin!=="string")throw new Error("microweber-sitemap-origin-invalid");
+ let origin:URL;
+ try{origin=new URL(canonical_origin);}catch{throw new Error("microweber-sitemap-origin-invalid");}
+ if(origin.protocol!=="https:"||origin.username||origin.password||origin.pathname!=="/"||origin.search||origin.hash)throw new Error("microweber-sitemap-origin-invalid");
+ const environment=value.environment as "preview"|"live";
+ const sitemap_xml=environment==="preview"?"":`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.slice().sort().map(route=>`<url><loc>${escapeHtml(new URL(route,origin).href)}</loc></url>`).join("")}</urlset>`;
+ const robots_txt=environment==="preview"?"User-agent: *\nDisallow: /\n":`User-agent: *\nAllow: /\nSitemap: ${origin.origin}/sitemap.xml\n`;
+ return Object.freeze({schema:"titan.microweber-seo-draft/v1",company_id,site_id,version:Number(value.version),environment,sitemap_xml,robots_txt,authority_granted:false});
 }
 export type BrandPublicationApproval=Readonly<{company_id:string;builder_document_id:string;revision:number;snapshot_hash:string;approved_by:string;approved_at:string}>;
 export type BrandSnapshotCurrentVerifier=(company_id:string,builder_document_id:string,revision:number,snapshot_hash:string)=>Promise<boolean>;
