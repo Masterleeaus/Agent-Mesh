@@ -4,38 +4,38 @@ This checklist verifies a **packaging candidate** in a local workspace or dispos
 
 The v0.1.4 record and the first v0.1.5 hashes below are historical candidates.
 The latest v0.1.5 candidate uses app sources on the canonical `agent/issue-1050`
-branch and exact current main `faab3c5c9bdfd90179d5d3bfee21c479dceb3613` after
-#1241/#1245 merged. The DirectAdmin SDK source tree is unchanged from `8c1161f2`
+branch and exact current main `bfbb06a5a22591100e2c0101e6598bee9c6f4589` after
+#1246 merged. The DirectAdmin SDK source tree is unchanged from `8c1161f2`
 and includes #1243 session behavior. Current-source results and hashes are at
 the end.
 
 ## Build the SDK and package
 
 For the current candidate, use the exact canonical SDK source from main
-`faab3c5c9bdfd90179d5d3bfee21c479dceb3613` (including #1243 session replacement
+`bfbb06a5a22591100e2c0101e6598bee9c6f4589` (including #1243 session replacement
 and registry-outage handling). Its `packages/titan-platform` tree is unchanged
 from `8c1161f2`. No shared SDK implementation is copied into the Workforce
 source. Node 22.23.3 and the repository's locked dependencies were used.
 
 ```sh
-work_area=/tmp/1050-sdk-faab
+work_area=/tmp/1050-sdk-current
 source_area=/tmp/1050-workforce-source
-rm -rf "$work_area" "$source_area" /tmp/1050-sdk-faab.mjs
+rm -rf "$work_area" "$source_area" /tmp/1050-sdk-current.mjs
 mkdir -p "$work_area" "$source_area"
 source_ref=$(git rev-parse HEAD)
-git archive faab3c5c9bdfd90179d5d3bfee21c479dceb3613 packages/titan-platform \
+git archive bfbb06a5a22591100e2c0101e6598bee9c6f4589 packages/titan-platform \
   | tar -xf - -C "$work_area"
 ln -s "$PWD/packages/titan-platform/node_modules" \
   "$work_area/packages/titan-platform/node_modules"
 node_modules/.pnpm/esbuild@0.27.3/node_modules/esbuild/bin/esbuild \
   "$work_area/packages/titan-platform/src/directadmin-plugin.ts" \
   --bundle --format=esm --platform=browser --target=es2022 \
-  --outfile=/tmp/1050-sdk-faab.mjs
+  --outfile=/tmp/1050-sdk-current.mjs
 
 git archive "$source_ref" apps/directadmin/workforce | tar -xf - -C "$source_area"
 node apps/directadmin/workforce/tools/package.mjs \
   --source-dir "$source_area/apps/directadmin/workforce" \
-  --sdk-module /tmp/1050-sdk-faab.mjs \
+  --sdk-module /tmp/1050-sdk-current.mjs \
   --output-dir /tmp/1050-package-candidate
 
 sha256sum /tmp/1050-package-candidate/titan_workforce.tar.gz
@@ -70,7 +70,7 @@ Run the integration suite against the compiled SDK:
 
 ```sh
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium \
-TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-faab.mjs \
+TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-current.mjs \
   node --test apps/directadmin/workforce/tests/*.test.mjs \
     apps/directadmin/workforce/tests/sdk-contract.integration.mjs \
     apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
@@ -236,23 +236,24 @@ was involved. This run predates the #1245 merge and is historical evidence.
 The 39/39 cockpit result was local evidence. The separate secretless Node 22
 hosted CI job remains with #1157 and was not changed here. #1050 remains open.
 
-## Current-source v0.1.5 candidate — main faab3c5c
+## Current-source v0.1.5 candidate — main bfbb06a5
 
-The canonical claim includes #1245 merge `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`.
-The #1049 SDK source tree is unchanged from main `8c1161f2`; its bundle compiled
-from exact `faab3c5c` source using Node v22.23.3 has SHA256
-`7d98fd60f5ccf83567e6763bf427768886b36f98c3a1def32d91d0695d40c011`. Two builds
+Current main is `bfbb06a5a22591100e2c0101e6598bee9c6f4589`, which merges #1246;
+#1245 merged earlier at `faab3c5c9bdfd90179d5d3bfee21c479dceb3613`. The #1049
+SDK source tree is unchanged from main `8c1161f2`; its bundle compiled from
+exact `bfbb06a5` source using Node v22.23.3 has SHA256
+`540f2cef873dd51bcdf7bea75c3ac519630cdc3345128f38f0f396957d31a448`. Two builds
 of the 19-file v0.1.5 package from the finalized app source and this bundle were
-byte-identical at `/tmp/1050-package-faab-final-a/titan_workforce.tar.gz` and
-`/tmp/1050-package-faab-final-b/titan_workforce.tar.gz`. Archive SHA256:
-`0b51724c05a292ac7df023ce21b21b0ccc6940b723483e29493b611716422018`.
+byte-identical at `/tmp/1050-package-current-bfbb-a/titan_workforce.tar.gz` and
+`/tmp/1050-package-current-bfbb-b/titan_workforce.tar.gz`. Archive SHA256:
+`9a7f1223b66fe3f475764344abae8f14d9d19635155627770bbe153fb6e9f2ba`.
 Independent extraction verified the matching sidecar, file allowlist/count,
 SDK hash, role/lifecycle modes and staged install/update/uninstall preflight.
 Uninstall preserves hosted business state. No DirectAdmin server was modified.
 
-Against the exact faab SDK bundle, the Workforce consumer/browser/hosted-session/
+Against the exact current-main SDK bundle, the Workforce consumer/browser/hosted-session/
 package suite passed **39/39**, shared bridge **83/83**, and package-script tests
-**3/3**. The extracted relay-to-host test used exact main `faab3c5c` source and
+**3/3**. The extracted relay-to-host test used exact main `bfbb06a5` source and
 passed **14 requests / 15 hosted routes**. Its production RAW default returned
 sanitized 503 `cookie_boundary_unverified` without upstream requests; the test
 then injected its fixture loader directly into the extracted module. Current
