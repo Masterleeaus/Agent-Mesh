@@ -168,3 +168,9 @@ jobs:
         run: |
           echo "::notice::Full Next.js web build becomes a strict gate when the recorded web TypeScript baseline reaches zero."
 
+
+      - name: Focused Titan Signal compile and tests
+        if: ${{ hashFiles('packages/titan-platform/src/signal/**', 'packages/titan-platform/tests/signal-runtime.test.mjs') != '' }}
+        run: |
+          pnpm --dir packages/titan-platform exec tsc -p tsconfig.json --noEmit false --outDir .test-dist --module NodeNext --moduleResolution NodeNext --isolatedModules false
+          pnpm --dir packages/titan-platform exec node --test ./tests/signal-runtime.test.mjs
