@@ -4,6 +4,7 @@ import { generateKeyPairSync, sign, verify } from "node:crypto";
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { request as httpRequest } from "node:http";
 import Database from "better-sqlite3";
 import { createSqliteStorage } from "../packages/storage/src/index.js";
 import { createIdentitySessionRegistry } from "../packages/titan-platform/src/security-boundary.js";
@@ -15,7 +16,7 @@ import type { HostedWorkforceDependencies } from "../services/workforce/src/host
 import { SqliteWorkforceStore } from "../services/workforce/src/sqlite-store.js";
 
 const capability = "crm.work_order.complete";
-async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?: number; legacyControlPort?: () => Promise<never> } = {}) {
+async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?: number; legacyControlPort?: () => Promise<never>; directAdmin?: HostedWorkforceDependencies["directAdmin"] } = {}) {
   const { createWorkforceServer } = await import("../services/workforce/src/server.ts");
   const dir = mkdtempSync(join(tmpdir(), "titan-hosted-"));
   const storagePath = join(dir, "control.db");
@@ -101,6 +102,7 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
     },
     async close() { dependencyCloseCount += 1; },
     async readiness() { if (readinessHook) return readinessHook(); await Promise.all([identity.query("SELECT 1"), control.query("SELECT 1"), stores.a.query("SELECT 1"), stores.b.query("SELECT 1")]); return { authentication: true, authority: true, provider: true, evidence: true }; },
+    ...(options.directAdmin ? { directAdmin: options.directAdmin } : {}),
   };
   if (options.legacyControlPort) Object.assign(dependencies.workOrders, { completeInControlTransaction: options.legacyControlPort });
   let host: WorkforceServer;
@@ -125,6 +127,35 @@ async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?:
     beforeRead(hook: (signal?: AbortSignal) => Promise<void>) { beforeRead = hook; },
     readiness(hook?: () => ReturnType<HostedWorkforceDependencies["readiness"]>) { readinessHook = hook; },
     async get(path: string) { return fetch(`${base}${path}`); },
+    async directAdmin(path: string, init: RequestInit = {}) {
+      const target = new URL(`${base}${path}`);
+      return new Promise<Response>((resolve, reject) => {
+        const outgoing = httpRequest({ hostname: target.hostname, port: target.port, path: `${target.pathname}${target.search}`, method: init.method ?? "GET", headers: {
+          host: "127.0.0.1", origin: "https://127.0.0.1", "sec-fetch-site": "same-origin", cookie: "__Host-titan-da-session=test-only",
+          "x-titan-csrf": "a".repeat(43), ...(init.headers as Record<string, string> | undefined),
+        } }, incoming => {
+          const headers = new Headers();
+          for (const [name, value] of Object.entries(incoming.headers)) {
+            if (typeof value === "string") headers.set(name, value);
+            else if (Array.isArray(value)) for (const item of value) headers.append(name, item);
+          }
+          const chunks: Buffer[] = [];
+          incoming.on("data", chunk => chunks.push(Buffer.from(chunk)));
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            resolve(new Response(Buffer.concat(chunks), { status: incoming.statusCode, headers }));
+          };
+          incoming.on("end", finish);
+          incoming.on("aborted", finish);
+          incoming.on("error", reject);
+        });
+        outgoing.once("error", reject);
+        if (typeof init.body === "string") outgoing.write(init.body);
+        outgoing.end();
+      });
+    },
     closeHost() { return host.close(); },
     get dependencyCloseCount() { return dependencyCloseCount; },
     async restart() { await host.close(); await start(); },
@@ -212,6 +243,70 @@ test("host launcher rejects absent, relative or malformed dependency factories b
     writeFileSync(file, "export const createWorkforceDependencies = async () => ({});\n");
     await assert.rejects(() => loadWorkforceDependencies(file), /workforce-dependencies-invalid/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("host mounts only an injected Fetch gateway and keeps absent DirectAdmin bridge read-only", async () => {
+  const unavailable = await fixture();
+  try {
+    const response = await unavailable.directAdmin("/v1/directadmin/titan_workforce/projection");
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { error: "directadmin-gateway-not-configured", read_only: true });
+  } finally { await unavailable.close(); }
+
+  let suppliedOwners: unknown;
+  let forwarded: { url: string; cookie: string | null; authorization: string | null; body: string } | undefined;
+  const configured = await fixture({ directAdmin: {
+    publicOrigin: "https://127.0.0.1",
+    createGateway(owners) {
+      suppliedOwners = owners;
+      return async request => {
+        forwarded = { url: request.url, cookie: request.headers.get("cookie"), authorization: request.headers.get("authorization"), body: await request.text() };
+        return new Response("test-only SDK adapter", { status: 418, headers: { "x-test-sdk-handler": "mounted" } });
+      };
+    },
+  } });
+  try {
+    const response = await configured.directAdmin("/v1/directadmin/titan_workforce/intents", {
+      method: "POST", headers: { "content-type": "application/json", authorization: "Bearer workforce-token-must-not-cross" }, body: "{\"test\":true}",
+    });
+    assert.equal(response.status, 418, await response.text());
+    assert.equal(response.headers.get("x-test-sdk-handler"), "mounted");
+    assert.equal(typeof (suppliedOwners as any)?.projection, "function");
+    assert.equal(typeof (suppliedOwners as any)?.requestIntent, "function");
+    assert.deepEqual(forwarded, { url: "https://127.0.0.1/v1/directadmin/titan_workforce/intents",
+      cookie: "__Host-titan-da-session=test-only", authorization: null, body: "{\"test\":true}" });
+  } finally { await configured.close(); }
+});
+
+test("DirectAdmin gateway timeout aborts the Fetch request and does not hold shutdown", async () => {
+  let gatewaySignal: AbortSignal | undefined;
+  const f = await fixture({ adapterTimeoutMs: 30, directAdmin: {
+    publicOrigin: "https://127.0.0.1",
+    createGateway() { return async request => { gatewaySignal = request.signal; return new Promise<Response>(() => {}); }; },
+  } });
+  try {
+    const started = Date.now();
+    const response = await f.directAdmin("/v1/directadmin/titan_workforce/projection");
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { error: "directadmin-gateway-unavailable", read_only: true });
+    assert.ok(Date.now() - started < 1000);
+    assert.equal(gatewaySignal?.aborted, true);
+    await f.closeHost();
+  } finally { await f.close(); }
+});
+
+test("DirectAdmin Fetch response stream failure closes an already-started response safely", async () => {
+  const f = await fixture({ directAdmin: {
+    publicOrigin: "https://127.0.0.1",
+    createGateway() { return async () => new Response(new ReadableStream<Uint8Array>({
+      start(controller) { controller.enqueue(new TextEncoder().encode("partial")); queueMicrotask(() => controller.error(new Error("injected-stream-failure"))); },
+    }), { status: 200 }); },
+  } });
+  try {
+    await assert.rejects(() => f.directAdmin("/v1/directadmin/titan_workforce/projection"),
+      (error: unknown) => (error as NodeJS.ErrnoException).code === "ECONNRESET");
+    assert.equal((await f.get("/health")).status, 200);
+  } finally { await f.close(); }
 });
 
 test("shutdown waits for in-flight provider work and closes dependencies once", async () => {
@@ -305,6 +400,34 @@ test("readiness replaces a timed-out probe without waiting for the old adapter p
     const recovered = await f.get("/ready"); assert.equal(recovered.status, 200);
     assert.equal((await f.get("/health")).status, 200);
   } finally { await f.close(); }
+});
+
+test("readiness deadline covers control-store queries held behind an authorized native effect", { timeout: 7000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 5000, shutdownTimeoutMs: 6000 });
+  let enter!: () => void; let release!: () => void;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const blocked = new Promise<void>(resolve => { release = resolve; });
+  let dependencyProbes = 0;
+  try {
+    f.beforeComplete(async () => { enter(); await blocked; });
+    const execution = f.post();
+    await entered; // completion is now inside the control-store authority fence
+    f.readiness(async () => { dependencyProbes += 1; return { authentication: true, authority: true, provider: true, evidence: true }; });
+
+    const started = Date.now();
+    const degraded = await f.get("/ready");
+    assert.equal(degraded.status, 503);
+    assert.ok(Date.now() - started < 1500, "the whole readiness probe, including queued SQLite reads, has a deadline");
+    assert.equal((await degraded.json() as any).checks.runtime, "fail");
+    assert.equal(dependencyProbes, 0, "stale work after the timed-out storage read must stop");
+    assert.equal((await f.get("/health")).status, 200);
+
+    release();
+    assert.equal((await execution).status, 200);
+    const recovered = await f.get("/ready");
+    assert.equal(recovered.status, 200);
+    assert.equal(dependencyProbes, 1);
+  } finally { release(); await f.close(); }
 });
 
 for (const alias of ["symlink", "hardlink", "directory-symlink"] as const) test(`host rejects identity/control physical ${alias} alias before migration`, async () => {

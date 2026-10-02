@@ -6,6 +6,7 @@ import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
 // @ts-expect-error Canonical execution boundary is JavaScript.
 import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mjs";
 import type { ConversationAuth, ConversationSurface } from "./conversation-api.js";
+import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
 
 export type HostedWorkforceDependencies = {
   identityStoragePath: string;
@@ -22,6 +23,13 @@ export type HostedWorkforceDependencies = {
   };
   /** Actual observations of credential, authority, provider and evidence dependencies. */
   readiness(options?: { signal: AbortSignal }): Promise<{ authentication: boolean; authority: boolean; provider: boolean; evidence: boolean }>;
+  /** Optional, separately commissioned #1049/#302 audience-bound session bridge.
+   * The module wraps the canonical SDK gateway factory; it must not reuse the
+   * Workforce conversation credential or carry DirectAdmin authority into Titan. */
+  directAdmin?: {
+    publicOrigin: string;
+    createGateway: DirectAdminGatewayFactory;
+  };
   close?(options?: { signal: AbortSignal }): Promise<void>;
 };
 

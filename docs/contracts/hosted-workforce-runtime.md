@@ -6,6 +6,10 @@ There is one canonical dispatcher, run store, Workforce store, authority gateway
 and native work-order completion owner. `apps/web` remains the full native FSM;
 Frappe is not required by this slice.
 
+For the clean-host preflight, one-company acceptance workflow, artifact/hash
+record, reboot/update/rollback checks and the #1182 incremental-streaming
+handoff, follow [the Workforce clean-host acceptance procedure](../operations/workforce-clean-host-acceptance.md).
+
 ## Commissioning contract
 
 Set `WORKFORCE_DEPENDENCIES_MODULE` to an absolute operator-owned module path.
@@ -44,6 +48,51 @@ cryptographically and resolves current registry state before projecting identity
 It creates no keys, credentials, sessions or provisioning routes. DirectAdmin
 audience credentials cannot be relabelled for Workforce; a commissioned
 Workforce-audience authentication handoff remains with #302/#1049.
+
+## DirectAdmin Workforce composition handoff
+
+`HostedWorkforceDependencies.directAdmin` is an optional operator-owned seam:
+it supplies a fixed HTTPS `publicOrigin` and a `createGateway(owners)` factory.
+That factory must compose #1049's canonical `DirectAdminSessionBridge` and
+`createDirectAdminGateway` with #302's canonical DirectAdmin-to-Workforce
+exchange/lineage owner. A standalone Workforce credential is insufficient:
+revalidating the derived session must observe source DirectAdmin company switch
+and revocation. Those exchange semantics are not implemented by this host.
+The launched server only translates and mounts the resulting Fetch handler at
+`/v1/directadmin/*`; it does not copy the browser cookie, CSRF, context-switch,
+logout or transport implementation. It pins the Fetch URL to `publicOrigin`,
+checks the incoming Host against that origin, forwards only the headers the
+shared SDK consumes, and never forwards the Workforce `Authorization` token.
+Without the separate bridge composition, DirectAdmin paths return read-only
+503. No audience or issuer is synthesized by the Workforce host.
+The optional mount does not exchange a DirectAdmin browser session into the
+`workforce` credential used by `POST /v1/workforce/conversations`; no such
+handoff route is available until #302 publishes and verifies the derived-session
+contract.
+
+The Workforce gateway owner builds
+`GET /v1/directadmin/titan_workforce/projection` from company-filtered canonical
+`SqliteWorkforceStore` worker/work records and `SqliteRunStore` run references.
+Its payload uses `data.schema = "titan.workforce-cockpit.v1"` and repeats the
+selected `company_id` in the envelope, discovery and status. Evidence references
+are the stored canonical work references; they are not a claim that every row
+is an accepted terminal outcome. The projection returns `controls: []` until
+canonical DirectAdmin management authorization and accepted-evidence owners are
+available.
+
+The consumer's current pause, resume, cancel, reassign, escalate and revoke
+intent names are proposals only. The owner validates the bound company, actor,
+operation/correlation IDs and bounded input, revalidates the current session,
+then rejects each proposal without calling unauthorised `WorkforceService`
+lifecycle methods, changing state, appending an event, or creating a receipt.
+Unknown actions are invalid. The owner raises a typed 403 unsupported-action
+denial, but current #1049 gateway code sanitizes all owner exceptions as generic
+503; it must add a typed, sanitized owner-denial mapping before the browser can
+distinguish that denial as 403/409. The live #1049 SDK route allowlist must also
+include `titan_workforce` before this mount is usable. #1050 carries this
+two-token allowlist addition on its consumer branch; it still needs to land in
+the shared #1049 owner. These are integration dependencies, not commissioned
+behavior.
 
 The old VPS smoke assumes an unconfigured host is ready; this is no longer a valid
 production acceptance claim and must be commissioned by the deployment owner.
@@ -140,8 +189,9 @@ including #811 readiness, malformed URL protection, restored exports and compile
 coverage, reviewed worker repairs and VPS setup fixes; integrated #302 resolver
 and credential owner `bd3075ef91222e32a23a1f09111a84b3c01af515` and main
 `ee1a3ee3709b9201fc728fc162067d9a5ab78e45`. The Docker launcher uses the
-package-local `tsx` command preserved from #1179.
-No edits to the DirectAdmin identity bridge or Server Node runtime owners.
+package-local `tsx` command preserved from #1179. DirectAdmin transport remains
+with active shared owner #1049; this change adds only an injected mount and a
+read-only projection/denial adapter, not a competing bridge or management API.
 
 Rollback stops ingress and restores the prior service artifact. Retain durable
 runtime, identity/revocation and evidence files; never erase or replay them to
