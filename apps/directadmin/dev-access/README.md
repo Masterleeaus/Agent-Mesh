@@ -16,7 +16,7 @@ Current implemented slice:
 - Effective-user-bound HOME validation for DirectAdmin CLI requests, including account-scoped CSRF tokens.
 - No private-key storage and no automatic sudo/root elevation.
 
-Version 1.3.1 changes only request transport and form compatibility. It keeps the `titan_dev_access` plugin ID, CSRF secret path/token derivation, SSH key paths and flat archive identity; it adds no persistent data migration. Retain the last server-validated archive until DirectAdmin accepts and verifies this candidate. Live upgrade and downgrade behavior still require a disposable-host check.
+Version 1.3.2 carries the bounded request transport and form compatibility from 1.3.1 and adds a read-only, self-locating lifecycle validator. The validator checks required plugin files and executable role entrypoints; it does not fetch, replace or migrate plugin data. The candidate keeps the `titan_dev_access` plugin ID, CSRF secret path/token derivation, SSH key paths and flat archive identity, with no persistent data migration. Retain the 1.3.1 archive until DirectAdmin accepts and verifies this candidate. Live update, remove/reinstall and rollback behavior still require a disposable-host check.
 
 This plugin does **not** grant Titan business authority. Mutating or privileged repair work belongs to canonical governed execution and deployment/runtime owners.
 
