@@ -9,6 +9,8 @@ on:
       - "apps/web/lib/work-orders/**"
       - "apps/web/app/api/v1/zero/**"
       - "packages/storage/**"
+      - "packages/deployment/**"
+      - "scripts/verify-release-candidate.mjs"
       - "services/workforce/**"
       - "packages/runtime/agent-runtime/**"
       - "packages/tools/execution-gateway.mjs"
@@ -19,6 +21,17 @@ permissions:
   contents: read
 
 jobs:
+  release-candidate-gate-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Signed release candidate and lifecycle verification
+        run: node --test packages/deployment/*.test.mjs
+
   cleaning-convergence:
     runs-on: ubuntu-latest
     timeout-minutes: 15
