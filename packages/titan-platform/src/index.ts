@@ -108,3 +108,5 @@ export * from "./maps-intelligence/runtime.js";
 export * from "./signal/runtime.js";
 
 export * from "./nexus-orchestration.js";
+
+export * from "./distribution-contract-compiler.js";
