@@ -136,7 +136,7 @@ export class ExecutionGateway {
   denied(request,code) { return {execution_id:request.execution_id,company_id:request.company_id,state:EXECUTION_STATES.DENIED,capability:request.capability,failure:{code}}; }
   async emitTransition(request,provider,state,payload) { await this.evidenceSink(this.evidence(request,provider,state,payload,null)); }
   evidence(request,provider,state,payload,startedAt) { return {
-    evidence_id:crypto.randomUUID(),execution_id:request.execution_id,company_id:request.company_id,decision_id:request.decision_id??null,work_id:request.work_id??null,run_id:request.run_id??null,agent_id:request.agent_id??null,
+    evidence_id:crypto.randomUUID(),execution_id:request.execution_id,company_id:request.company_id,actor_id:request.actor_id??null,agent_id:request.agent_id??null,correlation_id:request.correlation_id??request.work_id??request.run_id??request.execution_id,causation_id:request.causation_id??request.decision_id??null,decision_id:request.decision_id??null,authority_decision_id:request.authority_decision_id??request.decision_id??null,work_id:request.work_id??null,run_id:request.run_id??null,
     capability:request.capability,provider:provider.id,execution_class:provider.executionClass,state,started_at:startedAt,finished_at:this.now(),idempotency_key:request.idempotency_key,
     request_summary:redactRequest(request),external_ref:payload?.external_ref??null,observed_result:redactObserved(payload?.result??payload?.observed_result??null),verification:payload?.verification??null,failure:payload?.failure??null,final_outcome:state===EXECUTION_STATES.VERIFIED?'verified':state===EXECUTION_STATES.FAILED?'failed':null,
   }; }
