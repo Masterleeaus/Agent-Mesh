@@ -149,7 +149,10 @@ test('DA session exchange derives one fixed Workforce/Zero child with source-cap
   assert.deepEqual(source.context.allowed_company_ids, ['company-a']);
   assert.equal('directadmin' in source, false);
 
-  const retry = await f.source.exchangeWorkforceZero(da.credential, sourceExpectation, { audience: 'hub', surface: 'hub' });
+  await denied(f.source.exchangeWorkforceZero(da.credential, {
+    ...sourceExpectation, audience: 'hub', surface: 'hub',
+  }));
+  const retry = await f.source.exchangeWorkforceZero(da.credential, sourceExpectation);
   assert.equal(retry.context.session_id, workforce.context.session_id);
   assert.equal(retry.context.expires_at, workforce.context.expires_at);
   assert.equal((await f.storage.query('SELECT COUNT(*) AS count FROM titan_security_sessions')).rows[0].count, 2);
@@ -159,6 +162,20 @@ test('DA session exchange derives one fixed Workforce/Zero child with source-cap
   const rows = await f.storage.query('SELECT * FROM titan_security_sessions');
   assert.equal(JSON.stringify(rows).includes(da.credential), false);
   assert.equal(JSON.stringify(rows).includes(workforce.credential), false);
+});
+
+test('a signing service cannot mint an independent Workforce session from a DirectAdmin issuer', async t => {
+  const f = await fixture(t);
+  assert.throws(() => createSessionCredentialService({
+    registry: f.registry,
+    issuer: 'titan:workforce-auth', audience: 'workforce', key_id: 'workforce-session-key', algorithm: 'EdDSA',
+    signing_key: f.workforceKeys.privateKey, verification_key: f.workforceKeys.publicKey,
+    upstream: { issuer: f.provider, audience: 'da-login', key_id: 'da-login-key', algorithm: 'EdDSA',
+      verification_key: f.daLoginKeys.publicKey },
+    directadmin: { node_id: 'node-one' }, now: () => new Date(f.at),
+  }), { message: 'workforce-zero-exchange-required' });
+  // The target host's public-key-only verifier remains a supported consumer.
+  assert.equal(typeof f.verifier.authenticate, 'function');
 });
 
 test('idempotent child expiry can only tighten and tightening advances its revision', async t => {
@@ -308,6 +325,29 @@ test('effect fence uses the registry clock after authentication and denies an ex
     mutations += 1;
   }));
   assert.equal(mutations, 0);
+});
+
+test('effect fence passes the same absolute acquisition deadline to storage and its callback', async t => {
+  const f = await fixture(t);
+  const { workforce } = await f.exchange();
+  const authenticated = await f.verifier.authenticate(workforce.credential);
+  const proof = proofFor(authenticated, workforce.credential);
+  const transaction = f.storage.transaction.bind(f.storage);
+  let storageDeadline;
+  f.storage.transaction = (callback, options) => {
+    storageDeadline = options?.acquireDeadlineMs;
+    return transaction(callback, options);
+  };
+  let effectDeadline;
+  const result = await f.registry.withCurrentSessionFence(proof, expectedFor(authenticated), {}, (_current, _signal, deadline) => {
+    effectDeadline = deadline;
+    assert.equal(storageDeadline, deadline);
+    assert.ok(Number.isFinite(deadline));
+    assert.ok(deadline > performance.now());
+    return 'admitted';
+  });
+  assert.equal(result, 'admitted');
+  assert.equal(effectDeadline, storageDeadline);
 });
 
 test('effect fence linearizes before cross-process source revoke and releases after the bounded callback', async t => {

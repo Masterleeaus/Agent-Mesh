@@ -124,6 +124,13 @@ export function createSessionCredentialService(options: SessionCredentialOptions
       || (workforceTarget.algorithm === 'HS256' && (!(workforceSigningKey instanceof Uint8Array) || workforceSigningKey.byteLength < 32))
       || (workforceTarget.algorithm !== 'HS256' && workforceSigningKey instanceof Uint8Array)) throw new Error('credential-key-invalid');
   }
+  // A signing service trusted for a DirectAdmin issuer must not use generic
+  // issue() to mint an independent Workforce session. DA-derived Workforce
+  // credentials must go through the fixed, source-bound Zero exchange. A
+  // public-key-only Workforce verifier is still allowed to validate those
+  // derived credentials.
+  if (signingKey !== undefined && workforceTarget === undefined && policy.audience === 'workforce'
+    && canonicalDirectAdminProvider(upstream.issuer)) throw new Error('workforce-zero-exchange-required');
 
   function now(): Date {
     const value = clock();
@@ -312,6 +319,10 @@ export function createSessionCredentialService(options: SessionCredentialOptions
       return deny(async () => {
         if (workforceTarget === undefined || workforceSigningKey === undefined || daNode === undefined) {
           throw new Error('workforce-zero-exchange-disabled');
+        }
+        if (expectation !== undefined && Object.keys(expectation).some(field =>
+          !['company_id', 'device_id', 'actor_id', 'context_revision'].includes(field))) {
+          throw new Error('workforce-zero-target-fixed');
         }
         if (expectation !== undefined) expected(expectation);
         const at = now();

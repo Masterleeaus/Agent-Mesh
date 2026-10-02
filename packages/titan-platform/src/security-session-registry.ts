@@ -397,16 +397,19 @@ export class IdentitySessionRegistry {
 
   /** Revalidates a Workforce/Zero derivation under the GLOBAL_REGISTRY SQLite
    * writer lock immediately before the effect boundary. The bounded callback
-   * receives an abort signal. On timeout it may still be running; consumers must
-   * mark the execution UNCERTAIN and must not claim cancellation or retry it. */
+   * receives the absolute acquisition deadline and an abort signal. Keep it to
+   * short local admission work: no provider/network wait and no registry
+   * re-entry. On timeout it may still be running; consumers must mark the
+   * execution UNCERTAIN and must not claim cancellation or retry it. */
   async withCurrentSessionFence<T>(
     proof: VerifiedSessionIdentity,
     expected: ExpectedSessionContext,
     options: Readonly<{ signal?: AbortSignal }> = {},
-    effect: (current: CurrentSessionContext, signal: AbortSignal) => Promise<T> | T,
+    effect: (current: CurrentSessionContext, signal: AbortSignal, acquireDeadlineMs: number) => Promise<T> | T,
   ): Promise<T> {
     if (proof.source_session === undefined) throw new Error('session-source-required');
     if (options.signal?.aborted) throw new Error('session-fence-aborted');
+    const acquireDeadlineMs = performance.now() + workforceZeroFenceTimeoutMs;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let removeAbortListener = () => {};
     try {
@@ -414,6 +417,8 @@ export class IdentitySessionRegistry {
         // Sample the registry-owned clock after BEGIN IMMEDIATE succeeds, so
         // queue or cross-process writer contention cannot use a stale timestamp.
         const { current } = await this.resolve(tx, proof, expected, this.clock().toISOString());
+        const remainingMs = acquireDeadlineMs - performance.now();
+        if (remainingMs <= 0) throw new Error('session-fence-timeout');
         const controller = new AbortController();
         let rejectAbort!: (error: Error) => void;
         let rejectTimeout!: (error: Error) => void;
@@ -433,17 +438,22 @@ export class IdentitySessionRegistry {
           const error = new Error('session-fence-timeout');
           controller.abort(error);
           rejectTimeout(error);
-        }, workforceZeroFenceTimeoutMs);
+        }, remainingMs);
         controller.signal.throwIfAborted();
         const running = Promise.resolve().then(() => {
           controller.signal.throwIfAborted();
-          return effect(current, controller.signal);
+          return effect(current, controller.signal, acquireDeadlineMs);
         });
         // A non-cooperative effect can finish after this fence rejects. Consume
         // its late rejection; the consumer owns UNCERTAIN reconciliation.
         void running.catch(() => undefined);
         return await Promise.race([running, aborted, timedOut]);
-      });
+      }, { acquireDeadlineMs });
+    } catch (error) {
+      if (error instanceof Error && error.message === 'storage-transaction-acquire-timeout') {
+        throw new Error('session-fence-timeout', { cause: error });
+      }
+      throw error;
     } finally {
       if (timer !== undefined) clearTimeout(timer);
       removeAbortListener();
