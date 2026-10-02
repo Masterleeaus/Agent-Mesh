@@ -150,7 +150,7 @@ try {
   assert.equal(scalar(freshUrl, "SELECT COUNT(DISTINCT filename) FROM schema_migrations"), expectedCount);
   assertManifestLedger(freshUrl);
   const exportEvidence = () => {
-    const result = spawnSync("node", ["scripts/export-migration-history-evidence.mjs"], {
+    const result = spawnSync("node", ["scripts/export-migration-history-evidence-v2.mjs"], {
       cwd: repoRoot,
       encoding: "utf8",
       env: { ...process.env, MIGRATION_DATABASE_URL: freshUrl },
