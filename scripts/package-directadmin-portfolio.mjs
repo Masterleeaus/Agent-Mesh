@@ -13,15 +13,6 @@ export const ENABLED_PLUGINS = [
 
 const executable = new Set(["admin/index.html", "reseller/index.html", "user/index.html", "install.sh", "update.sh", "uninstall.sh", "health.sh", "scripts/install.sh", "scripts/uninstall.sh"]);
 
-function walk(source, relative = "") {
-  const absolute = path.join(source, relative);
-  const stat = fs.lstatSync(absolute);
-  if (stat.isSymbolicLink()) throw new Error(`symlink is not allowed: ${relative || "."}`);
-  if (stat.isDirectory()) return fs.readdirSync(absolute).flatMap((name) => walk(source, path.join(relative, name)));
-  if (!stat.isFile()) throw new Error(`unsupported package input: ${relative}`);
-  return [relative];
-}
-
 function copyValidated(source, staging, relative) {
   const absolute = path.join(source, relative);
   const stat = fs.lstatSync(absolute);
@@ -51,6 +42,19 @@ function validateManifest(source, plugin) {
   return fields;
 }
 
+function validateArchive(archive, plugin) {
+  const listing = spawnSync("tar", ["-tzf", archive], { encoding: "utf8" });
+  if (listing.error || listing.status !== 0) throw listing.error ?? new Error(`${plugin.id}: archive cannot be listed`);
+  const entries = listing.stdout.split(/\r?\n/).filter(Boolean).map((entry) => entry.replace(/^\.\//, ""));
+  if (entries.some((entry) => entry.startsWith("/") || entry.split("/").includes(".."))) throw new Error(`${plugin.id}: archive contains unsafe path`);
+  for (const required of plugin.files) if (!entries.includes(required) && !entries.includes(`${required}/`)) throw new Error(`${plugin.id}: archive missing ${required}`);
+  const details = spawnSync("tar", ["-tvzf", archive], { encoding: "utf8" });
+  if (details.error || details.status !== 0) throw details.error ?? new Error(`${plugin.id}: archive metadata cannot be read`);
+  for (const required of [...executable].filter((entry) => plugin.files.some((root) => required === root || required.startsWith(`${root}/`)))) {
+    if (!details.stdout.split(/\r?\n/).some((line) => /^-rwxr-xr-x\s/.test(line) && line.endsWith(` ${required}`))) throw new Error(`${plugin.id}: executable mode missing for ${required}`);
+  }
+}
+
 export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.join(ROOT, "dist", "directadmin") } = {}) {
   const output = path.resolve(outputDir);
   fs.mkdirSync(output, { recursive: true });
@@ -67,6 +71,7 @@ export function packagePortfolio({ plugins = ENABLED_PLUGINS, outputDir = path.j
       const archive = path.join(output, `${plugin.id}.tar.gz`);
       const tar = spawnSync("tar", ["--sort=name", "--mtime=@0", "--owner=0", "--group=0", "--numeric-owner", "-czf", archive, "-C", staging, ...plugin.files], { encoding: "utf8" });
       if (tar.error || tar.status !== 0) throw tar.error ?? new Error(tar.stderr || `tar failed for ${plugin.id}`);
+      validateArchive(archive, plugin);
       const bytes = fs.readFileSync(archive);
       artifacts.push({ plugin_id: plugin.id, version: manifest.version ?? "unknown", archive, sha256: createHash("sha256").update(bytes).digest("hex"), source: plugin.source });
     } finally { fs.rmSync(staging, { recursive: true, force: true }); }
