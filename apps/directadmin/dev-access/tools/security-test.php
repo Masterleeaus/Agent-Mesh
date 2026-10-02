@@ -81,6 +81,29 @@ expect_true(!valid_pubkey($wrongEmbeddedType),'declared algorithm must match the
 expect_true(add_key($splitEd25519)==='Invalid public key format.','malformed key must be rejected before key-directory setup');
 expect_true(!is_dir($home.'/.ssh'),'invalid public key must not create or alter the SSH directory');
 $terminalFields='csrf='.str_repeat('a',64).'&add_key=1';
+$terminalLength=strlen($terminalFields);
+expect_true(directadmin_request_body_length_matches($terminalFields,$terminalLength),'exact CONTENT_LENGTH must match the unmodified form body');
+expect_true(directadmin_request_body_length_matches($terminalFields."\n",$terminalLength),'one terminal LF may be present beyond CONTENT_LENGTH');
+expect_true(directadmin_request_body_length_matches($terminalFields."\r\n",$terminalLength),'one terminal CRLF may be present beyond CONTENT_LENGTH');
+expect_true(!directadmin_request_body_length_matches($terminalFields."\n\n",$terminalLength),'two terminal LF bytes beyond CONTENT_LENGTH must fail');
+expect_true(!directadmin_request_body_length_matches($terminalFields.'x',$terminalLength),'arbitrary CONTENT_LENGTH mismatch must fail');
+$diagnosticReasons=[
+ 'Invalid content length.'=>'content_length_invalid',
+ 'Unsupported form content type.'=>'content_type_invalid',
+ 'Raw DirectAdmin POST body is unavailable.'=>'raw_post_missing',
+ 'Invalid DirectAdmin POST marker.'=>'post_marker_invalid',
+ 'Duplicate form field.'=>'duplicate_field',
+ 'Form fields cannot be supplied in the query string.'=>'query_form_fields',
+ 'Ambiguous form action.'=>'action_ambiguous',
+ 'Request body length mismatch.'=>'body_length_mismatch'
+];
+foreach($diagnosticReasons as $message=>$code) expect_true(directadmin_request_error_code(new RuntimeException($message))===$code,'request error text must map only to static code '.$code);
+expect_true(directadmin_request_error_code(new RuntimeException('synthetic-secret-value=must-not-render'))==='request_rejected','unknown request errors must map to a static fallback code');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125];
+expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125','request diagnostics must expose only bounded reason, transport and numeric lengths');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret'];
+expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown','diagnostic output must reject unallowlisted codes, transports and nonnumeric lengths');
+unset($_SERVER['TDA_REQUEST_DIAGNOSTIC']);
 expect_true((directadmin_parse_form_body($terminalFields."\n")['add_key']??null)==='1','one DirectAdmin transport LF must be normalized after the complete form');
 expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??null)==='1','one DirectAdmin transport CRLF must be normalized after the complete form');
 expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\n\n");},'multiple form terminators must remain rejected');
@@ -158,6 +181,7 @@ $gitInitOut=(string)stream_get_contents($gitPipes[1]);
 $gitInitErr=(string)stream_get_contents($gitPipes[2]);
 fclose($gitPipes[1]); fclose($gitPipes[2]);
 expect_true(proc_close($gitInit)===0&&$gitInitOut===''&&$gitInitErr==='','synthetic Git fixture must initialize without errors');
+expect_true(directadmin_git_metadata_tree_safe($gitRepo.'/.git',$home,1)===false,'metadata traversal must stop at a small configured entry bound');
 $gitContext=directadmin_git_repository_context($gitRepo);
 expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME-contained Git root and gitdir must be accepted');
 [$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
@@ -278,3 +302,4 @@ expect_true(directadmin_role_can_mutate('unknown')===false,'unknown roles must f
 
 
 echo "Developer Portal security regression tests passed".PHP_EOL;
+
