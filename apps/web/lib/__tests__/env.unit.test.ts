@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { getEnv, _resetEnvCache } from "../env";
 
 const VALID_ENV = {
-  DATABASE_URL: "postgres://test:test@localhost/test",
+  DATABASE_URL: "file:./data/test-titan-zero.db",
+  DATABASE_DIALECT: "sqlite",
   REDIS_URL: "redis://localhost:6379/0",
   AUTH_SECRET: "this-is-a-valid-secret-exactly-32-chars!",
   NODE_ENV: "test",
@@ -16,6 +17,9 @@ const ENV_KEYS = [
   "NODE_ENV",
   "NEXT_PHASE",
   "BOOKING_ACCOUNT_ID",
+  "ANTHROPIC_API_KEY",
+  "SMTP_USER",
+  "SMTP_PASS",
 ] as const;
 
 describe("getEnv validation", () => {
@@ -63,11 +67,20 @@ describe("getEnv validation", () => {
     expect(() => getEnv()).not.toThrow();
   });
 
-  it("returns parsed env when all values are valid", () => {
+  it("returns parsed canonical SQLite env when all values are valid", () => {
     Object.assign(process.env, VALID_ENV);
     const env = getEnv();
     expect(env.DATABASE_URL).toBe(VALID_ENV.DATABASE_URL);
+    expect(env.DATABASE_DIALECT).toBe("sqlite");
     expect(env.AUTH_SECRET).toBe(VALID_ENV.AUTH_SECRET);
+  });
+
+  it("does not require a shared remote AI or SMTP credential", () => {
+    Object.assign(process.env, VALID_ENV);
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.SMTP_USER;
+    delete process.env.SMTP_PASS;
+    expect(() => getEnv()).not.toThrow();
   });
 
   it("throws when BOOKING_ACCOUNT_ID is present but not a UUID", () => {
