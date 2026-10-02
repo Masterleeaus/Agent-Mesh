@@ -1,6 +1,6 @@
 # DirectAdmin authenticated session bridge — #1049
 
-Status: PR #1204 remains an open draft and #1049 remains partial/non-closing. Its current-main ancestry includes the merged #1183 identity owner, #1201 Workforce HTTP server, #1211 DirectAdmin RAW relay, and #1240 company-placement resolver. The SDK composes the canonical #302 DirectAdmin-to-Workforce/Zero exchange with the server and relay in disposable fixtures. Unsupported lifecycle actions remain denied without effects, and no DirectAdmin host is commissioned.
+Status: PR #1204 merged into main at `75cc7f020353063aba129e5238b35e78de62291c`; #1049 remains open and partial/non-closing. This follow-up corrects switch replacement-session rejection mapping; no DirectAdmin host is commissioned. Its current-main ancestry includes the merged #1183 identity owner, #1201 Workforce HTTP server, #1211 DirectAdmin RAW relay, and #1240 company-placement resolver. The SDK composes the canonical #302 DirectAdmin-to-Workforce/Zero exchange with the server and relay in disposable fixtures. Unsupported lifecycle actions remain denied without effects, and no DirectAdmin host is commissioned.
 
 ## Canonical identity and browser boundary
 
@@ -15,6 +15,7 @@ The host issues `__Host-titan-da-session` as Secure, HttpOnly, SameSite=Strict, 
 Failure status is separate from identity authority. A canonical `authentication-denied` (treated as session rejection) returns a generic 401 and clears its session cookie; a request rejected by the Origin/CSRF boundary returns the same generic 401 body without clearing a cookie. After a source has authenticated, exchange, company-switch and revocation failures trigger a fresh source-session read: a rejected source returns 401, while an operation failure with a still-current source returns a redacted 503 without a `Set-Cookie` header. A typed Workforce action-denial 403 preserves the shared browser context and its subscribers; 401 and context-conflict 409 still invalidate them. No exception details are included in responses.
 
 #1183 now classifies durable identity-registry failures as sanitized `identity-registry-unavailable`, distinct from credential rejection. The bridge treats explicit canonical `authentication-denied` as a rejected session and maps registry or other service failures to a redacted unavailable response; it still fails closed on unknown boundary errors.
+After a company switch issues a replacement credential, explicit rejection of that replacement returns 401 and clears the stale browser cookie. If canonical registry verification of the replacement is unavailable, the bridge returns a redacted 503 without clearing the cookie; it does not claim the replacement is valid or expose its credential.
 
 ## Workforce/Zero exchange and consumers
 

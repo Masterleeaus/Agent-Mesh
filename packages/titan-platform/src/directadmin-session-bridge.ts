@@ -225,7 +225,14 @@ export class DirectAdminSessionBridge {
             // Server-only result: the gateway writes this header, never JSON.
             // #302 owns issuance; switching does not extend canonical expiry.
             return Object.freeze({ set_cookie: `${COOKIE}=${issued.credential}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=${seconds}` });
-          } catch { return unavailable(); }
+          } catch (error) {
+            const message = safeErrorMessage(error);
+            if (message === 'authentication-denied' || message === 'directadmin-session-rejected') {
+              return normalizeAuthenticationFailure(error);
+            }
+            if (message === 'identity-registry-unavailable' || message === 'directadmin-service-unavailable') return unavailable();
+            return normalizePostAuthenticationFailure(error, authenticateCurrent);
+          }
         },
         logout: async () => {
           if (request.method !== 'POST') return fail();
