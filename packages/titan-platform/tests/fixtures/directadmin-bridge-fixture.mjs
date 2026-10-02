@@ -1,9 +1,14 @@
 import { tsImport } from 'tsx/esm/api';
-import { createIdentitySessionRegistry, createSessionCredentialService } from '../../.test-dist/security-boundary.js';
-import { DirectAdminSessionBridge } from '../../.test-dist/directadmin-plugin.js';
-import { projectZeroCockpit } from '../../.test-dist/zero-cockpit.js';
-import { createOperationsHealth } from '../../.test-dist/operations-health.js';
-import { createBrandPublication } from '../../.test-dist/brand-publication.js';
+const security = await tsImport('../../src/security-boundary.ts', { parentURL: import.meta.url, tsconfig: false });
+const bridgeApi = await tsImport('../../src/directadmin-session-bridge.ts', { parentURL: import.meta.url, tsconfig: false });
+const zeroCockpit = await tsImport('../../src/zero-cockpit.ts', { parentURL: import.meta.url, tsconfig: false });
+const operationsHealth = await tsImport('../../src/operations-health.ts', { parentURL: import.meta.url, tsconfig: false });
+const brandPublication = await tsImport('../../src/brand-publication.ts', { parentURL: import.meta.url, tsconfig: false });
+const { createIdentitySessionRegistry, createSessionCredentialService } = security;
+const { DirectAdminSessionBridge } = bridgeApi;
+const { projectZeroCockpit } = zeroCockpit;
+const { createOperationsHealth } = operationsHealth;
+const { createBrandPublication } = brandPublication;
 const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
 export const ORIGIN = 'https://panel.example.test';
 export const b64 = value => Buffer.from(value).toString('base64url');
@@ -42,6 +47,10 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
   const upstreamToken = `${loginPayload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(loginPayload)))}`;
   const issued = await sessions.issue(upstreamToken, { company_id: 'company-a', device_id: 'device-1' });
   const token = issued.credential;
+  const loginFor = async (provider, jti) => {
+    const payload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode({ ...loginClaims, iss: provider, jti })}`;
+    return `${payload}.${b64(await crypto.subtle.sign('Ed25519', upstreamKeys.privateKey, Buffer.from(payload)))}`;
+  };
   // Fixture-only inspection of a credential just issued through the canonical service.
   const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url'));
   const sign = async (patch = {}, header = {}, privateKey = keys.privateKey) => {
@@ -73,6 +82,5 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
       const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
     },
   };
-  return { registry, sessions, policy, upstreamToken, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
+  return { registry, sessions, policy, upstreamToken, upstreamKeys, loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }
-

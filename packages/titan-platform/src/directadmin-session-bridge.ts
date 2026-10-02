@@ -1,4 +1,4 @@
-import type { createSessionCredentialService, AuthenticatedSessionCredential } from './security-boundary.js';
+import { directAdminIssuer, type createSessionCredentialService, type AuthenticatedSessionCredential } from './security-boundary.js';
 import type { DirectAdminRole } from './directadmin-plugin.js';
 
 /** Trusted host composition supplies the canonical #302 credential service.
@@ -31,10 +31,15 @@ function cookie(request: Request): string {
  * Caller IDs, company headers, DA roles and session IDs never grant authority. */
 export class DirectAdminSessionBridge {
   readonly #config: DirectAdminBridgeConfig;
+  readonly #provider: string;
   constructor(config: DirectAdminBridgeConfig) {
     const origin = new URL(config.origin);
     if (origin.protocol !== 'https:' || origin.origin !== config.origin || !id(config.audience) || !id(config.node_id) ||
         !['authenticate', 'switchCompany', 'revoke'].every(method => typeof config.sessions?.[method as keyof typeof config.sessions] === 'function')) fail();
+    const provider = (() => {
+      try { return directAdminIssuer(config.origin); } catch { return fail(); }
+    })();
+    this.#provider = provider;
     this.#config = Object.freeze({ ...config });
   }
   async authenticate(request: Request): Promise<{
@@ -56,7 +61,8 @@ export class DirectAdminSessionBridge {
       const csrfHash = encode(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(csrf))));
       const check = (authenticated: AuthenticatedSessionCredential): AuthenticatedSessionCredential => {
         // Also reject a miswired canonical service for a different host/audience.
-        if (authenticated.context.audience !== this.#config.audience || authenticated.directadmin?.node_id !== this.#config.node_id ||
+        if (authenticated.provider !== this.#provider || authenticated.context.audience !== this.#config.audience ||
+            authenticated.directadmin?.node_id !== this.#config.node_id ||
             authenticated.directadmin.csrf_sha256 !== csrfHash) return fail();
         return authenticated;
       };

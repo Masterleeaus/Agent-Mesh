@@ -3,8 +3,11 @@ import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
 import { tsImport } from 'tsx/esm/api';
-import { DirectAdminSessionBridge, createDirectAdminGateway, DirectAdminCockpitSession,
-  redactDirectAdminDiagnostics } from '../.test-dist/directadmin-plugin.js';
+const sdk = await tsImport('../src/directadmin-plugin.ts', { parentURL: import.meta.url, tsconfig: false });
+const security = await tsImport('../src/security-boundary.ts', { parentURL: import.meta.url, tsconfig: false });
+const { DirectAdminSessionBridge, createDirectAdminGateway, DirectAdminCockpitSession,
+  redactDirectAdminDiagnostics } = sdk;
+const { createSessionCredentialService, createSessionCredentialVerifier, directAdminIssuer } = security;
 const { mountZeroCore } = await tsImport('../../../apps/directadmin/zero-core/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
 const { mountOperationsHub } = await tsImport('../../../apps/directadmin/operations-hub/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
 const { mountBrandStudio } = await tsImport('../../../apps/directadmin/brand-studio/cockpit.mjs', { parentURL: import.meta.url, tsconfig: false });
@@ -27,6 +30,30 @@ for (const [label, patch] of [
 ]) test(`signed wrong ${label} is rejected before projection`, async t => {
   const f = await fixture(t); const token = await f.sign(patch);
   await assert.rejects(f.bridge.authenticate(f.request(undefined, { headers: { cookie: `__Host-titan-da-session=${token}` } })), /session-rejected/);
+});
+
+test('rejects a canonical credential whose verified provider is another DirectAdmin host issuer', async t => {
+  const f = await fixture(t);
+  const otherProvider = directAdminIssuer('https://other-panel.example.test');
+  await f.registry.putExternalBinding({ binding_id: 'mapping-other-host', provider: otherProvider,
+    subject: 'host-human-17', actor_id: 'actor-1', company_id: 'company-a', status: 'active' }, null);
+  const otherHostSessions = createSessionCredentialService({ ...f.policy,
+    upstream: { ...f.policy.upstream, issuer: otherProvider } });
+  const otherHostCredential = await otherHostSessions.issue(await f.loginFor(otherProvider, 'other-host-once'),
+    { company_id: 'company-a', device_id: 'device-1' });
+  assert.equal((await otherHostSessions.authenticate(otherHostCredential.credential)).provider, otherProvider);
+  const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, audience: expected.audience,
+    node_id: 'node-1', sessions: otherHostSessions });
+  const request = f.request(undefined, { headers: { cookie: `__Host-titan-da-session=${otherHostCredential.credential}` } });
+  await assert.rejects(bridge.authenticate(request), /session-rejected/);
+});
+
+test('rejects a valid credential from this provider when bridge is configured for another host', async t => {
+  const f = await fixture(t, { origin: 'https://panel-two.example.test' });
+  const authenticated = await f.sessions.authenticate(f.token);
+  assert.equal(authenticated.provider, external.provider);
+  assert.equal(authenticated.context.audience, expected.audience);
+  await assert.rejects(f.bridge.authenticate(f.request()), /session-rejected/);
 });
 
 test('raw session ID, forged signature, unknown key, algorithm confusion and duplicate cookies fail closed', async t => {
@@ -312,7 +339,6 @@ test('every retained bridge revalidation returns through the canonical credentia
 
 test('a signing-disabled canonical service can read but cannot switch company', async t => {
   const f = await fixture(t);
-  const { createSessionCredentialService } = await import('../.test-dist/security-boundary.js');
   const sessions = createSessionCredentialService({ ...f.policy, signing_key: undefined });
   const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, node_id: 'node-1', audience: expected.audience, sessions });
   const auth = await bridge.authenticate(f.request(undefined, { method: 'POST' }));
@@ -322,7 +348,6 @@ test('a signing-disabled canonical service can read but cannot switch company', 
 
 test('canonical Workforce audience cannot accept or relabel a DirectAdmin session credential', async t => {
   const f = await fixture(t);
-  const { createSessionCredentialVerifier } = await import('../.test-dist/security-boundary.js');
   const verifier = createSessionCredentialVerifier({ ...f.policy, audience: 'workforce' });
   await assert.rejects(verifier.authenticate(f.token), /authentication-denied/);
   await assert.rejects(verifier.resolve(f.token, { company_id: 'company-a', device_id: 'device-1' }), /authentication-denied/);

@@ -6,12 +6,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { SignJWT } from 'jose';
 import { tsImport } from 'tsx/esm/api';
-import {
-  createIdentitySessionRegistry, createSessionCredentialService,
-  createSessionCredentialVerifier, directAdminIssuer,
-} from '../.test-dist/security-boundary.js';
 
+const security = await tsImport('../src/security-boundary.ts', { parentURL: import.meta.url, tsconfig: false });
 const { createSqliteStorage } = await tsImport('@titan-zero/storage', { parentURL: import.meta.url, tsconfig: false });
+const { createIdentitySessionRegistry, createSessionCredentialService,
+  createSessionCredentialVerifier, directAdminIssuer } = security;
 
 test('canonical audience checks reject DA credentials; separate Workforce issuance is not session exchange', async t => {
   const directory = mkdtempSync(join(tmpdir(), 'titan-da-workforce-'));

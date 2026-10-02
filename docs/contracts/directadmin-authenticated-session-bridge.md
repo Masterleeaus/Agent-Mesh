@@ -2,9 +2,11 @@
 
 Status: implemented canonical credential adapter and disposable integration evidence; **not commissioned on a DirectAdmin host**. PR #1204 remains draft/non-closing. The current integration uses #302 / open draft PR #1183 head `363d3f018e971d09309d95e87c56bd5209511b9f` (credential implementation `ec61f95a769a8c7b1ebaf1de91d6c2c6ead9a965`). That owner commit is inherited through the claim branch for integration; #1183 has not merged to `main`. This SDK does not copy or reimplement its identity/credential logic.
 
+The latest security review correction is addressed: the bridge now requires the verified canonical `provider` to equal `directAdminIssuer(config.origin)` before projection, retained revalidation, and post-switch use. Adversarial tests reject both a valid credential issued in another DirectAdmin host namespace and a valid credential presented to a bridge configured for another host. This is a host/service wiring defense; no live exploit was reported.
+
 ## Canonical owner and API
 
-`packages/titan-platform/src/directadmin-session-bridge.ts` imports the canonical credential service's **type** from `security-boundary.ts`. The earlier hand-written `titan-da-session+jwt` verifier has been removed. There are no SDK signing keys, signature parsers, credential issuers, identity stores or registry provisioning methods. Browser requests use only #302's `titan-session+jwt` credentials; upstream login assertions, the provisional token type and legacy credentials are rejected.
+`packages/titan-platform/src/directadmin-session-bridge.ts` imports only the canonical credential API types and the host-issuer helper from `security-boundary.ts`. The earlier hand-written `titan-da-session+jwt` verifier has been removed. There are no SDK signing keys, signature parsers, credential issuers, identity stores or registry provisioning methods. Browser requests use only #302's `titan-session+jwt` credentials; upstream login assertions, the provisional token type and legacy credentials are rejected.
 
 The trusted host supplies:
 
@@ -86,7 +88,27 @@ Routes:
 - POST `/v1/directadmin/company` with `{ "company_id": "..." }`
 - POST `/v1/directadmin/logout`
 
-## Executed evidence
+## Latest continuation verification
+
+After current `main` advanced to `987728413bfdae855dba1a0796a686efb53e8805`, the focused bridge and handoff tests were run directly from TypeScript sources:
+
+```sh
+node --test packages/titan-platform/tests/directadmin-bridge.test.mjs packages/titan-platform/tests/directadmin-workforce-handoff.test.mjs
+```
+
+Result: **64/64 pass**. This includes the two cross-host issuer regressions, CSRF/origin/session and revocation tests, three real consumers through disposable HTTP, and a file-backed temporary SQLite/real-Ed25519-key test proving the Workforce verifier rejects a DirectAdmin-audience credential. The separately issued Workforce session is independent: it has another session ID and remains on company A after the DirectAdmin session switches to B. That is deliberately not represented as an exchange or combined Workforce HTTP effect-fence test.
+
+The changed bridge and its imported source typecheck with:
+
+```sh
+node_modules/.bin/tsc --noEmit --strict --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --lib ES2022,DOM packages/titan-platform/src/directadmin-session-bridge.ts
+```
+
+`git diff --check` passes. The package project typecheck is currently blocked by inherited malformed literal `\\n` text in `packages/titan-platform/src/index.ts` and `packages/titan-platform/tsconfig.json` from current main/#1225: `tsc -p packages/titan-platform/tsconfig.json --noEmit` reports TS1127/TS1005 and TS5092. This shared Nexus/export/config defect is owned by #1084; this branch leaves those files untouched. A workspace-wide install/build/gate and Chromium rerun were not performed on the merged head.
+
+## Earlier integration evidence
+
+The cumulative package/browser evidence below was executed on the prior published head `9fbcdc5720e7287da0e3e57c7f77da8c8c1680dd`. It remains historical evidence for those features, not a claim that the malformed current package config passes on the latest merged head.
 
 ```sh
 node_modules/.bin/tsc -p packages/titan-platform/tsconfig.json --noEmit
