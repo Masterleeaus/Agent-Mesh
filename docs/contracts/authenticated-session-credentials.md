@@ -74,7 +74,15 @@ memberships, never supplied by the caller as an identity grant.
 Issuance derives a session ID from SHA-256 of the unambiguous issuer/jti tuple.
 The existing durable session primary key atomically consumes that assertion:
 concurrent exchange, replay after company switch, revocation and process restart
-cannot issue it again. No second replay/identity store is added. Retain session
+cannot issue it again. No second replay/identity database or authority is added.
+The separate #302 DirectAdmin pre-auth nonce add-on is a short-lived page
+challenge in the same `GLOBAL_REGISTRY` database and owner; it prevents replay
+before a login assertion exists and does not replace session-key assertion
+consumption. Its version-2 nonce binds effective subject, authenticated real
+operator, DirectAdmin role and impersonation context in addition to the canonical
+actor/company/device generation; role and operator provenance grant no Titan
+authority, and no exact DirectAdmin session binding is claimed without a stable
+upstream session identifier. Retain session
 rows/revocations and protect backups against rollback; deleting them destroys
 this guarantee. Signed session credentials remain reusable authentication until
 expiry/revocation/generation change. They are **not one-use execution grants**;

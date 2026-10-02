@@ -51,6 +51,94 @@ stored bearer. Resolution checks both source and child revisions and expires the
 child no later than the source bearer/current session. Derived contexts expose
 only their selected company and cannot switch independently.
 
+## DirectAdmin pre-auth bootstrap nonce
+
+The proof-to-assertion flow has a durable, single-use pre-auth challenge API in
+this same `GLOBAL_REGISTRY` owner. It does not add another database, identity
+authority, membership store, or session store. Its narrow challenge table is a
+separately versioned add-on (`titan_security_directadmin_nonce_migrations` v2)
+because the hosted Workforce readiness contract still pins the core
+`titan_security_migrations` schema to v1. The nonce add-on is **not** created by
+`createIdentitySessionRegistry` or by host startup. Its initializer is explicit:
+
+```ts
+await initializeDirectAdminBootstrapNonceStore({
+  storage: globalRegistryStorage,
+  storage_role: 'GLOBAL_REGISTRY',
+});
+```
+
+No production registry was initialized or migrated by the local implementation.
+The challenge table stores only SHA-256 nonce digests plus the configured
+DirectAdmin issuer/origin, effective subject, authenticated real operator,
+effective DirectAdmin role and impersonation state, canonically resolved actor,
+selected company/device, current identity-generation snapshot, issue time,
+expiry, and consumption time. The operator fields bind provenance only; they do
+not grant Titan authority. The upstream `/api/session` contract exposes no
+stable DirectAdmin session identifier, so this binds authenticated identity and
+login-as context, not one exact DirectAdmin cookie/session. The raw cookie is
+never stored. Lifetime defaults to 120 seconds and is capped at 300 seconds.
+Wrong issuer, subject, operator, role, impersonation state or origin does not
+burn a valid challenge; expired or stale current identity fails closed, and
+stale-identity failure burns the challenge. The consumer updates the row
+conditionally under the SQLite writer transaction, so independent connections
+cannot redeem it twice. Contended writer admission is bounded and returns
+unavailable; a retry after the winning transaction commits is denied as replay.
+The earlier local v1 add-on is rejected by the v2 initializer; no automatic
+backfill or live migration is provided.
+
+The exact trusted issuer entrypoint is
+`createDirectAdminBootstrapFlow({ registry, origin, node_id, upstream,
+signing_key, ... })`. The #812 page-renderer/server composition must call its server-only
+`issueNonce({ origin, cookie, authorization: null, company_id, device_id })`
+with the ambient DirectAdmin `session` and `key` cookies and the single current company/device
+selection obtained from trusted server context. `issueNonce` itself fetches the
+configured host's HTTPS `/api/session`, derives the effective subject, real
+operator, role and impersonation state from that authenticated response, and
+then asks the registry to validate the subject's current actor, company
+membership and device ownership before storing a nonce.
+It accepts no caller-supplied actor, subject or session ID. If #812 has no trusted
+current company/device selection, it must fail closed; do not enumerate all
+switch choices or place them into operation scope.
+
+Both nonce issuance and assertion redemption parse the Cookie header with the
+same fixed allowlist: exactly one `session` and one `key` pair, no other cookie
+names and no duplicates. They rebuild the upstream header as
+`session=<value>; key=<value>` before calling `/api/session`; malformed or
+unexpected cookies are rejected before any network request. The raw header is
+never stored.
+
+When implemented, the page renderer may return only the short-lived nonce in
+its same-origin bootstrap challenge. At redemption, the current `provide` method requires an
+allowlisted `session` and `key` cookies inside a trusted server call, reauthenticates them against the
+fixed HTTPS `/api/session`, compares effective subject, real operator, role and
+impersonation state, then consumes the nonce through the built-in
+`createDirectAdminBootstrapNonceConsumer` before signing a `titan-login+jwt`.
+The signed assertion is the proof passed server-to-server to the canonical
+`createSessionCredentialService.issue()` verifier; the DirectAdmin cookie must
+not be returned to the browser or forwarded through the generic Workforce relay.
+
+The current #812 RAW relay and #1049 SDK now expose a fixed bootstrap POST, but
+the RAW relay deliberately strips every Cookie before forwarding to the private
+gateway. The #1049 bridge therefore constructs a proof with `cookie: null` on
+that path, which this flow rejects before any DirectAdmin request. The SDK
+browser client also reads its one-time nonce from a trusted HTML callback, but
+no published page renderer issues that nonce or calls `issueNonce` with the
+ambient DirectAdmin cookie and trusted selected company/device. No safe proof
+currently reaches redemption.
+
+A bounded server-side host composition is still required for nonce issuance and
+redemption. It must keep the ambient DirectAdmin cookie within the trusted
+DirectAdmin authentication boundary, derive only the `session` and `key` cookie
+pairs there, and pass a verified/signed assertion and exact selected
+company/device to the canonical #302 credential owner. The browser may receive
+only the short-lived opaque nonce and resulting Titan session cookie/CSRF
+contract. Do not forward the DirectAdmin Cookie through the generic RAW relay,
+accept caller-supplied identity claims, or substitute the nonce alone for
+upstream reauthentication. No host route or page renderer is implemented here.
+The canonical session registry still performs its durable issuer/JTI single-use
+exchange. Explicit nonce-store commissioning remains pending.
+
 ## Authentication and provisioning trust boundary
 
 Registry lookup is not credential verification. Before issuing, resolving or
