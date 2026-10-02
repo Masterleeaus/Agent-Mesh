@@ -266,7 +266,9 @@ integration_expect(strpos($connectionHtml,$expectedConnection)!==false,'actual a
 integration_expect(strpos($connectionHtml,'Host source</b><br>configured')!==false&&strpos($connectionHtml,'Port source</b><br>configured')!==false,'configured SSH endpoint sources must be identified in the role UI');
 integration_expect(strpos($connectionHtml,'value="ssh.example.test"')!==false&&strpos($connectionHtml,'value="2222"')!==false,'the client-side endpoint fields must reflect validated server settings');
 integration_expect(strpos($connectionHtml,'Permission denied (publickey)')!==false&&strpos($connectionHtml,'Load key: Permission denied')!==false,'the role UI must distinguish local key loading from server public-key rejection');
+integration_expect(strpos($connectionHtml,'id="tda-ssh-alias"')!==false&&strpos($connectionHtml,'IdentityFile')!==false,'the role UI must support a saved workstation alias that selects its configured key');
 integration_expect(strpos($connectionHtml,'name="tda-ssh-host"')===false&&strpos($connectionHtml,'name="tda-ssh-port"')===false,'client-only SSH endpoint fields must not submit or persist host overrides');
+integration_expect(strpos($connectionHtml,'name="tda-ssh-alias"')===false,'client-only saved alias field must not submit or persist a workstation setting');
 
 $invalidConnectionEnvironment=$common+[
  'REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes['admin'],'QUERY_STRING'=>'',
@@ -277,7 +279,7 @@ $invalidConnectionEnvironment=$common+[
 [$invalidConnectionHtml]=integration_run_role($root,'admin',$invalidConnectionEnvironment);
 integration_expect(strpos($invalidConnectionHtml,'touch /tmp/unsafe')===false,'invalid configured SSH host must not be reflected into the page or command');
 integration_expect(strpos($invalidConnectionHtml,'ssh -p 2222 '.$account['name'].'@ssh.example.test')===false,'invalid configured SSH host must not create a shell-like connection command');
-integration_expect(strpos($invalidConnectionHtml,'Enter a valid SSH host and port to build the command.')!==false,'invalid configured SSH host must leave the command unavailable');
+integration_expect(strpos($invalidConnectionHtml,'Enter a valid SSH alias, or a valid SSH host and port, to build the command.')!==false,'invalid configured SSH host must leave the command unavailable');
 
 foreach(['reseller','user'] as $role){
  $environment=$common+['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$routes[$role],'QUERY_STRING'=>''];
@@ -615,6 +617,50 @@ foreach($keyTransportCases as $caseName=>$case){
  [$keyResult]=integration_run_role($root,'admin',$keyEnvironment,$stdinBody);
  integration_expect_successful_key($keyResult,$case['key'],$keyHome);
 }
+
+$lifecycleHome=$fixture.'/key-lifecycle';
+integration_expect(mkdir($lifecycleHome,0700,true),'isolated key-lifecycle HOME must be created');
+$lifecycleSsh=$lifecycleHome.'/.ssh';
+integration_expect(mkdir($lifecycleSsh,0700),'isolated key-lifecycle .ssh directory must be created');
+$lifecycleAuthorized=$lifecycleSsh.'/authorized_keys';
+$lifecycleEd=explode(' ',integration_synthetic_public_key('ssh-ed25519'),3);
+$lifecycleRsa=explode(' ',integration_synthetic_public_key('ssh-rsa'),3);
+$lifecycleEdMaterial=$lifecycleEd[0].' '.$lifecycleEd[1];
+$lifecycleRsaMaterial=$lifecycleRsa[0].' '.$lifecycleRsa[1];
+$lifecycleOriginal=$lifecycleEdMaterial.' initial-comment';
+integration_expect(file_put_contents($lifecycleAuthorized,$lifecycleOriginal)!==false,'no-terminal-LF authorized_keys fixture must be seeded');
+chmod($lifecycleAuthorized,0600);
+$lifecycleGet=array_replace($common,['REQUEST_METHOD'=>'GET','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','HOME'=>$lifecycleHome]);
+[$lifecyclePage]=integration_run_role($root,'admin',$lifecycleGet);
+$lifecycleToken=integration_token($lifecyclePage);
+$lifecyclePost=static function(array $fields)use($common,$route,$lifecycleHome,$root):string{
+ $body=http_build_query($fields,'','&',PHP_QUERY_RFC1738);
+ $environment=array_replace($common,['REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','POST'=>$body,'CONTENT_LENGTH'=>(string)strlen($body),'HOME'=>$lifecycleHome]);
+ [$html]=integration_run_role($root,'admin',$environment);
+ return $html;
+};
+$duplicateAdd=$lifecyclePost(['csrf'=>$lifecycleToken,'public_key'=>$lifecycleEdMaterial.' another-comment','add_key'=>'1']);
+integration_expect(strpos($duplicateAdd,'Key already installed.')!==false,'actual admin role must deduplicate a key by public material even when its comment differs');
+integration_expect(file_get_contents($lifecycleAuthorized)===$lifecycleOriginal,'duplicate-key form must leave the no-final-LF existing line unchanged');
+$distinctAdd=$lifecyclePost(['csrf'=>$lifecycleToken,'public_key'=>$lifecycleRsaMaterial.' rsa-comment','add_key'=>'1']);
+integration_expect(strpos($distinctAdd,'Public key installed.')!==false,'actual admin role must report a successful checked atomic write');
+integration_expect(file_get_contents($lifecycleAuthorized)===$lifecycleOriginal."\n".$lifecycleRsaMaterial." rsa-comment\n",'actual role append must separate an unterminated prior line with LF');
+integration_expect((fileperms($lifecycleAuthorized)&0777)===0600&&fileowner($lifecycleAuthorized)===posix_geteuid(),'actual role key lifecycle must retain the account owner and mode 0600');
+$duplicateRecords=$lifecycleEdMaterial.' first-comment' ."\n".$lifecycleEdMaterial.' second-comment' ."\n".$lifecycleRsaMaterial.' rsa-comment' ."\n";
+integration_expect(file_put_contents($lifecycleAuthorized,$duplicateRecords)!==false,'actual role duplicate-fingerprint fixture must be seeded');
+chmod($lifecycleAuthorized,0600);
+$duplicateRemove=$lifecyclePost(['csrf'=>$lifecycleToken,'remove_key'=>'0']);
+integration_expect(strpos($duplicateRemove,'Key revoked.')!==false,'actual admin role must report successful fingerprint revocation');
+integration_expect(file_get_contents($lifecycleAuthorized)===$lifecycleRsaMaterial." rsa-comment\n",'actual role revocation must remove all comment variants of the selected key material');
+$outsideKeyFile=$fixture.'/outside-authorized-keys';
+integration_expect(file_put_contents($outsideKeyFile,'sentinel-do-not-change')!==false,'actual role outside-key sentinel must be created');
+integration_expect(unlink($lifecycleAuthorized)&&symlink($outsideKeyFile,$lifecycleAuthorized),'actual role unsafe authorized_keys symlink fixture must be created');
+$unsafeWrite=$lifecyclePost(['csrf'=>$lifecycleToken,'public_key'=>$lifecycleEdMaterial.' rejected-symlink','add_key'=>'1']);
+integration_expect(strpos($unsafeWrite,'Unable to update authorized_keys safely.')!==false,'actual admin role must report an unsafe-path write failure accurately');
+integration_expect(strpos($unsafeWrite,'Public key installed.')===false,'unsafe authorized_keys path must never be reported as a successful install');
+integration_expect(file_get_contents($outsideKeyFile)==='sentinel-do-not-change','actual role must not write through an authorized_keys symlink');
+integration_expect(strpos($unsafeWrite,'Public-key management unavailable')!==false,'unsafe key storage must render a safe recovery message instead of a PHP error');
+integration_expect(unlink($lifecycleAuthorized),'actual role symlink fixture must be removed from isolated HOME');
 
 function integration_expect_invalid_key(string $html,string $home,string $case):void{
  integration_expect(strpos($html,'Invalid public key format.')!==false,$case.' must be rejected as an invalid key line');

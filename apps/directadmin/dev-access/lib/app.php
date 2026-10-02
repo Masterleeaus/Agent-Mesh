@@ -376,19 +376,149 @@ function valid_pubkey($k){
  }
  return $offset===strlen($blob);
 }
-function ensure_ssh(){ $d=key_dir(); if(!is_dir($d) && !mkdir($d,0700,true) && !is_dir($d)) throw new RuntimeException('Unable to create .ssh directory.'); chmod($d,0700); if(!file_exists(key_file())) touch(key_file()); chmod(key_file(),0600); }
+function ensure_ssh(){
+ $identity=directadmin_identity_context();
+ if(!is_array($identity)||!isset($identity['uid'],$identity['home'])) throw new RuntimeException('DirectAdmin execution identity is unavailable.');
+ $uid=(int)$identity['uid'];$home=realpath($identity['home']);$directory=key_dir();
+ if($uid<=0||!$home||is_link($directory)) throw new RuntimeException('SSH key storage path is unsafe.');
+ if(!is_dir($directory)&&!@mkdir($directory,0700)) throw new RuntimeException('Unable to create .ssh directory.');
+ clearstatcache(true,$directory);$directoryStat=@lstat($directory);$realDirectory=realpath($directory);
+ if(!$directoryStat||(($directoryStat['mode']&0170000)!==0040000)||(int)$directoryStat['uid']!==$uid||$realDirectory!==$home.'/.ssh'||!@chmod($directory,0700)) throw new RuntimeException('SSH key storage path is unsafe.');
+ $file=key_file();$fileStat=@lstat($file);
+ if($fileStat===false){
+  $created=@fopen($file,'x+b');
+  if(is_resource($created)){@fclose($created);if(!@chmod($file,0600)) throw new RuntimeException('Unable to secure authorized_keys permissions.');}
+  clearstatcache(true,$file);$fileStat=@lstat($file);
+ }
+ if(!$fileStat||(($fileStat['mode']&0170000)!==0100000)||(int)$fileStat['uid']!==$uid||is_link($file)||!@chmod($file,0600)) throw new RuntimeException('authorized_keys is not a safe regular file.');
+ return true;
+}
+function directadmin_authorized_keys_lines($contents){
+ if(!is_string($contents)||$contents==='') return [];
+ $lines=preg_split('/\r\n|\n/',$contents);
+ if($lines===false) return [];
+ if($lines&&end($lines)==='') array_pop($lines);
+ return $lines;
+}
+function directadmin_authorized_key_identity($line){
+ if(!is_string($line)||$line===''||strlen($line)>16384||strpos($line,"\0")!==false) return null;
+ $tokens=[];$token='';$quoted=false;$escaped=false;$active=false;
+ for($i=0,$length=strlen($line);$i<$length;$i++){
+  $char=$line[$i];
+  if($escaped){$token.=$char;$escaped=false;$active=true;continue;}
+  if($quoted&&$char==='\\'){$token.=$char;$escaped=true;$active=true;continue;}
+  if($char==='"'){$quoted=!$quoted;$token.=$char;$active=true;continue;}
+  if(!$quoted&&($char===' '||$char==="\t")){
+   if($active){$tokens[]=$token;$token='';$active=false;}
+   continue;
+  }
+  if(preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$char)===1) return null;
+  $token.=$char;$active=true;
+ }
+ if($quoted||$escaped) return null;
+ if($active)$tokens[]=$token;
+ if(count($tokens)<2) return null;
+ $algorithms=['ssh-ed25519','ssh-rsa'];
+ foreach(['nistp256','nistp384','nistp521'] as $curve)$algorithms[]='ecdsa-sha2-'.$curve;
+ $offset=in_array($tokens[0],$algorithms,true)?0:(in_array($tokens[1]??null,$algorithms,true)?1:-1);
+ if($offset<0||!isset($tokens[$offset+1])||!valid_pubkey($tokens[$offset].' '.$tokens[$offset+1])) return null;
+ $blob=base64_decode($tokens[$offset+1],true);
+ if(!is_string($blob)) return null;
+ return ['identity'=>$tokens[$offset].':'.hash('sha256',$blob),'fingerprint'=>'SHA256:'.rtrim(base64_encode(hash('sha256',$blob,true)),'=')];
+}
+function directadmin_authorized_keys_lock(){
+ ensure_ssh();
+ $path=key_dir().'/.authorized_keys.lock';$stat=@lstat($path);
+ if($stat===false){
+  $created=@fopen($path,'x+b');
+  if(is_resource($created)){@fclose($created);if(!@chmod($path,0600)) throw new RuntimeException('Unable to secure authorized_keys lock.');}
+  clearstatcache(true,$path);$stat=@lstat($path);
+ }
+ $identity=directadmin_identity_context();$uid=is_array($identity)?(int)($identity['uid']??-1):-1;
+ if(!$stat||$uid<=0||(($stat['mode']&0170000)!==0100000)||(int)$stat['uid']!==$uid||is_link($path)) throw new RuntimeException('authorized_keys lock path is unsafe.');
+ $handle=@fopen($path,'r+b');
+ if(!is_resource($handle)) throw new RuntimeException('Unable to lock authorized_keys.');
+ $opened=@fstat($handle);$current=@lstat($path);
+ if(!$opened||!$current||(($opened['mode']&0170000)!==0100000)||(int)$opened['uid']!==$uid||$opened['dev']!==$current['dev']||$opened['ino']!==$current['ino']||!@chmod($path,0600)||!@flock($handle,LOCK_EX)){
+  @fclose($handle);throw new RuntimeException('Unable to lock authorized_keys.');
+ }
+ clearstatcache(true,$path);$after=@lstat($path);$locked=@fstat($handle);
+ if(!$after||!$locked||is_link($path)||$after['dev']!==$locked['dev']||$after['ino']!==$locked['ino']||(int)$after['uid']!==$uid){@flock($handle,LOCK_UN);@fclose($handle);throw new RuntimeException('authorized_keys lock changed unexpectedly.');}
+ return $handle;
+}
+function directadmin_authorized_keys_read(){
+ $path=key_file();$before=@lstat($path);$identity=directadmin_identity_context();$uid=is_array($identity)?(int)($identity['uid']??-1):-1;
+ if(!$before||$uid<=0||is_link($path)||(($before['mode']&0170000)!==0100000)||(int)$before['uid']!==$uid) throw new RuntimeException('authorized_keys is not a safe regular file.');
+ $handle=@fopen($path,'rb');
+ if(!is_resource($handle)) throw new RuntimeException('Unable to read authorized_keys.');
+ $opened=@fstat($handle);$current=@lstat($path);
+ if(!$opened||!$current||$opened['dev']!==$before['dev']||$opened['ino']!==$before['ino']||$current['dev']!==$opened['dev']||$current['ino']!==$opened['ino']||(int)$opened['uid']!==$uid){@fclose($handle);throw new RuntimeException('authorized_keys changed unexpectedly.');}
+ $contents=@stream_get_contents($handle,1048577);@fclose($handle);
+ if(!is_string($contents)||strlen($contents)>1048576) throw new RuntimeException('authorized_keys exceeds the supported size.');
+ $before['content_sha256']=hash('sha256',$contents);
+ return [$contents,$before];
+}
+function directadmin_authorized_keys_write_atomic($contents,$expectedStat){
+ if(!is_string($contents)||strlen($contents)>1048576||!is_array($expectedStat)||!is_string($expectedStat['content_sha256']??null)) return false;
+ $directory=realpath(key_dir());$path=key_file();$current=@lstat($path);$identity=directadmin_identity_context();$uid=is_array($identity)?(int)($identity['uid']??-1):-1;
+ if(!$directory||$uid<=0||!$current||is_link($path)||(($current['mode']&0170000)!==0100000)||(int)$current['uid']!==$uid||$current['dev']!==$expectedStat['dev']||$current['ino']!==$expectedStat['ino']) return false;
+ $temporary=@tempnam($directory,'.authorized_keys.');
+ if(!is_string($temporary)||realpath(dirname($temporary))!==$directory){if(is_string($temporary))@unlink($temporary);return false;}
+ $handle=@fopen($temporary,'wb');
+ if(!is_resource($handle)){@unlink($temporary);return false;}
+ $ok=@chmod($temporary,0600);$offset=0;$length=strlen($contents);
+ while($ok&&$offset<$length){$written=@fwrite($handle,substr($contents,$offset));if(!is_int($written)||$written<=0){$ok=false;break;}$offset+=$written;}
+ if($ok)$ok=@fflush($handle);
+ if($ok&&function_exists('fsync'))$ok=@fsync($handle);
+ if(!@fclose($handle))$ok=false;
+ clearstatcache(true,$temporary);$tempStat=@lstat($temporary);
+ if(!$ok||!$tempStat||(($tempStat['mode']&0170000)!==0100000)||(int)$tempStat['uid']!==$uid||(($tempStat['mode']&0777)!==0600)){@unlink($temporary);return false;}
+ try{[$latestContents,$latestStat]=directadmin_authorized_keys_read();}catch(Throwable $e){@unlink($temporary);return false;}
+ clearstatcache(true,$path);$beforeRename=@lstat($path);
+ if(!hash_equals($expectedStat['content_sha256'],hash('sha256',$latestContents))||$latestStat['dev']!==$expectedStat['dev']||$latestStat['ino']!==$expectedStat['ino']||!$beforeRename||is_link($path)||$beforeRename['dev']!==$expectedStat['dev']||$beforeRename['ino']!==$expectedStat['ino']||!@rename($temporary,$path)){@unlink($temporary);return false;}
+ clearstatcache(true,$path);$final=@lstat($path);
+ return $final!==false&&!is_link($path)&&(($final['mode']&0170000)===0100000)&&(int)$final['uid']===$uid&&(($final['mode']&0777)===0600);
+}
 function add_key($k){
  $k=is_string($k)?trim($k):'';
  if(!valid_pubkey($k)) return 'Invalid public key format.';
- ensure_ssh();
- $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[];
- if(in_array($k,$lines,true)) return 'Key already installed.';
- file_put_contents(key_file(),$k."\n",FILE_APPEND|LOCK_EX);
- chmod(key_file(),0600);
- return 'Public key installed.';
+ $lock=null;
+ try{
+  $lock=directadmin_authorized_keys_lock();[$contents,$stat]=directadmin_authorized_keys_read();$incoming=directadmin_authorized_key_identity($k);
+  if(!$incoming) return 'Invalid public key format.';
+  foreach(directadmin_authorized_keys_lines($contents) as $line){$existing=directadmin_authorized_key_identity($line);if($existing&&$existing['identity']===$incoming['identity'])return 'Key already installed.';}
+  $updated=$contents;if($updated!==''&&substr($updated,-1)!=="\n")$updated.="\n";$updated.=$k."\n";
+  if(!directadmin_authorized_keys_write_atomic($updated,$stat))return 'Unable to update authorized_keys safely.';
+  return 'Public key installed.';
+ }catch(Throwable $e){return 'Unable to update authorized_keys safely.';}
+ finally{if(is_resource($lock)){@flock($lock,LOCK_UN);@fclose($lock);}}
 }
-function remove_key($idx){ ensure_ssh(); if(!is_int($idx)||$idx<0) return 'Key not found.'; $lines=file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]; if(!isset($lines[$idx])) return 'Key not found.'; unset($lines[$idx]); file_put_contents(key_file(),$lines?implode("\n",$lines)."\n":'',LOCK_EX); chmod(key_file(),0600); return 'Key revoked.'; }
-function fingerprints(){ ensure_ssh(); $out=[]; foreach((file(key_file(),FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES)?:[]) as $i=>$k){ $tmp=tempnam(sys_get_temp_dir(),'tda'); if($tmp===false){$out[]=[$i,'fingerprint unavailable'];continue;} file_put_contents($tmp,$k."\n"); $fp=trim((string)shell_exec('ssh-keygen -lf '.escapeshellarg($tmp).' 2>/dev/null')); @unlink($tmp); $out[]=[$i,$fp?:'fingerprint unavailable']; } return $out; }
+function remove_key($idx){
+ if(!is_int($idx)||$idx<0) return 'Key not found.';
+ $lock=null;
+ try{
+  $lock=directadmin_authorized_keys_lock();[$contents,$stat]=directadmin_authorized_keys_read();$lines=directadmin_authorized_keys_lines($contents);$visible=[];
+  foreach($lines as $line)if($line!=='')$visible[]=$line;
+  if(!isset($visible[$idx]))return 'Key not found.';
+  $target=$visible[$idx];$targetIdentity=directadmin_authorized_key_identity($target);$removeIndex=null;$remaining=[];$visibleIndex=0;
+  foreach($lines as $line){
+   if($line===''){$remaining[]=$line;continue;}
+   $identity=directadmin_authorized_key_identity($line);$matches=$targetIdentity?($identity&&$identity['identity']===$targetIdentity['identity']):($visibleIndex===$idx);
+   if($matches){$removeIndex=$visibleIndex;}else{$remaining[]=$line;}
+   $visibleIndex++;
+  }
+  if($removeIndex===null)return 'Key not found.';
+  $updated=$remaining?implode("\n",$remaining)."\n":'';
+  if(!directadmin_authorized_keys_write_atomic($updated,$stat))return 'Unable to update authorized_keys safely.';
+  return 'Key revoked.';
+ }catch(Throwable $e){return 'Unable to update authorized_keys safely.';}
+ finally{if(is_resource($lock)){@flock($lock,LOCK_UN);@fclose($lock);}}
+}
+function fingerprints(){
+ ensure_ssh();$contents=@file_get_contents(key_file());if(!is_string($contents)||strlen($contents)>1048576)throw new RuntimeException('Unable to read authorized_keys safely.');
+ $out=[];$index=0;foreach(directadmin_authorized_keys_lines($contents) as $line){if($line==='')continue;$identity=directadmin_authorized_key_identity($line);$out[]=[$index++,$identity?$identity['fingerprint']:'fingerprint unavailable'];}
+ return $out;
+}
 function path_within($path,$root){
  $path=rtrim(str_replace('\\','/',(string)$path),'/'); $root=rtrim(str_replace('\\','/',(string)$root),'/');
  return $path===$root || ($root!=='' && strncmp($path,$root.'/',strlen($root)+1)===0);
@@ -838,10 +968,10 @@ function server_node_health(){
 function directadmin_ssh_access_script(){
  return <<<'JS'
 (function(){
- var host=document.getElementById("tda-ssh-host"),port=document.getElementById("tda-ssh-port"),
+ var host=document.getElementById("tda-ssh-host"),port=document.getElementById("tda-ssh-port"),alias=document.getElementById("tda-ssh-alias"),
   user=document.getElementById("tda-ssh-username"),command=document.getElementById("tda-ssh-command"),
   copy=document.getElementById("tda-ssh-copy"),copyStatus=document.getElementById("tda-ssh-copy-status");
- if(!host||!port||!user||!command||!copy)return;
+ if(!host||!port||!alias||!user||!command||!copy)return;
  function validHost(value){
   if(value.length===0||value.length>253)return false;
   return value.split(".").every(function(label){
@@ -849,14 +979,17 @@ function directadmin_ssh_access_script(){
   });
  }
  function update(){
-  var h=host.value.trim(),p=port.value.trim(),u=user.textContent.trim(),
-   ok=validHost(h)&&/^[0-9]{1,5}$/.test(p)&&Number(p)>=1&&Number(p)<=65535&&/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$/.test(u);
-  command.textContent=ok?"ssh -p "+String(Number(p))+" "+u+"@"+h:"Enter a valid SSH host and port to build the command.";
+  var a=alias.value.trim(),h=host.value.trim(),p=port.value.trim(),u=user.textContent.trim(),
+   aliasValid=/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$/.test(a),
+   directValid=validHost(h)&&/^[0-9]{1,5}$/.test(p)&&Number(p)>=1&&Number(p)<=65535&&/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$/.test(u),
+   ok=a!==""?aliasValid:directValid;
+  command.textContent=ok?(a!==""?"ssh "+a:"ssh -p "+String(Number(p))+" "+u+"@"+h):"Enter a valid SSH alias, or a valid SSH host and port, to build the command.";
   copy.disabled=!ok;
   return ok;
  }
  host.addEventListener("input",update);
  port.addEventListener("input",update);
+ alias.addEventListener("input",update);
  copy.addEventListener("click",function(){
   if(!update())return;
   var value=command.textContent;
@@ -875,9 +1008,11 @@ function directadmin_ssh_access_script(){
   }
   var text=raw.toLowerCase();
   if(/load key[^\r\n]*permission denied|bad permissions/.test(text)){
-   guidance.textContent="Local key-file access failed before server authentication. Check Windows permissions for the private-key file named by your SSH config; this does not show that the server rejected the public key.";
+   guidance.textContent="Local key-file access failed before server authentication. Check Windows permissions for the private-key file selected by your SSH alias or config; this does not show that the server rejected the public key.";
+  }else if(/no such identity|identity file[^\r\n]*(?:no such file|type -1)|load key[^\r\n]*no such file or directory/.test(text)){
+   guidance.textContent="The SSH client could not find the configured identity file locally. Check the IdentityFile path in your saved SSH alias/config. The server has not rejected this missing local key.";
   }else if(/permission denied\s*\(publickey\)/.test(text)){
-   guidance.textContent="The SSH server was reached, but it did not accept an offered key for this account. Check the installed public-key fingerprint and the DirectAdmin username, host and port.";
+   guidance.textContent="The SSH server was reached, but none of the keys offered by the client were accepted; the expected key may not have been selected. Check your alias IdentityFile/IdentitiesOnly settings, installed public-key fingerprint, DirectAdmin username, host and port.";
   }else if(/could not resolve hostname|name or service not known|temporary failure in name resolution/.test(text)){
    guidance.textContent="The hostname did not resolve. Check the SSH host value and workstation DNS or VPN.";
   }else if(/connection timed out|operation timed out/.test(text)){
@@ -900,15 +1035,15 @@ function directadmin_ssh_access_script(){
 })();
 JS;
 }
-function render_directadmin_ssh_access($info,$command,$canInspectKeys,$keys,$token){
+function render_directadmin_ssh_access($info,$command,$canInspectKeys,$keys,$token,$canMutate=false){
  echo '<div class="card" id="tda-server-access"><h3>Connect Codex to this server</h3><p>Use this guide to connect a development client from your workstation. The username comes from the validated DirectAdmin Unix account. The host uses the operator setting when present, otherwise the DirectAdmin panel server name; the port defaults to SSH port 22. Confirm the endpoint with your server administrator if SSH uses another address or port.</p>';
  echo '<div class="diag"><div><b>SSH username</b><br><code id="tda-ssh-username">'.h($info['username']?:'unavailable').'</code></div><div><b>Host source</b><br>'.h($info['host_source']).'</div><div><b>Port source</b><br>'.h($info['port_source']).'</div><div><b>Installed public keys</b><br>'.($canInspectKeys?h((string)count($keys)):'Admin role required to inspect fingerprints').'</div></div>';
- echo '<label for="tda-ssh-host">SSH host</label><input id="tda-ssh-host" value="'.h($info['host']).'" autocomplete="off" spellcheck="false" placeholder="server.example.com"><label for="tda-ssh-port">SSH port</label><input id="tda-ssh-port" type="number" min="1" max="65535" value="'.h($info['port']).'" inputmode="numeric">';
- echo '<p class="muted">These fields only build a command in this browser. They are not submitted or saved. The username is fixed to the current DirectAdmin Unix account.</p><p><b>Windows PowerShell command</b></p><code id="tda-ssh-command" style="display:block;padding:10px;border:1px solid var(--tda-border);border-radius:7px;overflow-wrap:anywhere">'.h($command?:'Enter a valid SSH host and port to build the command.').'</code><div class="copyrow"><button type="button" id="tda-ssh-copy"'.($command===''?' disabled':'').'>Copy connection command</button><span id="tda-ssh-copy-status" class="copy-status" aria-live="polite"></span></div>';
- echo '<div class="notice"><b>Setup steps</b><ol><li>Use the matching <b>public key</b> from your workstation. Compare its fingerprint with the installed fingerprint below.</li><li>Install only that public key with the admin-only form below.</li><li>From Windows PowerShell, run the copied command. If you use a saved SSH alias, you can keep using it; this portal cannot inspect your Windows SSH config.</li><li>Confirm an interactive SSH login from the workstation before treating server access as verified.</li></ol></div>';
- echo '<p class="muted">The portal cannot test a workstation private key or verify an end-to-end SSH login. It never asks for or reads a private key. If a saved Windows alias fails, run <code>ssh -v &lt;your-alias&gt;</code> locally and diagnose only the one-line error below; do not share private key contents or full verbose logs.</p>';
+ echo '<label for="tda-ssh-host">SSH host</label><input id="tda-ssh-host" value="'.h($info['host']).'" autocomplete="off" spellcheck="false" placeholder="server.example.com"><label for="tda-ssh-port">SSH port</label><input id="tda-ssh-port" type="number" min="1" max="65535" value="'.h($info['port']).'" inputmode="numeric"><label for="tda-ssh-alias">Saved SSH alias (optional)</label><input id="tda-ssh-alias" autocomplete="off" spellcheck="false" placeholder="titan">';
+ echo '<p class="muted">These fields only build a command in this browser. They are not submitted or saved. With an alias, the command is <code>ssh ALIAS</code> and Windows OpenSSH uses that alias's local <code>HostName</code>, <code>User</code>, <code>Port</code>, <code>IdentityFile</code> and <code>IdentitiesOnly</code> settings. The portal cannot inspect or modify your SSH config or key files. Without an alias, the username is fixed to this DirectAdmin account and the validated host/port are used.</p><p><b>Windows PowerShell command</b></p><code id="tda-ssh-command" style="display:block;padding:10px;border:1px solid var(--tda-border);border-radius:7px;overflow-wrap:anywhere">'.h($command?:'Enter a valid SSH alias, or a valid SSH host and port, to build the command.').'</code><div class="copyrow"><button type="button" id="tda-ssh-copy"'.($command===''?' disabled':'').'>Copy connection command</button><span id="tda-ssh-copy-status" class="copy-status" aria-live="polite"></span></div>';
+ echo '<div class="notice"><b>Setup steps</b><ol><li>Use the saved workstation alias that selects the matching key, if one is configured (for example, enter <code>titan</code> above). Compare the installed public-key fingerprint below.</li><li>If no alias selects the intended key, configure an approved local <code>IdentityFile</code> entry on the workstation or ask your endpoint administrator. Never paste or upload a private key.</li><li>Install only the matching public key with the admin-only form below.</li><li>From Windows PowerShell, run the copied command. Confirm an interactive SSH login before treating access as verified.</li></ol></div>';
+ echo '<p class="muted">The portal cannot test a workstation private key or verify an end-to-end SSH login. If a saved Windows alias fails, run <code>ssh -v &lt;your-alias&gt;</code> locally and diagnose only one error line below; do not share private-key contents or full verbose logs.</p>';
  echo '<label for="tda-ssh-error">Diagnose one OpenSSH error line</label><textarea id="tda-ssh-error" rows="3" maxlength="1000" placeholder="Paste one error line only. It is handled in this browser, not submitted or saved."></textarea><button type="button" id="tda-ssh-diagnose">Show guidance</button><p id="tda-ssh-guidance" class="notice" aria-live="polite">Guidance will appear here. No diagnostic text leaves this browser.</p>';
- echo '<p class="footer-note">For a local Windows <b>Load key: Permission denied</b> message, OpenSSH cannot read that private-key file before server authentication. Check local file permissions with <code>icacls "$env:USERPROFILE\\.ssh\\YOUR_KEY_FILE"</code>; if your Windows account lacks read access, use your endpoint administrator\'s approved repair process. For <b>Permission denied (publickey)</b>, compare the public-key fingerprint, DirectAdmin username, host and port. These errors have different causes.</p></div>';
+ echo '<p class="footer-note">For a local Windows <b>Load key: Permission denied</b> message, OpenSSH cannot read the selected private-key file before server authentication. Check local file permissions with <code>icacls "$env:USERPROFILE\\.ssh\\YOUR_KEY_FILE"</code>; if your Windows account lacks read access, use your endpoint administrator\'s approved repair process. A missing local identity path is a client configuration issue. For <b>Permission denied (publickey)</b>, the server was reached but did not accept an offered key; the expected identity may not have been selected. Compare the public-key fingerprint and check the alias <code>IdentityFile</code>/<code>IdentitiesOnly</code>, username, host and port.</p></div>';
  if($canInspectKeys){
   echo '<div class="card"><h3>Install a workstation public key</h3><p>Paste the single-line <code>.pub</code> public key that matches the private key on the workstation. This admin-only, CSRF-protected action writes only that public key to this DirectAdmin account\'s <code>authorized_keys</code>. Never paste a private key.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... workstation-key"></textarea><button name="add_key" value="1">Install public key</button></form>';
   if(!$keys) echo '<p>No public keys are installed for this account.</p>';
@@ -916,7 +1051,8 @@ function render_directadmin_ssh_access($info,$command,$canInspectKeys,$keys,$tok
    echo '<div class="keyrow"><b>'.h($fingerprint).'</b><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>';
   }
   echo '</div>';
- }else echo '<div class="card"><h3>Public-key management</h3><p class="muted">This DirectAdmin role is read-only. Ask an authorized admin to install the matching public key and compare fingerprints; no key material is displayed here.</p></div>';
+ }elseif($canMutate) echo '<div class="card"><h3>Public-key management unavailable</h3><p class="muted">SSH key storage is unsafe or unavailable. No key changes were made; ask the server administrator to repair this account storage through its approved process.</p></div>';
+ else echo '<div class="card"><h3>Public-key management</h3><p class="muted">This DirectAdmin role is read-only. Ask an authorized admin to install the matching public key and compare fingerprints; no key material is displayed here.</p></div>';
  echo '<script>'.directadmin_ssh_access_script().'</script>';
 }
 function redact_text($value){
@@ -977,7 +1113,8 @@ function render(){
   elseif(isset($_POST['run'])){[$output,$rc,$commandClass]=run_cmd(post_string('command',''),$cwd);}
  }
  $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();
- $keys=$canMutate?fingerprints():[];
+ $keyStorageAvailable=true;$keys=[];
+ if($canMutate){try{$keys=fingerprints();}catch(Throwable $e){$keys=[];$keyStorageAvailable=false;if($msg==='')$msg='SSH key storage is unsafe or unavailable. No SSH key changes were made.';}}
  $readiness=codex_readiness($cwd,$keys,$diag,$canMutate);$serverNode=server_node_health();$token=$canMutate?csrf():'';$fullDiag=diagnostics_report($diag,$keys,$readiness);
  $sshAccess=directadmin_ssh_connection_info();$sshCommand=directadmin_ssh_connection_command($sshAccess);
  echo '<style>
@@ -1016,7 +1153,7 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
  } else {
   echo '<div class="card"><h3>Operator actions</h3><p class="muted">Terminal and SSH key mutation are available only on the DirectAdmin admin route. This role is intentionally read-only.</p></div>';
  }
- render_directadmin_ssh_access($sshAccess,$sshCommand,$canMutate,$keys,$token);
+ render_directadmin_ssh_access($sshAccess,$sshCommand,$canMutate&&$keyStorageAvailable,$keys,$token,$canMutate);
  echo '<div class="card"><h3>Plugin Diagnostics</h3><p class="muted">Read-only support report. Tokens, secrets, passwords, cookies and private-key blocks are redacted.</p><div class="copyrow"><button type="button" onclick="tdaCopyDiagnostics()">Copy Full Diagnostics</button><span id="tda-copy-status" class="copy-status"></span></div><textarea id="tda-full-diagnostics" class="diagbox" readonly>'.h($fullDiag).'</textarea></div>';
  echo '<script>function tdaCopyDiagnostics(){var el=document.getElementById("tda-full-diagnostics"),status=document.getElementById("tda-copy-status"),text=el.value;if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(function(){status.textContent="Copied";}).catch(function(){el.focus();el.select();document.execCommand("copy");status.textContent="Copied";});}else{el.focus();el.select();try{document.execCommand("copy");status.textContent="Copied";}catch(e){status.textContent="Select all and copy manually";}}}</script>';
  echo '<div class="card"><h3>Safety boundary</h3><p class="footer-note">Developer Portal does not grant Titan business authority, root or sudo. Working directories are restricted to HOME and real descendants. Unknown or mutating commands fail closed and must use canonical governed execution elsewhere.</p></div></div>';
