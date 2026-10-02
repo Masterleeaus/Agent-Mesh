@@ -17,6 +17,17 @@ class TitanGenerativeItem {
     this.context = const {},
   });
 
+  TitanGenerativeItem copyWith({Map<String, dynamic>? context}) {
+    return TitanGenerativeItem(
+      type: type,
+      title: title,
+      subtitle: subtitle,
+      fields: fields,
+      actions: actions,
+      context: context ?? this.context,
+    );
+  }
+
   factory TitanGenerativeItem.fromJson(Map<String, dynamic> json) {
     final rawType = (json['type'] ?? 'notice').toString();
     final type = TitanGenerativeType.values.firstWhere(
