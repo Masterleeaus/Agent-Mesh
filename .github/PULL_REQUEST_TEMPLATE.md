@@ -3,6 +3,9 @@
 > Required mission claim: exactly `agent/issue-<issue-number>`. One mission, one branch through review and merge.
 
 **Linked issue:** Refs #
+**Parent issue:** Refs #<parent, or none>
+**Delivery scope:** child slice / subproduct completion
+**Subproduct gate:** defer / run
 **Subgoal ID:** <optional roadmap traceability; not a claim>
 **Claim branch:** `agent/issue-<issue-number>`
 **Base main SHA:** `...`
@@ -29,7 +32,8 @@ List the existing packages/services/contracts reused. If a new abstraction was a
 -
 
 ### Verification
-**Required tier:** 0 / 1 / 2 / 3
+**Slice verification tier:** 0 / 1 / 2 / 3
+**Parent-level checks deferred:** <list or none>
 
 Exact commands executed:
 ```text
@@ -40,8 +44,9 @@ Results:
 - [ ] Targeted tests passed
 - [ ] Relevant lint/typecheck/build passed
 - [ ] Integration checks passed when cross-boundary
-- [ ] `pnpm gate:fast` passed when required/supported
-- [ ] `pnpm gate` passed when Tier 3 and supported
+- [ ] Slice-level compile/build/smoke passed
+- [ ] Focused negative/migration check passed when a protected boundary changed
+- [ ] Full `pnpm gate:fast` / `pnpm gate` run only when `Subproduct gate: run` or required by this slice's risk
 - [ ] Failure/negative paths were tested where relevant
 - [ ] Any unrun required check is documented below with exact blocker and residual risk
 
@@ -63,12 +68,7 @@ Unrun/blocked checks and residual risk:
 - [ ] Verification invalidated by conflict resolution was rerun
 
 ### Completion evidence
-Start non-closing. Keep `Refs` while any mission requirement or required check is
-unproven. For a complete mission candidate, change the linked relationship to
-`Closes`, set `mode` to `complete`, and map every current issue requirement. If a
-small separate blocker remains, keep this PR at `Refs`/`partial`, link the successor
-issue preserving every unmet criterion, and follow the post-merge handoff sequence
-in root `AGENTS.md`; do not represent it as full mission completion.
+Start with `Refs`. A completed child slice may change this to `Closes #child` and `mode: complete` when all child criteria pass; keep the parent under `Parent issue: Refs #parent`. This closes only the child. A parent PR may close the parent only after the full subproduct gate passes. Use `Subproduct gate: run` to invoke broad Titan CI. Record checks actually run and list deferred parent checks without claiming they passed.
 See [the evidence format and review contract](../docs/agent/MISSION_CLOSURE_EVIDENCE.md).
 
 ```mission-evidence
@@ -88,19 +88,9 @@ See [the evidence format and review contract](../docs/agent/MISSION_CLOSURE_EVID
 }
 ```
 
-For each criterion, use an object with `criterion`, `implementation` (path array),
-and `checks` (check ID array). Each check has `id`, `command`, `result`, `evidence`,
-`required` (boolean), and `kind`. Copy exact current issue text; record actual
-commands and outcomes, never assumed passes. Required/unrun/live-host checks keep
-the mission open. Link any handoff successor before merge without dropping any original acceptance
-requirement. After merge, record delivery and remaining scope on the original issue
-before closing it administratively.
+For each criterion, use an object with `criterion`, `implementation` (path array), and `checks` (check ID array). Each check has `id`, `command`, `result`, `evidence`, `required` and `kind`. Map the linked child issue for a slice or the full parent issue for a subproduct completion. Record commands and outcomes actually observed. Parent-level tests may be listed as deferred on a child PR; never claim they passed.
 
-Human reviewer: compare evidence with the full current issue and Done condition.
-A green format check or checkbox alone cannot prove semantic completion and does
-not authorize closure. Confirm actual implementation, executed verification,
-justified live-host applicability, residual risks and current scope before approval.
-
+Review the linked scope. A green format check cannot prove semantic completion. Confirm implementation, required slice checks, deferred parent checks, risk and compatibility before approval.
 ### Risk / compatibility / rollback
 Describe migrations, compatibility implications, rollback path, security/privacy/cost impact, and any separately tracked follow-up.
 
