@@ -1,0 +1,69 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { readFile } from 'node:fs/promises';
+import { workState, verifiedOutcome } from '../images/presentation.mjs';
+const source = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8')).replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
+const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const context = () => ({ company_id: 'company-a', actor_id: 'actor-a', session_revision: '1' });
+function fixture() {
+  const calls = [];
+  return { calls, context: async () => context(), discover: async () => ({ company_id: 'company-a', workers: [] }), status: async () => ({ company_id: 'company-a', work: [] }), control: async (ctx, action) => { calls.push(action); return { company_id: ctx.company_id, state: 'PROVIDER_ACKNOWLEDGED' }; } };
+}
+test('loads actual transport projections and submits once without optimistic success', async () => {
+  const api = fixture(); const model = new WorkforceController(api); await model.connect();
+  assert.equal(model.state.phase, 'ready');
+  await Promise.all([model.submit({ action: 'pause', work_id: 'w1' }), model.submit({ action: 'pause', work_id: 'w1' })]);
+  assert.equal(api.calls.length, 1); assert.equal(model.state.receipt.state, 'PROVIDER_ACKNOWLEDGED');
+  assert.equal(verifiedOutcome(model.state.receipt), false);
+});
+test('rejects cross-company root and nested data and clears prior projections', async () => {
+  for (const payload of [{ company_id: 'company-b' }, { company_id: 'company-a', workers: [{ company_id: 'company-b', worker_id: 'private-b' }] }]) {
+    const api = fixture(); api.discover = async () => payload; const model = new WorkforceController(api); await model.connect();
+    assert.equal(model.state.phase, 'denied'); assert.equal(model.state.discovery, null); assert.doesNotMatch(JSON.stringify(model.state), /private-b/);
+  }
+});
+test('revocation before submit prevents any action request', async () => {
+  const api = fixture(); const model = new WorkforceController(api); await model.connect();
+  api.context = async () => ({ ...context(), session_revision: '2' }); await model.submit({ action: 'resume' });
+  assert.equal(api.calls.length, 0); assert.equal(model.state.phase, 'denied'); assert.equal(model.state.context, null);
+});
+test('company switch discards in-flight prior company response', async () => {
+  const api = fixture(); let release;
+  api.discover = () => new Promise(resolve => { release = resolve; });
+  const model = new WorkforceController(api); const pending = model.connect(); await new Promise(resolve => setImmediate(resolve));
+  model.invalidate(); release({ company_id: 'company-a', workers: [{ company_id: 'company-a', worker_id: 'old-private' }] }); await pending;
+  assert.equal(model.state.discovery, null); assert.equal(model.state.phase, 'denied');
+});
+test('revocation while action in flight discards receipt', async () => {
+  const api = fixture(); let release; api.control = () => new Promise(resolve => { release = resolve; });
+  const model = new WorkforceController(api); await model.connect(); const pending = model.submit({ action: 'pause' });
+  await new Promise(resolve => setImmediate(resolve)); model.invalidate(); release({ company_id: 'company-a', state: 'VERIFIED' }); await pending;
+  assert.equal(model.state.receipt, null);
+});
+test('denied and unavailable responses erase data and redact errors', async () => {
+  for (const error of ['titan-api-http-403 secret=do-not-render', 'ECONNRESET internal-host=private']) {
+    const api = fixture(); const model = new WorkforceController(api); await model.connect(); api.control = async () => { throw Error(error); }; await model.submit({ action: 'pause' });
+    assert.equal(model.state.discovery, null); assert.equal(model.state.context, null); assert.doesNotMatch(JSON.stringify(model.state), /do-not-render|internal-host/);
+    assert.equal(model.state.phase, error.includes('403') ? 'denied' : 'unavailable');
+  }
+});
+test('completion/ACK/self-report cannot claim verified outcome', () => {
+  for (const state of ['COMPLETED', 'SUCCEEDED', 'PROVIDER_ACKNOWLEDGED']) {
+    assert.equal(verifiedOutcome({ state, verified: true, evidence_refs: ['e1'] }), false);
+    assert.notEqual(workState(state), 'Verified');
+  }
+  assert.equal(verifiedOutcome({ state: 'VERIFIED', verification: { status: 'VERIFIED' }, evidence_refs: ['e1'] }), true);
+  assert.equal(verifiedOutcome({ state: 'VERIFIED', verification: { status: 'VERIFIED' }, evidence_refs: [] }), false);
+});
+test('controls stay serialized until canonical refresh finishes', async () => {
+  const api = fixture(); const model = new WorkforceController(api); await model.connect(); let release;
+  api.status = () => new Promise(resolve => { release = resolve; });
+  const pending = model.submit({ action: 'pause' }); await new Promise(resolve => setImmediate(resolve));
+  assert.equal(model.state.phase, 'submitting'); await model.submit({ action: 'resume' }); assert.equal(api.calls.length, 1);
+  release({ company_id: 'company-a', work: [] }); await pending; assert.equal(model.state.phase, 'ready');
+});
+test('unsupported VERIFIED receipt never renders verified outcome', async () => {
+  const { receiptState } = await import('../images/presentation.mjs');
+  assert.match(receiptState({ state: 'VERIFIED' }), /unproven/);
+  assert.match(receiptState({ state: 'VERIFIED', verification: { status: 'VERIFIED' }, evidence_refs: [] }), /unproven/);
+});
