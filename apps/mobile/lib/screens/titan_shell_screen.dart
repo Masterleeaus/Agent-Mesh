@@ -50,7 +50,9 @@ class _TitanShellScreenState extends State<TitanShellScreen> {
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Titan Zero'), actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none)), IconButton(onPressed: () {}, icon: const Icon(Icons.person_outline))]),
     body: SafeArea(child: Column(children: [
-      _ContextCards(onTap: _quickAsk), const Divider(height: 1),
+      if (MediaQuery.viewInsetsOf(context).bottom == 0)
+        _ContextCards(onTap: _quickAsk),
+      const Divider(height: 1),
       Expanded(child: _turns.isEmpty ? const _EmptySurface() : ListView.builder(
         padding: const EdgeInsets.all(12), itemCount: _turns.length,
         itemBuilder: (context, i) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
