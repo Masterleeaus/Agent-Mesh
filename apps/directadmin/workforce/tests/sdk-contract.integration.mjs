@@ -49,6 +49,7 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
   // projection and owner below are controlled contract
   // fixtures, never production identity, authority or business data.
   const csrf = 'A'.repeat(43);
+  const bootstrapNonce = 'N'.repeat(43);
   const companyId = 'company-a';
   const bridgeContext = { schema: 'titan.directadmin.session/v1', actor_id: 'fixture-actor', company_id: companyId,
     company_ids: [companyId], context_revision: 'fixture-context-revision', session_revision: 1,
@@ -122,6 +123,14 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
       logout: async () => {} };
   } }, owners);
   const fetcher = async (path, init = {}) => {
+    if (new URL(path, 'https://panel.example.test').pathname === '/v1/directadmin/bootstrap') {
+      const headers = new Headers(init.headers);
+      assert.equal(init.method, 'POST');
+      assert.equal(init.body, '');
+      assert.equal(headers.get('x-titan-da-bootstrap-csrf'), bootstrapNonce);
+      return new Response(JSON.stringify({ csrf_token: csrf }), { status: 200,
+        headers: { 'content-type': 'application/json', 'set-cookie': '__Host-titan-da-session=fixture-session; Path=/; Secure; HttpOnly; SameSite=Strict' } });
+    }
     let body = init.body;
     if (tamperNextIntentScope && path.endsWith('/intents')) {
       tamperNextIntentScope = false;
@@ -133,7 +142,7 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
         'content-type': init.headers?.['Content-Type'] ?? '',
         'x-titan-csrf': init.headers?.['X-Titan-CSRF'] ?? '' } }));
   };
-  const session = new SDK.DirectAdminCockpitSession(() => csrf, fetcher, undefined);
+  const session = new SDK.DirectAdminCockpitSession(() => bootstrapNonce, fetcher, undefined);
   t.after(() => session.dispose());
   const controller = new WorkforceController(new WorkforceApi(session));
   const unsubscribe = session.subscribe(() => controller.invalidate());
