@@ -357,6 +357,27 @@ export async function compileMicroweberSiteDraft(values:readonly unknown[],verif
  const source_snapshot_hash=`sha256:${[...digest].map(byte=>byte.toString(16).padStart(2,"0")).join("")}`;
  return Object.freeze({schema:"titan.microweber-site-draft/v1",company_id:first.company_id,publication_id:first.publication_id,site_id:first.site_id,version:first.version,environment:first.environment,routes:Object.freeze(routes),pages:Object.freeze(pages),source_snapshot_hash,authority_granted:false});
 }
+export type MicroweberSitemapDraft=Readonly<{schema:"titan.microweber-seo-draft/v1";company_id:string;site_id:string;version:number;environment:"preview"|"live";sitemap_xml:string;robots_txt:string;authority_granted:false}>;
+/** Derives safe crawl metadata from an already verified site draft; never writes or publishes it. */
+export function createMicroweberSitemapDraft(value:unknown,canonical_origin:string):MicroweberSitemapDraft {
+ if(!record(value)||Object.keys(value).some(key=>!["schema","company_id","publication_id","site_id","version","environment","routes","pages","source_snapshot_hash","authority_granted"].includes(key)))throw new Error("microweber-sitemap-site-invalid");
+ if(value.schema!=="titan.microweber-site-draft/v1"||value.authority_granted!==false)throw new Error("microweber-sitemap-site-invalid");
+ const company_id=req(value.company_id,"company_id"),site_id=req(value.site_id,"site_id");
+ if(!Number.isInteger(value.version)||Number(value.version)<1||!["preview","live"].includes(String(value.environment)))throw new Error("microweber-sitemap-site-invalid");
+ if(!Array.isArray(value.routes)||value.routes.length===0||value.routes.length>100||!Array.isArray(value.pages)||value.pages.length!==value.routes.length)throw new Error("microweber-sitemap-site-invalid");
+ const routes=value.routes.map(safeRoute);
+ if(new Set(routes).size!==routes.length)throw new Error("microweber-sitemap-duplicate-route");
+ const pageRoutes=value.pages.map(page=>record(page)?safeRoute(page.route):(()=>{throw new Error("microweber-sitemap-site-invalid")})());
+ if(pageRoutes.length!==routes.length||pageRoutes.some(route=>!routes.includes(route)))throw new Error("microweber-sitemap-site-invalid");
+ if(typeof canonical_origin!=="string")throw new Error("microweber-sitemap-origin-invalid");
+ let origin:URL;
+ try{origin=new URL(canonical_origin);}catch{throw new Error("microweber-sitemap-origin-invalid");}
+ if(origin.protocol!=="https:"||origin.username||origin.password||origin.pathname!=="/"||origin.search||origin.hash||canonical_origin!==origin.origin)throw new Error("microweber-sitemap-origin-invalid");
+ const environment=value.environment as "preview"|"live";
+ const sitemap_xml=environment==="preview"?"":`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.slice().sort().map(route=>`<url><loc>${escapeHtml(new URL(route,origin).href)}</loc></url>`).join("")}</urlset>`;
+ const robots_txt=environment==="preview"?"User-agent: *\nDisallow: /\n":`User-agent: *\nAllow: /\nSitemap: ${origin.origin}/sitemap.xml\n`;
+ return Object.freeze({schema:"titan.microweber-seo-draft/v1",company_id,site_id,version:Number(value.version),environment,sitemap_xml,robots_txt,authority_granted:false});
+}
 export type BrandPublicationApproval=Readonly<{company_id:string;builder_document_id:string;revision:number;snapshot_hash:string;approved_by:string;approved_at:string}>;
 export type BrandSnapshotCurrentVerifier=(company_id:string,builder_document_id:string,revision:number,snapshot_hash:string)=>Promise<boolean>;
 export async function computeBrandPublicationIdempotencyKey(input:{company_id:string;site_id:string;version:number;environment:"preview"|"live"}):Promise<string> {
