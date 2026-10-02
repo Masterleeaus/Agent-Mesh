@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const ENABLED_PLUGINS = [
-  { id: "titan-server-node", source: "apps/directadmin/server-node", files: ["plugin.conf", "install.sh", "update.sh", "uninstall.sh", "health.sh", "runtime.mjs"] },
-  { id: "titan_dev_access", source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts"] },
+  { id: "titan-server-node", displayName: "titan-server-node", source: "apps/directadmin/server-node", files: ["plugin.conf", "install.sh", "update.sh", "uninstall.sh", "health.sh", "runtime.mjs"] },
+  { id: "titan_dev_access", displayName: "Developer Portal", legacyDisplayNames: { "1.2.0": "Titan Dev Access" }, source: "apps/directadmin/dev-access", files: ["plugin.conf", "README.md", "AGENTS.md", "admin", "reseller", "user", "hooks", "lib", "scripts"] },
 ];
 
 const executable = new Set(["admin/index.html", "reseller/index.html", "user/index.html", "install.sh", "update.sh", "uninstall.sh", "health.sh", "scripts/install.sh", "scripts/update.sh", "scripts/uninstall.sh"]);
@@ -37,8 +37,10 @@ function validateManifest(source, plugin) {
     return [line.slice(0, index), line.slice(index + 1)];
   }));
   if (fields.version && !/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(fields.version)) throw new Error(`${plugin.id}: invalid version`);
-  if (plugin.id === "titan-server-node" && fields.name !== plugin.id) throw new Error(`${plugin.id}: manifest id mismatch`);
-  if (plugin.id === "titan_dev_access" && !/^Titan Dev Access$/.test(fields.name || "")) throw new Error(`${plugin.id}: donor manifest identity changed`);
+  const expectedDisplayName = plugin.legacyDisplayNames?.[fields.version] ?? plugin.displayName;
+  if (typeof plugin.displayName !== "string" || !plugin.displayName || fields.name !== expectedDisplayName) {
+    throw new Error(`${plugin.id}: manifest display name mismatch`);
+  }
   return fields;
 }
 
