@@ -49,7 +49,11 @@ export class DirectAdminCockpitSession {
     });
     if (epoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
     if (!response.ok) {
-      if ([401, 403, 409].includes(response.status)) this.invalidate();
+      // A governed owner may return a typed 403 while the authenticated
+      // DirectAdmin context remains valid (for example, an unsupported
+      // Workforce action). Keep sibling consumers mounted; identity failures
+      // and context conflicts still purge the shared session.
+      if ([401, 409].includes(response.status)) this.invalidate();
       throw new Error(`directadmin-http-${response.status}`);
     }
     const result = await response.json();

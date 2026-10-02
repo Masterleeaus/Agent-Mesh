@@ -1,5 +1,5 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
-  matchesDirectAdminContextRevision, type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
+  directAdminBridgeFailureKind, matchesDirectAdminContextRevision, type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
 export type DirectAdminPluginId = 'titan_zero' | 'titan_workforce' | 'titan_operations' | 'titan_web';
@@ -56,6 +56,16 @@ function isUnsupportedWorkforceActionDenial(error: unknown): boolean {
     return false;
   }
 }
+function bridgeFailure(error: unknown): Response {
+  const kind = directAdminBridgeFailureKind(error);
+  if (kind === 'request-rejected') {
+    return json(401, { error: 'directadmin-session-rejected', read_only: true });
+  }
+  if (kind === 'session-rejected') {
+    return json(401, { error: 'directadmin-session-rejected', read_only: true }, DIRECTADMIN_CLEAR_SESSION_COOKIE);
+  }
+  return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+}
 async function body(request: Request): Promise<Record<string, unknown>> {
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json' || request.headers.has('content-encoding')) throw new Error('invalid-body');
   const reader = request.body?.getReader();
@@ -88,7 +98,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
   const handle = async (request: Request): Promise<Response> => {
     let session;
     try { session = await bridge.authenticate(request); }
-    catch { return json(401, { error: 'directadmin-session-rejected', read_only: true }); }
+    catch (error) { return bridgeFailure(error); }
     try {
       const url = new URL(request.url);
       if (url.search || url.hash) return json(400, { error: 'invalid-route' });
@@ -146,13 +156,10 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       return json(405, { error: 'method-not-allowed' });
     } catch (error) {
       // Never return exception messages, cookies, credentials or arbitrary provider diagnostics.
-      if (error instanceof Error && error.message === 'directadmin-session-rejected') {
-        return json(401, { error: 'directadmin-session-rejected', read_only: true });
-      }
       if (isUnsupportedWorkforceActionDenial(error)) {
         return json(403, { error: 'directadmin-workforce-action-unsupported', read_only: true });
       }
-      return json(503, { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+      return bridgeFailure(error);
     }
   };
   return async (request: Request): Promise<Response> => {

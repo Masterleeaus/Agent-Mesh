@@ -20,7 +20,7 @@ export const proof = { ...external, session_id: sessionId, device_id: 'device-1'
 export const expected = { company_id: 'company-a', audience: 'titan-directadmin:node-1' };
 export const csrf = b64(crypto.getRandomValues(new Uint8Array(32)));
 
-export async function fixture(t, { origin = ORIGIN, provider = external.provider } = {}) {
+export async function fixture(t, { origin = ORIGIN, provider = external.provider, sessionOverrides = {} } = {}) {
   const externalIdentity = { provider, subject: external.subject };
   const now = Math.floor(Date.now() / 1000) * 1000;
   let clock = now;
@@ -67,7 +67,8 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
     const payload = `${encode({ alg: 'EdDSA', typ: 'titan-session+jwt', kid: 'key-1', ...header })}.${encode({ ...claims, ...patch })}`;
     return `${payload}.${b64(await crypto.subtle.sign('Ed25519', privateKey, Buffer.from(payload)))}`;
   };
-  const bridge = new DirectAdminSessionBridge({ origin, audience: expected.audience, node_id: 'node-1', sessions });
+  const bridgeSessions = { ...sessions, ...sessionOverrides };
+  const bridge = new DirectAdminSessionBridge({ origin, audience: expected.audience, node_id: 'node-1', sessions: bridgeSessions });
   const request = (path = '/v1/directadmin/context', options = {}) => {
     const headers = new Headers({ origin, 'sec-fetch-site': 'same-origin', 'x-titan-csrf': csrf,
       cookie: `__Host-titan-da-session=${token}` });
@@ -92,6 +93,6 @@ export async function fixture(t, { origin = ORIGIN, provider = external.provider
       const latest = await revalidate(); effects.push({ intent, context: latest }); return { receipt_id: 'receipt-1' };
     },
   };
-  return { registry, sessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
+  return { registry, sessions, bridgeSessions, workforceVerifier, workforceKeys, policy, upstreamToken, upstreamKeys,
     loginFor, bridge, request, token, claims, sign, owners, effects, now, setClock: value => { clock = value; } };
 }

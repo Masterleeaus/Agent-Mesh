@@ -252,6 +252,31 @@ test('Workforce intent route keeps the owner typed denial while the DirectAdmin 
   assert.deepEqual(await response.json(), { error: 'directadmin-workforce-action-unsupported', read_only: true });
 });
 
+test('typed Workforce 403 keeps the shared browser context and sibling subscribers valid', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  class DirectAdminWorkforceActionDenied extends Error {
+    code = 'directadmin-workforce-action-unsupported';
+    status = 403;
+    constructor() { super('private unsupported-action details'); this.name = 'DirectAdminWorkforceActionDenied'; }
+  }
+  f.owners.requestIntent = async () => { throw new DirectAdminWorkforceActionDenied(); };
+  const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => gateway(f.request(path, {
+    method: init.method, headers: init.headers, ...(init.body === undefined ? {} : { body: init.body }),
+  })));
+  t.after(() => session.dispose());
+  await session.connect();
+  let invalidations = 0;
+  const unsubscribe = session.subscribe(() => { invalidations++; });
+  t.after(unsubscribe);
+  await assert.rejects(session.intent('titan_workforce', { company_id: 'company-a', actor_id: 'actor-1',
+    capability_id: 'workforce.inspect', operation_id: 'unsupported-1', correlation_id: 'unsupported-1', input: {} }),
+  /directadmin-http-403/);
+  assert.equal(invalidations, 0);
+  const projection = await session.projection('titan_workforce');
+  assert.equal(projection.company_id, 'company-a');
+  assert.equal(invalidations, 0);
+});
+
 test('a typed Workforce denial is suppressed when the DirectAdmin source is revoked in its callback', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   class DirectAdminWorkforceActionDenied extends Error {
@@ -299,6 +324,17 @@ test('company switch changes canonical revision and old credentials fail for eve
   assert.equal((await f.sessions.authenticate(token)).context.context_revision, current.context_revision);
   const auth = await f.bridge.authenticate(f.request(undefined, { headers: { cookie: `__Host-titan-da-session=${token}` } }));
   assert.deepEqual(auth.context.company_ids, ['company-b']);
+});
+
+test('gateway clears a canonically rejected session but does not clear cookies for an origin rejection', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  await f.registry.revokeSession(proof.session_id, 1);
+  const revoked = await gateway(f.request());
+  assert.equal(revoked.status, 401);
+  assert.match(revoked.headers.get('set-cookie') ?? '', /__Host-titan-da-session=;.*Max-Age=0/);
+  const crossOrigin = await gateway(f.request(undefined, { headers: { origin: 'https://attacker.test' } }));
+  assert.equal(crossOrigin.status, 401);
+  assert.equal(crossOrigin.headers.get('set-cookie'), null);
 });
 
 test('revocation while a canonical read is pending suppresses the returned company data', async t => {
@@ -463,6 +499,89 @@ test('logout revokes durable current session rather than only removing a client 
   await assert.rejects(f.bridge.authenticate(f.request()), /session-rejected/);
 });
 
+test('an unavailable canonical authentication service returns a redacted 503', async t => {
+  const f = await fixture(t, { sessionOverrides: {
+    authenticate: async () => { throw new Error(`sqlite-path=/private/db; credential=${f.token}`); },
+  } });
+  const response = await createDirectAdminGateway(f.bridge, f.owners)(f.request());
+  assert.equal(response.status, 503);
+  const text = await response.text();
+  assert.deepEqual(JSON.parse(text), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal(text.includes(f.token), false);
+});
+
+test('Workforce exchange service failure is a redacted 503 while the source session remains usable', async t => {
+  const f = await fixture(t, { sessionOverrides: {
+    exchangeWorkforceZero: async () => { throw new Error(`bearer=${f.token}; db=/private/path`); },
+  } });
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, withWorkforceZeroSession) =>
+    withWorkforceZeroSession(async () => ({ receipt_id: 'never-issued' }));
+  const response = await gateway(f.request('/v1/directadmin/titan_zero/intents', post(intentBody(f))));
+  assert.equal(response.status, 503);
+  const text = await response.text();
+  assert.deepEqual(JSON.parse(text), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(text.includes(f.token), false);
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal((await gateway(f.request())).status, 200);
+  assert.equal((await f.sessions.authenticate(f.token)).context.company_id, 'company-a');
+});
+
+test('company-switch service failure returns 503 without rotating or clearing the source session', async t => {
+  const f = await fixture(t, { sessionOverrides: {
+    switchCompany: async () => { throw new Error(`secret=${f.token}; storage=unavailable`); },
+  } });
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const response = await gateway(f.request('/v1/directadmin/company', post({ company_id: 'company-b' })));
+  assert.equal(response.status, 503);
+  const text = await response.text();
+  assert.deepEqual(JSON.parse(text), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(text.includes(f.token), false);
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal((await gateway(f.request())).status, 200);
+  assert.equal((await f.sessions.authenticate(f.token)).context.company_id, 'company-a');
+});
+
+test('logout revocation service failure returns 503 without clearing a still-valid session cookie', async t => {
+  const f = await fixture(t, { sessionOverrides: {
+    revoke: async () => { throw new Error(`session=${f.token}; sqlite=/private`); },
+  } });
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const response = await gateway(f.request('/v1/directadmin/logout', post({})));
+  assert.equal(response.status, 503);
+  const text = await response.text();
+  assert.deepEqual(JSON.parse(text), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(text.includes(f.token), false);
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal((await gateway(f.request())).status, 200);
+  assert.equal((await f.sessions.authenticate(f.token)).context.company_id, 'company-a');
+});
+
+for (const [operation, sessionMethod, path] of [
+  ['exchange', 'exchangeWorkforceZero', '/v1/directadmin/titan_zero/intents'],
+  ['company switch', 'switchCompany', '/v1/directadmin/company'],
+  ['logout', 'revoke', '/v1/directadmin/logout'],
+]) test(`${operation} canonical denial is revalidated and reported as unavailable when the source remains active`, async t => {
+  const f = await fixture(t, { sessionOverrides: {
+    [sessionMethod]: async () => { throw new Error('authentication-denied'); },
+  } });
+  const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  if (sessionMethod === 'exchangeWorkforceZero') {
+    f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, withWorkforceZeroSession) =>
+      withWorkforceZeroSession(async () => ({ receipt_id: 'never-issued' }));
+  }
+  const options = sessionMethod === 'exchangeWorkforceZero' ? post(intentBody(f))
+    : sessionMethod === 'switchCompany' ? post({ company_id: 'company-b' }) : post({});
+  const response = await gateway(f.request(path, options));
+  assert.equal(response.status, 503);
+  const text = await response.text();
+  assert.deepEqual(JSON.parse(text), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal((await gateway(f.request())).status, 200);
+  assert.equal((await f.sessions.authenticate(f.token)).context.company_id, 'company-a');
+});
+
 test('cross-tab invalidation clears every mounted consumer without accepting a supplied company', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const channel = { onmessage: null, postMessage() {}, close() {} };
@@ -552,7 +671,7 @@ test('a signing-disabled canonical service can read but cannot switch company', 
   const sessions = createSessionCredentialService({ ...f.policy, signing_key: undefined });
   const bridge = new DirectAdminSessionBridge({ origin: ORIGIN, node_id: 'node-1', audience: expected.audience, sessions });
   const auth = await bridge.authenticate(f.request(undefined, { method: 'POST' }));
-  await assert.rejects(auth.switchCompany('company-b'), /session-rejected/);
+  await assert.rejects(auth.switchCompany('company-b'), /service-unavailable/);
   assert.equal((await auth.revalidate()).company_id, 'company-a');
 });
 
