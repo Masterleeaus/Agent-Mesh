@@ -81,12 +81,19 @@ class GovernanceContractTests(unittest.TestCase):
             writer.write_text('await db.query("INSERT INTO accepted_evidence (id) VALUES (?)")')
             fact_writer = root / 'services/workforce/outcome-store.ts'
             fact_writer.write_text('await db.query("INSERT INTO business_facts (id) VALUES (?)")')
+            history_writer = root / 'apps/web/status-history.ts'
+            history_writer.parent.mkdir(parents=True)
+            history_writer.write_text('await db.query("INSERT INTO status_history (id) VALUES (?)")')
+            ui = root / 'apps/web/status-form.tsx'
+            ui.write_text('// Update status after save')
             builder = root / 'packages/evidence-presentation.ts'
             builder.parent.mkdir(parents=True)
             builder.write_text('export function buildEvidenceView(input) { return input }')
             found = guard.active_evidence_sources(root)
         self.assertIn('services/workforce/evidence-store.ts', found)
         self.assertIn('services/workforce/outcome-store.ts', found)
+        self.assertIn('apps/web/status-history.ts', found)
+        self.assertNotIn('apps/web/status-form.tsx', found)
         self.assertNotIn('packages/evidence-presentation.ts', found)
 
 
