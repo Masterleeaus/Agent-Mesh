@@ -2,7 +2,7 @@
   "goal_id": "TZ-ROADMAP-04",
   "priority": "P1",
   "title": "Planning & Goal Management",
-  "objective": "Give Titan Zero persistent goals, projects, milestones and adaptive execution plans.",
+  "objective": "Give Titan Zero persistent goals, projects, milestones and adaptive execution plans, including customer-facing Missions that can create bounded temporary workspaces, interfaces, workforce scopes, integrations and verified completion/retirement lifecycles.",
   "status": "PLANNED",
   "subgoals": [
     {
@@ -158,7 +158,7 @@
       }
     },
     {
-      "title": "Define goal hierarchy and lifecycle",
+      "title": "Define the canonical goal/project/Mission hierarchy and lifecycle, including DRAFT→PLANNING→READY→ACTIVE→CLOSING→VERIFIED→ARCHIVED plus pause/cancel/failure semantics",
       "status": "TODO",
       "subgoal_order": 2,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -296,7 +296,7 @@
       }
     },
     {
-      "title": "Implement goal decomposition into milestones/actions",
+      "title": "Implement goal decomposition into milestones/actions and Mission workspaces with scoped workflows, temporary interfaces, forms/checklists, completion criteria and exception handling",
       "status": "TODO",
       "subgoal_order": 3,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -448,7 +448,7 @@
       }
     },
     {
-      "title": "Connect goals to agents, CRM entities and schedules",
+      "title": "Connect goals and Missions to canonical agents, workers, subcontractors, customers, assets, locations, schedules, budgets and company-scoped permissions without duplicating domain ownership",
       "status": "TODO",
       "subgoal_order": 4,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -583,7 +583,7 @@
       }
     },
     {
-      "title": "Add progress/evidence aggregation",
+      "title": "Add evidence-backed progress aggregation, machine-verifiable Mission completion, exception reasons, permanent-data promotion and archive/retirement receipts",
       "status": "TODO",
       "subgoal_order": 5,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -867,7 +867,7 @@
       }
     },
     {
-      "title": "Add re-planning on exceptions and changed constraints",
+      "title": "Add deterministic replanning on exceptions, changed constraints and event-triggered Mission creation/suggestion for recalls, emergencies, seasonal campaigns, expiring compliance and new contracts",
       "status": "TODO",
       "subgoal_order": 7,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -1018,7 +1018,7 @@
       }
     },
     {
-      "title": "Add user conversational plan editing",
+      "title": "Add conversational objective/Mission creation and editing so users describe outcomes while Titan derives scope, required data, workforce, interfaces, duration and completion conditions",
       "status": "TODO",
       "subgoal_order": 8,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -1302,7 +1302,7 @@
       }
     },
     {
-      "title": "Certify planning runtime and dashboards",
+      "title": "Certify planning and Mission runtime across ephemeral, campaign, standing and crisis Missions, including scoped identity/authority/integrations, verified outcomes and safe retirement",
       "status": "TODO",
       "subgoal_order": 10,
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
@@ -1455,7 +1455,11 @@
     }
   ],
   "affinity_tags": [
-    "planning"
+    "planning",
+    "missions",
+    "temporary-workspaces",
+    "verified-outcomes",
+    "ephemeral-workflows"
   ],
   "preferred_predecessors": [],
   "preferred_successors": [],

@@ -1,0 +1,786 @@
+{
+  "schema": "titan-repository-license-audit/v2",
+  "manifests": [
+    {
+      "path": "apps/browser/package.json",
+      "name": "titan-zero-browser-node",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "9757c9fdc907b33e0b62abb6073c4d852df732cabdaa496c6496ada8d6aac10d"
+    },
+    {
+      "path": "apps/browser/src/browser/agent-runtime/package.json",
+      "name": null,
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "a4710f8ad3d474b62fae39aa1ffff43b9c4d838894610972ede32fbbabc085fa"
+    },
+    {
+      "path": "apps/directadmin/server-node/package.json",
+      "name": "@titan-zero/server-node",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "0b2dc9d3556c30dbbbe309defb31f9c91e2be135ac1ec9a0fc096824e54c31d7"
+    },
+    {
+      "path": "apps/llm-plugin/package.json",
+      "name": "titan-zero-chatgpt-app",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "8376161a8627f21cc2fa9a672ef6cd1a849f5fff0c15ea557ae42c194e2b244a"
+    },
+    {
+      "path": "apps/marketing/fieldops/package.json",
+      "name": "titan-zero-marketing-fieldops",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "4bcda907d7dd02eeb6e08c0e7c7983fda788b9747e211b694275cf7480a82e09"
+    },
+    {
+      "path": "apps/marketing/nexjob/package.json",
+      "name": "titan-zero-field-services-marketing",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "8dfef3adbbf03511e1f75c7eaa5bcd07c172617e48d55b3460cd04ad27cd50d4"
+    },
+    {
+      "path": "apps/marketing/tradepilot/package.json",
+      "name": "titan-zero-marketing-tradepilot",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "1da53a40e56cf3c8a51fcc0c8d2bba3b6314708b049d91f93898ce9f75a6ea12"
+    },
+    {
+      "path": "apps/pwa/package.json",
+      "name": "@titan-zero/pwa",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "dafd854bcdf02e6b3be861eca8586646027b44639c54eceae158eb185ccc6ed7"
+    },
+    {
+      "path": "apps/web/marketing-source/fieldops/package.json",
+      "name": "fieldops-marketing-site",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "2b905abb4f233c5b02d3804f8f70e362515836f0b0399c6751cad6119e29d903"
+    },
+    {
+      "path": "apps/web/marketing-source/tradepilot/package.json",
+      "name": "tradepilot-waitlist",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "5c8c1b8337716c8c1aa488d72eba6f387808a2c08fa9989337a415883ef7451e"
+    },
+    {
+      "path": "apps/web/package.json",
+      "name": "@titan-zero/web",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "25d1d3f54912e57e5d80892e71c0cc5c4e7c3e5047e54622468801e5fe6fdf26"
+    },
+    {
+      "path": "package.json",
+      "name": "titan-zero",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "b8d975a66b50c523615ffc3b35ec23995e636eb7b800cda815415cc6f189595a"
+    },
+    {
+      "path": "packages/domain/package.json",
+      "name": "@titan-zero/domain",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "60a9b5e8af31a90262011691d985b10e05ada86b0407a554a57223cd68cfa826"
+    },
+    {
+      "path": "packages/email-templates/package.json",
+      "name": "@titan-zero/email-templates",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "f522cff7de36b80dae8c59dc0a3ec7695e12a459186c8a1866f785dfae907b82"
+    },
+    {
+      "path": "packages/log/package.json",
+      "name": "@titan-zero/log",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "4b13aa9adb84540bdac68afc34fc8588992b92d0486885b500e07a7164e97972"
+    },
+    {
+      "path": "packages/money/package.json",
+      "name": "@titan-zero/money",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "183b675c0cb4d235e9a2f159790b3e628cacbde457f3beeec66b0cb214017e2b"
+    },
+    {
+      "path": "packages/storage/package.json",
+      "name": "@titan-zero/storage",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "cee710b2b5e027dc723926d819dedd0586a85212e045379b6ba6e1f249f90e65"
+    },
+    {
+      "path": "packages/titan-platform/package.json",
+      "name": "@titan-zero/titan-platform",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "becf3dce9c92f95a78c7083176d0935156d3351927485d2546601775e6cc6238"
+    },
+    {
+      "path": "packages/workforce/package.json",
+      "name": "@titan-zero/workforce-legacy",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "5f74323963b91ef7908b97b056d7f3fdb9563b90d7be4759bd3dd9a83f6b0471"
+    },
+    {
+      "path": "services/worker/package.json",
+      "name": "@titan-zero/worker",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "3c7221765b70ddf0a100df35487eba207ff5b782fcdf928997b48988dc537ea3"
+    },
+    {
+      "path": "services/workforce/package.json",
+      "name": "@titan-zero/workforce",
+      "private": true,
+      "license": "NOASSERTION",
+      "sha256": "b6bb193f2c87e0e7f72d96b555e93fa2ef3856dfd9d7774517381371fc8ca44a"
+    }
+  ],
+  "archive_inputs": [
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-01(1).zip",
+      "bytes": 9332832,
+      "sha256": "5c94db9c1b0a7b0ba1ff0b915f27f9312df244dac66e56ad00b98f079f8b908f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-02.zip",
+      "bytes": 819612,
+      "sha256": "632ef7f2eb7700107d10670eed9140eb73076f5287975790083e9c431197b7b0",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/T0GM-Master-v1.0.0-alpha.9-Operational-Step09-NO-LOSS-CONVERGED.zip",
+      "bytes": 1338849,
+      "sha256": "7f409a98c91eff0c343c3d874abeeab1d1b8aeb3b23ab56251d657250ed72192",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan AI Assurance Engine Master v2.3.3.zip",
+      "bytes": 317946,
+      "sha256": "104b828ffefa9fd560c0b10c25a3bc238690811db82759e4bd13b08bcc5d05af",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan AI Master v1.5.4.zip",
+      "bytes": 345721,
+      "sha256": "97c973dd26bb6e41765f7dd3157fe72677294e1afaa016ad01187b4f4504aa02",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan AI Vision Master v1.12.6.zip",
+      "bytes": 159244,
+      "sha256": "5b56e80f4b25a8450848b9a2e9b73d34264a45daeb24cc0156f6569e14a3127f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan AI Workforce Master v0.97.0-alpha.83.zip",
+      "bytes": 1359244,
+      "sha256": "5bf464a6bbc7c949ae1e4bacd22c4e73be15d58c85540d19e19cc77e3e9b1c72",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Forge Master v0.9.0-alpha.9.zip",
+      "bytes": 203278,
+      "sha256": "ec9371fbdc10f0eb6683101d34e11376259cc082e2fe32b0a84c8325e569609f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Investigation Workforce Master Step 25.zip",
+      "bytes": 5394641,
+      "sha256": "7b30d5cc46a1b027e5b74a5bd74bb2c5ce0051e6988380a89f15a593234f4185",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Locker Master v1.1.0-alpha.7.zip",
+      "bytes": 114906,
+      "sha256": "6c551f0ca698706bbbedbde241e1de175e56628548741383bfe1b9caf1faf294",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan MCP Master v1.5.14.zip",
+      "bytes": 200005,
+      "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Maps Intelligence Master v2.0.9.zip",
+      "bytes": 636043,
+      "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Model Council Master v1.0.0-rc.2.zip",
+      "bytes": 189736,
+      "sha256": "cfb9480cfbbe57fdc9eded5203ef78f4ef3e6d1e8f79fab48ac6863ec385b093",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Risk Engine Master v1.0.0-rc.4.zip",
+      "bytes": 323705,
+      "sha256": "9f434be5d91c9bca8749e677dc8e649685c6cb55691a6024f6649298c3fe7f18",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Shield Master v1.0.0-rc.3.zip",
+      "bytes": 259148,
+      "sha256": "630a139ee00751df858047993fd2f9b82bdae5436c2e29420302df59232d9bd8",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Solution Engineering Workforce Master Step 26.zip",
+      "bytes": 10790336,
+      "sha256": "85c139aab41f6395f9d6dd3ff297fba7f0e6abf8367957d6dc52abdb7c810c75",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03/library-masters/Titan Wisdom Engine Master v0.3.2.zip",
+      "bytes": 135440,
+      "sha256": "4abe56611b4418be43f0d3655a23494d3ca610ae872b10467fbe1c7832eda3d7",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-03.zip",
+      "bytes": 21148086,
+      "sha256": "ecd742d3fc30cecde216bdfaad2062753827f99959f54cdb03c0e84d7d1dc363",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/OnboardingPro Master v6.0.0-rc.4.zip",
+      "bytes": 347479,
+      "sha256": "a2330f9826e6da15612e8a782d3f71203dccab0636c7da26302d7a19ee6b7f42",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Assets Master v0.2.0-alpha.8.zip",
+      "bytes": 116348,
+      "sha256": "8778605b40a250c7979f28fbe8d3273bd692c945abadd62761606d7e3bab6a1a",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Bookings Quotes Master v1.1.1.zip",
+      "bytes": 176567,
+      "sha256": "ba3251684967132c1eb11e9ce1bffab4baa9440f16b148d1cf1f9c6b2ab43588",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan CRM Master Step 41.zip",
+      "bytes": 47841,
+      "sha256": "f71afd3fabfc2af8d72aca9000932b1913cf785895adcc51d853188e2a751c7e",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Field Master v1.0.12.zip",
+      "bytes": 307619,
+      "sha256": "64ad7c55e5a6de854058c341b6dc0cbeceb97f87937dcbf6b81f6bce6455e1f2",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Financial Engine Master v0.4.0.zip",
+      "bytes": 136785,
+      "sha256": "8c36b99bea0970e412682a222a264abc0d9e673910b8bf46d5548f68462db06f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Ledger Master v1.20.0-rc.5.zip",
+      "bytes": 381213,
+      "sha256": "57cdb5f97d12be58ad9f8703e316420b60d05d96b60d3b2f60dbd80f974a388d",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Omnichannel Master v4.0.0-rc.4.zip",
+      "bytes": 905712,
+      "sha256": "37a7e38f2672fcf3d8733036a4064fa06b7a1f35fecc561db462c1a3aea98cf4",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Payroll Master v0.1.0-rc.3.zip",
+      "bytes": 187352,
+      "sha256": "e55cc0587b5ec5f616cde7d55d29a3035ff621678100eef2482950d17cae5f05",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan People Master v1.0.0-rc.3.zip",
+      "bytes": 158983,
+      "sha256": "0b70acb066ab882c6a5300a0300181558e45e6a9069d2342558a3df695f55418",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Reach Agent Master v1.55.7.zip",
+      "bytes": 6990380,
+      "sha256": "3ba3d026e3abdefff566a973bbdfc15f04a8f119af39729b47a30145b234ecc8",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Reach Campaigns Master v4.55.5.zip",
+      "bytes": 266127,
+      "sha256": "7c3648696472cf6e45a518d9769b26b4a8f82b2ff6a93a407582fd2c34a07b0d",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Reach Flow Master v1.43.5.zip",
+      "bytes": 220553,
+      "sha256": "014c127fd6c3a5b93ac6160451674baefd1696d9f922d2c047c0cb9ec1cf2878",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Reach Pro Master v5.59.8.zip",
+      "bytes": 409070,
+      "sha256": "1628f81f05ff6c356026ca40ded341a952bdc977fd5c212e49e741d6d1a2b2d3",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04/Titan-Zero-Library-Bundle-04/Titan Time Attendance Master v0.1.8.zip",
+      "bytes": 164606,
+      "sha256": "4e68c4e1f173409a5816dbd134dedbb308e39fb225311c14d48f2c8409017c43",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-04.zip",
+      "bytes": 10213669,
+      "sha256": "fe7c1cd17b79f9bef8a7f939d2fe84e47b3a80445a6b717ac787efd03808558b",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Builder Master v0.10.2.zip",
+      "bytes": 578149,
+      "sha256": "e86475cb197cb25336dfcb3357a8a682b31ad7041bd47c2b703dbf8e2e7c9f3e",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Core Master v0.19.0-alpha.1.zip",
+      "bytes": 70933,
+      "sha256": "548ada16cf41157c516396cbe3df056e312c07086a2b5855f4692ab50f21c527",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Go Master v1.10.0.zip",
+      "bytes": 44596,
+      "sha256": "bbd7f36e92462c62a6f6c8cbbbe178fd3b5b592187e9d7b0dffc0eb8cd30970d",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Hub Master v1.0.0-alpha.8.zip",
+      "bytes": 53110,
+      "sha256": "13631ed5e0e661affcd86c66c7fd10e99434cf3656fcca95dcfbeefce3a77c5a",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Interaction Engine Master v10.12.0.zip",
+      "bytes": 807309,
+      "sha256": "481c4fce6292a623d1cad265093593a2c0b7a0fd50d049d8a4ce770b818a6219",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Interface Runtime Master v1.0.4-recovery.3.zip",
+      "bytes": 533575,
+      "sha256": "04a069e7abd08a2d0042be80e8df7100a12705a8a006163a4b52f9f6887f1963",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Visual Runtime Master v1.9.0.zip",
+      "bytes": 62993,
+      "sha256": "50ec413656feefdfea1b528789fd653976b552c5b8c77201cd7117d38f715907",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05.zip",
+      "bytes": 1902522,
+      "sha256": "dc9cac4bb58223d68b9473a818828c4af1fe15b4e64984480f33695a4bf6ec91",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan MCP Master v1.5.14.zip",
+      "bytes": 200005,
+      "sha256": "62526970da785c278d8e72553b94b8e59d96d63138fcee9ec3ba971d51d9324f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Maps Intelligence Master v2.0.9.zip",
+      "bytes": 636043,
+      "sha256": "2f9ecdc86e1c6aee335c452da8ecaffdf38b6ce5d147e02c699a268e7bfebe6d",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/orchestrator/Titan-AI-Workforce-v0.72.0-alpha.45-31-Provider-Full-Platform-Converged-Cumulative.zip",
+      "bytes": 1089757,
+      "sha256": "d84b60160698f1fbd6de18c00df61fe84a5868afd8aee9c21b3f5c79d4cb6b6c",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-AI-Assurance-Engine-v2.3.0-Pass6-Namespace-Isolation-Cumulative.zip",
+      "bytes": 373771,
+      "sha256": "a5af964427ae643644efd82a097a0e34ceca068a9068fc9d8ec79e39c0208340",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-AI-Core-v0.5.0-Pass5-Runtime-Availability-Handoff-Cumulative.zip",
+      "bytes": 109609,
+      "sha256": "1ba599369349b0ea084246f17d9f458b0f63162f2d320f7c54a7fd6a0eac5d2a",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-AI-Vision-v1.12.6-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 164177,
+      "sha256": "dd152bb3525047656beb669b9f2ed13c7ae0370b03899606f5514b7bdc891355",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-AI-v1.5.3-Pass6-Workforce-Identity-Boundary-Cumulative.zip",
+      "bytes": 386380,
+      "sha256": "10bbf4c6706fca124b1c0145377fbf0543b662ae92d547ebdf3ef94eadba196a",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Assets-v0.2.0-alpha.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "bytes": 128608,
+      "sha256": "1cf01bd7fe7cf40beaa0acefc91c38acf70917bb98ee8e8da0a7a5da3153c0c9",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Autonomy-v1.7.5-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 260143,
+      "sha256": "f1df29de599e36e82b7b77565251827a14079c2728a874ca901aa1def4db4976",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Bookings-Quotes-v0.1.0-alpha.2-Pass2-Booking-Engine-Cumulative.zip",
+      "bytes": 27880,
+      "sha256": "9dee7b76126528f732c3a8bec1ba48fa4a7df20f96125cff3ab3954a01d15753",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-CRM-v1.3.0-alpha.42-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "bytes": 854188,
+      "sha256": "9a2ebb607abff5a0af8d1e9c16aacac48bc499e235b426c65e6ee89563a892cf",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Command-Bus-v0.2.0-alpha.7-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "bytes": 101092,
+      "sha256": "a41812967540080c4bacbe058077eee12fdea85aec00b8760fc5c9bf8a2604f7",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Connect-v0.10.6-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "bytes": 299861,
+      "sha256": "6c9aa87498571f8dad111f9e980aff7859d9c03682f586ac1564a0403d4fa528",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Field-v1.0.12-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "bytes": 341204,
+      "sha256": "d09e8c8d4a0e4776cff0253612f96d30442b15f57055430663700e49ebe8cbcc",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Financial-Engine-v0.4.0-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "bytes": 125119,
+      "sha256": "38ffa756ca64797a1f821ab8a578a507b835f8db15794bc7075c56b16cdedb0c",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Forge-v0.9.0-alpha.8-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 278666,
+      "sha256": "b8e92661f80ea2c693e06b26ce44d57bdaecde661057a4ab6b7ad3afbeef9d34",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Governance-v1.0.0-rc.2-Pass5-Durable-Execution-Cumulative.zip",
+      "bytes": 318916,
+      "sha256": "d66cbc444f5ce796454bc62112c569a1e54b55212e94ac3fecfdae34b4520a6e",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Interaction-Engine-v10.3.2-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "bytes": 732482,
+      "sha256": "b625000458f5ada8574cbf06d1705dde2d11962ee82a0c0a95421689b05bf3d8",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Ledger-v1.20.0-rc.5-Pass5-Executable-Workforce-Contract-Cumulative.zip",
+      "bytes": 390187,
+      "sha256": "94fd80a17874fe4ae2bcbfdf55749c57df0c10a4012386416528c7f233f9d0a8",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Locker-v1.1.0-alpha.6-Pass6-Command-Bus-Convergence-Cumulative.zip",
+      "bytes": 102433,
+      "sha256": "3b12cbba25680e34ae9e5f352bfdc78698efb32fc1635c7f7dded2705a44f7af",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-MCP-v1.5.14-Agent06-Pass7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 226612,
+      "sha256": "1e4d79a2be5c9a24ce0476cd749c7c19d699f098d99cc8aa08be94a2de9f7da8",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Maps-Intelligence-v2.0.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "bytes": 743467,
+      "sha256": "060e40c97e6296672cfd09cd4a8f366e962cca973629094a0fa8a97e2c480e41",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Model-Council-v1.0.0-rc.1-Pass6-Assurance-Coexistence-Cumulative.zip",
+      "bytes": 311850,
+      "sha256": "5a38fa1cc443f7c3c5dff923485de28b0be5efcf70bba9e0e2f64a506f49c85a",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Payroll-v0.1.0-rc.2-Workforce31-Converged-Cumulative.zip",
+      "bytes": 300391,
+      "sha256": "e37cce9fc23cb91417d23fbd817393dbcf670a173a09c23893665db8cb2c6790",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-People-v1.0.0-rc.1-Workforce31-Converged-Cumulative.zip",
+      "bytes": 167546,
+      "sha256": "f4345b11154d69137ccd854c509f0485677587b053de3c87ce93172da55f2db7",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Prime-v0.4.0-Pass5-Runtime-Availability-Handoff-Cumulative.zip",
+      "bytes": 92039,
+      "sha256": "1e53c751050e6b815d01366f60f1319e594f6eb9dcebace817d98a8e9273d7a2",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Risk-Engine-v1.0.0-rc.3-Pass5-Durable-Execution-Cumulative.zip",
+      "bytes": 332826,
+      "sha256": "6a527075bda0e6ed5998100f7c0788a696fe69b5e6336faa125d78ba0003e44f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Shield-v1.0.0-rc.2-Pass5-Durable-Execution-Cumulative.zip",
+      "bytes": 287338,
+      "sha256": "7a2dad4020c4a5fec21e85abcace9cfd557c1066fa4c8b6edfff44310f91acce",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/Titan-Time-Attendance-v0.1.7-Pass6-DEEP-SCAN-FIXED-Cumulative.zip",
+      "bytes": 191526,
+      "sha256": "6cb01a6e894f3e2204c4e05fc8a894204a921347c96db1ab8db8450783545376",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/TitanKnowledgeAuthority-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 144692,
+      "sha256": "bd5d676353f0ca93f0f4b3ba939c35e9feb72f403fb444198d56594e7213138b",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/TitanNexus-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 323937,
+      "sha256": "9846a93d0233176167022232d35371b69e60300afe4c194e940b23abf091412f",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/TitanRewind-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 447224,
+      "sha256": "a95e12a326186e7b30fe5740c791561e022db7c6bd39252fb79d19a1e2c197eb",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/TitanSignalEngine-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 549033,
+      "sha256": "9834d63e2919101a1763a0c15b3033c544ac4599993d901b6afb1733143839cb",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/TitanTrust-v2.1.0-Workforce31-Converged-Cumulative.zip",
+      "bytes": 98877,
+      "sha256": "9b1d99fb266976ec05fe863f717e16dfbb4e8665fdbc1b29ac484748dba896e9",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/providers/TitanWisdomEngine-Production-Orchestration-Operations-v1.7-DeepScan-CompanyID-Cumulative.zip",
+      "bytes": 155256,
+      "sha256": "3019bb66d7225ae9a39cc7395ea58a93fc63a4db0c22c58f8b23a226c5fbab81",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14/Titan-Shared-Platform-Services-Step14/recovered-donors/quality-compliance/Titan-Quality-Compliance-Team-v0.8.0-Pass8-Production-Hardening-Final-Cumulative.zip",
+      "bytes": 3318274,
+      "sha256": "b674fe6887b7f1229ffebed39817420a18a90a5158ee700180865b4bceb49572",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Shared Platform Services Master Step 14.zip",
+      "bytes": 14327934,
+      "sha256": "18b5fe4696f61facc0882ba53da09a4f10dd46ec49b3b352e5f578aa1f23e116",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06/Titan Trust Master v2.1.0.zip",
+      "bytes": 113388,
+      "sha256": "7eb70047ec8874f0756c3c8883a415b01fc3e1aa1cf3e7c0d7d5c8bf317aeb74",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-06.zip",
+      "bytes": 14835205,
+      "sha256": "9729cc2fd3625ba42917e54040628a8098f0ef2ddcb265617c3dc2200c31b891",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-07/Titan Decision Engine Master Step 25.zip",
+      "bytes": 15689075,
+      "sha256": "3bda451db30aea3bd51fe1205a89ff68ef93e3cbde00f92c1b2810986836a70a",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-07.zip",
+      "bytes": 15550456,
+      "sha256": "e8293d6abb4165d0e7e9a0c00861d1d84774ec3f2929ae9d0afe7ccc0a417311",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/marketing-sites-extracted/marketing-sites-extracted/nexjob-marketing-main.zip",
+      "bytes": 61285,
+      "sha256": "aef255998b4789f01c4a584364c71643404cc473e1b705181ca8173b6189c8c5",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/marketing-sites-extracted/marketing-sites-extracted/tradepilot-waitlist-main.zip",
+      "bytes": 4031987,
+      "sha256": "a64ba30c41357a0cfdb71981b2020258cf065dbb26036ac53de6d2cce562e73b",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    },
+    {
+      "path": "archive/marketing-sites-extracted/marketing-sites-extracted/trydrafted-landing-main.zip",
+      "bytes": 94728,
+      "sha256": "70cb54f359829e522936e07321556a749f48c0b2cd2f1b895741c61a6b61d7b1",
+      "spdx": "NOASSERTION",
+      "redistribution_state": "uninspected_archive_content"
+    }
+  ],
+  "license_evidence": [
+    {
+      "path": "apps/browser/docs/third-party/OPENBROWSER-DONOR-NOTICE.md",
+      "bytes": 937,
+      "sha256": "0805803446d03c7acc11e1930d6e701d68168c771d802e9ae785fc0594bc30b9",
+      "observed_spdx": "MIT",
+      "rights_review": "required"
+    },
+    {
+      "path": "apps/browser/imports/browser-ai-subsystems-2026-09-21/subsystems/chrome-prompt-api/LICENSE",
+      "bytes": 1091,
+      "sha256": "9858c64479c15bcc3240856d5f1a08b7bc5dd4906c04d13ce813743fd50ab5d1",
+      "observed_spdx": "MIT",
+      "rights_review": "required"
+    },
+    {
+      "path": "archive/Titan-Zero-Usable-Code-Donor-Pack/Titan-Zero-Usable-Code-Donor-Pack/n8n-vh3ai/LICENSE",
+      "bytes": 1063,
+      "sha256": "8bb8990c4efbea79c80da41ed259c92737d9c94fa30d919369ca1f10850e1fda",
+      "observed_spdx": "MIT",
+      "rights_review": "required"
+    },
+    {
+      "path": "archive/library-masters/mobile/titan-zero-apps-v0.19.0-alpha.1/Titan-Zero-Library-Bundle-05/Titan Interaction Engine Master v10.12.0/third_party/adaptive-persona-engine/LICENSE",
+      "bytes": 1056,
+      "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685",
+      "observed_spdx": "MIT",
+      "rights_review": "required"
+    }
+  ]
+}

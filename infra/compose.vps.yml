@@ -63,6 +63,76 @@ services:
       - ${TZ_DATA_ROOT:?required}/uploads:/app/uploads
     networks: [app]
 
+  workforce:
+    build:
+      context: ..
+      dockerfile: services/workforce/Dockerfile
+    image: titan-zero-workforce:${APP_TAG:-latest}
+    restart: unless-stopped
+    env_file: ["${TZ_ENV_FILE:?required}"]
+    environment:
+      NODE_ENV: production
+      WORKFORCE_PORT: "3010"
+      WORKFORCE_SQLITE_PATH: /app/runtime/workforce.db
+      WORKFORCE_WEB_SQLITE_PATH: /app/web-data/titan-zero.db
+      WORKFORCE_DEPENDENCIES_MODULE: /app/services/workforce/src/production-dependencies.ts
+      WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE: ${WORKFORCE_DIRECTADMIN_DEPENDENCIES_MODULE:-}
+      WORKFORCE_IDENTITY_SQLITE_PATH: /app/runtime/identity.db
+      WORKFORCE_COMPANY_STORE_ROOT: /app/company-stores
+      WORKFORCE_DIRECTADMIN_NODE_ID: ${WORKFORCE_DIRECTADMIN_NODE_ID:?required}
+      WORKFORCE_SESSION_ISSUER: ${WORKFORCE_SESSION_ISSUER:?required}
+      WORKFORCE_SESSION_KEY_ID: ${WORKFORCE_SESSION_KEY_ID:?required}
+      WORKFORCE_SESSION_ALGORITHM: ${WORKFORCE_SESSION_ALGORITHM:?required}
+      WORKFORCE_UPSTREAM_SESSION_ISSUER: ${WORKFORCE_UPSTREAM_SESSION_ISSUER:?required}
+      WORKFORCE_UPSTREAM_SESSION_AUDIENCE: ${WORKFORCE_UPSTREAM_SESSION_AUDIENCE:?required}
+      WORKFORCE_UPSTREAM_SESSION_KEY_ID: ${WORKFORCE_UPSTREAM_SESSION_KEY_ID:?required}
+      WORKFORCE_UPSTREAM_SESSION_ALGORITHM: ${WORKFORCE_UPSTREAM_SESSION_ALGORITHM:?required}
+      WORKFORCE_SESSION_PUBLIC_KEY_PATH: /run/workforce-keys/workforce-session.pub.pem
+      WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_PATH: /run/workforce-keys/upstream-session.pub.pem
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+    ports:
+      - "127.0.0.1:${WORKFORCE_PORT:-3010}:3010"
+    depends_on:
+      redis: {condition: service_healthy}
+      web: {condition: service_healthy}
+    volumes:
+      - ${TZ_DATA_ROOT:?required}/runtime:/app/runtime
+      - type: bind
+        source: ${TZ_DATA_ROOT:?required}/sqlite/titan-zero.db
+        target: /app/web-data/titan-zero.db
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${WORKFORCE_COMPANY_STORE_HOST_ROOT:?required}
+        target: /app/company-stores
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${WORKFORCE_IDENTITY_SQLITE_HOST_PATH:?required}
+        target: /app/runtime/identity.db
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH:?required}
+        target: /run/workforce-keys/workforce-session.pub.pem
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH:?required}
+        target: /run/workforce-keys/upstream-session.pub.pem
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3010/ready >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks: [app]
+
 volumes:
   titan_zero_redis:
 networks:

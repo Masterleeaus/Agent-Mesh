@@ -7,6 +7,16 @@ import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
+type PeriodCloseRow = {
+  id: string;
+  account_id: string;
+  period_month: string;
+  closed_by: string;
+  closed_at: string | Date;
+  notes: string | null;
+};
+
+
 // ---------------------------------------------------------------------------
 // GET /api/v1/reports/period-closes?month=YYYY-MM
 // Returns whether the given month is closed for the current account.
@@ -40,7 +50,7 @@ export const GET = withAuth(async (request: NextRequest, session) => {
 
   try {
     const row = await withReportContext(session, async (client) => {
-      const result = await client.query(
+      const result = await client.query<PeriodCloseRow>(
         `SELECT id, account_id, period_month, closed_by, closed_at, notes
          FROM period_closes
          WHERE account_id = $1 AND period_month = $2
@@ -119,7 +129,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   try {
     const close = await withReportContext(session, async (client) => {
       // Check for existing close
-      const existing = await client.query(
+      const existing = await client.query<{ id: string }>(
         `SELECT id FROM period_closes WHERE account_id = $1 AND period_month = $2`,
         [session.accountId, month]
       );
@@ -129,14 +139,14 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
         });
       }
 
-      const result = await client.query(
+      const result = await client.query<PeriodCloseRow>(
         `INSERT INTO period_closes (account_id, period_month, closed_by, notes)
          VALUES ($1, $2, $3, $4)
          RETURNING id, account_id, period_month, closed_by, closed_at, notes`,
         [session.accountId, month, session.userId, notes ?? null]
       );
 
-      const row = result.rows[0];
+      const row = result.rows[0]!;
 
       await appendAuditLog(client, {
         account_id: session.accountId,

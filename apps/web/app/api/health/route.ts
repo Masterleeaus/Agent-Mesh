@@ -17,7 +17,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { getPool } from "@/lib/db";
+import { portableQuery } from "@/lib/db/portable";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +37,7 @@ interface HealthResponse {
 
 async function checkDb(): Promise<CheckStatus> {
   try {
-    await getPool().query("SELECT 1");
+    await portableQuery("SELECT 1");
     return "ok";
   } catch (err) {
     logger.error("health: db check failed", err);

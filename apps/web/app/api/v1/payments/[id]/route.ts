@@ -1,3 +1,9 @@
+/**
+ * Financial-history compatibility warning:
+ * This legacy route physically deletes payment state after a role check. It is
+ * not the canonical finance correction model. Migrate to governed immutable
+ * reversal/void/refund/adjustment semantics preserving evidence and audit history.
+ */
 import { NextResponse } from "next/server";
 import { withRole } from "@/lib/auth/middleware";
 import { withInvoiceContext } from "@/lib/invoices/db";

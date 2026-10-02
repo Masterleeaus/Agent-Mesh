@@ -31,6 +31,28 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+type ExpenseDetailRow = {
+  id: string;
+  vendor_name: string;
+  category: string;
+  amount_cents: number;
+  expense_date: string | Date;
+  job_id: string | null;
+  client_id: string | null;
+  property_id: string | null;
+  vehicle_id: string | null;
+  notes: string | null;
+  receipt_url: string | null;
+  created_by: string;
+  created_at: string | Date;
+  updated_at: string | Date;
+  job_title: string | null;
+  client_name: string | null;
+  vehicle_nickname: string | null;
+  fuel_gallons: number | null;
+  fuel_odometer: number | null;
+};
+
 export default async function ExpenseDetailPage({ params }: PageProps) {
   const { id } = await params;
   const session = await getSession();
@@ -39,7 +61,7 @@ export default async function ExpenseDetailPage({ params }: PageProps) {
   const canManage = canManageExpenses(session.role);
 
   const expense = await withExpenseContext(session, async (client) => {
-    const result = await client.query(
+    const result = await client.query<ExpenseDetailRow>(
       `SELECT e.id, e.vendor_name, e.category, e.amount_cents,
               e.expense_date, e.job_id, e.client_id, e.property_id, e.vehicle_id,
               e.notes, e.receipt_url, e.created_by, e.created_at, e.updated_at,

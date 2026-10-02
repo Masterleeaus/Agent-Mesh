@@ -99,6 +99,9 @@ export function buildBookingJobCommercialOriginEvidence(input: Readonly<Record<s
   if (lifecycle.company_id !== companyId) throw new TypeError('revenue-booking-job-cross-company-lifecycle');
 
   const origin = resolveOrigin(lifecycle.correlation);
+  const bookingEvent = lifecycle.booking_event;
+  if (!bookingEvent) throw new TypeError('revenue-booking-job-booking-event-required');
+
   const evidenceRefs = Object.freeze([
     ...((lifecycle.evidence ?? []).map((item: any) => clean(item?.source_ref)).filter((value: string | null): value is string => Boolean(value))),
     bookingSourceRef,
@@ -113,7 +116,7 @@ export function buildBookingJobCommercialOriginEvidence(input: Readonly<Record<s
     commercial_origin: Object.freeze({ ...origin, source_of_truth: true as const }),
     booking: Object.freeze({
       booking_id: lifecycle.booking_id,
-      event: lifecycle.booking_event,
+      event: bookingEvent,
       source_domain: bookingSourceDomain,
       source_ref: bookingSourceRef,
       canonical_owner: bookingOwner.canonicalOwner,

@@ -113,27 +113,78 @@ Predictive capability is earned behaviour, not a fifth identity tier.
 
 Trust/Autonomy progression remains capability/operation specific and cannot silently increase authority.
 
-## 8. Titan Server Node
+## 8. Titan Business Node Control Plane / Server Node
 
-DirectAdmin is the first deployment beachhead for the Titan Server Node.
+DirectAdmin is the first deployment beachhead for the Titan Server Node **and the primary Business Node control plane / meta-orchestration system**.
 
-The installable DirectAdmin plugin is a thin installer/control-plane interface around a persistent server-side Titan execution node. The Titan Server Node hosts the canonical workforce runtime 24/7 and supplies governed infrastructure/application capabilities.
+The DirectAdmin layer is not merely a hosting plugin. It is the business operations cockpit and orchestration plane that supervises, composes and governs the customer's digital operating environment: workforce runtimes, applications, websites, data services, communications, integrations, deployments, devices/nodes, backups, security, health and recovery.
 
-It is not a fourth business surface and does not own canonical business truth.
+DirectAdmin therefore acts as the **physical/operational management layer of the Business Node** while Zero remains the intelligence interface and the Business Evidence Ledger remains the factual history.
 
-### Server Node responsibilities
+It is not required to own canonical business truth itself, and DirectAdmin/root/admin privilege never becomes Titan business authority. But it is intentionally the place where the business's systems are installed, discovered, coordinated, monitored, repaired, upgraded and lifecycle-managed.
 
-- install and supervise the canonical Titan Workforce Host;
+Canonical Zero/Go/Hub remain the main business interaction surfaces; DirectAdmin is the expert/operator Business Node cockpit and meta-layer that manages the systems underneath them.
+
+### Server Node / Business Node control-plane responsibilities
+
+- install and supervise the canonical Titan Workforce Host and its dependent business runtimes;
 - maintain persistent Node/TypeScript runtime(s);
 - expose bounded DirectAdmin/API/MCP capabilities;
-- manage websites and applications, including WordPress, static/TypeScript, Node, PHP, Git deployments and approved containers;
+- manage the complete business application estate, including WordPress, static/TypeScript, Node, PHP, Git deployments, approved containers, generated/temporary apps and connected systems;
 - DNS, SSL, mail, database, Redis and service capabilities;
 - security capability integration such as CSF/BFM/ModSecurity/ClamAV where available;
 - backup/restore integration and verification;
 - deployment preview, health verification, promotion and rollback;
 - governed terminal/command capabilities;
-- resource/health observation;
+- business-wide system discovery, resource/health observation, drift detection and coordinated remediation;
 - evidence collection for host/application execution.
+
+### 8.0 Physical native company isolation
+
+Titan's mature native FSM remains the default field-service implementation. `company_id` is the canonical logical identity, while company-owned operational persistence defaults to **one physical database per Titan company** behind a fail-closed company storage resolver/mapping. The resolver is a placement boundary, not authority. Shared runtime/control/evidence stores are allowed only for explicit canonical owners and must not become a shared operational business database. Initial deployments may use isolated SQLite company databases where supported; future placement may use another certified database without changing Titan domain contracts. Backup, restore, migration and upgrade operate company-by-company.
+
+### 8.1 Extension Business Engine — Frappe/ERPNext
+
+DirectAdmin is the Business Node **meta-orchestration/control plane**; it does not need to reimplement mature CRM/ERP/domain primitives itself.
+
+**Titan's mature native TypeScript FSM is the default operational field-service product.** Frappe Framework with selected ERPNext capabilities is an optional **Extension Business Engine** managed from the DirectAdmin Business Node control plane.
+
+The intended layering is:
+
+```
+ONE / ZERO
+    ↓
+Titan Workforce + Governance
+    ↓
+Titan Domain / Capability contracts
+    ↓
+DirectAdmin Business Node Control Plane
+    ├─ Business Engine (Frappe/ERPNext)
+    ├─ Websites / WordPress / Microweber
+    ├─ Domains / DNS / TLS
+    ├─ Email / Rspamd
+    ├─ Databases / Redis
+    ├─ Applications / Node / PHP / Git
+    ├─ Devices / Nodes / Sync
+    ├─ Backups / Recovery
+    ├─ Security / Diagnostics
+    └─ Foundry / temporary Mission apps
+    ↓
+Verification → Business Evidence Ledger
+```
+
+Frappe/ERPNext provides optional deeper ERP/HR/payroll/procurement/warehousing/manufacturing/custom-module capabilities and may provide a deliberately selected implementation for a domain facet. Titan consumes it through a **Titan Domain API / anti-corruption layer** rather than binding surfaces directly to Frappe DocTypes or Desk UI. Existing mature Titan FSM capabilities remain native unless explicitly delegated.
+
+When Frappe is enabled, its default tenancy is **shared versioned application/runtime code with per-company Frappe site/database isolation**. Titan `company_id` remains the cross-system business identity and evidence boundary; the provider site/database is an additional physical isolation boundary, not a replacement identity.
+
+Frappe/ERPNext is therefore an optional extension/provider engine beneath Titan for enabled/delegated capabilities. It does not replace:
+- the Business Evidence Ledger as factual history;
+- Titan Constitution / Trust / Authority;
+- Titan Workforce identity/runtime;
+- the canonical capability graph;
+- Zero/Go/Hub presentation contracts.
+
+DirectAdmin owns the orchestration and lifecycle of the Business Engine: provision, configure, inspect, migrate, back up, restore, reconcile, upgrade, health-check and retire it through governed capabilities.
 
 ### Server Node governance
 
@@ -141,7 +192,7 @@ Host/root privilege never becomes Titan business authority.
 
 Curated capability execution is preferred over arbitrary shell execution. Emergency shell/elevated execution requires explicit stronger authority and complete evidence.
 
-External DirectAdmin implementations such as MCP/API layers are capability providers behind Titan's canonical registry and ExecutionGateway, not new control planes.
+External DirectAdmin implementations such as MCP/API layers are execution/capability providers **inside the Titan Business Node control plane**. They may extend operational reach, but they do not replace Titan's canonical authority, evidence, workforce or capability ownership.
 
 Canonical deployment lifecycle:
 
@@ -151,15 +202,100 @@ No deployment is considered commissioned merely because a process started or API
 
 ## 9. Surfaces and channels
 
-Canonical product surfaces remain:
+Canonical product surface identities remain:
 
-- `zero` — owner/manager projection;
-- `go` — worker/field projection;
-- `hub` — customer projection.
+- `zero` — owner/manager mode;
+- `go` — worker/field mode;
+- `hub` — customer mode.
 
-There is one canonical PWA with these governed modes. Native mobile, Browser Node, ChatGPT/MCP/external assistants, voice, messaging and future channels are adapters/projections over the same hosted workforce and evidence-backed state.
+Titan has **one canonical PWA application with three governed modes: Zero, Go and Hub**. Native mobile follows the same one-application / three-mode model. The modes share the canonical Titan Runtime, company identity, capability graph, Workforce, Interaction/Decision contracts and evidence-backed business state while enforcing mode-specific audience, privacy, entitlement and offline behavior.
 
-Interfaces do not own business truth, authority or workforce runtime.
+**The PWA is not `apps/web`.** The TypeScript `apps/web` application is the separate **full Titan base web application**. It may contain the complete browser-based business application experience while preserving its mature native AI-FSM field-service capabilities and progressively converging duplicated Titan runtime mechanisms behind canonical contracts. Frappe is optional extension infrastructure, not the default replacement for native FSM persistence. Do not collapse the base web app into the PWA, and do not treat the PWA as merely a route/mode inside `apps/web`.
+
+Canonical deployment distinction:
+
+```
+Titan Base Web App (apps/web)
+  = full server-hosted browser application
+
+Titan PWA
+  = one installable PWA
+      ├─ Zero mode
+      ├─ Go mode
+      └─ Hub mode
+
+Titan Native Mobile
+  = one native application
+      ├─ Zero mode
+      ├─ Go mode
+      └─ Hub mode
+```
+
+Browser Node, ChatGPT/MCP/external assistants, voice, messaging and future channels are additional adapters/projections over the same hosted Workforce and evidence-backed state.
+
+Interfaces and modes do not own business truth, authority or Workforce runtime. Titan Surfaces manages deployment/lifecycle/health of interface endpoints; canonical runtime/contracts remain singular.
+
+## 9.1 Commercial product portfolio and entitlement architecture
+
+Titan is one platform packaged through multiple customer-facing entry products and four commercial tiers. Commercial packaging must never redefine canonical runtime ownership.
+
+### Customer-facing portfolio
+
+The customer-facing portfolio is:
+
+- **Titan Zero** — owner/manager experience over canonical `zero`;
+- **Titan Go** — field/worker experience over canonical `go`;
+- **Titan Hub** — customer self-service experience over canonical `hub`;
+- **Titan in external AI hosts** — ChatGPT, Claude and future assistants as authenticated adapters over canonical Titan capabilities;
+- **Titan for WordPress / Web Presence** — website and CMS adapters that turn an existing site into an operational front door without creating another CRM or business core;
+- **Titan Omni** — messaging/voice/channel projections sharing Interaction, identity, conversation and governed execution contracts.
+
+Foundry, Missions, Compliance/Policy packs, Private/Sovereign Intelligence and Server Node controls are platform capabilities/deployment profiles exposed by commercial entitlement. They are not additional business truth stores or canonical surfaces.
+
+### Commercial tiers
+
+| Tier | Intended operating profile | Commercial capability envelope |
+| --- | --- | --- |
+| **Titan Solo** | Solo operators and micro-businesses, typically 1–3 people | Zero with a deliberately small operational envelope, external-AI-host access, limited Omni/channel use and core booking/quote/invoice/customer workflows. |
+| **Titan Team** | Small service teams, typically 4–10 people | Full Zero, Go, basic Hub, external AI hosts, broader Omni, WordPress/Web Presence integration, field/offline/evidence workflows and baseline compliance. |
+| **Titan Business** | Mid-market/multi-team businesses | Team plus Foundry, Missions, stronger compliance/policy controls, capability-gap detection/digital-twin style analysis and governed composite/temporary applications. |
+| **Titan Sovereign** | Enterprise, regulated or customer-controlled infrastructure | Business plus Private/Sovereign Intelligence deployment profiles, Server Node/control-plane capabilities, locality/data-residency controls, advanced workforce/audit/recovery and contractual operational guarantees. |
+
+User-count ranges and prices are commercial defaults, not architecture invariants. They must be configurable without changing identity, evidence, authority, data ownership or business-state schemas.
+
+### Entitlement separation
+
+Titan must maintain a versioned entitlement model separating:
+
+1. commercial plan/tier;
+2. customer-facing product/channel availability;
+3. capability entitlement;
+4. metered usage/quota/funding;
+5. runtime locality/provider eligibility;
+6. user membership and role;
+7. effective business execution authority.
+
+Entitlement answers **what the subscription exposes**. Authority answers **what this actor may execute now**. A paid tier, add-on, provider subscription, host privilege or product installation can never grant business authority by itself.
+
+Entitlement decisions and changes must be auditable. Upgrades and downgrades must preserve business identity and factual history. Solo → Team → Business is an entitlement expansion over the same business state, not a data migration between product cores. Business → Sovereign is a governed deployment/locality transition, not a fork.
+
+Downgrade semantics must define retention/read-only/grace behavior for no-longer-entitled capabilities, preserve historical evidence, avoid destructive data loss, and revoke capability exposure without silently changing prior facts or widening authority.
+
+### Upgrade signals
+
+Titan may recommend an upgrade when evidence shows a meaningful need, such as:
+
+- user/headcount growth requiring Go/team coordination;
+- a Mission-shaped project/campaign/crisis;
+- compliance/assurance requirements;
+- multi-location/complex integration needs;
+- data-residency, security-review or customer-controlled-infrastructure requirements.
+
+These are Signal/recommendation inputs only. They cannot self-purchase, self-upgrade or self-expand authority.
+
+### Commercial supersession rule
+
+Historical packaging such as **Titan Nano**, **Titan Pro**, or assumptions that a free tier includes unrestricted/full cloud AI is donor/history unless explicitly re-adopted by the current commercial entitlement contract. Current architecture uses **Solo → Team → Business → Sovereign** as the commercial tier model while preserving provider neutrality and Cost Sovereignty.
 
 ## 10. Capability architecture
 

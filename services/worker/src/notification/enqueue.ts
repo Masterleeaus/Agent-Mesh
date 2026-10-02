@@ -21,11 +21,14 @@ export interface EnqueueOpts {
 export type EnqueueResult = "enqueued" | "duplicate" | "suppressed";
 
 export async function enqueueNotification(client: DatabaseClient, opts: EnqueueOpts): Promise<EnqueueResult> {
-  const existing = await client.query<{ status: string }>(
-    `SELECT status FROM notification_queue WHERE idempotency_key = $1 LIMIT 1`,
+  const existing = await client.query<{ account_id: string; status: string; attempt_count: number; max_attempts: number; failure_reason: string | null }>(
+    `SELECT account_id,status,attempt_count,max_attempts,failure_reason FROM notification_queue WHERE idempotency_key = $1 LIMIT 1`,
     [opts.idempotencyKey]
   );
-  if (existing.rows.length > 0 && existing.rows[0].status !== "failed") return "duplicate";
+  const prior = existing.rows[0];
+  if (prior?.account_id !== undefined && prior.account_id !== opts.accountId) throw new Error("notification-idempotency-company-mismatch");
+  if (prior && (prior.status !== "failed" || prior.attempt_count >= prior.max_attempts ||
+      prior.failure_reason?.startsWith("delivery-outcome-unknown"))) return "duplicate";
 
   if (opts.priority > COOLDOWN_BYPASS_MINIMUM && opts.clientId) {
     const cooldown = await client.query<{ last_sent_at: string; cooldown_hours: number }>(
@@ -59,21 +62,39 @@ export async function enqueueNotification(client: DatabaseClient, opts: EnqueueO
   }
 
   const nextAttemptAt = opts.scheduledFor ?? new Date();
-  await client.query(
+  const mysql = databaseDialect(client) === "mysql";
+  const eligible = mysql
+    ? "account_id=VALUES(account_id) AND status='failed' AND attempt_count < max_attempts AND (failure_reason IS NULL OR failure_reason NOT LIKE 'delivery-outcome-unknown%')"
+    : "notification_queue.account_id=excluded.account_id AND notification_queue.status='failed' AND notification_queue.attempt_count < notification_queue.max_attempts AND (notification_queue.failure_reason IS NULL OR notification_queue.failure_reason NOT LIKE 'delivery-outcome-unknown%')";
+  // Revalidate at the write: another poll may quarantine this key after SELECT.
+  // Do not reset attempt_count: numbered history and retry ceilings are durable.
+  const upsert = mysql
+    ? `ON DUPLICATE KEY UPDATE next_attempt_at=IF(${eligible},VALUES(next_attempt_at),next_attempt_at),
+       failure_reason=IF(${eligible},NULL,failure_reason),status=IF(${eligible},'pending',status)`
+    : `ON CONFLICT (idempotency_key) DO UPDATE SET status='pending',failure_reason=NULL,
+       next_attempt_at=excluded.next_attempt_at WHERE ${eligible}`;
+  const instant = nextAttemptAt.toISOString();
+  const inserted = await client.query(
     `INSERT INTO notification_queue
        (account_id, client_id, automation_type, priority, to_address,
         subject, html_body, idempotency_key, entity_type, entity_id,
         cancel_on_events, next_attempt_at, metadata)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-     ON CONFLICT (idempotency_key) DO UPDATE
-       SET status = 'pending', attempt_count = 0, failure_reason = NULL,
-           next_attempt_at = excluded.next_attempt_at`,
+     ${upsert}`,
     [opts.accountId, opts.clientId, opts.automationType, opts.priority, opts.toAddress,
       opts.subject, opts.htmlBody, opts.idempotencyKey, opts.entityType ?? null,
-      opts.entityId ?? null, JSON.stringify(opts.cancelOnEvents ?? []), nextAttemptAt.toISOString(),
+      opts.entityId ?? null, databaseDialect(client) === "postgres" ? opts.cancelOnEvents ?? [] : JSON.stringify(opts.cancelOnEvents ?? []),
+      mysql ? instant.replace("T", " ").replace("Z", "") : instant,
       JSON.stringify(opts.metadata ?? {})]
   );
-  return "enqueued";
+  if (mysql) {
+    // mysql2 FOUND_ROWS may report one affected row for a guarded no-op.
+    // Observe the actual queue disposition before claiming enqueue success.
+    const current = await client.query<{account_id:string;status:string}>(
+      "SELECT account_id,status FROM notification_queue WHERE idempotency_key=$1 LIMIT 1", [opts.idempotencyKey]);
+    return current.rows[0]?.account_id === opts.accountId && current.rows[0]?.status === "pending" ? "enqueued" : "duplicate";
+  }
+  return (inserted.rowCount ?? 0) > 0 ? "enqueued" : "duplicate";
 }
 
 export async function cancelNotificationsForEntity(

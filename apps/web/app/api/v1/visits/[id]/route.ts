@@ -67,8 +67,10 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
     );
   }
 
-  const schema = session.role === "tech" ? techUpdateBody : ownerUpdateBody;
-  const parsed = schema.safeParse(await request.json().catch(() => null));
+  const rawBody = await request.json().catch(() => null);
+  const parsed = session.role === "tech"
+    ? techUpdateBody.safeParse(rawBody)
+    : ownerUpdateBody.safeParse(rawBody);
   if (!parsed.success) {
     return NextResponse.json(
       {
@@ -97,16 +99,17 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         );
       }
 
+      const ownerPatch = session.role === "tech" ? null : ownerUpdateBody.parse(rawBody);
       const scheduleChanged =
-        parsed.data.scheduled_start !== undefined ||
-        parsed.data.scheduled_end !== undefined ||
-        parsed.data.assigned_user_id !== undefined;
-      if (scheduleChanged) {
-        const scheduledStart = String(parsed.data.scheduled_start ?? old.scheduled_start ?? "");
-        const scheduledEnd = String(parsed.data.scheduled_end ?? old.scheduled_end ?? "");
+        ownerPatch?.scheduled_start !== undefined ||
+        ownerPatch?.scheduled_end !== undefined ||
+        ownerPatch?.assigned_user_id !== undefined;
+      if (scheduleChanged && ownerPatch) {
+        const scheduledStart = String(ownerPatch.scheduled_start ?? old.scheduled_start ?? "");
+        const scheduledEnd = String(ownerPatch.scheduled_end ?? old.scheduled_end ?? "");
         const assignedUserId =
-          parsed.data.assigned_user_id !== undefined
-            ? parsed.data.assigned_user_id
+          ownerPatch.assigned_user_id !== undefined
+            ? ownerPatch.assigned_user_id
             : (old.assigned_user_id as string | null | undefined) ?? null;
         if (!scheduledStart || !scheduledEnd || new Date(scheduledEnd).getTime() <= new Date(scheduledStart).getTime()) {
           return NextResponse.json(

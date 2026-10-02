@@ -91,7 +91,7 @@ export const POST = withRole(["owner", "admin"], async (request, session) => {
         [id, session.accountId]
       );
 
-      if (existingFinal.rowCount !== null && existingFinal.rowCount > 0) {
+      if (existingFinal.rows.length > 0) {
         // Already converted — return existing final invoice (idempotent)
         return {
           invoice_id: existingFinal.rows[0].id,

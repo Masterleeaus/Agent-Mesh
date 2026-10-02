@@ -62,3 +62,5 @@ export * from './device-runtime.js';
 export * from './resource-reporting.js';
 
 export * from './edge-advertisement.js';
+
+export * from './context-budget.js';

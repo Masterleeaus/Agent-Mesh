@@ -5,7 +5,7 @@ RUN corepack enable
 
 FROM base AS deps
 COPY . .
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 FROM deps AS build
 # Legacy source imports still use @ai-fsm/* while workspace package names have
@@ -29,6 +29,8 @@ ENV PORT=3000
 COPY --from=build /app/apps/web/.next/standalone ./
 COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build /app/apps/web/public ./apps/web/public
+COPY --from=build /app/scripts/sqlite-migrate.mjs ./apps/web/sqlite-migrate.mjs
+COPY --from=build /app/db/sqlite ./apps/web/db/sqlite
 WORKDIR /app/apps/web
 EXPOSE 3000
 CMD ["node", "server.js"]

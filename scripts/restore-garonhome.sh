@@ -1,55 +1,14 @@
 #!/usr/bin/env bash
+# RETIRED LEGACY GARONHOME ENTRYPOINT
+#
+# Historical implementation is preserved in Git history. The garonhome /
+# AI-FSM deployment topology is not the canonical Titan Business Node.
+#
+# Current owners:
+#   #322 deployment/release/rollback
+#   #812 Server Node infrastructure/provider mechanics
+#   #1051 Frappe Business Engine provisioning where applicable
 set -euo pipefail
-
-if [[ $# -ne 1 ]]; then
-  echo "usage: $0 /path/to/ai_fsm_YYYYMMDDTHHMMSSZ.dump"
-  exit 1
-fi
-
-DUMP_FILE="$1"
-if [[ ! -f "${DUMP_FILE}" ]]; then
-  echo "dump file not found: ${DUMP_FILE}"
-  exit 1
-fi
-
-DEPLOY_ROOT="${FSM_DEPLOY_ROOT:-/opt/business/ai-fsm}"
-REPO_ROOT="${FSM_REPO_ROOT:-${DEPLOY_ROOT}/repo}"
-ENV_FILE="${FSM_ENV_FILE:-${DEPLOY_ROOT}/env/.env}"
-COMPOSE_FILE="${FSM_COMPOSE_FILE:-${REPO_ROOT}/infra/compose.garonhome.yml}"
-
-set -a
-# shellcheck disable=SC1090
-source "${ENV_FILE}"
-set +a
-
-docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" stop web worker
-
-docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" exec -T postgres \
-  psql -U "${POSTGRES_USER:-ai_fsm}" -d postgres -v ON_ERROR_STOP=1 <<SQL
-SELECT pg_terminate_backend(pid)
-FROM pg_stat_activity
-WHERE datname = '${POSTGRES_DB}'
-  AND pid <> pg_backend_pid();
-DROP DATABASE IF EXISTS ${POSTGRES_DB};
-CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER};
-SQL
-
-cat "${DUMP_FILE}" | docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" exec -T postgres \
-  pg_restore -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" --no-owner --no-privileges
-
-docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" up -d web worker
-
-# Wait for web to be healthy, then verify from inside the container
-# (host port 3000 may be occupied by another service)
-WEB_CONTAINER=$(docker compose --env-file "${ENV_FILE}" -f "${COMPOSE_FILE}" ps -q web)
-echo "waiting for web to be healthy..."
-for i in $(seq 1 30); do
-  STATUS=$(docker inspect --format='{{.State.Health.Status}}' "${WEB_CONTAINER}" 2>/dev/null || echo "unknown")
-  if [[ "${STATUS}" == "healthy" ]]; then
-    break
-  fi
-  sleep 2
-done
-
-docker exec "${WEB_CONTAINER}" wget -qO- http://127.0.0.1:3000/api/health
-echo ""
+echo "ERROR: restore-garonhome.sh is retired legacy infrastructure and must not be used for current Titan deployments." >&2
+echo "Use the current #322/#812 deployment path and commissioned Business Node configuration." >&2
+exit 64

@@ -1,3 +1,9 @@
+# RETIRED LEGACY AI-FSM PRODUCTION COMPOSE — DO NOT USE FOR CURRENT TITAN
+# This file encodes the former ai-fsm web/worker/PostgreSQL topology.
+# Canonical production composition is owned by #322/#812 with #1051 Frappe
+# Business Engine provisioning and owner-specific Titan runtime storage.
+# Retained temporarily as migration/provenance evidence only.
+
 services:
   web:
     image: ${WEB_IMAGE:-ghcr.io/your-org/ai-fsm-web}:${APP_TAG:-latest}

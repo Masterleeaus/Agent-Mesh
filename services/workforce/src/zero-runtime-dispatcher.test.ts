@@ -114,7 +114,9 @@ describe("ZeroWorkforceRuntimeDispatcher", () => {
     const work = (await store.list("company-1"))[0];
     assert.equal(work.state, "COMPLETED");
     assert.equal(work.assignee, "manager-1");
-    assert.deepEqual(work.origin, {
+    assert.match(work.origin!.dispatch_fingerprint!, /^[a-f0-9]{64}$/);
+    const { dispatch_fingerprint, ...origin } = work.origin!;
+    assert.deepEqual(origin, {
       actor_id: "one-1",
       conversation_id: "conversation-1",
       surface: "zero",

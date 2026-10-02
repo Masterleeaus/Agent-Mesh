@@ -29,6 +29,16 @@ interface PageProps {
   searchParams: Promise<{ month?: string }>;
 }
 
+type PeriodCloseDisplayRow = {
+  id: string;
+  period_month: string;
+  closed_by: string;
+  closed_at: string | Date;
+  notes: string | null;
+  closed_by_name: string | null;
+};
+
+
 function currentMonth(): string {
   return new Date().toISOString().slice(0, 7);
 }
@@ -58,7 +68,7 @@ export default async function ClosePage({ searchParams }: PageProps) {
 
   // ---- Fetch close status ----
   const closeRow = await withReportContext(session, async (client) => {
-    const r = await client.query(
+    const r = await client.query<PeriodCloseDisplayRow>(
       `SELECT pc.id, pc.period_month, pc.closed_by, pc.closed_at, pc.notes,
               u.full_name AS closed_by_name
        FROM period_closes pc

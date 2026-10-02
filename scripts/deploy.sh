@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
-# Usage: ./scripts/deploy.sh [branch]
-# Deploys a branch to garonhome. Defaults to main.
-# Test a feature branch before merging: ./scripts/deploy.sh fix/my-feature
+# Legacy deployment entrypoint retained only to fail closed.
+#
+# The former implementation deployed directly to the historical "garonhome"
+# host at /opt/business/ai-fsm/repo via deploy-garonhome.sh. That topology is
+# NOT the canonical Titan Business Node architecture.
+#
+# Current deployment ownership:
+#   #322 generic package/install/promote/rollback lifecycle
+#   #812 Titan Server Node / DirectAdmin infrastructure provider
+#   #1051 Frappe Business Engine provisioning/configuration
+#
+# Do not restore direct host assumptions here. Use the current commissioned
+# deployment mechanism documented by those missions/current production config.
 set -euo pipefail
 
-BRANCH=${1:-main}
+cat >&2 <<'EOF'
+ERROR: scripts/deploy.sh is a retired legacy deployment entrypoint.
 
-echo "Deploying branch: $BRANCH"
+It no longer deploys to garonhome or /opt/business/ai-fsm/repo.
 
-ssh garonhome "
-  set -euo pipefail
-  cd /opt/business/ai-fsm/repo &&
-  git fetch origin '$BRANCH' &&
-  git checkout '$BRANCH' &&
-  git reset --hard origin/'$BRANCH' &&
-  DEPLOY_BRANCH='$BRANCH' bash scripts/deploy-garonhome.sh
-"
+Use the current Titan deployment path owned by #322/#812. Frappe Business
+Engine provisioning is coordinated by #1051 through Server Node capabilities.
+EOF
+exit 64

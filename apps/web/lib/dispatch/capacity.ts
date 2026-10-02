@@ -46,7 +46,7 @@ export interface DispatchVisit {
   } | null;
 }
 
-type DbVisit = {
+type DbVisit = Record<string, unknown> & {
   id: string;
   job_id: string;
   work_order_id: string | null;
@@ -68,7 +68,7 @@ type DbVisit = {
   status: string;
 };
 
-type DbTech = { id: string; full_name: string | null; email: string | null };
+type DbTech = Record<string, unknown> & { id: string; full_name: string | null; email: string | null };
 
 export function minutesBetween(start: string | Date, end: string | Date): number {
   const ms = new Date(end).getTime() - new Date(start).getTime();
@@ -95,7 +95,7 @@ export function buildCapacity(
     current.visits += 1;
     byUser.set(visit.assigned_user_id, current);
   }
-  return technicians.map((tech) => {
+  return technicians.map((tech): DispatchTechnicianCapacity => {
     const load = byUser.get(tech.id) ?? { minutes: 0, visits: 0 };
     const userAvailability = availability.filter((window) => window.userId === tech.id);
     const configuredMinutes = availableMinutesInRange(userAvailability, rangeStart, rangeEnd);
@@ -133,7 +133,7 @@ export async function loadDispatchBoard(accountId: string, rangeStart: Date, ran
   ]);
   const vehiclesByUser = new Map(vehicleAssignments.map((assignment) => [assignment.userId, { id: assignment.vehicleId, name: assignment.vehicleName, plate: assignment.plate }]));
 
-  const fieldVehicles = await portableQuery<{ id: string; nickname: string; plate: string | null }>(
+  const fieldVehicles = await portableQuery<Record<string, unknown> & { id: string; nickname: string; plate: string | null }>(
     `SELECT id, nickname, plate FROM vehicles WHERE account_id = $1 AND is_active = true AND kind <> 'trailer' ORDER BY nickname ASC`,
     [accountId],
   );

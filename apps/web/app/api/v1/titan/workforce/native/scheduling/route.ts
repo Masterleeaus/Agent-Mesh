@@ -50,7 +50,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
 
   try {
     const result = await executeNativeSchedulingAction(request, session, parsed.data);
-    const status = "upstream" in result ? result.upstream.status : 200;
+    const status = result.upstream?.status ?? 200;
     return NextResponse.json(result, { status });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Scheduling Agent request failed";

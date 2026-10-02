@@ -70,7 +70,7 @@ const PAGE_ACTIONS = {
 };
 
 function routeForTool(tool) {
-  const id = String(tool?.id || '').trim();
+  const id = String(tool?.tool_id || tool?.id || '').trim();
   if (AI_WORKSPACE.has(id)) {
     const language = LANGUAGE_WORKSPACE[id];
     const documentWorkspace = DOCUMENT_WORKSPACE[id];
@@ -167,7 +167,7 @@ export function resolveTitanToolLaunch(toolId, map) {
 
 export function validateTitanToolLaunchMap(map, tools=[]) {
   const errors = [];
-  const expected = new Set(tools.map(tool => String(tool?.id || '').trim()).filter(Boolean));
+  const expected = new Set(tools.map(tool => String(tool?.tool_id || tool?.id || '').trim()).filter(Boolean));
   for (const id of expected) {
     const route = map?.[id];
     if (!route) { errors.push(`${id}: no Titan launch route`); continue; }
@@ -181,3 +181,4 @@ export function validateTitanToolLaunchMap(map, tools=[]) {
   for (const id of Object.keys(map || {})) if (!expected.has(id)) errors.push(`${id}: route has no census tool`);
   return {ok:errors.length === 0, errors};
 }
+

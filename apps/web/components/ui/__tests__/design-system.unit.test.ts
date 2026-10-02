@@ -234,7 +234,7 @@ describe("getNavSections (nested hubs)", () => {
     expect(hrefs).not.toContain("/app/capture");
   });
 
-  it("leads with My Day for owner/tech, Overview for pure admin", () => {
+  it("leads with the field home for owner/tech and Desk for pure admin", () => {
     for (const role of ["tech", "owner"] as const) {
       const items = flattenSections(getNavSections(role));
       expect(items[0].href).toBe("/app/my-work");
@@ -242,7 +242,7 @@ describe("getNavSections (nested hubs)", () => {
 
     const adminFirst = flattenSections(getNavSections("admin"))[0];
     expect(adminFirst.href).toBe("/app");
-    expect(adminFirst.label).toBe("Overview");
+    expect(adminFirst.label).toBe("Desk");
   });
 
   it("owner sidebar shows the active workspace's home, not both", () => {
@@ -266,7 +266,7 @@ describe("getNavSections (nested hubs)", () => {
   it("Home hub lists Tracking next to Day Review for owner/admin", () => {
     const adminHome = getNavSections("admin").find((s) => s.label === "Home");
     expect(adminHome?.items.map((i) => i.label)).toEqual([
-      "Overview",
+      "Desk",
       "Capture",
       "Day Review",
       "Tracking",
@@ -295,10 +295,10 @@ describe("getNavSections (nested hubs)", () => {
 });
 
 describe("getBottomNavItems (mobile hubs)", () => {
-  it("returns 4 hub tabs for admin (Home Work People Money) — More is the 5th slot", () => {
+  it("returns 4 hub tabs for admin (Desk Jobs People Money) — More is the 5th slot", () => {
     const items = getBottomNavItems("admin");
     expect(items).toHaveLength(4);
-    expect(items.map((i) => i.label)).toEqual(["Home", "Work", "People", "Money"]);
+    expect(items.map((i) => i.label)).toEqual(["Desk", "Jobs", "People", "Money"]);
     expect(items.map((i) => i.href)).toEqual([
       "/app",
       "/app/jobs",
@@ -319,9 +319,9 @@ describe("getBottomNavItems (mobile hubs)", () => {
     expect(hrefs).not.toContain("/app/jobs");
   });
 
-  it("returns 4 hub tabs for owner leading with Home (My Day)", () => {
+  it("returns 4 hub tabs for owner leading with Today", () => {
     const items = getBottomNavItems("owner");
-    expect(items.map((i) => i.label)).toEqual(["Home", "Work", "People", "Money"]);
+    expect(items.map((i) => i.label)).toEqual(["Today", "Jobs", "People", "Money"]);
     expect(items.map((i) => i.href)).toEqual([
       "/app/my-work",
       "/app/jobs",
@@ -331,7 +331,7 @@ describe("getBottomNavItems (mobile hubs)", () => {
   });
 
   it("Work hub tab stays active on estimates and schedule", () => {
-    const work = getBottomNavItems("owner").find((i) => i.label === "Work");
+    const work = getBottomNavItems("owner").find((i) => i.href === "/app/jobs");
     expect(work).toBeDefined();
     expect(isNavActive("/app/estimates/new", work!.href, work!.activePrefixes)).toBe(true);
     expect(isNavActive("/app/schedule", work!.href, work!.activePrefixes)).toBe(true);
@@ -339,7 +339,7 @@ describe("getBottomNavItems (mobile hubs)", () => {
   });
 
   it("Home stays active on Tracking; Money stays active on Mileage", () => {
-    const ownerHome = getBottomNavItems("owner").find((i) => i.label === "Home");
+    const ownerHome = getBottomNavItems("owner").find((i) => i.href === "/app/my-work");
     const money = getBottomNavItems("owner").find((i) => i.label === "Money");
     expect(isNavActive("/app/timeline", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);
     expect(isNavActive("/app/day-review", ownerHome!.href, ownerHome!.activePrefixes)).toBe(true);

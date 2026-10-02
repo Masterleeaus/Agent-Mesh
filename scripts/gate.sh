@@ -81,11 +81,13 @@ wait_http() {
 log "lint"
 pnpm lint
 
-log "migration prefixes"
+log "immutable migration manifest"
 node scripts/check-migration-prefixes.mjs
 log "rls coverage"
 node scripts/check-rls-coverage.mjs
 node --test scripts/*.test.mjs
+log "release candidate verification"
+node --test packages/deployment/*.test.mjs
 
 log "typecheck"
 pnpm typecheck
@@ -156,7 +158,7 @@ if [[ "${SKIP_INTEGRATION:-}" != "1" ]]; then
   E2E_SKIP_EMAIL_DELIVERY=1 \
   E2E_DISABLE_LOGIN_RATE_LIMIT=1 \
   NODE_ENV=development \
-    pnpm --filter @ai-fsm/web exec next dev --port "${TEST_WEB_PORT}" >/tmp/ai-fsm-gate-server.log 2>&1 &
+    pnpm --filter @titan-zero/web exec next dev --port "${TEST_WEB_PORT}" >/tmp/ai-fsm-gate-server.log 2>&1 &
   SERVER_PID=$!
   sleep 2
   if ! kill -0 "$SERVER_PID" 2>/dev/null; then

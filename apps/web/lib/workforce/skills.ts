@@ -1,3 +1,9 @@
+/**
+ * Native Titan FSM technician-skill implementation.
+ * Preserve skill/proficiency behavior and converge it with the broader Titan
+ * Workforce capability graph. Optional Frappe HR skill records are provider data,
+ * not Titan execution authority and not a default replacement.
+ */
 import { portableQuery } from "@/lib/db/portable";
 
 export type TechnicianSkill = {

@@ -82,7 +82,7 @@ export default async function InvoicePrintPage({
   if (!session) redirect("/login");
 
   const result = await withInvoiceContext(session, async (client) => {
-    const invResult = await client.query(
+    const invResult = await client.query<InvoiceRow>(
       `SELECT
          i.id, i.status, i.invoice_number,
          i.subtotal_cents, i.tax_cents, i.total_cents, i.paid_cents, i.deposit_cents, i.paid_at,
@@ -99,7 +99,7 @@ export default async function InvoicePrintPage({
     );
     if (invResult.rowCount === 0) return null;
 
-    const liResult = await client.query(
+    const liResult = await client.query<LineItemRow>(
       `SELECT id, description, quantity::float8 AS quantity, unit_price_cents, total_cents
        FROM invoice_line_items
        WHERE invoice_id = $1 AND visible_to_customer = true
@@ -108,8 +108,8 @@ export default async function InvoicePrintPage({
     );
 
     return {
-      invoice: invResult.rows[0] as InvoiceRow,
-      lineItems: liResult.rows as LineItemRow[],
+      invoice: invResult.rows[0]!,
+      lineItems: liResult.rows,
     };
   });
 

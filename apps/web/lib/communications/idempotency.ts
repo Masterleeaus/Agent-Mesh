@@ -3,7 +3,10 @@ import { communicationIdempotencyKey, type CommunicationEnvelope } from "./contr
 /**
  * Process-local replay guard for a single runtime instance.
  *
- * This is deliberately not the durable cross-instance authority. It provides
+ * COMPATIBILITY/LOCAL OPTIMIZATION ONLY: this is deliberately not the durable
+ * cross-instance/restart idempotency authority. Production multi-worker delivery
+ * must claim the canonical durable operation/idempotency key before provider I/O.
+ * It provides
  * immediate duplicate suppression while callers migrate to a shared durable
  * idempotency store. The canonical key is company-scoped so one company can
  * never suppress another company's communication.

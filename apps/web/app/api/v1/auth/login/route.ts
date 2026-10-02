@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { compare } from "bcryptjs";
 import { z } from "zod";
+import { getDatabaseDialect } from "@/lib/db/dialect";
 import { portableQuery } from "@/lib/db/portable";
 import { createSession, setSessionCookie } from "@/lib/auth/session";
 import { roleSchema } from "@titan-zero/domain";
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     // Look up user by email. The schema allows the same email in multiple
     // accounts, so fail closed instead of guessing which tenant to log into.
     const matches = await portableQuery<UserRow>(
-      `SELECT id, email, full_name, role, account_id, password_hash
+      `SELECT id, email, full_name, role, ${getDatabaseDialect() === "sqlite" ? "company_id AS account_id" : "account_id"}, password_hash
        FROM users
        WHERE lower(email) = lower($1)
        ORDER BY created_at ASC

@@ -1,3 +1,9 @@
+/**
+ * Native Titan FSM time-clock implementation.
+ * Preserve clock/retry/correction/pay-type behavior while improving portability.
+ * Optional Frappe HR/payroll integration may consume/supply deliberately delegated
+ * facets; it is not the default replacement for Titan time tracking.
+ */
 import { randomUUID } from "crypto";
 import type { DbClient } from "@/lib/db-contract";
 import type { PayType } from "@titan-zero/domain";

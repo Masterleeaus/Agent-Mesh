@@ -1,8 +1,14 @@
 /**
+ * Native Titan FSM work-order lifecycle persistence.
+ * The status derivation is shared domain logic and the persistence is part of the
+ * mature native FSM. Improve portability/authority/evidence boundaries without
+ * replacing the capability with Frappe by default.
+ */
+/**
  * Recompute and persist work order planning status from child visits.
  */
 
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import {
   deriveWorkOrderStatus,
   type WorkOrderVisitSnapshot,
@@ -28,7 +34,7 @@ const schedulableList = SCHEDULABLE_WORK_ORDER_STATUSES.map((s) => `'${s}'`).joi
 const bookableList = BOOKABLE_WORK_ORDER_STATUSES.map((s) => `'${s}'`).join(", ");
 
 export async function syncWorkOrderStatus(
-  client: PoolClient,
+  client: DbClient,
   workOrderId: string,
   accountId: string,
 ): Promise<WorkOrderStatus | null> {
@@ -82,7 +88,7 @@ export async function syncWorkOrderStatus(
 
 /** Sync all work orders on a project (after visit create/transition). */
 export async function syncWorkOrdersForJob(
-  client: PoolClient,
+  client: DbClient,
   jobId: string,
   accountId: string,
 ): Promise<void> {
@@ -102,7 +108,7 @@ export async function syncWorkOrdersForJob(
  * No-op if not draft. Returns true when a row was updated.
  */
 export async function promoteDraftWorkOrderToReady(
-  client: PoolClient,
+  client: DbClient,
   workOrderId: string,
   accountId: string,
 ): Promise<boolean> {
@@ -121,7 +127,7 @@ export async function promoteDraftWorkOrderToReady(
  * - Auto: single bookable WO on the job (including one draft).
  */
 export async function resolveWorkOrderForVisit(
-  client: PoolClient,
+  client: DbClient,
   jobId: string,
   accountId: string,
   workOrderId?: string | null,

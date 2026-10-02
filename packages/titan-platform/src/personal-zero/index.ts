@@ -5,3 +5,5 @@ export * from "./learning-governor-bridge.js";
 export * from "./learning-review.js";
 export * from "./learning-consumption.js";
 export * from "./share-acceptance.js";
+
+export * from "./context-relationship.js";

@@ -6,7 +6,7 @@ product
 
 ## Users
 
-Three roles share one operating system; the UI must serve all three without fragmenting into separate products.
+`apps/web` is Titan's **full base web application**. It is distinct from the installable Titan PWA and native mobile app, which each expose governed Zero/Go/Hub modes. The base web app may serve owner/admin, office and technician workflows where appropriate without becoming the PWA or a second canonical business core.
 
 - **Owner/Admin** — reviews intake, prices work, schedules visits, invoices clients, and carries business risk. Works across phone (in the field) and desktop (pricing, scheduling, billing). Needs trustworthy numbers and visible review state.
 - **Office/Admin** — keeps clients, estimates, invoices, and follow-ups moving. Primarily desktop; values speed through repetitive coordination.
@@ -14,7 +14,7 @@ Three roles share one operating system; the UI must serve all three without frag
 
 ## Product Purpose
 
-Titan Zero preserves the field-service operating capability inherited from its FSM base, from first request through paid invoice and a permanent property record. The product center is the relationship between a **client** and a **property**: jobs, visits, estimates, invoices, photos, notes, and completion records accumulate into a useful, lasting service history for each home.
+The Titan base web application preserves the mature field-service operating capability inherited from its FSM base while progressively consuming canonical Titan Domain APIs and the Frappe/ERPNext Business Engine rather than owning duplicate CRM/ERP persistence. It covers the journey from first request through paid invoice and a permanent property record. The product center is the relationship between a **client** and a **property**: jobs, visits, estimates, invoices, photos, notes, and completion records accumulate into a useful, lasting service history for each home.
 
 Success looks like: new requests captured without duplicate or ambiguous work; accurate estimates with pricing guardrails and visible review state; visits executed with the right information on site; completed work converted cleanly into invoices and payment history — all without multiplying dashboards or product concepts.
 

@@ -2,7 +2,7 @@
   "goal_id": "TZ-ROADMAP-31",
   "priority": "P0",
   "title": "Canonical Capability Registry & Schema Generation",
-  "objective": "Make Titan Zero TypeScript the single canonical source for capabilities, schemas, tools and generated distribution contracts.",
+  "objective": "Make Titan Zero TypeScript the single canonical source for capabilities, schemas, tools, generated distribution contracts and package/provider capability metadata used by App Foundry and Mission composition.",
   "status": "PLANNED",
   "subgoals": [
     {
@@ -196,7 +196,7 @@
     },
     {
       "subgoal": 2,
-      "title": "Implement canonical Titan Capability Registry with governed handler bindings",
+      "title": "Implement canonical Titan Capability Registry/graph with governed handler bindings plus package/provider/source provenance, compatibility and reachability metadata",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1081,7 +1081,7 @@
     },
     {
       "subgoal": 7,
-      "title": "Generate plugin/host manifests and documentation from canonical metadata",
+      "title": "Generate plugin/host/Titan Package manifests, capability marketplace projections and documentation from canonical metadata rather than hand-maintained catalogues",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1257,7 +1257,7 @@
     },
     {
       "subgoal": 8,
-      "title": "Add capability change detection and semantic version impact classification",
+      "title": "Add capability/package/provider change detection, upstream/source drift tracking and semantic-version impact classification for Foundry maintenance and Mission composition",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1601,7 +1601,7 @@
     },
     {
       "subgoal": 10,
-      "title": "Certify registry/schema generation across representative capabilities and backwards-compatible versions",
+      "title": "Certify registry/schema/package generation across representative native, imported, composite and generated capabilities with backwards-compatible versions and no duplicate business logic",
       "status": "TODO",
       "execution_unit": "CLAIMABLE_MULTI_PASS_SUBGOAL",
       "pass_plan": {
@@ -1778,7 +1778,11 @@
     "architecture",
     "contracts",
     "capabilities",
-    "distribution"
+    "distribution",
+    "app-foundry",
+    "package-provenance",
+    "software-supply",
+    "mission-composition"
   ],
   "preferred_predecessors": [],
   "preferred_successors": [],

@@ -1,3 +1,9 @@
+/**
+ * @deprecated Compatibility Titan Connect donor contract.
+ * Canonical ownership is #432 MCP, bound to #7 capability identities.
+ * Do not add new production semantics under ported/**; migrate consumers to
+ * the canonical provider/MCP namespace and retain only compatibility exports.
+ */
 export type TitanMcpHostFeatures = Readonly<{
   tools?: boolean;
   resources?: boolean;
@@ -61,7 +67,7 @@ export function negotiateTitanMcpHost(input: {
 export const TITAN_MCP_HOST_CONTRACT=Object.freeze({
   schema:"titan.mcp.host-negotiation/v1",
   protocol_version:"2025-03-26",
-  tenant_boundary:"company_id",
+  tenant_boundary:"company_id-logical",
   host_identity_grants_authority:false,
   negotiation_grants_authority:false,
   execution_authority:false,

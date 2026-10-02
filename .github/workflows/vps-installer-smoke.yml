@@ -10,6 +10,10 @@ on:
       - 'apps/web/Dockerfile'
       - 'apps/web/next.config.mjs'
       - 'services/worker/Dockerfile'
+      - 'services/workforce/Dockerfile'
+      - 'services/workforce/**'
+      - 'packages/deployment/**'
+      - 'scripts/inventory-release-artifacts.mjs'
       - '.github/workflows/vps-installer-smoke.yml'
   workflow_dispatch:
 
@@ -19,6 +23,15 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+          run_install: false
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.3
       - name: Validate SQLite VPS scripts and topology
         shell: bash
         run: |
@@ -28,10 +41,45 @@ jobs:
           bash -n scripts/vps/backup-vps.sh
           bash -n scripts/vps/update-vps.sh
           cp infra/vps.env.example .env.vps
-          sed -i 's/GENERATED_BY_INSTALLER/local-smoke-test-only/g' .env.vps
-          mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads"
+          sed -i 's/GENERATED_BY_INSTALLER/ci-smoke-placeholder-not-a-real-secret-00000000000000000000000000000000/g' .env.vps
+          mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads" \
+            "$RUNNER_TEMP/titan-data/runtime" "$RUNNER_TEMP/workforce-company-stores" \
+            "$RUNNER_TEMP/workforce-keys"
+          # Empty public-key sentinels and CI-only identifiers keep Compose
+          # inspectable without creating session credentials or commissioning auth.
+          touch "$RUNNER_TEMP/titan-data/runtime/identity.db" \
+            "$RUNNER_TEMP/workforce-keys/workforce-session.pub.pem" \
+            "$RUNNER_TEMP/workforce-keys/upstream-session.pub.pem"
           export TZ_ENV_FILE="$PWD/.env.vps"
           export TZ_DATA_ROOT="$RUNNER_TEMP/titan-data"
+          export WORKFORCE_COMPANY_STORE_HOST_ROOT="$RUNNER_TEMP/workforce-company-stores"
+          export WORKFORCE_IDENTITY_SQLITE_HOST_PATH="$RUNNER_TEMP/titan-data/runtime/identity.db"
+          export WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH="$RUNNER_TEMP/workforce-keys/workforce-session.pub.pem"
+          export WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH="$RUNNER_TEMP/workforce-keys/upstream-session.pub.pem"
+          export WORKFORCE_DIRECTADMIN_NODE_ID=ci-smoke-uncommissioned
+          export WORKFORCE_SESSION_ISSUER=ci:uncommissioned-session
+          export WORKFORCE_SESSION_KEY_ID=ci-smoke-no-key
+          export WORKFORCE_SESSION_ALGORITHM=EdDSA
+          export WORKFORCE_UPSTREAM_SESSION_ISSUER=ci:uncommissioned-upstream
+          export WORKFORCE_UPSTREAM_SESSION_AUDIENCE=ci:uncommissioned-workforce
+          export WORKFORCE_UPSTREAM_SESSION_KEY_ID=ci-smoke-no-key
+          export WORKFORCE_UPSTREAM_SESSION_ALGORITHM=EdDSA
+          cat >> "$GITHUB_ENV" <<EOF
+          TZ_ENV_FILE=$TZ_ENV_FILE
+          TZ_DATA_ROOT=$TZ_DATA_ROOT
+          WORKFORCE_COMPANY_STORE_HOST_ROOT=$WORKFORCE_COMPANY_STORE_HOST_ROOT
+          WORKFORCE_IDENTITY_SQLITE_HOST_PATH=$WORKFORCE_IDENTITY_SQLITE_HOST_PATH
+          WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH=$WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH
+          WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH=$WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH
+          WORKFORCE_DIRECTADMIN_NODE_ID=$WORKFORCE_DIRECTADMIN_NODE_ID
+          WORKFORCE_SESSION_ISSUER=$WORKFORCE_SESSION_ISSUER
+          WORKFORCE_SESSION_KEY_ID=$WORKFORCE_SESSION_KEY_ID
+          WORKFORCE_SESSION_ALGORITHM=$WORKFORCE_SESSION_ALGORITHM
+          WORKFORCE_UPSTREAM_SESSION_ISSUER=$WORKFORCE_UPSTREAM_SESSION_ISSUER
+          WORKFORCE_UPSTREAM_SESSION_AUDIENCE=$WORKFORCE_UPSTREAM_SESSION_AUDIENCE
+          WORKFORCE_UPSTREAM_SESSION_KEY_ID=$WORKFORCE_UPSTREAM_SESSION_KEY_ID
+          WORKFORCE_UPSTREAM_SESSION_ALGORITHM=$WORKFORCE_UPSTREAM_SESSION_ALGORITHM
+          EOF
           docker compose --env-file .env.vps -f infra/compose.vps.yml config > "$RUNNER_TEMP/compose.yml"
           if grep -Eiq '(^|[[:space:]])postgres:|postgresql://' "$RUNNER_TEMP/compose.yml"; then
             echo 'PostgreSQL leaked into canonical VPS topology' >&2
@@ -43,28 +91,283 @@ jobs:
         shell: bash
         run: |
           TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
-            docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker
+            docker compose --env-file .env.vps -f infra/compose.vps.yml build web worker workforce
       - name: Create and verify fresh SQLite database
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite"
-          docker run --rm \
-            --env-file "$PWD/.env.vps" \
-            -e DATABASE_DIALECT=sqlite \
-            -e DATABASE_URL=file:/app/data/titan-zero.db \
-            -e SQLITE_PATH=/app/data/titan-zero.db \
-            -v "$PWD:/app" \
-            -v "$RUNNER_TEMP/titan-data/sqlite:/app/data" \
-            -w /app \
-            titan-zero-web:latest node scripts/sqlite-migrate.mjs
+          TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
+          docker compose --env-file .env.vps -f infra/compose.vps.yml \
+            run --rm --no-deps web node sqlite-migrate.mjs
           python3 - "$RUNNER_TEMP/titan-data/sqlite/titan-zero.db" <<'PY'
           import sqlite3, sys
           db = sqlite3.connect(sys.argv[1])
           try:
+              db.execute('PRAGMA foreign_keys=ON')
+              assert not db.execute('PRAGMA foreign_key_check').fetchall()
               assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
               assert db.execute('PRAGMA foreign_keys').fetchone()[0] == 1
           finally:
               db.close()
           print('sqlite-production-database: PASS')
           PY
+      - name: Create CI-only uncommissioned Workforce dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$TZ_DATA_ROOT/smoke"
+          cat > "$TZ_DATA_ROOT/smoke/workforce-dependencies.mjs" <<'JS'
+          import { createSqliteStorage } from "/app/packages/storage/src/index.ts";
+          import { createIdentitySessionRegistry } from "/app/packages/titan-platform/src/security-session-registry.ts";
+
+          export async function createWorkforceDependencies() {
+            const identityStoragePath = "/app/runtime/workforce-identity.db";
+            const identityStorage = createSqliteStorage(identityStoragePath);
+            try {
+              // Initialize only the canonical disposable schema. Do not provision identities,
+              // sessions, credentials, authority, provider effects, or accepted evidence.
+              await createIdentitySessionRegistry({ storage: identityStorage, storage_role: "GLOBAL_REGISTRY" });
+            } finally {
+              await identityStorage.close();
+            }
+            const disabled = async () => { throw new Error("ci-smoke-dependency-disabled"); };
+            return {
+              identityStoragePath,
+              credentialVerifier: { verify: disabled },
+              companyPlacementRegistry: { findByCompanyId: disabled },
+              companyStoreOpener: { open: disabled },
+              workOrders: { read: disabled, complete: disabled },
+              async readiness() {
+                return { authentication: false, authority: false, provider: false, evidence: false };
+              },
+            };
+          }
+          JS
+          cat > "$RUNNER_TEMP/workforce-smoke.compose.yml" <<'YAML'
+          services:
+            workforce:
+              environment:
+                WORKFORCE_DEPENDENCIES_MODULE: /app/smoke/workforce-dependencies.mjs
+              volumes:
+                - ${TZ_DATA_ROOT:?required}/smoke:/app/smoke:ro
+              healthcheck:
+                test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3010/health >/dev/null 2>&1"]
+                interval: 10s
+                timeout: 5s
+                retries: 12
+                start_period: 10s
+          YAML
+          docker compose --env-file .env.vps -f infra/compose.vps.yml \
+            -f "$RUNNER_TEMP/workforce-smoke.compose.yml" config > "$RUNNER_TEMP/workforce-smoke-compose.yml"
+          grep -q 'WORKFORCE_DEPENDENCIES_MODULE: /app/smoke/workforce-dependencies.mjs' \
+            "$RUNNER_TEMP/workforce-smoke-compose.yml"
+      - name: Verify Workforce starts live and remains unready without commissioning
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! TZ_ENV_FILE="$PWD/.env.vps" TZ_DATA_ROOT="$RUNNER_TEMP/titan-data" \
+            docker compose --env-file .env.vps -f infra/compose.vps.yml \
+            -f "$RUNNER_TEMP/workforce-smoke.compose.yml" up -d redis workforce; then
+            docker compose --env-file .env.vps -f infra/compose.vps.yml \
+              -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=150 redis web workforce
+            exit 1
+          fi
+          for attempt in $(seq 1 30); do
+            if [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3010/health || true)" == "200" ]]; then
+              break
+            fi
+            if [[ "$attempt" == 30 ]]; then
+              docker compose --env-file .env.vps -f infra/compose.vps.yml \
+                -f "$RUNNER_TEMP/workforce-smoke.compose.yml" logs --tail=150 redis web workforce
+              exit 1
+            fi
+            sleep 2
+          done
+          [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3010/health)" == "200" ]]
+          readiness_status=$(curl --silent --show-error --output "$RUNNER_TEMP/workforce-ready.json" \
+            --write-out '%{http_code}' http://127.0.0.1:3010/ready)
+          [[ "$readiness_status" == "503" ]]
+          python3 - "$RUNNER_TEMP/workforce-ready.json" <<'PY'
+          import json, sys
+          body = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert body['status'] == 'degraded'
+          assert body['checks'] == {
+              'storage': 'ok', 'runtime': 'ok', 'authentication': 'fail',
+              'authority': 'fail', 'provider': 'fail', 'evidence': 'fail'
+          }
+          print('workforce-live-but-uncommissioned: PASS')
+          PY
+          cat > "$RUNNER_TEMP/workforce-smoke-request.json" <<'JSON'
+          {
+            "company_id":"ci-smoke-company", "actor_id":"ci-smoke-actor",
+            "device_id":"ci-smoke-device", "surface":"zero", "session_id":"ci-smoke-session",
+            "context_revision":"ci-smoke-context", "conversation_id":"ci-smoke-conversation",
+            "interaction_id":"ci-smoke-interaction", "client_message_id":"ci-smoke-message",
+            "request_id":"ci-smoke-request", "operation_id":"ci-smoke-operation",
+            "correlation_id":"ci-smoke-correlation", "trace_id":"ci-smoke-trace",
+            "idempotency_key":"ci-smoke-idempotency", "text":"smoke authentication denial"
+          }
+          JSON
+          conversation_status=$(curl --silent --show-error --output "$RUNNER_TEMP/workforce-denied.json" \
+            --write-out '%{http_code}' -X POST http://127.0.0.1:3010/v1/workforce/conversations \
+            -H 'content-type: application/json' -H 'authorization: Bearer smoke-disabled' \
+            --data-binary "@$RUNNER_TEMP/workforce-smoke-request.json")
+          [[ "$conversation_status" == "401" ]]
+          python3 - "$RUNNER_TEMP/workforce-denied.json" <<'PY'
+          import json, sys
+          assert json.load(open(sys.argv[1], encoding='utf-8')) == {'error': 'conversation-authentication-failed'}
+          print('workforce-smoke-authentication-denied: PASS')
+          PY
+          [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3010/health)" == "200" ]]
+          python3 - "$RUNNER_TEMP/titan-data/runtime/workforce.db" \
+            "$RUNNER_TEMP/titan-data/runtime/workforce-identity.db" <<'PY'
+          import sqlite3, sys
+          for path in sys.argv[1:]:
+              db = sqlite3.connect(path)
+              try:
+                  assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+                  assert not db.execute('PRAGMA foreign_key_check').fetchall()
+              finally:
+                  db.close()
+          identity = sqlite3.connect(sys.argv[2])
+          try:
+              for table in ('titan_security_actors', 'titan_security_companies', 'titan_security_memberships',
+                            'titan_security_devices', 'titan_security_external_bindings', 'titan_security_sessions'):
+                  assert identity.execute(f'SELECT COUNT(*) FROM {table}').fetchone()[0] == 0
+          finally:
+              identity.close()
+          print('workforce-disposable-stores-integrity-and-empty-identity: PASS')
+          PY
+      - name: Stop smoke services
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/workforce-smoke.compose.yml" ]]; then
+            docker compose --env-file .env.vps -f infra/compose.vps.yml \
+              -f "$RUNNER_TEMP/workforce-smoke.compose.yml" down -v --remove-orphans
+          else
+            docker compose --env-file .env.vps -f infra/compose.vps.yml down -v --remove-orphans
+          fi
+      - name: Inventory exact built images and CI observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          bundle_root="$RUNNER_TEMP/titan-release-artifact-inventory"
+          artifact_root="$bundle_root/artifacts"
+          mkdir -p "$artifact_root"
+
+          app_tag="$(sed -n 's/^APP_TAG=//p' infra/vps.env.example | head -n 1)"
+          test -n "$app_tag"
+          export APP_TAG="$app_tag"
+          for service in web worker workforce; do
+            image="titan-zero-${service}:${app_tag}"
+            docker image inspect "$image" >/dev/null
+            docker save "$image" | gzip -1 > "$artifact_root/${service}-image.tar.gz"
+            docker image load --input "$artifact_root/${service}-image.tar.gz" >/dev/null
+          done
+
+          tar --create --gzip --file "$artifact_root/config.tar.gz" \
+            infra/compose.vps.yml infra/vps.env.example \
+            scripts/vps/install-sqlite-vps.sh scripts/vps/update-vps.sh \
+            scripts/vps/backup-vps.sh scripts/sqlite-migrate.mjs
+          tar --create --gzip --file "$artifact_root/migrations.tar.gz" db/sqlite
+
+          node --input-type=module - "$artifact_root" "$bundle_root" <<'NODE'
+          import { execFileSync } from 'node:child_process';
+          import { writeFile } from 'node:fs/promises';
+          import { join } from 'node:path';
+
+          const [artifactRoot, bundleRoot] = process.argv.slice(2);
+          const services = ['web', 'worker', 'workforce'];
+          const images = services.map(service => {
+            const reference = `titan-zero-${service}:${process.env.APP_TAG || 'latest'}`;
+            const imageId = execFileSync('docker', ['image', 'inspect', '--format', '{{.Id}}', reference], { encoding: 'utf8' }).trim();
+            if (!/^sha256:[a-f0-9]{64}$/.test(imageId)) throw new Error(`invalid-image-id:${service}`);
+            const runtime_node_version = execFileSync('docker', [
+              'run', '--rm', '--entrypoint', 'node', reference, '--version',
+            ], { encoding: 'utf8' }).trim();
+            if (!/^v\d+\.\d+\.\d+$/.test(runtime_node_version)) throw new Error(`invalid-node-runtime:${service}`);
+            return { role: service, reference, image_id: imageId, runtime_node_version };
+          });
+          const source_sha = process.env.GITHUB_SHA;
+          if (!/^[a-f0-9]{40}$/.test(source_sha || '')) throw new Error('missing-build-source-sha');
+          const writeJson = (name, value) => writeFile(join(artifactRoot, name), `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx' });
+
+          await writeJson('ci-build-observation.json', {
+            schema: 'titan.deployment.ci-build-observation.v1',
+            trust: 'unsigned-ci-observation-not-publisher-attestation',
+            source_sha,
+            workflow: process.env.GITHUB_WORKFLOW,
+            run_id: process.env.GITHUB_RUN_ID,
+            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+            workflow_run_url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+            event_name: process.env.GITHUB_EVENT_NAME,
+            runner_os: process.env.RUNNER_OS,
+            node: process.version,
+            pnpm: execFileSync('pnpm', ['--version'], { encoding: 'utf8' }).trim(),
+            docker: execFileSync('docker', ['--version'], { encoding: 'utf8' }).trim(),
+            built_images: images,
+          });
+          await writeJson('ci-smoke-observations.json', {
+            schema: 'titan.deployment.ci-smoke-observations.v1',
+            source_sha,
+            environment: 'disposable GitHub-hosted Ubuntu runner',
+            workflow_run_url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+            observations: [
+              { id: 'compose-images-built', result: 'passed' },
+              { id: 'sqlite-migrations-integrity', result: 'passed' },
+              { id: 'workforce-health', result: 'passed', http_status: 200 },
+              { id: 'workforce-uncommissioned-readiness', result: 'degraded-as-expected', http_status: 503 },
+              { id: 'workforce-authentication-denial', result: 'passed', http_status: 401 },
+              { id: 'workforce-disposable-store-integrity', result: 'passed' },
+            ],
+            not_performed: [
+              'live_host_install', 'directadmin_install', 'production_web_readiness', 'worker_service_startup',
+              'company_isolation', 'upgrade', 'rollback', 'reboot_recovery', 'destructive_backup_restore',
+              'second_substrate', 'business_action', 'release_signing', 'promotion',
+            ],
+            host_certification: 'NOT_PERFORMED',
+            grants_authority: false,
+          });
+
+          await writeFile(join(bundleRoot, 'inventory-request.json'), `${JSON.stringify({
+            schema: 'titan.deployment.release-artifact-inventory-request.v1',
+            source_sha,
+            profile: 'portable',
+            artifacts: [
+              { role: 'web', path: 'web-image.tar.gz' },
+              { role: 'worker', path: 'worker-image.tar.gz' },
+              { role: 'workforce', path: 'workforce-image.tar.gz' },
+              { role: 'config', path: 'config.tar.gz' },
+              { role: 'migrations', path: 'migrations.tar.gz' },
+              { role: 'provenance', path: 'ci-build-observation.json' },
+              { role: 'evidence', path: 'ci-smoke-observations.json' },
+            ],
+          }, null, 2)}\n`, { flag: 'wx' });
+          NODE
+
+          node scripts/inventory-release-artifacts.mjs \
+            "$bundle_root/inventory-request.json" "$artifact_root" > "$bundle_root/inventory.json"
+          python3 - "$bundle_root/inventory.json" <<'PY'
+          import json, sys
+          inventory = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert inventory['schema'] == 'titan.deployment.release-artifact-inventory.v1'
+          assert inventory['status'] == 'ARTIFACTS_INVENTORIED'
+          assert inventory['release_gate']['status'] == 'DENIED'
+          assert inventory['release_gate']['promotion_allowed'] is False
+          assert inventory['release_gate']['grants_authority'] is False
+          assert inventory['release_gate']['host_certification'] == 'NOT_PERFORMED'
+          assert inventory['release_gate']['signature_status'] == 'NOT_SIGNED'
+          assert inventory['missing_artifact_roles'] == ['sbom']
+          assert inventory['unattested_required_checks'] == inventory['required_check_ids']
+          print('real-build-artifact-inventory: recorded; release remains denied')
+          PY
+      - name: Upload unsigned artifact inventory and exact CI build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: titan-release-artifact-inventory-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/titan-release-artifact-inventory/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0

@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import {
   DEFAULT_TRAVEL_SETTINGS,
   type TravelSettings,
@@ -72,7 +72,7 @@ export function rowToTravelSettings(row: Record<string, unknown> | null | undefi
 
 /** Load settings; auto-seed row if missing (new accounts). */
 export async function loadTravelSettings(
-  client: PoolClient,
+  client: DbClient,
   accountId: string
 ): Promise<TravelSettings> {
   const existing = await client.query(
@@ -105,7 +105,7 @@ export interface ActiveMileageRate {
 
 /** Active mileage rate for new calculations. Falls back to settings default. */
 export async function loadActiveMileageRate(
-  client: PoolClient,
+  client: DbClient,
   accountId: string,
   settings?: TravelSettings
 ): Promise<ActiveMileageRate> {

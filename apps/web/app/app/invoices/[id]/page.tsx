@@ -137,7 +137,7 @@ export default async function InvoiceDetailPage({
   if (!session) redirect("/login");
 
   const result = await withInvoiceContext(session, async (client) => {
-    const invoiceResult = await client.query(
+    const invoiceResult = await client.query<InvoiceRow>(
       `SELECT i.*, c.name AS client_name, c.email AS client_email, j.title AS job_title, j.status AS job_status
        FROM invoices i
        LEFT JOIN clients c ON c.id = i.client_id
@@ -153,7 +153,7 @@ export default async function InvoiceDetailPage({
       [session.accountId],
     );
 
-    const lineItemsResult = await client.query(
+    const lineItemsResult = await client.query<LineItemRow>(
       `SELECT id, invoice_id, estimate_line_item_id,
               description, quantity::float8 AS quantity, unit_price_cents, total_cents, line_item_type, sort_order, created_at
        FROM invoice_line_items
@@ -162,7 +162,7 @@ export default async function InvoiceDetailPage({
       [id]
     );
 
-    const locationResult = await client.query(
+    const locationResult = await client.query<DocumentLocationRow>(
       `SELECT i.property_id AS document_property_id,
               ${documentLocationSelect({ includeEstimateProperty: true })}
        FROM invoices i
@@ -172,10 +172,10 @@ export default async function InvoiceDetailPage({
     );
 
     return {
-      invoice: invoiceResult.rows[0] as InvoiceRow,
-      lineItems: lineItemsResult.rows as LineItemRow[],
+      invoice: invoiceResult.rows[0]!,
+      lineItems: lineItemsResult.rows,
       accountSettings: accountResult.rows[0]?.settings ?? {},
-      location: locationResult.rows[0] as DocumentLocationRow | undefined,
+      location: locationResult.rows[0],
     };
   });
 

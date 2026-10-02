@@ -1,0 +1,11 @@
+{
+  "schema": "titan.mobile.compatibility.v1",
+  "application": "one-mobile-app-zero-go-hub",
+  "modes": ["zero", "go", "hub"],
+  "platforms": {
+    "android": {"minimum_os": "10", "release_artifact": "aab", "signing_ref_env": "ANDROID_KEYSTORE_BASE64"},
+    "ios": {"minimum_os": "15", "release_artifact": "ipa", "signing_ref_env": "IOS_EXPORT_OPTIONS_BASE64"}
+  },
+  "required_evidence": ["company_boundary", "canonical_surfaces", "authority_contraction", "offline_revalidation", "secure_key_path", "remote_revocation", "remote_wipe", "incident_repair", "signed_build", "rollback", "low_connectivity", "security", "accessibility", "performance"],
+  "release_invariants": ["no_debug_signing", "no_committed_credentials", "mode_switch_does_not_change_company", "rollback_artifact_is_retained"]
+}

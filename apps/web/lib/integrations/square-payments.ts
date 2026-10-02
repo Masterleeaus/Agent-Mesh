@@ -3,9 +3,11 @@ import type { DbClient } from "@/lib/db-contract";
 import { encryptJson, decryptJson } from "@/lib/crypto";
 import { randomUUID } from "node:crypto";
 
-// Provider module for Square card payments. Dovetails OS owns the invoice and
-// payment record; Square only processes online card payments. All other
-// providers (Stripe, PayPal) would get a sibling module under lib/integrations.
+// Legacy base-web Square provider adapter. Canonical invoice/payment semantics are
+// owned by #263/#1054 and operational materialization by #1051 where mapped.
+// Square is a replaceable payment/channel provider; connection/provider identity
+// never grants Titan authority. This module remains a compatibility donor until
+// rebound through #403/#1060 and canonical finance contracts.
 
 export type SquareEnvironmentName = "sandbox" | "production";
 

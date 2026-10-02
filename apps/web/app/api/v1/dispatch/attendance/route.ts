@@ -36,7 +36,7 @@ export const GET = withAuth(async (request: NextRequest, session: AuthSession) =
         ORDER BY u.full_name, u.email`,
       [session.accountId],
     ),
-    portableQuery<AttendanceClockRow>(
+    portableQuery<AttendanceClockRow & Record<string, unknown>>(
       `SELECT user_id, clock_in_at, clock_out_at, status
          FROM time_clock_sessions
         WHERE account_id = $1 AND voided_at IS NULL

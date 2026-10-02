@@ -31,7 +31,6 @@ Required Dart defines:
 - `TITAN_SURFACE_PROJECTION_URL`
 - `TITAN_SURFACE_COMMAND_URL`
 
-Optional:
-- `TITAN_AUTH_TOKEN`
+Access tokens are loaded from platform secure storage by company, actor, device and canonical surface. Do not pass `TITAN_AUTH_TOKEN` as a Dart define or URL parameter. The current bootstrap configures a single initial surface; interactive mode and company switching still require the authenticated session bridge and are not yet certified.
 
 Missing production configuration fails closed. `LocalMvpTitanGateway` is development/offline compatibility only and is not wired into the production shell. Core projections remain authority-neutral and consequential commands require server acceptance/receipts.

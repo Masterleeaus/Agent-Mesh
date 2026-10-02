@@ -1,34 +1,69 @@
-name: Agent work
-description: Claimable Titan Zero implementation work
-title: "[TZ-ROADMAP-XX-SG-XX] "
+name: Implementation slice
+description: A small, independently reviewable Titan Zero delivery issue
+title: "[CODEX] "
 body:
-  - type: input
-    id: subgoal
+  - type: dropdown
+    id: scope
     attributes:
-      label: Roadmap subgoal
-      placeholder: TZ-ROADMAP-01-SG-01
-    validations:
-      required: true
-  - type: textarea
-    id: remaining
-    attributes:
-      label: Remaining work
-      description: State only work that remains after checking main and existing evidence.
-    validations:
-      required: true
-  - type: textarea
-    id: evidence
-    attributes:
-      label: Existing evidence / reuse targets
-      description: Files, contracts, tests, agents or capabilities that must be reused or extended.
-  - type: checkboxes
-    id: rules
-    attributes:
-      label: Agent Mesh rules
+      label: Work scope
       options:
-        - label: I will work from current GitHub main, not conversation memory or old ZIP/HEAD pointers.
+        - Child implementation slice
+        - Product or subproduct milestone
+        - Integration or certification
+    validations:
+      required: true
+  - type: input
+    id: parent
+    attributes:
+      label: Parent issue
+      description: Optional for a top-level mission; required when this is a child slice.
+      placeholder: "1234"
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Observable outcome
+      description: State one concrete result this issue will deliver.
+      placeholder: An operator can view the current company's workforce roster and team membership.
+    validations:
+      required: true
+  - type: textarea
+    id: owner_scope
+    attributes:
+      label: Canonical owner and allowed scope
+      description: Name the existing owner/contracts to reuse and the boundaries this slice may change.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Keep this to a short list of observable results for this slice. Put full product certification in the parent issue.
+      placeholder: |
+        - The outcome works for an authorized company.
+        - Cross-company access is denied.
+        - Existing canonical state remains authoritative.
+    validations:
+      required: true
+  - type: textarea
+    id: focused_checks
+    attributes:
+      label: Focused checks
+      description: List the smallest relevant build, test or smoke checks for this change. Do not require full parent-level gates on each child.
+    validations:
+      required: true
+  - type: textarea
+    id: deferred_gates
+    attributes:
+      label: Parent or subproduct checks
+      description: Link the tracking issue for any full integration, recovery, live-host or release checks deferred until the product is assembled.
+  - type: checkboxes
+    id: protected_boundaries
+    attributes:
+      label: Protected boundaries
+      options:
+        - label: Keep company isolation, authority, money, migrations, evidence, privacy and idempotency safeguards intact where touched.
           required: true
-        - label: I will use a dedicated branch and linked PR; I will not push implementation directly to main.
+        - label: Record only checks actually run; do not represent deferred checks as passing.
           required: true
-        - label: I will preserve company_id as the canonical boundary and reuse existing canonical identities.
+        - label: Merge partial work with Refs and keep the parent issue open until the product milestone is complete.
           required: true

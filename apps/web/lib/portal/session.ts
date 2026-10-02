@@ -1,3 +1,11 @@
+/**
+ * Architecture security note:
+ * This is a legacy base-web portal session and currently resolves only clientId.
+ * It is NOT sufficient as the canonical Hub customer principal because it does
+ * not bind company_id/context revision in the returned session. Canonical Hub
+ * APIs must resolve a company-bound customer principal and enforce object
+ * relationship scope server-side before returning or mutating business data.
+ */
 import { cookies } from "next/headers";
 import { query, queryOne } from "@/lib/db";
 

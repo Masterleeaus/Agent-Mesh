@@ -1,8 +1,8 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 
 /** Set WO lead from visit scheduling; overwrites when visit assignee is explicit. */
 export async function syncWorkOrderLeadFromVisit(
-  client: PoolClient,
+  client: DbClient,
   workOrderId: string,
   accountId: string,
   assignedUserId: string | null | undefined,

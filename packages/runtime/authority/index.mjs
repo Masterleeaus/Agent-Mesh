@@ -49,3 +49,9 @@ export { SqliteAuthorityStore } from './sqlite-authority-store.mjs';
 export { AuthorityContextResolver } from './authority-context-resolver.mjs';
 
 export { RuntimeAuthorityGateway } from './runtime-authority-gateway.mjs';
+
+export { CapabilityRequirementResolver } from './capability-requirement-resolver.mjs';
+
+export { SqliteWorkerAccessStore, WorkerAccessResolver } from './worker-access-resolver.mjs';
+
+export { INVOCATION_ENVELOPE_SCHEMA, CONTEXT_OWNER_SCHEMA, HANDOFF_RECEIPT_SCHEMA, createInvocationEnvelope, createContextOwnerRecord, DurableAgentContextOwner, createHandoffReceipt, HandoffReceiptInbox } from './invocation-context.mjs';

@@ -1,6 +1,6 @@
 // Titan Zero Marketplace Commercialisation — Pass 1
 // Reconciles legacy cleaning marketplace product state with the governed Titan Modules lifecycle.
-// company_id is the sole company boundary. This adapter does not grant authority or execute spend.
+// company_id is Titan's canonical logical company identity. Provider-local physical isolation may add stronger boundaries. This compatibility adapter does not grant authority or execute spend.
 
 const clone = <T>(value: T): T => value == null ? value : JSON.parse(JSON.stringify(value));
 const COMPANY_ID=/^[A-Za-z0-9._:-]{2,128}$/;
@@ -11,7 +11,7 @@ export function normalizeMarketplaceCompanyId(value: unknown){
   if(value && typeof value === 'object'){
     if('tenant_id' in value || 'tenant_company_id' in value || 'organisation_id' in value ||
        'organization_id' in value || 'workspace_tenant_id' in value){
-      throw new Error('company_id is the only canonical company boundary');
+      throw new Error('legacy tenant identifiers are not accepted here; normalize to canonical company_id before marketplace lifecycle use');
     }
     value=(value as Record<string, unknown>).company_id;
   }
@@ -85,12 +85,13 @@ export function createMarketplaceCommercialLifecycle({moduleManager,marketplaceR
       grants_authority:false,executes_purchases:false,executes_renewals:false});
   }
 
+  /** @deprecated Compatibility lifecycle only. `approved=true` is not Titan execution authority; canonical installs must traverse effective authority + ExecutionGateway/Foundry. */
   async function governedInstall(company_id: unknown,itemId: string,options: any={}){
     const company=normalizeMarketplaceCompanyId(company_id);
-    if(options.approved!==true) throw new Error('Explicit approved=true is required before governed marketplace installation');
+    if(options.approved!==true) throw new Error('Compatibility approval marker required; canonical effective authority must be evaluated by the execution owner');
     const result=await marketplaceRuntime.install(itemId,options);
     return Object.freeze({company_id:company,item_id:itemId,result:clone(result),
-      authority_source:'explicit_approval_plus_titan_modules_governed_runtime'});
+      authority_source:'compatibility_marker_only_not_canonical_execution_authority'});
   }
 
   return Object.freeze({snapshot,governedInstall});

@@ -23,3 +23,36 @@ export function buildInvoicePaymentLifecycleObservation(input={}){
  return Object.freeze({schema:REVENUE_INVOICE_PAYMENT_LIFECYCLE_SCHEMA,company_id,revenue_journey_id:correlation.revenue_journey_id,invoice_id,payment_id,invoice_state,payment_state,amounts:Object.freeze({total:amount_total,paid:amount_paid,refunded:amount_refunded,outstanding}),correlation,idempotency_key:key,provenance:p,evidence:ev,review:Object.freeze({reconciliation_required,refund_review_required,failure_review_required}),semantics:Object.freeze({invoice_truth_owner:'Titan CRM revenue document authority',payment_truth_owner:'Titan CRM receivable/payment lifecycle pending dedicated Titan Pay master',invoice_creation_capability:'crm.invoice.create',payment_reconciliation_capability:'finance.payment.reconcile',payment_reconciliation_authority:'user_only',partial_payment_does_not_mean_settled:true,failed_payment_does_not_void_invoice:true,refund_state_does_not_execute_refund:true,invoice_paid_state_is_evidence_not_authority:true}),governance:Object.freeze({company_boundary:'company_id',owns_domain_truth:false,identity_is_authority:false,authority_granted:false,execution_permitted:false,may_move_money:false,may_refund:false,may_create_entities:false,may_mutate_entities:false})});
 }
 export function assertInvoicePaymentReplay(a,b){return Boolean(a&&b&&a.schema===REVENUE_INVOICE_PAYMENT_LIFECYCLE_SCHEMA&&b.schema===REVENUE_INVOICE_PAYMENT_LIFECYCLE_SCHEMA&&a.idempotency_key===b.idempotency_key&&a.company_id===b.company_id&&a.revenue_journey_id===b.revenue_journey_id);}
+
+
+export function verifyInvoicePaymentOutcome(observation, input = {}) {
+ if (!observation || observation.schema !== REVENUE_INVOICE_PAYMENT_LIFECYCLE_SCHEMA) throw new TypeError('revenue-invoice-payment-observation-required');
+ const company_id = company(input);
+ if (company_id !== observation.company_id) throw new TypeError('revenue-invoice-payment-cross-company-verification');
+ if (input.provider_acknowledged === true && input.authoritative_reread !== true) throw new TypeError('revenue-invoice-payment-provider-ack-is-not-verification');
+ if (input.authoritative_reread !== true) throw new TypeError('revenue-invoice-payment-authoritative-reread-required');
+ const verified_evidence_refs = evidence(input.verified_evidence_refs);
+ if (observation.payment_state !== 'settled') throw new TypeError('revenue-invoice-payment-settlement-not-observed');
+ if (observation.amounts.paid < observation.amounts.total) throw new TypeError('revenue-invoice-payment-total-not-settled');
+ const verified_at = clean(input.verified_at);
+ if (!verified_at) throw new TypeError('revenue-invoice-payment-verification-time-required');
+ return Object.freeze({
+  schema: 'titan.zero.revenue-journey.invoice-payment-outcome.v1',
+  company_id,
+  revenue_journey_id: observation.revenue_journey_id,
+  invoice_id: observation.invoice_id,
+  payment_id: observation.payment_id,
+  idempotency_key: `verified:${observation.idempotency_key}`,
+  status: 'VERIFIED',
+  verified_at,
+  verified_evidence_refs,
+  authoritative_reread: true,
+  provider_acknowledged: input.provider_acknowledged === true,
+  governance: Object.freeze({
+   authority_granted: false,
+   execution_permitted: false,
+   may_move_money: false,
+   owns_domain_truth: false,
+  }),
+ });
+}

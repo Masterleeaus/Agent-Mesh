@@ -27,3 +27,6 @@ export { createBackupRecoveryService } from "./backup-recovery.js";
 export type { CompanyBackup, CompanyBackupRecord } from "./backup-recovery.js";
 
 export { createStorageAuthorityDiagnostics } from "./diagnostics.js";
+
+export { resolveCompanyBlobPlacement, assertBlobObjectBound, validateRestoreManifest } from "./blob-contract.js";
+export type { BlobStorageRole, CompanyBlobPlacement, BlobObject, RestoreManifest } from "./blob-contract.js";

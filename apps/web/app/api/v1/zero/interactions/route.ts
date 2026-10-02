@@ -73,9 +73,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result, { status: 202 });
   } catch (error) {
     const code = (error as { code?: string }).code;
+    if (error instanceof Error && ["zero-workforce-manager-unavailable", "zero-requested-agent-unavailable"].includes(error.message)) {
+      return NextResponse.json({ error: "No eligible Workforce agent is available", code: "ZERO_WORKER_UNAVAILABLE" }, { status: 503 });
+    }
     if (code === "ZERO_RUNTIME_UNAVAILABLE") {
       return NextResponse.json({ error: "Zero runtime is not available", code }, { status: 503 });
     }
     return NextResponse.json({ error: "Zero interaction rejected" }, { status: 400 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const work_id = req.nextUrl.searchParams.get("work_id");
+  if (!work_id) return NextResponse.json({ error: "work_id required" }, { status: 400 });
+  try {
+    const { getProductionZeroRuntime } = await import("@/lib/zero/production-runtime");
+    const view = await (await getProductionZeroRuntime()).project({ company_id: session.accountId, actor_id: session.userId, work_id });
+    return view ? NextResponse.json(view, { headers: { "Cache-Control": "no-store" } }) : NextResponse.json({ error: "Not found" }, { status: 404 });
+  } catch {
+    return NextResponse.json({ error: "Zero runtime is not available", code: "ZERO_RUNTIME_UNAVAILABLE" }, { status: 503 });
   }
 }

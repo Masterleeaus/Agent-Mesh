@@ -7,15 +7,10 @@ export { calcTotals, lineItemTotal } from "./math";
 export type { LineItemInput, Totals } from "./math";
 
 /**
- * Run fn within a PostgreSQL transaction with RLS session context set.
- *
- * Sets app.current_user_id, app.current_account_id, app.current_role as
- * LOCAL (transaction-scoped) config vars so RLS policies can enforce
- * tenant isolation and role-based access.
- *
- * Source evidence:
- *   Myprogram: supabase/migrations/003_rls_policies.sql (set_config pattern)
- *   AI-FSM: db/migrations/003_rls_policies.sql (app.* session vars)
+ * Native Titan FSM estimate persistence boundary.
+ * The PostgreSQL/RLS implementation needs portability/company-context convergence,
+ * but the mature quoting capability remains Titan-owned. Do not replace it with
+ * Frappe merely because ERPNext provides quotations.
  */
 export async function withEstimateContext<T>(
   session: SessionPayload,

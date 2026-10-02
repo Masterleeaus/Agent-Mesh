@@ -134,7 +134,7 @@ export default async function EstimatesPage({ searchParams }: PageProps) {
       idx++;
     }
 
-    const r = await client.query(
+    const r = await client.query<EstimateRow>(
       `SELECT e.id, e.status, e.subtotal_cents, e.tax_cents, e.total_cents,
               e.sent_at, e.expires_at, e.created_at, e.estimate_number,
               c.name AS client_name,
@@ -147,7 +147,7 @@ export default async function EstimatesPage({ searchParams }: PageProps) {
        LIMIT 100`,
       params
     );
-    return r.rows as EstimateRow[];
+    return r.rows;
   });
 
   const hasFilter = !!(q || statusFilter || activeTier || attentionMode);

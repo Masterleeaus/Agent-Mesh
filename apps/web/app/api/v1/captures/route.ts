@@ -9,6 +9,7 @@ import { z } from "zod";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { withDbSession } from "@/lib/db";
+import { requireCompanyId } from "@/lib/db/contracts";
 import { logger } from "@/lib/logger";
 import { captureDir, captureFilePath } from "./files";
 
@@ -99,6 +100,16 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
     formData = await request.formData();
   } catch {
     return errorJson(session, 422, "VALIDATION_ERROR", "Expected multipart form data");
+  }
+
+  // Offline payload context is a constraint, never authority. Reject stale tabs
+  // after a company switch before accessing any storage or writing a file.
+  const queuedCompanyId = formData.get("company_id");
+  if (typeof queuedCompanyId !== "string" || queuedCompanyId.trim() === "") {
+    return errorJson(session, 422, "VALIDATION_ERROR", "company_id is required");
+  }
+  if (queuedCompanyId !== requireCompanyId(session)) {
+    return errorJson(session, 403, "COMPANY_MISMATCH", "Capture belongs to a different company");
   }
 
   const audio = asFile(formData.get("audio"));

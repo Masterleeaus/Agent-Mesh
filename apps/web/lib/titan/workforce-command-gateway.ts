@@ -42,12 +42,23 @@ export function buildWorkforceCommandPlan(session: SessionPayload, input: Workfo
       companyBoundary: session.accountId,
       actorId: session.userId,
       actorRole: session.role,
-      businessOpsRouteRemainsAuthoritative: true,
+      // Compatibility only: the legacy route is transport, never Titan execution authority.
+      businessOpsRouteRemainsAuthoritative: false,
+      compatibilityTransport: "legacy_internal_api_route",
+      canonicalAuthority: "hosted_workforce_effective_authority_execution_gateway",
       browserExtensionRequired: false,
     },
   } as const;
 }
 
+/**
+ * Compatibility transport for legacy business routes.
+ *
+ * This function MUST NOT be treated as the canonical Workforce/execution authority.
+ * New consumers should dispatch through the hosted Workforce + effective-authority +
+ * ExecutionGateway path. HTTP success from the legacy route is provider/transport
+ * acknowledgement only and is not a VERIFIED Titan business outcome.
+ */
 export async function executeWorkforceCommand(
   request: Request,
   session: SessionPayload,

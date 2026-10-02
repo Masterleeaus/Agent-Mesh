@@ -7,6 +7,7 @@ class TitanStorageFabricTopologyValidator {
     required TitanStorageFabricTopology topology,
     required String companyId,
     required DateTime now,
+    TitanStorageFabricTopology? previouslyAccepted,
     bool enforceFreshness=true,
   }){
     if(topology.companyId!=companyId){
@@ -16,6 +17,17 @@ class TitanStorageFabricTopologyValidator {
         topology.revision.trim().isEmpty||
         topology.correlationId.trim().isEmpty){
       throw StateError('storage topology identity incomplete');
+    }
+    if(previouslyAccepted!=null){
+      if(previouslyAccepted.companyId!=companyId){
+        throw StateError('previous storage topology company mismatch');
+      }
+      if(topology.sequence<=previouslyAccepted.sequence){
+        throw StateError('storage topology sequence is stale');
+      }
+      if(topology.revision==previouslyAccepted.revision){
+        throw StateError('storage topology revision did not advance');
+      }
     }
     if(enforceFreshness&&
         (topology.issuedAt.isAfter(now.add(const Duration(minutes:5)))||
@@ -239,3 +251,4 @@ class TitanStorageFabricTopologyValidator {
   }
 
 }
+

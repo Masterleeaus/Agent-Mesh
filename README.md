@@ -1,3 +1,5 @@
+![Titan Zero Field Service Workforce — FIELD + HOME SERVICES · CANONICAL PRODUCT](docs/images/portfolio-banner.svg)
+
 <p align="center">
   <img src="docs/images/CB4FE4C8-1FF9-4228-8DAC-98FED23D43A3.png" alt="Titan Zero Field Service Workforce" width="520" />
 </p>
@@ -17,6 +19,13 @@ The platform combines field-service operations, multi-agent orchestration, decis
 </p>
 
 ---
+
+## Product architecture and engineering highlights
+
+A field-service operating platform in which a TypeScript business application coordinates scheduling, dispatch, field work, customer operations, and a governed AI workforce.
+
+- **Architecture:** The architecture keeps the full web application distinct from a single three-mode PWA and a separate native mobile app; company_id is the tenant boundary. The TypeScript core owns native field-service workflows, while Frappe/ERPNext remains an optional provider for capabilities deliberately delegated to it.
+- **Distinctive engineering:** Standout systems include the Interaction and Decision Engines, Nexus workforce orchestration, Evidence Ledger, offline execution, DirectAdmin Business Node, and reversible authority-gated actions. Titan Zero, Titan Go, and Titan Hub are coordinated operating modes across owner, field, and customer workflows.
 
 ## The operating model
 
@@ -55,6 +64,21 @@ That separation is fundamental to the architecture.
 <p align="center">
   <img src="docs/images/4FE3482C-D943-4405-86CF-143AAFEF52C5.png" alt="Titan Zero Field Service Workforce system architecture" width="100%" />
 </p>
+
+## Product portfolio
+
+Titan is packaged as one platform rather than six independent business systems.
+
+- **Titan Zero** — owner/manager experience.
+- **Titan Go** — field/worker experience.
+- **Titan Hub** — customer self-service.
+- **Titan in external AI hosts** — authenticated access from ChatGPT, Claude and future assistants.
+- **Titan for WordPress / Web Presence** — websites become operational front doors backed by Titan capabilities.
+- **Titan Omni** — shared messaging, voice and channel interactions.
+
+Commercial packaging follows **Titan Solo → Titan Team → Titan Business → Titan Sovereign**. Higher tiers expose additional capabilities such as Foundry, Missions, stronger compliance/policy controls, Private/Sovereign Intelligence and Server Node infrastructure controls.
+
+These are entitlements over the same canonical platform. The only canonical business surfaces remain `zero`, `go` and `hub`; channels, plugins, hosts and pricing tiers never create business authority or a second source of truth. See `docs/architecture/TITAN-ZERO-BLUEPRINT-V3.md`.
 
 ## Advanced Intelligence Workforce
 

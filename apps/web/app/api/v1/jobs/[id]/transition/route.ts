@@ -52,7 +52,7 @@ export const POST = withRole(
     try {
       return await withPortableTransaction(async (client) => {
 
-      const existing = await client.query(
+      const existing = await client.query<{ intake_decision: string | null } & Record<string, unknown>>(
         `SELECT * FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
         [id, session.accountId]
       );

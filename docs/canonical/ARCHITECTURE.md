@@ -1,49 +1,44 @@
-# Architecture
+# Titan Zero Architecture
 
-## System Shape
+Status: canonical product architecture. For the full runtime and evidence model, see [Titan Zero Blueprint v3](../architecture/TITAN-ZERO-BLUEPRINT-V3.md) and [Canonical Rules](../architecture/CANONICAL-RULES.md).
 
-Dovetails FSM is a pnpm monorepo with a Next.js web app, shared domain package, PostgreSQL database, PostgreSQL-backed worker queues, SQL migrations, and Docker Compose deployment profiles.
+## Product shape
 
-## Runtime Components
+Titan Zero is a governed workforce and field-service operating platform in a TypeScript monorepo. The full TypeScript application in `apps/web` is the native Titan field-service product. It must install and operate without Frappe.
 
-| Component | Path | Purpose |
-|---|---|---|
-| Web app | `apps/web` | Owner/admin/tech UI and API routes. |
-| Worker | `services/worker` | Background notification, queue, and automation processing. |
-| Domain package | `packages/domain` | Shared schemas, constants, status labels, and Dovetails-specific domain helpers. |
-| Database migrations | `db/migrations` | SQL schema, policies, and additive migrations. |
-| Infrastructure | `infra` | Local, production, and garonhome Docker Compose profiles. |
+The separate Titan PWA and Flutter mobile app expose entitled Zero, Go, and Hub modes over the hosted Titan runtime. They are not replacements for `apps/web`. DirectAdmin is the Business Node operations and infrastructure control plane; it is not a customer business surface or authority source.
 
-## Data Model
+## Runtime ownership
 
-PostgreSQL is the source of persistence. The application uses raw SQL and row-level security rather than an ORM. Tables are account-scoped for tenant isolation even though the current Dovetails deployment is single-business.
+| Component | Canonical role |
+| --- | --- |
+| `apps/web` | Complete native Titan FSM web product and user interface. |
+| Titan Workforce/runtime | Persistent governed execution and business operation runtime. |
+| Company database | Native company-owned operational persistence, physically isolated per company and resolved through canonical `company_id`. |
+| Business Evidence Ledger | Append-only factual history; current state is derived and verified against evidence. |
+| Frappe/ERPNext | Optional provider for explicitly delegated extensions or missing/deeper capabilities. It is not required for base installation and does not replace mature native FSM ownership by default. |
+| DirectAdmin Business Node | Provisions and manages hosts, services, applications, optional Frappe sites, and deployment lifecycle through governed capabilities. It does not own Titan business semantics or grant business authority. |
 
-The canonical product model is defined in `docs/canonical/DOMAIN_MODEL.md`. Technical status contracts may live in working documentation, but product direction comes from canonical docs.
+Frappe enablement is a deliberate per-company configuration. If selected, provision an isolated site/database for that company, register provider mappings behind stable Titan contracts, and verify authority, sync, conflict handling, idempotency, evidence, health, backup, upgrade, disablement, and rollback. Titan application surfaces use Titan APIs and provider contracts; they do not access provider databases directly.
 
-## Deployment
+## Onboarding, verticals, and generated applications
 
-The active production target is garonhome.local using `infra/compose.garonhome.yml` and a deploy root under `/opt/business/ai-fsm`.
+Company provisioning creates company identity, native storage placement, and initial membership before product onboarding. Onboarding configures an already provisioned company: it discovers needs, guides setup, gathers evidence and approvals, and prepares typed configuration intents. It does not create infrastructure, grant authority, or own vertical definitions.
 
-Development uses local Compose service for PostgreSQL.
+Versioned vertical packs define industry terminology, workflows, standards, capability bundles, and optional provider extensions. The vertical compiler validates and resolves a pack before installation. Titan Sprout manages pack discovery, configuration, versioning, staged rollout, upgrade, and retirement. Core business facts remain with their canonical native or explicitly delegated domain owners.
 
-## Quality Gates
+Nexus may coordinate discovery, recommendations, and proposed configuration or deployment work. Proposals must resolve to versioned capabilities, packs, and typed intents, then pass normal policy, authority, execution, verification, and evidence checks. Nexus is not a second customer/job/finance store and cannot silently promote generated output to factual configuration.
 
-The primary validation command is:
+Foundry generates, validates, previews, stages, deploys, and retires application packages, including temporary Mission apps. DirectAdmin supplies managed infrastructure and application lifecycle operations for those packages. Temporary applications receive bounded company and capability scope, expiry/retirement behavior, and verified cleanup of runtime resources and credentials; required evidence and approved business outcomes remain.
 
-```bash
-pnpm gate
-```
+## Consequential execution
 
-For faster static/unit feedback:
+Use the canonical flow:
 
-```bash
-pnpm gate:fast
-```
+`Intent → Decision → Risk → Assurance → Effective Authority → ExecutionGateway → Provider effect → Observed-state verification → Verified outcome → Business Evidence Ledger`
 
-## Architectural Guardrails
+Provider acknowledgements are not verified outcomes. UI state, model recommendations, plugin roles, host privileges, and installed software do not create Titan business authority.
 
-- Keep product vocabulary aligned with canonical docs.
-- Prefer derived views over new stored workflow objects.
-- Keep migrations additive unless a deliberate migration plan exists.
-- Keep pricing and workflow rules centralized in shared domain or focused server helpers.
-- Do not let deployment, agent, or historical phase documents define product scope.
+## Historical Dovetails documentation
+
+Older Dovetails FSM and PostgreSQL deployment notes describe a previous product/repository state. They are historical context only and must not override the Titan Zero architecture, Blueprint v3, or Canonical Rules. Do not use account-scoped legacy persistence or the old local deployment target as the current Titan production contract.

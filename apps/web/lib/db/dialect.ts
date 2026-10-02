@@ -19,5 +19,7 @@ export function inferDatabaseDialect(databaseUrl: string): DatabaseDialect {
 export function getDatabaseDialect(): DatabaseDialect {
   const env = getEnv();
   const explicit = env.DATABASE_DIALECT;
-  return explicit === "mariadb" ? "mysql" : explicit ?? inferDatabaseDialect(env.DATABASE_URL);
+  if (explicit === "mariadb") return "mysql";
+  if (explicit === "sqlite" || explicit === "postgres" || explicit === "mysql") return explicit;
+  return inferDatabaseDialect(env.DATABASE_URL);
 }

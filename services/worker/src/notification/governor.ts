@@ -1,4 +1,5 @@
 import type { DatabaseClient } from "../db-client.js";
+import { databaseDialect } from "../db-client.js";
 import { COOLDOWN_BYPASS_MINIMUM } from "./priority.js";
 
 interface NotificationSettings {
@@ -112,10 +113,15 @@ export async function updateCooldown(
   accountId: string,
   clientId: string
 ): Promise<void> {
+  const mysql = databaseDialect(client) === "mysql";
+  const instant = new Date().toISOString();
+  const value = mysql ? instant.replace("T", " ").replace("Z", "") : instant;
+  const upsert = mysql
+    ? "ON DUPLICATE KEY UPDATE last_sent_at=VALUES(last_sent_at)"
+    : "ON CONFLICT (account_id, client_id) DO UPDATE SET last_sent_at=excluded.last_sent_at";
   await client.query(
     `INSERT INTO notification_cooldowns (account_id, client_id, last_sent_at)
-     VALUES ($1, $2, now())
-     ON CONFLICT (account_id, client_id) DO UPDATE SET last_sent_at = now()`,
-    [accountId, clientId]
+     VALUES ($1, $2, $3) ${upsert}`,
+    [accountId, clientId, value]
   );
 }

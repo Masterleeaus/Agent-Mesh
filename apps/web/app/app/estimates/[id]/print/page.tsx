@@ -81,7 +81,7 @@ export default async function EstimatePrintPage({
   if (!session) redirect("/login");
 
   const result = await withEstimateContext(session, async (client) => {
-    const estResult = await client.query(
+    const estResult = await client.query<EstimateRow>(
       `SELECT
          e.id, e.status,
          e.subtotal_cents, e.tax_cents, e.total_cents,
@@ -112,7 +112,7 @@ export default async function EstimatePrintPage({
 
     if (estResult.rowCount === 0) return null;
 
-    const liResult = await client.query(
+    const liResult = await client.query<LineItemRow>(
       `SELECT id, description, quantity, unit_price_cents, total_cents,
               sort_order, visible_to_customer
        FROM estimate_line_items
@@ -127,8 +127,8 @@ export default async function EstimatePrintPage({
     );
 
     return {
-      estimate: estResult.rows[0] as EstimateRow,
-      lineItems: liResult.rows as LineItemRow[],
+      estimate: estResult.rows[0]!,
+      lineItems: liResult.rows,
       account: accountResult.rows[0] ?? null,
     };
   });

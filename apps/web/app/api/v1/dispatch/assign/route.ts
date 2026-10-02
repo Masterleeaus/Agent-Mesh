@@ -99,7 +99,7 @@ export const POST = withAuth(async (request: NextRequest, session: AuthSession) 
         account_id: session.accountId,
         entity_type: "visit",
         entity_id: visit.id,
-        action: "dispatch_assignment",
+        action: "update",
         actor_id: session.userId,
         trace_id: session.traceId,
         old_value: { assigned_user_id: visit.assigned_user_id },

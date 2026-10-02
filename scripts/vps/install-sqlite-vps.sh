@@ -41,9 +41,9 @@ unzip -q "$ZIP" -d "$EXTRACT"
 REPO=""
 while IFS= read -r p; do d="$(dirname "$p")"; [[ -d "$d/apps/web" && -f "$d/pnpm-workspace.yaml" ]] && { REPO="$d"; break; }; done < <(find "$EXTRACT" -maxdepth 3 -name package.json -type f)
 [[ -n "$REPO" ]] || die 'Titan Zero repository root not found.'
-for f in infra/compose.vps.yml infra/vps.env.example scripts/sqlite-migrate.mjs apps/web/Dockerfile services/worker/Dockerfile; do [[ -e "$REPO/$f" ]] || die "Missing $f"; done
+for f in infra/compose.vps.yml infra/vps.env.example scripts/sqlite-migrate.mjs apps/web/Dockerfile services/worker/Dockerfile services/workforce/Dockerfile services/workforce/src/server.ts; do [[ -e "$REPO/$f" ]] || die "Missing $f"; done
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"; RELEASE="$INSTALL_ROOT/releases/$STAMP"; SHARED="$INSTALL_ROOT/shared"; ENV="$SHARED/env/.env"; DATA="$SHARED/data"
-mkdir -p "$RELEASE" "$SHARED/env" "$DATA/sqlite" "$DATA/uploads" "$INSTALL_ROOT/backups"
+mkdir -p "$RELEASE" "$SHARED/env" "$SHARED/keys" "$DATA/sqlite" "$DATA/runtime" "$DATA/uploads" "$DATA/companies" "$INSTALL_ROOT/backups"
 rsync -a --delete --exclude .git "$REPO/" "$RELEASE/"
 [[ -f "$ENV" ]] || cp "$RELEASE/infra/vps.env.example" "$ENV"
 chmod 600 "$ENV"
@@ -66,16 +66,62 @@ setenv NODE_ENV production; setenv APP_PORT "$APP_PORT"; setenv APP_BASE_URL "$U
 setenv DATABASE_DIALECT sqlite; setenv DATABASE_URL file:/app/data/titan-zero.db; setenv SQLITE_PATH /app/data/titan-zero.db; setenv REDIS_URL redis://redis:6379/0
 [[ -n "$APP_DOMAIN" ]] && setenv APP_DOMAIN "$APP_DOMAIN"
 secret AUTH_SECRET; secret APP_ENCRYPTION_KEY
-[[ "$(getenv BOOKING_ACCOUNT_ID)" != 00000000-0000-0000-0000-000000000000 && -n "$(getenv BOOKING_ACCOUNT_ID)" ]] || setenv BOOKING_ACCOUNT_ID "$(cat /proc/sys/kernel/random/uuid)"
+[[ $NO_TLS -eq 1 ]] && setenv SECURE_COOKIES false || setenv SECURE_COOKIES true
+# Workforce company storage and identity DB are node-owned locations. The
+# identity and placement registry schemas/data are provisioned by their
+# canonical owners.
+[[ "$(getenv WORKFORCE_COMPANY_STORE_HOST_ROOT)" == /opt/titan-zero/shared/data/companies ]] \
+  && setenv WORKFORCE_COMPANY_STORE_HOST_ROOT "$DATA/companies"
+[[ "$(getenv WORKFORCE_IDENTITY_SQLITE_HOST_PATH)" == /opt/titan-zero/shared/data/runtime/identity.db ]] \
+  && setenv WORKFORCE_IDENTITY_SQLITE_HOST_PATH "$DATA/runtime/identity.db"
+[[ "$(getenv WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH)" == /opt/titan-zero/shared/keys/workforce-session.pub.pem ]] \
+  && setenv WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH "$SHARED/keys/workforce-session.pub.pem"
+[[ "$(getenv WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH)" == /opt/titan-zero/shared/keys/upstream-session.pub.pem ]] \
+  && setenv WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH "$SHARED/keys/upstream-session.pub.pem"
+
+for key in WORKFORCE_DIRECTADMIN_NODE_ID WORKFORCE_SESSION_ISSUER WORKFORCE_SESSION_KEY_ID \
+  WORKFORCE_UPSTREAM_SESSION_ISSUER WORKFORCE_UPSTREAM_SESSION_AUDIENCE WORKFORCE_UPSTREAM_SESSION_KEY_ID; do
+  value="$(getenv "$key")"
+  [[ -n "$value" && "$value" != REPLACE_* && "$value" != *[[:space:]]* ]] \
+    || die "Set a valid $key in $ENV using the value from its trusted issuer."
+done
+for key in WORKFORCE_SESSION_ALGORITHM WORKFORCE_UPSTREAM_SESSION_ALGORITHM; do
+  case "$(getenv "$key")" in EdDSA|ES256|RS256) ;; *) die "$key must be EdDSA, ES256, or RS256.";; esac
+done
+for key in WORKFORCE_SESSION_PUBLIC_KEY_HOST_PATH WORKFORCE_UPSTREAM_SESSION_PUBLIC_KEY_HOST_PATH; do
+  key_file="$(getenv "$key")"
+  [[ "$key_file" == /* && -f "$key_file" && ! -L "$key_file" ]] \
+    || die "Provide the trusted public key file for $key before installing."
+  openssl pkey -pubin -in "$key_file" -noout >/dev/null 2>&1 \
+    || die "$key must reference a valid PEM public key; private keys are not accepted."
+done
+IDENTITY_DB="$(getenv WORKFORCE_IDENTITY_SQLITE_HOST_PATH)"
+[[ "$IDENTITY_DB" == /* && -f "$IDENTITY_DB" && ! -L "$IDENTITY_DB" ]] \
+  || die "Provision the trusted Workforce global identity/placement registry before installing; the installer will not invent identity or company authority data."
+# Never mint a legacy account selector here. Public booking must use a trusted
+# company/surface context; an installer-generated UUID is not company identity.
 export TZ_ENV_FILE="$ENV" TZ_DATA_ROOT="$DATA" APP_PORT
 COMPOSE="$RELEASE/infra/compose.vps.yml"
 docker compose --env-file "$ENV" -f "$COMPOSE" config -q
-docker compose --env-file "$ENV" -f "$COMPOSE" build web worker
+docker compose --env-file "$ENV" -f "$COMPOSE" build web worker workforce
 log 'Applying SQLite migrations'
-docker run --rm --env-file "$ENV" -e SQLITE_PATH=/app/data/titan-zero.db -v "$RELEASE:/app" -v "$DATA/sqlite:/app/data" -w /app "titan-zero-web:${APP_TAG:-latest}" node scripts/sqlite-migrate.mjs
+docker compose --env-file "$ENV" -f "$COMPOSE" run --rm --no-deps web node sqlite-migrate.mjs
 docker compose --env-file "$ENV" -f "$COMPOSE" up -d
-for _ in $(seq 1 60); do curl -fsS "http://127.0.0.1:$APP_PORT/api/health" >/dev/null 2>&1 && break; sleep 2; done
+for _ in $(seq 1 60); do
+  if curl -fsS "http://127.0.0.1:$APP_PORT/api/health" >/dev/null 2>&1 \
+    && curl -fsS "http://127.0.0.1:3010/health" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 2
+done
 curl -fsS "http://127.0.0.1:$APP_PORT/api/health" >/dev/null || { docker compose --env-file "$ENV" -f "$COMPOSE" logs --tail=150; die 'Application health check failed.'; }
+curl -fsS "http://127.0.0.1:3010/health" >/dev/null || { docker compose --env-file "$ENV" -f "$COMPOSE" logs --tail=150 workforce; die 'Workforce process health check failed.'; }
+WORKFORCE_READY_STATUS="$(curl --silent --show-error --output "$WORK/ready.json" --write-out '%{http_code}' "http://127.0.0.1:3010/ready" || true)"
+case "$WORKFORCE_READY_STATUS" in
+  200) log 'Workforce readiness: ready';;
+  503) log 'Workforce process is healthy but not commissioned; /ready remains 503 until identity, authority, evidence, and a READY company placement are provisioned.';;
+  *) docker compose --env-file "$ENV" -f "$COMPOSE" logs --tail=150 workforce; die "Unexpected Workforce readiness response: ${WORKFORCE_READY_STATUS:-unreachable}.";;
+esac
 ln -sfn "$RELEASE" "$INSTALL_ROOT/current"
 if ! command -v caddy >/dev/null; then
   apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
@@ -93,5 +139,5 @@ EOF
 caddy validate --config /etc/caddy/Caddyfile
 systemctl enable --now caddy; systemctl reload caddy
 ufw allow OpenSSH >/dev/null; ufw allow 80/tcp >/dev/null; ufw allow 443/tcp >/dev/null; ufw --force enable >/dev/null
-log "SQLite-first installation healthy: $URL"
+log "SQLite-first installation process checks passed: $URL"
 log "Database: $DATA/sqlite/titan-zero.db"

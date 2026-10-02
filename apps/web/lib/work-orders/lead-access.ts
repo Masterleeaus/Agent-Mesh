@@ -26,7 +26,7 @@ export async function assertAssignedLead(
 ): Promise<{ id: string; status: string; completion_criteria: unknown } | null> {
   const res = await client.query<{ id: string; status: string; completion_criteria: unknown }>(
     `SELECT id, status, completion_criteria FROM work_orders
-     WHERE id = $1 AND account_id = $2 AND assigned_user_id = $3 FOR UPDATE`,
+     WHERE id = $1 AND account_id = $2 AND assigned_user_id = $3${client.dialect === "sqlite" ? "" : " FOR UPDATE"}`,
     [workOrderId, accountId, userId],
   );
   return res.rows[0] ?? null;
@@ -46,4 +46,26 @@ export function mergeCompletionCriteriaToggles(
   return existing.map((c) =>
     toggleById.has(c.id) ? { ...c, completed: toggleById.get(c.id)! } : c,
   );
+}
+/** Shared completion operation; callers must supply a transaction-scoped client. */
+export async function completeAssignedWorkOrder(client: DbClient, id: string, companyId: string, actorId: string, authorityFence?: { assertCurrent(): void }) {
+  const { loadWorkOrderCompletionCriteria } = await import("./task-time");
+  const { validateWorkOrderCompletion } = await import("./validate");
+  const wo = await assertAssignedLead(client, id, companyId, actorId);
+  if (!wo) return { kind: "forbidden" as const };
+  if (wo.status === "completed") return { kind: "ok" as const, status: "completed" as const };
+  const active = await client.query(
+    "SELECT 1 FROM visits WHERE work_order_id=$1 AND account_id=$2 AND status IN ('dispatched','traveling','arrived','in_progress','waiting') LIMIT 1",
+    [id, companyId],
+  );
+  if (active.rowCount) return { kind: "active_visit" as const };
+  const criteria = await loadWorkOrderCompletionCriteria(client, id, companyId, wo.completion_criteria);
+  const message = await validateWorkOrderCompletion(client, id, companyId, criteria);
+  if (message) return { kind: "gate" as const, message };
+  authorityFence?.assertCurrent();
+  await client.query(
+    "UPDATE work_orders SET status='completed', completed_at=COALESCE(completed_at,CURRENT_TIMESTAMP), updated_at=CURRENT_TIMESTAMP WHERE id=$1 AND account_id=$2 AND assigned_user_id=$3 AND status <> 'completed'",
+    [id, companyId, actorId],
+  );
+  return { kind: "ok" as const, status: "completed" as const };
 }

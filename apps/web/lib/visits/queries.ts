@@ -1,3 +1,9 @@
+/**
+ * Native Titan FSM visit query implementation.
+ * Preserve triage and operational behavior while converging storage portability,
+ * canonical company context and shared contracts. Frappe is optional extension
+ * infrastructure, not the default visit provider.
+ */
 import { query } from "@/lib/db";
 import type { TriageVisitRow } from "./triage";
 

@@ -1,3 +1,10 @@
+/**
+ * @deprecated Compatibility Cost Sovereignty facade from the Titan AI Core donor.
+ * Canonical model/provider/locality/privacy/cost routing lives in
+ * packages/titan-platform/src/intelligence-runtime and #647/#1055.
+ * Do not add new routing policy here. Migrate consumers, then retain only a
+ * compatibility translation/re-export if required.
+ */
 export type InferenceRoute = "device" | "customer-hosted" | "byo-cloud" | "titan-managed";
 export type CostSovereigntyRequest = Readonly<{
   company_id: string;
@@ -43,7 +50,7 @@ export function decideInferenceRoute(input: CostSovereigntyRequest): CostSoverei
 
 export const COST_SOVEREIGNTY_POLICY=Object.freeze({
   schema:"titan.ai.cost-sovereignty/v1",
-  tenant_boundary:"company_id",
+  tenant_boundary:"company_id-logical",
   routing_order:Object.freeze(ROUTES),
   hidden_titan_fallback:false,
   authority_neutral:true,

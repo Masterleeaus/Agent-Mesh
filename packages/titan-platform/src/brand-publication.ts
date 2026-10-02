@@ -1,0 +1,13 @@
+export type BrandPublication={schema:"titan.brand-publication.v1";publication_id:string;company_id:string;site_id:string;version:number;source_snapshot_hash:string;environment:"preview"|"live";status:"draft"|"approved"|"published"|"rolled_back";route_manifest:readonly string[];created_at:string};
+const req=(v:unknown,n:string)=>{const x=String(v??"").trim();if(!x)throw new Error(`${n}-required`);return x;};
+export function createBrandPublication(input:{publication_id:string;company_id:string;site_id:string;version:number;source_snapshot_hash:string;environment?:BrandPublication["environment"];status?:BrandPublication["status"];route_manifest:string[];created_at?:string}):BrandPublication{
+ const created_at=input.created_at??new Date().toISOString(); if(!Number.isFinite(Date.parse(created_at)))throw new Error("created_at-invalid"); if(!Number.isInteger(input.version)||input.version<1)throw new Error("version-invalid");
+ const routes=[...new Set(input.route_manifest.map(v=>{const r=req(v,"route");if(!r.startsWith("/"))throw new Error("route-invalid");return r}))]; if(!routes.length)throw new Error("route-manifest-required");
+ const environment=input.environment??"preview",status=input.status??"draft"; if(environment==="live"&&status!=="approved"&&status!=="published")throw new Error("live-publication-not-approved");
+ return Object.freeze({schema:"titan.brand-publication.v1",publication_id:req(input.publication_id,"publication_id"),company_id:req(input.company_id,"company_id"),site_id:req(input.site_id,"site_id"),version:input.version,source_snapshot_hash:req(input.source_snapshot_hash,"source_snapshot_hash"),environment,status,route_manifest:Object.freeze(routes),created_at});
+}
+export function promoteBrandPublication(publication:BrandPublication,input:{company_id:string;approved_snapshot_hash:string;now?:string}):BrandPublication{
+ if(publication.company_id!==req(input.company_id,"company_id"))throw new Error("publication-company-mismatch"); if(publication.status!=="approved")throw new Error("publication-approval-required"); if(publication.source_snapshot_hash!==req(input.approved_snapshot_hash,"approved_snapshot_hash"))throw new Error("publication-snapshot-mismatch");
+ return Object.freeze({...publication,environment:"live",status:"published",created_at:input.now??publication.created_at});
+}
+export function rollbackBrandPublication(publication:BrandPublication,knownGood:BrandPublication):BrandPublication{if(publication.company_id!==knownGood.company_id||publication.site_id!==knownGood.site_id)throw new Error("rollback-scope-mismatch");if(knownGood.status!=="published")throw new Error("known-good-publication-required");return Object.freeze({...knownGood,status:"published"});}

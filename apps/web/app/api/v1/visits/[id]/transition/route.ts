@@ -5,7 +5,7 @@ import type { AuthSession } from "../../../../../../lib/auth/middleware";
 import { withPortableTransaction } from "../../../../../../lib/db/portable";
 import { appendAuditLog } from "../../../../../../lib/db/audit";
 import { logger } from "../../../../../../lib/logger";
-import { checkCompletionPacket, isQuickJobPacketExempt } from "../../../../../../lib/completion-guard";
+import { checkCompletionPacket, isQuickJobPacketExempt, type CompletionPacket } from "../../../../../../lib/completion-guard";
 import { visitTransitions, visitStatusSchema } from "@titan-zero/domain";
 import type { VisitStatus } from "@titan-zero/domain";
 interface VisitRow {
@@ -167,7 +167,7 @@ export const POST = withAuth(
       }
 
       if (targetStatus === "completed") {
-        const packetResult = await client.query(
+        const packetResult = await client.query<CompletionPacket>(
           `SELECT photo_urls, signature_url, signature_waiver, photos_waived, photos_waiver_reason
            FROM completion_packets
            WHERE visit_id = $1 AND account_id = $2`,

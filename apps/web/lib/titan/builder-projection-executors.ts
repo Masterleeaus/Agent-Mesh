@@ -1,3 +1,10 @@
+/**
+ * Builder preview is read-only and authority-neutral. These server projection
+ * executors currently read the native Titan FSM store. Preserve native FSM
+ * ownership, but keep Builder coupled to bounded Titan Domain/Business Reality
+ * contracts rather than persistence details so optional providers remain possible.
+ * Historical "workcore" naming is an internal donor label, not a canonical owner.
+ */
 import { portableQuery } from "@/lib/db/portable";
 import type { InterfaceContext } from "@titan-zero/titan-platform/interface-runtime";
 import {

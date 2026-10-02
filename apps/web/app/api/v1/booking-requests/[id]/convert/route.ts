@@ -19,6 +19,15 @@ const convertSchema = z.object({
   review_notes: z.string().max(2000).optional().nullable(),
 });
 
+interface BookingRequestRow {
+  status: string;
+  visit_id: string | null;
+  job_id: string | null;
+  preferred_date: string | null;
+  preferred_time_slot: string | null;
+  access_notes: string | null;
+}
+
 export const POST = withRole(["owner", "admin"], async (request: NextRequest, session) => {
   const id = extractId(request.url);
   if (!id) {
@@ -36,7 +45,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
   try {
     return await withTenantTransaction(session, async (client, accountId) => {
     // Lock the row to serialize concurrent convert requests
-    const { rows: brRows } = await client.query(
+    const { rows: brRows } = await client.query<BookingRequestRow>(
       `SELECT * FROM booking_requests WHERE id = $1 AND account_id = $2 FOR UPDATE`,
       [id, accountId]
     );
@@ -66,7 +75,7 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       return NextResponse.json({ error: { code: "CONFLICT", message: "No job linked to this booking request", traceId: session.traceId } }, { status: 409 });
     }
 
-    const { rows: jobRows } = await client.query(
+    const { rows: jobRows } = await client.query<{ status: string }>(
       `SELECT status FROM jobs WHERE id = $1 AND account_id = $2 FOR UPDATE`,
       [br.job_id, accountId]
     );

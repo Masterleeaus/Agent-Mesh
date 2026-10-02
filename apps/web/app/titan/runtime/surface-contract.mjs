@@ -68,7 +68,8 @@ function rejectLegacy(input) {
 }
 
 export function getDemoSurfaceProjection(surface) {
-  if (!(surface in presentation)) throw new TypeError("canonical-surface-required");
+  const presentationSurface = surface === "zero" ? "command" : surface;
+  if (!(presentationSurface in presentation)) throw new TypeError("canonical-surface-required");
   return Object.freeze({
     schema_version: SURFACE_CONTRACT_VERSION,
     company_id: "demo_001",
@@ -77,12 +78,12 @@ export function getDemoSurfaceProjection(surface) {
     revision: "merge77-demo-rev-1",
     issued_at: "2026-09-16T04:00:00.000Z",
     expires_at: "2099-09-16T04:00:00.000Z",
-    capabilities: capabilities[surface].map((capability) => Object.freeze({
+    capabilities: capabilities[presentationSurface].map((capability) => Object.freeze({
       ...capability,
       operations: Object.freeze([...capability.operations]),
       requires_receipt: capability.requires_receipt ?? capability.mutation,
     })),
-    data: Object.freeze({ presentation: presentation[surface] }),
+    data: Object.freeze({ presentation: presentation[presentationSurface] }),
     authority_neutral: true,
     identity_grants_authority: false,
     cached_state_grants_authority: false,

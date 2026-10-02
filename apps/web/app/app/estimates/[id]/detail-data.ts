@@ -154,7 +154,7 @@ export async function loadEstimateDetail(
   id: string
 ): Promise<EstimateDetail | null> {
   const result = await withEstimateContext(session, async (client) => {
-    const estimateResult = await client.query(
+    const estimateResult = await client.query<EstimateRow>(
       `SELECT e.*, c.name AS client_name, c.email AS client_email, j.title AS job_title
        FROM estimates e
        LEFT JOIN clients c ON c.id = e.client_id
@@ -165,7 +165,7 @@ export async function loadEstimateDetail(
 
     if (estimateResult.rowCount === 0) return null;
 
-    const lineItemsResult = await client.query(
+    const lineItemsResult = await client.query<LineItemRow>(
       `SELECT id, estimate_id, option_id, description, quantity, unit_price_cents, total_cents, line_item_type, sort_order, created_at
        FROM estimate_line_items
        WHERE estimate_id = $1
@@ -173,7 +173,7 @@ export async function loadEstimateDetail(
       [id]
     );
 
-    const optionsResult = await client.query(
+    const optionsResult = await client.query<OptionRow>(
       `SELECT id, estimate_id, label, description, sort_order, subtotal_cents, tax_cents, total_cents, is_recommended, created_at
        FROM estimate_options
        WHERE estimate_id = $1
@@ -181,7 +181,7 @@ export async function loadEstimateDetail(
       [id]
     );
 
-    const locationResult = await client.query(
+    const locationResult = await client.query<DocumentLocationRow>(
       `SELECT e.property_id AS document_property_id,
               ${documentLocationSelect()}
        FROM estimates e
@@ -191,8 +191,8 @@ export async function loadEstimateDetail(
     );
     const pricingSettings = await loadPricingSettings(client, session.accountId);
 
-    const allLineItems = lineItemsResult.rows as LineItemRow[];
-    const options = optionsResult.rows as OptionRow[];
+    const allLineItems = lineItemsResult.rows;
+    const options = optionsResult.rows;
 
     const optionsWithItems: OptionWithItems[] = options.map((opt) => ({
       ...opt,
@@ -200,10 +200,10 @@ export async function loadEstimateDetail(
     }));
 
     return {
-      estimate: estimateResult.rows[0] as EstimateRow,
+      estimate: estimateResult.rows[0]!,
       lineItems: allLineItems.filter((li) => !li.option_id),
       options: optionsWithItems,
-      location: locationResult.rows[0] as DocumentLocationRow | undefined,
+      location: locationResult.rows[0],
       pricingSettings,
     };
   });

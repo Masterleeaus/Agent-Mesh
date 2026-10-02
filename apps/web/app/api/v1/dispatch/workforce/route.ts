@@ -25,7 +25,10 @@ const skillSchema = z.object({
   category: z.string().trim().max(120).nullable().optional(),
   proficiency: z.number().int().min(1).max(5).nullable().optional(),
 });
-const bodySchema = z.discriminatedUnion("action", [availabilitySchema, skillSchema]);
+// availabilitySchema has a refinement, so Zod wraps it in ZodEffects and it
+// cannot participate in discriminatedUnion. The literal action fields still
+// provide the same safe narrowing after parsing.
+const bodySchema = z.union([availabilitySchema, skillSchema]);
 
 function requireManager(session: AuthSession) {
   return ["owner", "admin"].includes(session.role);

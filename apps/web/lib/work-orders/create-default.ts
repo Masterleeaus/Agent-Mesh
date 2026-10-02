@@ -1,4 +1,9 @@
 /**
+ * Native Titan FSM work-order persistence helper.
+ * Preserve the default schedulable work-order behavior and converge it with
+ * canonical domain/runtime boundaries; do not migrate it to Frappe by default.
+ */
+/**
  * Create a default schedulable work order for a project (e.g. quick-book).
  */
 
