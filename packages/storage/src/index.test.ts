@@ -11,5 +11,12 @@ describe('SQLite storage', () => {
     await expect(s.transaction(async tx => { await tx.query('INSERT INTO x VALUES($1,$2)',['b','c1']); throw new Error('rollback'); })).rejects.toThrow('rollback');
     expect((await s.query('SELECT * FROM x')).rowCount).toBe(1);
   });
+  it('does not enter a transaction when its absolute acquisition deadline has expired', async () => {
+    const s=createSqliteStorage(':memory:'); stores.push(s);
+    let entered=false;
+    await expect(s.transaction(async () => { entered=true; }, { acquireDeadlineMs: performance.now() - 1 }))
+      .rejects.toThrow('storage-transaction-acquire-timeout');
+    expect(entered).toBe(false);
+  });
   it('requires an explicit company for company-scoped access', () => { const s=createSqliteStorage(':memory:'); stores.push(s); expect(() => forCompany(s,'')).toThrow(/company_id/); });
 });
