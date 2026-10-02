@@ -313,6 +313,34 @@ function codex_readiness($cwd,$keys,$diag){
   'composer_available'=>!empty($diag['composer'])
  ];
 }
+function normalize_server_node_status($raw){
+ if(!is_string($raw)||$raw===''||strlen($raw)>65536) return ['state'=>'UNAVAILABLE','ready'=>false,'checked_at'=>null,'checks'=>[],'reason'=>'invalid-response'];
+ $data=json_decode($raw,true);
+ if(!is_array($data)||($data['schema']??'')!=='titan.server-node.health.v1') return ['state'=>'UNAVAILABLE','ready'=>false,'checked_at'=>null,'checks'=>[],'reason'=>'invalid-schema'];
+ $checks=[];
+ foreach(array_slice(is_array($data['checks']??null)?$data['checks']:[],0,16) as $row){
+  if(!is_array($row)) continue;
+  $id=preg_replace('/[^a-zA-Z0-9_.-]/','',substr((string)($row['id']??''),0,64));
+  if($id==='') continue;
+  $status=strtolower((string)($row['status']??'unknown'));
+  if(!in_array($status,['healthy','unhealthy','unreachable'],true)) $status='unknown';
+  $checks[]=['id'=>$id,'status'=>$status,'critical'=>($row['critical']??true)===true,'http_status'=>is_int($row['http_status']??null)?$row['http_status']:null];
+ }
+ $ready=($data['ready']??false)===true;
+ $status=strtolower((string)($data['status']??''));
+ $state=$ready&&$status==='healthy'?'CONNECTED':($ready?'DEGRADED':'UNAVAILABLE');
+ $checkedAt=(string)($data['checked_at']??'');
+ if($checkedAt!==''&&strtotime($checkedAt)===false)$checkedAt='';
+ $reason=substr(preg_replace('/[^a-zA-Z0-9_.-]/','',(string)($data['reason']??'')),0,120);
+ return ['state'=>$state,'ready'=>$ready,'checked_at'=>$checkedAt?:null,'checks'=>$checks,'reason'=>$reason?:null];
+}
+function server_node_health(){
+ $url='http://127.0.0.1:3099/v1/status';
+ $context=stream_context_create(['http'=>['method'=>'GET','timeout'=>2,'ignore_errors'=>true,'header'=>"Accept: application/json\r\nConnection: close\r\n"]]);
+ $raw=@file_get_contents($url,false,$context,0,65537);
+ if(!is_string($raw)) return ['state'=>'UNAVAILABLE','ready'=>false,'checked_at'=>null,'checks'=>[],'reason'=>'server-node-unreachable'];
+ return normalize_server_node_status($raw);
+}
 function redact_text($value){
  $s=(string)$value;
  $patterns=[
@@ -362,7 +390,7 @@ function render(){
   elseif(isset($_POST['remove_key'])){$idx=filter_var($_POST['remove_key'],FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);$msg=remove_key($idx===false?-1:$idx);}
   elseif(isset($_POST['run'])){[$output,$rc,$commandClass]=run_cmd(post_string('command',''),$cwd);}
  }
- $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();$keys=fingerprints();$readiness=codex_readiness($cwd,$keys,$diag);$token=csrf();$fullDiag=diagnostics_report($diag,$keys,$readiness);
+ $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();$keys=fingerprints();$readiness=codex_readiness($cwd,$keys,$diag);$serverNode=server_node_health();$token=csrf();$fullDiag=diagnostics_report($diag,$keys,$readiness);
  echo '<style>
 :root{color-scheme:light dark;--tda-panel:var(--card-background,#fff);--tda-text:var(--text-color,#1f2937);--tda-muted:var(--neutral,#6b7280);--tda-border:var(--border-color,#d9dde5);--tda-primary:var(--primary,#2563eb);--tda-safe:var(--safe,#16803c);--tda-danger:var(--danger,#c62828);--tda-input:var(--input-background,var(--tda-panel));}
 @media (prefers-color-scheme:dark){:root{--tda-panel:#18212f;--tda-text:#eef2f7;--tda-muted:#9ca3af;--tda-border:#334155;--tda-input:#0f172a}}
@@ -380,6 +408,19 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
   echo '<div><b>'.h(str_replace('_',' ',$name)).'</b><br><span class="'.h($class).'">'.h($display).'</span></div>';
  }
  echo '</div></div>';
+ echo '<div class="card"><h3>Server Node Health</h3><p class="muted">Read-only projection from the canonical loopback Server Node health bridge. No host action can be executed here.</p><div class="diag">';
+ echo '<div><b>State</b><br><span class="'.($serverNode['state']==='CONNECTED'?'oktxt':($serverNode['state']==='DEGRADED'?'':'badtxt')).'">'.h($serverNode['state']).'</span></div>';
+ echo '<div><b>Ready</b><br>'.h($serverNode['ready']?'yes':'no').'</div>';
+ echo '<div><b>Checked</b><br>'.h($serverNode['checked_at']??'unknown').'</div>';
+ echo '<div><b>Reason</b><br>'.h($serverNode['reason']??'—').'</div>';
+ echo '</div>';
+ if(!$serverNode['checks']) echo '<p class="muted">No dependency checks available.</p>';
+ foreach($serverNode['checks'] as $check){
+  echo '<div class="keyrow"><b>'.h($check['id']).'</b> · '.h($check['status']).' · '.($check['critical']?'critical':'optional');
+  if($check['http_status']!==null) echo ' · HTTP '.h($check['http_status']);
+  echo '</div>';
+ }
+ echo '</div>';
  echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
  if($rc!==null) echo '<p>Class: '.h($commandClass).' · Exit code: '.h($rc).'</p><div class="term">'.h($output).'</div>'; echo '</div>';
  echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
