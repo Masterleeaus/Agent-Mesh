@@ -7,6 +7,8 @@ Use this as the body or starting prompt for an implementation mission. Keep the 
 **Type:** <Mission | Integration certification | Certification gate | Release certification | Convergence mission | Convergence audit | Contract convergence | Reliability certification | Observability & performance certification>  
 **Parallel safe:** <No — shared owner/contract reason | Yes — exact isolated scope and stabilization condition>  
 **Canonical owner:** #<issue number>  
+**Parent issue:** #<number or none>  
+**Issue role:** <parent subproduct | mergeable child slice>  
 **Verification tier:** <0 | 1 | 2 | 3>
 
 ## Mission
@@ -62,14 +64,14 @@ Cross-boundary edits are allowed only when required to achieve the outcome; stat
 <one objective stopping condition; no open-ended “improve/continue/audit more” wording>
 
 ## Verification
-Run the root `AGENTS.md` requirements for the declared tier plus targeted tests for the changed owner. Record exact commands and results.
+Run the slice merge checks in root `AGENTS.md`. State which broad integration, recovery, live-host or release checks belong to the parent/subproduct completion gate.
 
 ## Branch discipline
 Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-number>` from the required current `main` SHA. If it exists, do not create an alternate/suffix branch. Keep the same branch through implementation, conflicts, verification, PR and fixes. After merge, do not open a successor branch for the completed mission.
 
 ## Mission closure evidence
 
-If this PR completes the entire mission, use `Closes #<issue>` only after every issue acceptance criterion is satisfied. A partial slice normally uses `Refs #<issue>` and leaves it open. For a small, independently executable remainder blocked outside this branch, use the bounded handoff procedure in root `AGENTS.md`: create a successor issue first that preserves all unmet criteria, keep this PR non-closing, merge the verified slice on the existing claim branch, then record the handoff and close the original issue after merge. This is an administrative handoff, never a claim of full completion.
+A child-slice PR may use `Closes #<child>` when every criterion in that child issue is complete, and must set `Parent issue: #<parent>` plus `Refs #<parent>`. This closes only the child. The parent/subproduct PR uses `Closes #<parent>` only after every parent criterion and the declared completion gate pass. Use the `Subproduct gate` field to run broad CI., then record the handoff and close the original issue after merge. This is an administrative handoff, never a claim of full completion.
 
 Use the standard `mission-evidence` JSON record from either PR template and follow
 [Mission closure evidence](MISSION_CLOSURE_EVIDENCE.md). Enumerate the current issue's
