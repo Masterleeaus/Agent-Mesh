@@ -273,26 +273,75 @@ expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/
 expect_true(run_security_git_fixture(['-C',$workflowRepo,'remote','add','origin','https://synthetic-user:synthetic-token@example.invalid/repository.git'],$home),'credential-shaped fixture remote must be configured without connecting');
 $workflowContext=directadmin_git_repository_context($workflowRepo);
 expect_true(is_array($workflowContext),'workflow readiness fixture must pass the HOME-bounded repository resolver');
-$workflowHeadBefore=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+$workflowHeadProbe=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+$workflowHeadBefore=directadmin_git_probe_output($workflowHeadProbe);
+expect_true(($workflowHeadProbe['status']??null)==='success'&&is_string($workflowHeadBefore)&&preg_match('/^[0-9a-f]{40}$/D',$workflowHeadBefore)===1,'successful Git probes must retain their output and success state');
 $workflowConfigBefore=hash_file('sha256',$workflowRepo.'/.git/config');
 $workflowReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
 expect_true($workflowReadiness['git_claim_branch_format_valid']===true&&$workflowReadiness['git_claim_issue_number']==='1048','canonical issue branch must be identified without asserting remote ownership');
+expect_true($workflowReadiness['git_repository_state']==='available'&&$workflowReadiness['git_branch_state']==='named'&&$workflowReadiness['git_head_state']==='available','successful repository, branch and HEAD probes must have explicit available states');
 expect_true($workflowReadiness['git_upstream_configured']===true&&$workflowReadiness['git_ahead']===1&&$workflowReadiness['git_behind']===1,'local-only comparison must report one ahead and one behind commit');
-expect_true($workflowReadiness['git_dirty']===false,'read-only workflow diagnostics must preserve clean worktree state');
+expect_true($workflowReadiness['git_dirty']===false&&$workflowReadiness['git_worktree_state']==='clean','successful empty status output must mean clean, not unknown');
 $workflowJson=json_encode($workflowReadiness);
 expect_true(is_string($workflowJson)&&strpos($workflowJson,'synthetic-user')===false&&strpos($workflowJson,'synthetic-token')===false&&strpos($workflowJson,'example.invalid')===false,'workflow readiness must never expose remote URLs or credentials');
-expect_true(directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD'])===$workflowHeadBefore,'workflow readiness must not move HEAD or create commits');
+$workflowHeadAfter=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+expect_true(($workflowHeadAfter['status']??null)==='success'&&directadmin_git_probe_output($workflowHeadAfter)===$workflowHeadBefore,'workflow readiness must not move HEAD or create commits');
 expect_true(hash_file('sha256',$workflowRepo.'/.git/config')===$workflowConfigBefore,'workflow readiness must not modify Git configuration');
-expect_true(directadmin_git_probe($workflowContext,['status','--porcelain'])==='','workflow readiness must not modify the worktree');
+$workflowStatusAfter=directadmin_git_probe($workflowContext,['status','--porcelain']);
+expect_true(($workflowStatusAfter['status']??null)==='success'&&directadmin_git_probe_output($workflowStatusAfter)==='','workflow readiness must not modify the worktree');
+
+$dirtyMarker=$workflowRepo.'/readiness-dirty.txt';
+expect_true(file_put_contents($dirtyMarker,'dirty')!==false,'dirty-worktree fixture marker must be written');
+$dirtyReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($dirtyReadiness['git_repository_state']==='available'&&$dirtyReadiness['git_dirty']===true&&$dirtyReadiness['git_worktree_state']==='dirty','successful nonempty status output must be reported as dirty');
+expect_true(unlink($dirtyMarker),'dirty-worktree fixture marker must be removed');
+$cleanAgain=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($cleanAgain['git_dirty']===false&&$cleanAgain['git_worktree_state']==='clean','worktree must return to clean after fixture cleanup');
+
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--detach','HEAD'],$home),'detached HEAD fixture must be created');
+$detachedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($detachedReadiness['git_repository']===true&&$detachedReadiness['git_branch']===null&&$detachedReadiness['git_branch_state']==='detached','successful empty branch output must be distinguished as detached');
+expect_true($detachedReadiness['git_claim_branch_format_valid']===false&&$detachedReadiness['git_worktree_state']==='clean','detached HEAD is known noncanonical and must not imply a dirty or failed probe');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','agent/issue-1048'],$home),'canonical claim branch fixture must be restored');
+
+$oversizedNames=[];
+for($i=0;$i<44;$i++){
+ $name='oversized-status-'.str_pad((string)$i,3,'0',STR_PAD_LEFT).'-'.str_repeat('x',190);
+ expect_true(file_put_contents($workflowRepo.'/'.$name,'x')!==false,'oversized status fixture file must be written');
+ $oversizedNames[]=$workflowRepo.'/'.$name;
+}
+$oversizedProbe=directadmin_git_probe($workflowContext,['status','--porcelain']);
+expect_true(($oversizedProbe['status']??null)==='unknown'&&($oversizedProbe['reason']??null)==='output_oversized','Git probe output beyond its existing 8192-byte bound must be unknown');
+$oversizedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($oversizedReadiness['git_repository']===true&&$oversizedReadiness['git_dirty']===null&&$oversizedReadiness['git_worktree_state']==='unknown','oversized status output must not be misreported as clean');
+foreach($oversizedNames as $oversizedName) expect_true(unlink($oversizedName),'oversized status fixture file must be removed');
+$cleanAfterOversized=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($cleanAfterOversized['git_dirty']===false&&$cleanAfterOversized['git_worktree_state']==='clean','worktree state must recover after oversized fixture cleanup');
+
+$successRepositoryProbe=['status'=>'success','output'=>'true','reason'=>null];
+$successBranchProbe=['status'=>'success','output'=>'agent/issue-1048','reason'=>null];
+$successHeadProbe=['status'=>'success','output'=>'abcdef012345','reason'=>null];
+$timeoutProbe=['status'=>'unknown','output'=>null,'reason'=>'timeout'];
+$failedStatusProjection=directadmin_git_readiness_projection(true,$successRepositoryProbe,$successBranchProbe,$successHeadProbe,$timeoutProbe,$timeoutProbe);
+expect_true($failedStatusProjection['git_repository']===true&&$failedStatusProjection['git_dirty']===null&&$failedStatusProjection['git_worktree_state']==='unknown','timed-out status probe must remain unknown, not appear clean');
+expect_true($failedStatusProjection['git_claim_branch_format_valid']===true&&$failedStatusProjection['git_upstream_configured']===null&&$failedStatusProjection['git_upstream_state']==='unknown','failed upstream probe must not mark a canonical branch invalid or claim that upstream is absent');
+$failedBranchProjection=directadmin_git_readiness_projection(true,$successRepositoryProbe,$timeoutProbe,$successHeadProbe,['status'=>'success','output'=>'','reason'=>null],$timeoutProbe);
+expect_true($failedBranchProjection['git_repository']===true&&$failedBranchProjection['git_branch']===null&&$failedBranchProjection['git_branch_state']==='unknown'&&$failedBranchProjection['git_claim_branch_format_valid']===null,'failed branch probe must be unknown, not detached or noncanonical');
+$failedRepositoryProjection=directadmin_git_readiness_projection(true,$timeoutProbe,null,null,null,null);
+expect_true($failedRepositoryProjection['git_repository']===null&&$failedRepositoryProjection['git_repository_state']==='unknown'&&$failedRepositoryProjection['git_claim_branch_format_valid']===null,'failed repository probe must not be reported as a non-repository or invalid claim');
 
 expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','agent/issue-01048'],$home),'noncanonical padded issue branch fixture must be created');
+$paddedContext=directadmin_git_repository_context($workflowRepo);
+expect_true(is_array($paddedContext),'padded branch repository context must remain HOME-bounded');
+$missingUpstreamProbe=directadmin_git_probe($paddedContext,['rev-list','--left-right','--count','HEAD...@{u}']);
+expect_true(($missingUpstreamProbe['status']??null)==='unknown'&&($missingUpstreamProbe['reason']??null)==='command_failed','a real nonzero Git probe without upstream must be recorded as unknown');
 $paddedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
 expect_true($paddedReadiness['git_claim_branch_format_valid']===false&&$paddedReadiness['git_claim_issue_number']===null,'padded issue numbers must not be shown as canonical claim branches');
-expect_true($paddedReadiness['git_upstream_configured']===false&&$paddedReadiness['git_ahead']===null&&$paddedReadiness['git_behind']===null,'missing upstream must produce unknown divergence counts');
+expect_true($paddedReadiness['git_upstream_configured']===null&&$paddedReadiness['git_upstream_state']==='unknown'&&$paddedReadiness['git_ahead']===null&&$paddedReadiness['git_behind']===null,'failed/missing upstream probe must produce unknown state and unknown divergence counts');
 $notRepo=$home.'/not-a-repository';
 expect_true(mkdir($notRepo,0700,true),'non-repository fixture must be created');
 $notRepoReadiness=codex_readiness($notRepo,[],['git'=>'/usr/bin/git']);
-expect_true($notRepoReadiness['git_repository']===false&&$notRepoReadiness['git_claim_branch_format_valid']===null&&$notRepoReadiness['git_upstream_configured']===null,'non-repository checkout must report claim/upstream state as unknown');
+expect_true($notRepoReadiness['git_repository']===false&&$notRepoReadiness['git_repository_state']==='unavailable'&&$notRepoReadiness['git_claim_branch_format_valid']===null&&$notRepoReadiness['git_upstream_configured']===null,'unavailable repository context must not mark claim/upstream data as invalid');
 
 $textconvHelper=$home.'/synthetic-textconv-helper';
 $textconvMarker=$home.'/synthetic-textconv-marker';
