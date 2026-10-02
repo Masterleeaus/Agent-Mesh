@@ -23,6 +23,29 @@ void main() {
     expect(find.byKey(const Key('conversation-send-error')), findsOneWidget);
     expect(find.textContaining('check your connection or sign in again'), findsOneWidget);
   });
+
+  testWidgets('context actions fail closed instead of opening seeded records', (tester) async {
+    await tester.pumpWidget(MaterialApp(home: TitanShellScreen(gateway: _RejectingGateway())));
+    await tester.tap(find.text('Evidence'));
+    await tester.pump();
+
+    expect(find.textContaining('server-scoped job'), findsOneWidget);
+    expect(find.byKey(const Key('conversation-send-error')), findsOneWidget);
+  });
+
+  testWidgets('shell controls explain unavailable hosted capabilities', (tester) async {
+    await tester.pumpWidget(MaterialApp(home: TitanShellScreen(gateway: _RejectingGateway())));
+    await tester.tap(find.byIcon(Icons.notifications_none));
+    await tester.pump();
+
+    expect(find.textContaining('hosted attention projection'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.mic_none));
+    await tester.pump();
+
+    expect(find.textContaining('hosted capability and permission state'), findsOneWidget);
+  });
+
 }
 
 class _RecordingGateway implements TitanGateway {
