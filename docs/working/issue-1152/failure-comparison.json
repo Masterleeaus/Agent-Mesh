@@ -1,6 +1,6 @@
 {
   "code_head": "865697a3aa6f4ce79f8bfa6f0b3b405b7367a1f5",
-  "dependency": "latest reviewed PR1179 head 13279000737e7714f18024047954bd373de8ee58 pending merge",
+  "dependency": "latest published PR1179 head 444072f35eeaf4397da2e11cc6f23126f0c5f0aa; its exact-head web gate reports 108 names; integration pending owner coordination",
   "main": "987728413bfdae855dba1a0796a686efb53e8805 observed; not integrated into tested branch",
   "runtime": "Node22.23.3 / pnpm9.12.0",
   "before": [

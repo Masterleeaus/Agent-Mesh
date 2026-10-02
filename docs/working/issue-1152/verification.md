@@ -1,7 +1,7 @@
 # Web gate repair evidence — issue 1152
 
 Partial, blocked; no merge or product-completion claim. Canonical branch: `agent/issue-1152`.
-Current implementation commit: `865697a3aa6f4ce79f8bfa6f0b3b405b7367a1f5` (tested source is based on the previously published `fc6bd2bb`; latest `main` sync is pending #1179 owner coordination).
+Current draft PR head: `f1d17d4143c1697beaa0fcb720e1fc31625bacb5`; latest source change is audit fix `865697a3aa6f4ce79f8bfa6f0b3b405b7367a1f5` (documentation-only commit follows). The tested source includes the prior `fc6bd2bb` merge; current-main sync remains pending upstream coordination.
 
 ## Provenance and integration
 
@@ -9,7 +9,7 @@ Claim created atomically from main `ee1a3ee3709b9201fc728fc162067d9a5ab78e45`, a
 
 Prerequisite #1179 commit `743e70789b85571fa0eafb1029630f0cbc6b7eb6` was merged with ancestry retained in `1a6b0804`. The sole conflict was main's Maps timestamp assertion versus the reviewed prerequisite's stronger ISO/offset equivalence assertion; the reviewed prerequisite version was retained. No platform implementation/export/compiler repair was recreated. Worker #1149/#1219 and session issuance #302/#1183 were not edited. Platform #1153 remains separately owned.
 
-The latest reviewed #1179 head is `13279000737e7714f18024047954bd373de8ee58`, with current `origin/main` `987728413bfdae855dba1a0796a686efb53e8805` as an ancestor. It carries the current Nexus export/config repair and migration-prefix guard update. This #1152 claim branch is still at `fc6bd2bbd7c75261fbe334fb5af7dfb530d2351d`; a coordination request was posted to #1179 before syncing that fresh ancestry. Exact-current-main hosted checks therefore remain pending. Keep #1152 as a draft and non-closing until the upstream owner confirms sync and post-merge verification completes.
+The latest published #1179 head is `444072f35eeaf4397da2e11cc6f23126f0c5f0aa`, with current `origin/main` `987728413bfdae855dba1a0796a686efb53e8805` as an ancestor. It retains the shared Nexus export/config repair and changes the migration-prefix guard so all nine historical duplicate-prefix pairs remain blocking until applied-history review. Exact-head run [36961285511](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/actions/runs/36961285511) passes the non-web convergence, Workforce, Browser, source-index, and SQLite smoke checks but fails the full web gate at108 named failures (105 failed tests plus3 suite-load failures). The active owner has not confirmed integrating this #1152 branch. Our draft head remains `f1d17d41`; exact-head run [36961630100](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/actions/runs/36961630100) fails the Agent Claim Gate because current `main` is not an ancestor. The same run's Titan CI stops before web tests on the malformed shared Nexus export/tsconfig from #1225; the VPS smoke also stops at that build error. Do not edit those shared platform files in this claim. Keep #1152 draft and non-closing pending coordinated sync and exact-head verification.
 
 ## Changes and reasons
 
