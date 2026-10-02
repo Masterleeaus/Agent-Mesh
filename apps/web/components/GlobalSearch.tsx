@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { Route } from "next";
 import { useRouter } from "next/navigation";
 
 type Result = {
@@ -98,7 +99,8 @@ export function GlobalSearch() {
     setOpen(false);
     setQuery("");
     setResults([]);
-    router.push(href);
+    // Search API builds these links from the app's business-record routes.
+    router.push(href as Route);
   };
 
   return (
