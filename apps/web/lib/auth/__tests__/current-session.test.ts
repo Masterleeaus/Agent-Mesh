@@ -223,6 +223,17 @@ describe("opt-in web durable session migration", () => {
     expect(await ingress.resolveRequest(requestWithCookie(`${CURRENT_WEB_SESSION_COOKIE_NAME}=not-a-jwt`))).toBeNull();
   });
 
+  it("preserves only the sanitized registry-unavailable signal for server error handling", async () => {
+    const unavailableIngress = createCurrentWebSessionIngress({
+      authenticate: async () => { throw new Error("identity-registry-unavailable"); },
+      resolve: verifier.resolve,
+    }, { resolveLegacyAccountId: async companyId => approvedAccounts.get(companyId) ?? null });
+    const request = requestWithCookie(`${CURRENT_WEB_SESSION_COOKIE_NAME}=a.b.c`);
+
+    await expect(unavailableIngress.resolveRequest(request)).rejects.toThrow(/^identity-registry-unavailable$/);
+    expect(await ingress.resolveRequest(request)).toBeNull();
+  });
+
   it("revalidates canonical session context after request identity mapping", async () => {
     const issued = await web.issue(await upstream(), expected);
     const gate = delayedMapper();

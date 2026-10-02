@@ -136,7 +136,13 @@ export function createCurrentWebSessionIngress(verifier: CredentialVerifier, pro
       if (!credential) return null;
       try {
         return await resolveCredential(credential);
-      } catch {
+      } catch (error) {
+        // Keep the verifier's sanitized availability signal distinct so a
+        // caller can return 503 instead of treating a registry outage as a
+        // bad login. All other credential/projection failures deny as null.
+        if (error instanceof Error && error.message === "identity-registry-unavailable") {
+          throw new Error("identity-registry-unavailable");
+        }
         return null;
       }
     },

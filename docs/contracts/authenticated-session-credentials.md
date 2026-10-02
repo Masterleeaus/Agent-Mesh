@@ -146,6 +146,10 @@ The result contains the full `CurrentSessionContext` (including `device_id`,
 resolver, and operation scope `[context.company_id]`. The request cannot choose
 the company. This authenticates identity and current membership; it does not
 grant business authority or replace CSRF/origin checks on mutating routes.
+Malformed, missing, legacy, invalid and stale credentials return `null`. A
+sanitized `identity-registry-unavailable` error is preserved so route handlers
+can report temporary server unavailability instead of turning a registry outage
+into an authentication redirect; no backend details or credential data escape.
 
 This is an injectable ingress contract, not a production cutover. Current web
 login still issues the legacy `fsm_session`; no production web verifier instance,
