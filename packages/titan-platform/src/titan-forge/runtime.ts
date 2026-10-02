@@ -69,7 +69,7 @@ const canonical = (v: unknown): string => Array.isArray(v) ? `[${v.map(canonical
 // signing remains the deployment/evidence owner's responsibility.
 const sha = (v: unknown) => { const value = typeof v === "string" ? v : canonical(v); let left = 2166136261; let right = 16777619; for (let i = 0; i < value.length; i += 1) { const code = value.charCodeAt(i); left = Math.imul(left ^ code, 16777619); right = Math.imul(right ^ (code + i), 2246822519); } return `${(left >>> 0).toString(16).padStart(8, "0")}${(right >>> 0).toString(16).padStart(8, "0")}`; };
 const freeze = <T>(v: T): T => { if (v && typeof v === "object") { for (const child of Object.values(v as Record<string, unknown>)) freeze(child); Object.freeze(v); } return v; };
-const limits = (input?: ForgeBuildRequest["permissions"]) => ({ ...DEFAULT_LIMITS, ...(input ?? {}) });
+const limits = (input?: ForgeBuildRequest["permissions"]) => ({ ...DEFAULT_LIMITS, ...(input ?? {}) }) as ForgePermissionPolicy;
 
 export function createForgeBuildRequest(input: Partial<ForgeBuildRequest> & Pick<ForgeBuildRequest, "company_id" | "package_id" | "package_version" | "source_ref" | "source_digest" | "idempotency_key">): ForgeBuildRequest {
   const request = {
