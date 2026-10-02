@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-import { workState, verifiedOutcome } from '../images/presentation.mjs';
+import { identityType, teamMemberships, workState, verifiedOutcome } from '../images/presentation.mjs';
 const source = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8')).replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
 const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const context = () => ({ company_id: 'company-a', actor_id: 'actor-a', session_revision: '1' });
@@ -234,4 +234,33 @@ test('malformed optional display scalars are rejected before later tab rendering
       assert.equal(model.state.context, null);
     }
   }
+});
+test('roster requires explicit availability and rejects malformed team and manager IDs', async () => {
+  const base = { company_id: 'company-a', worker_id: 'worker-a', kind: 'digital', active: true, capabilities: [] };
+  for (const worker of [
+    { ...base, active: undefined }, { ...base, active: 'active' },
+    { ...base, team_id: '' }, { ...base, team_id: '   ' }, { ...base, team_id: {} },
+    { ...base, manager_id: [] }, { ...base, manager_id: '' },
+  ]) {
+    const api = fixture(); api.discover = async () => ({ company_id: 'company-a', workers: [worker] });
+    const model = new WorkforceController(api); await model.connect();
+    assert.equal(model.state.phase, 'unavailable');
+    assert.equal(model.state.context, null);
+    assert.equal(model.state.discovery, null);
+  }
+});
+test('team view is only a company roster projection and keeps human and AI identity types distinct', () => {
+  const workers = [
+    { company_id: 'company-a', worker_id: 'human-a', kind: 'human', active: true, team_id: 'crew-a' },
+    { company_id: 'company-a', worker_id: 'digital-a', kind: 'digital', active: false, team_id: 'crew-a' },
+    { company_id: 'company-a', worker_id: 'human-unassigned', kind: 'human', active: true },
+  ];
+  assert.equal(identityType(workers[0]), 'Human');
+  assert.equal(identityType(workers[1]), 'AI / digital');
+  assert.deepEqual(teamMemberships(workers), [
+    { team_id: 'crew-a', members: workers.slice(0, 2) },
+    { team_id: null, members: [workers[2]] },
+  ]);
+  assert.deepEqual(teamMemberships([]), []);
+  assert.equal(workers.length, 3, 'projection grouping does not edit or duplicate the canonical roster');
 });
