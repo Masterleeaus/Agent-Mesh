@@ -51,7 +51,7 @@ The inspected inventory contains distinct projects including `ZeroPay`, `Interac
 
 - `Developer-Workforce-Extension-` retains an opaque upstream ID/version directory containing the seed extension; it now has a package-level README. Normalize the path only through a provenance-preserving migration.
 - `Documents` has a landing README; the ZIP archive still needs contents and provenance review.
-- Many substantive READMEs lack project-specific wide banners. Use existing repo artwork where verified; do not substitute unrelated images or imply a banner exists when it does not.
+- Portfolio banner pass added checked-in, project-specific SVG headers to 29 additional substantive repositories; there are now 30 checked-in SVG banner assets; Climate Crew retains its existing wide PNG header, so 31 of 33 default-branch READMEs have a checked-in banner. The two near-empty deletion candidates remain intentionally unbranded. Verify image rendering in GitHub after any repository rename.
 - Several repositories still need stronger status, setup, CI/test, license/provenance, and screenshot coverage.
 - Repository descriptions/topics, release tags, branch protection, and repo-level settings have not been normalized because no repository metadata update operation was exposed in this session.
 - Some repositories contain imported ZIPs, generated artifacts, environment variants, or OS files. Review each item and its history before removing it.
@@ -88,14 +88,14 @@ This file records candidates only. No repository was deleted, archived, renamed,
 
 ### README duplication and portfolio disposition
 
-- `cleanly` and `modules` had identical README content/blob before this pass, but their complete recursive trees differ substantially (11,260 vs 6,305 entries at the reviewed commits). This is a **README duplication**, not a proven repository duplicate. `modules` is documented as the Titan BOS application source. `cleanly` is private and still needs an accurate description of its actual code before any visibility or disposition decision. Neither is a deletion candidate based solely on this comparison.
+- `cleanly` and `modules` had identical README content/blob before this pass, but their complete recursive trees differ substantially (11,260 vs 6,305 entries at the reviewed commits). This is a **README duplication**, not a proven repository duplicate. `modules` is documented as the Titan BOS application source. `cleanly` is private and now has a repository-specific workspace README; its provenance, security, tests, and product boundary still need review before any visibility or disposition decision. Neither is a deletion candidate based solely on this comparison.
 - `Worksuite-Saas---Project-Management-System_Laravel` is a public, large imported third-party codebase. Its README now records vendor provenance and marks it for archive/deletion review. This is a **deletion-review candidate**, not an instruction to delete it. Preserve its vendor attribution and license until the owner decides.
 - `Delivery-Management-Platform` is a distinct, small Laravel application with upstream authorship evident in its README. Keep as a source/provenance archive or assess license and relevance before portfolio promotion. It is not a duplicate of the Titan BOS application.
-- `cleanly` is currently private, so it is not visible in the public portfolio. Decide its intended audience only after its repository-specific README is written.
+- `cleanly` remains private and is not visible in the public portfolio. Its repository-specific README is now in place; decide its intended audience after provenance, security, and product-boundary review.
 
 ### Pass status
 
-Current tree scans confirm the two cleaned Titan BOS source repositories retain an example env file and sanitized template; populated tracked local env files were removed in this pass. A full historical secret scan, credential rotation, complete test/build verification across all repositories, banner creation for every project, repository metadata normalization, and complete 33-repository tree/history comparison are still outstanding.
+Current tree scans confirm the two cleaned Titan BOS source repositories retain an example env file and sanitized template; populated tracked local env files were removed in this pass. A full historical secret scan, credential rotation, complete test/build verification across all repositories, repository metadata normalization, and complete 33-repository tree/history comparison are still outstanding. Banner coverage is 31 of 33; the two near-empty deletion candidates remain unbranded.
 
 
 ## Additional findings — portfolio visibility pass
@@ -103,25 +103,25 @@ Current tree scans confirm the two cleaned Titan BOS source repositories retain 
 ### README and banner inventory
 
 - Rechecked all 33 repositories: each default branch has a README, and no byte-for-byte duplicate README remains. This does not certify content accuracy or runtime completeness.
-- Wide project-specific banners remain inconsistent. Several READMEs use text-only headers; the Worksuite import had a placeholder-host image URL added during triage and it is not a finished banner. Replace it with a real, appropriately licensed, project-specific asset or remove it before presenting that repo.
+- Banner coverage is now complete for 31 of 33 repositories. `cleanhub` and `cleanhub2` remain intentionally unbranded while they are deletion-review candidates. Worksuite now has a checked-in portfolio banner; inherited product artwork within its README still requires provenance review.
 
 ### Explicit repository disposition shortlist
 
 | Repository | Current evidence | Portfolio action |
 |---|---|---|
 | `cleanhub` | Public, default branch contains only README; repository metadata reports size 0. | **Deletion candidate** after checking branches, tags, settings, and external references. |
-| `Titan-Zero` | Public, default branch contains only README; integration archive has no build, tests, or release artifact. | **Deletion or archive candidate** unless a documented integration workflow uses it. |
+| `Titan-Zero` | Public, default branch contains README and banner; four non-main branches hold integration work, including mobile components, device-runtime source/tests, and merge verification. | **Retain pending branch review and integration-work disposition; not a current deletion candidate.** |
 | `cleanhub2` | Private, default branch contains README and Git attributes/ignore files only. | **Deletion candidate** if no unique branches/settings/references need preservation. |
 | `Worksuite-Saas---Project-Management-System_Laravel` | Public, large imported third-party application; exposed env file removed from current branch, but source provenance/license and history remain to review. | **Archive/deletion review candidate; weak as original portfolio evidence.** Preserve attribution and license during review. |
 | `Delivery-Management-Platform` | Public, distinct Laravel application with upstream authorship noted in README; small compared with main platform. | Keep only as a clearly attributed source/provenance archive if useful; otherwise mark for archival review. |
-| `cleanly` | Private and substantial; different recursive tree from `modules`; still carries the duplicated Titan BOS README rather than a repository-specific description. | Not a duplicate finding. Keep private pending an accurate content-specific README and purpose decision. |
+| `cleanly` | Private and substantial; different recursive tree from `modules`; now has a repository-specific workspace README and banner. | Not a duplicate. Keep private pending provenance, security, test, and product-boundary review. |
 | `Titancore`, `Titanzero` | Substantial legacy code trees with unclear relationship to the current workforce product. | Lineage/license/build review before presenting; archive only if unique code/docs are retained elsewhere or clearly labeled. |
 
 No repositories were deleted or archived. The table marks candidates for the owner's later disposition decision.
 
 ### Banner quality correction
 
-The Worksuite README currently uses a placeholder external graphic, not a genuine project banner. It should not be counted as a completed banner. The portfolio requirement remains project-specific, accurate imagery with valid repository-relative or otherwise controlled asset hosting.
+Worksuite now uses a checked-in repository-relative portfolio banner. This resolves the earlier external-banner issue; review other inherited vendor artwork separately for provenance and license.
 
 
 ### Branch and release checks for placeholder candidates
@@ -139,3 +139,83 @@ A targeted review of ten substantive repositories found active pull requests acr
 - Some PRs are marked WIP, depend on non-main bases, or overlap with other PRs. Maintain a per-repository queue with dependency order and canonical target rather than merging solely by branch name.
 - The portfolio cleanup process therefore has two distinct tracks: (1) repository disposition candidates with no unique branch history; (2) active implementation branches that need code review, tests, and merge decisions.
 - No branch or PR was merged, closed, or deleted in this pass.
+
+
+## Rebranding handoff
+
+A repository-by-repository naming map with proposed GitHub slugs, README titles, suggested repository descriptions, provenance notes, and disposition guidance is in [REPOSITORY-NAMING-PLAN.md](REPOSITORY-NAMING-PLAN.md). Repository names and descriptions were not changed because the connected GitHub capability here does not expose repository settings edits; the owner can apply the proposed slugs and descriptions in GitHub.
+
+
+### Portfolio branding pass — 2026-10-02
+
+- Added project-specific wide SVG banner files and README references across 29 additional repositories, including prototypes and source archives. The private `cleanly` workspace also has its own banner. A follow-up fetch verified that all 30 SVG banner references point to checked-in files; Climate Crew's existing PNG header is also checked in.
+- Kept the banner system consistent in layout and varied each project's title, status label, and accent color. Existing project artwork remains alongside the banner where already present.
+- Left `cleanhub` and `cleanhub2` unbranded because both are near-empty deletion candidates pending disposition.
+- Banner images are documentation assets; no application builds or tests were run for this visual pass.
+
+
+### README accuracy and provenance pass — 2026-10-02
+
+- Aligned remaining public README titles with the rename plan and fixed stale banner statements after adding the image assets.
+- Corrected `Titan-Zero`'s default-branch content description to include its checked-in banner, and retained it for review because four non-main branches contain unique integration work.
+- Corrected `cleanhub` to describe its current state: one status README, no app source or release artifact.
+- Added explicit attribution notes to `ForgeMesh` and `TitanPro`: checked-in package/license metadata identifies third-party copyright/provenance that must be preserved and reviewed before claiming original authorship. The `workcore-extensions` repository has no root license file, now called out before public release.
+- These changes improve README accuracy only. They do not verify functional completeness, licenses beyond the checked-in notices, or runtime behavior.
+
+
+
+### README follow-up — 2026-10-02
+
+- Updated `modules` to remove a stale claim that a populated `.env.development` remains tracked. The current default-branch tree contains sanitized `.env.example` and `.env.development.template` files, with no tracked `.env.development`. Historical exposure and credential rotation/history review remain separate outstanding security work.
+- Qualified Titan BOS feature descriptions as product direction, removed unsupported public pricing and savings figures, and replaced absolute service promises with design goals. Corrected the repository structure label and removed a stale hard-coded branch instruction.
+- Added setup/validation guidance to `ForgeMesh`, `Climate-crew`, and `Commerce-Crew`, including maturity/integration caveats. No application builds, scientific workflows, or test suites were run during this documentation pass.
+- The current `cleanly` README is repository-specific; earlier README duplication with `modules` has been resolved. The repos have distinct trees, so this is not a duplicate-repository finding.
+
+
+### CI and open pull-request inventory — 2026-10-02
+
+Read-only snapshot of GitHub check runs attached to each repository's current `main` commit and open pull requests. A missing check-run record does not prove that a repository has no workflow; it means no check run was attached to the inspected commit. Failure labels below are status signals, not root-cause diagnoses.
+
+#### Main-branch check status
+
+| Repository | Checks attached to current `main` | Review note |
+|---|---:|---|
+| `Titan-BOS` | 24 | Multiple platform build, deployment, and test checks fail; some platform jobs pass or are skipped. |
+| `zero` | 3 | All three checks pass. |
+| `Worksuite-Saas---Project-Management-System_Laravel` | 6 | Syntax check passes; Pint, SQLite/MySQL tests, PHPStan, and fresh-install checks fail. |
+| `clean` | 6 | Three integrity/scan checks fail; JavaScript, Python, and Actions analysis pass. |
+| `modules` | 2 | Test Suite and Fresh Migration Check fail. |
+| `TitanPro` | 5 | Backend, frontend, and module production checks fail; PR automation check passes. |
+| `Tenant-Forge` | 1 | Test check fails. |
+| `Uniquely` | 3 | Tests fail; build and install checks pass. |
+| `AI-Coding-Studio` | 2 | JavaScript/TypeScript and Actions analysis pass. |
+| `Titan-Builder` | 7 | Required CI, Linux/Windows verification, and workflow-policy checks fail; static analysis checks pass. |
+| `Titan-themes` | 1 | Validation passes. |
+| `workcore-extensions` | 1 | Validation passes. |
+| `Interaction-engine` | 1 | Verification check fails. |
+| `Titan-Zero-Field-Service-Workforce` | 2 | `verify` passes; `validate` fails. |
+
+The remaining 19 repositories had no check runs attached to the inspected `main` commit: `Ai_agent_voice_assistance_using_vapi`, `Ai-Medical-Voice-Agent-Saas-App`, `predictive-analytics-module`, `Delivery-Management-Platform`, `Titan-Zero`, `cleanhub`, `cleanhub2`, `cleanly`, `callingagent-`, `ZeroPay`, `Titancore`, `Titanzero`, `Documents`, `Ai-extensions`, `Climate-crew`, `ForgeMesh`, `Commerce-Crew`, `Developer-Workforce-Extension-`, and `gearbox`. Add a lightweight CI workflow where appropriate, or document why validation is manual.
+
+#### Open pull requests
+
+| Repository | Open PRs | Drafts | Older than 90 days |
+|---|---:|---:|---:|
+| `zero` | 1 | 1 | 1 |
+| `Worksuite-Saas---Project-Management-System_Laravel` | 1 | 0 | 1 |
+| `clean` | 6 | 1 | 0 |
+| `cleanly` | 4 | 4 | 0 |
+| `modules` | 5 | 4 | 5 |
+| `TitanPro` | 7 | 0 | 4 |
+| `Titancore` | 4 | 4 | 0 |
+| `AI-Coding-Studio` | 8 | 2 | 0 |
+| `Titan-Builder` | 18 | 14 | 0 |
+| `Ai-extensions` | 14 | 7 | 0 |
+| `Titan-Zero-Field-Service-Workforce` | 29 | 15 | 0 |
+| **Total** | **97** | **52** | **11** |
+
+The 11 PRs older than 90 days are `zero` #254; Worksuite #444; `modules` #84, #88–#91; and `TitanPro` #550, #554, #564, #567. Review whether each is still wanted, superseded, blocked, or ready before closing or merging.
+
+Five PRs currently target non-`main` bases: `AI-Coding-Studio` #4, #8, #22; `Titan-Builder` #289; and `Ai-extensions` #447. Confirm intended dependency chains before retargeting or merging.
+
+No PRs were closed or merged. The inventory is a status snapshot; checks and PR states can change after this date.

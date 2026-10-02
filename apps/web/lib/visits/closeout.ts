@@ -2,7 +2,6 @@ import type { PoolClient } from "pg";
 import {
   checkSchedulingPreconditions,
   FIELD_ACTIVE_VISIT_STATUSES,
-  laborDescriptionFromVisitNotes,
   visitTransitions,
   type VisitCloseoutBody,
   type VisitStatus,
@@ -445,22 +444,6 @@ export async function runVisitCloseout(
 
   if (input.kind === "done" && completed.job_id) {
     if (jobStatus === "in_progress" || jobStatus === "scheduled") {
-      const notes = await client.query<{ tech_notes: string | null }>(
-        `SELECT tech_notes FROM visits
-         WHERE job_id = $1 AND account_id = $2 AND status = 'completed'
-           AND visit_type IS DISTINCT FROM 'site_visit'
-         ORDER BY scheduled_start ASC`,
-        [completed.job_id, session.accountId],
-      );
-      const titleRow = await client.query<{ title: string }>(
-        `SELECT title FROM jobs WHERE id = $1 AND account_id = $2`,
-        [completed.job_id, session.accountId],
-      );
-      const desc = laborDescriptionFromVisitNotes(
-        notes.rows.map((r) => r.tech_notes),
-        titleRow.rows[0]?.title ?? "Labor",
-      );
-
       const completedJob = await client.query<{ complete_job_from_closeout: string | null }>(
         `SELECT complete_job_from_closeout($1) AS complete_job_from_closeout`,
         [completed.job_id],
@@ -489,6 +472,9 @@ export async function runVisitCloseout(
 
       await client.query("SAVEPOINT before_final_invoice");
       try {
+        // Use the supported final-invoice contract. The former closeoutRollup
+        // and laborDescription options were ignored by this helper; pricing,
+        // tracked labor, and expense selection remain owned by final-invoice.
         const result = await createDraftFinalInvoiceForJob({
           client,
           jobId: completed.job_id,
@@ -496,8 +482,6 @@ export async function runVisitCloseout(
           userId: session.userId,
           visitId,
           traceId: session.traceId,
-          closeoutRollup: true,
-          laborDescription: desc,
         });
         invoiceId = result?.invoiceId ?? null;
         await client.query("RELEASE SAVEPOINT before_final_invoice");

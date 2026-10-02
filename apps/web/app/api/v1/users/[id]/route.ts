@@ -136,6 +136,15 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
       [...params, session.accountId]
     );
 
+    if (role !== undefined) {
+      // Membership is the session role source. Synchronize only this company;
+      // never recreate a missing membership or reactivate an inactive one.
+      await client.query(
+        `UPDATE business_memberships SET role = $1 WHERE user_id = $2 AND account_id = $3`,
+        [role, id, session.accountId]
+      );
+    }
+
     await appendAuditLog(client, {
       account_id: session.accountId,
       entity_type: "user",

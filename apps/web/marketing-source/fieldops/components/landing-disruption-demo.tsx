@@ -2,10 +2,9 @@
 
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Check, RefreshCw, ShieldCheck, Sparkles, TriangleAlert } from "lucide-react";
-import { defaultPolicyWeights, optimizeRecovery } from "@/lib/dispatch-optimizer";
-import styles from "@/app/landing.module.css";
+import { defaultPolicyWeights, optimizeRecovery } from "../lib/dispatch-optimizer";
+import styles from "../app/landing.module.css";
 
 type DemoState = "idle" | "ingest" | "constraints" | "optimizing" | "resolved";
 
@@ -90,7 +89,7 @@ export function LandingDisruptionDemo() {
             <b>{state === "resolved" ? protectedOrder ? assignment?.to : "ADVISOR CALLBACK" : ""}</b>
           </span>;
         })}</div>
-        {state === "resolved" ? <Link href="/control-room/service-command" className={styles.demoDeepLink}>Open the full recovery workspace <ArrowRight/></Link> : null}
+        {state === "resolved" ? <a href="/control-room/service-command" className={styles.demoDeepLink}>Open the full recovery workspace <ArrowRight/></a> : null}
       </section>
     </div>
 

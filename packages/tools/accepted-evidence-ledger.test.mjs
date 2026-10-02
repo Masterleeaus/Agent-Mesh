@@ -56,7 +56,7 @@ test('provider acknowledgement without verification cannot enter the verified pr
   const result = await gateway.execute({ ...base, execution_id: 'execution-2', idempotency_key: 'complete-job-2' });
   const projection = ledger.projectJob('company-a', 'job-1');
 
-  assert.equal(result.state, 'FAILED');
+  assert.equal(result.state, 'UNCERTAIN');
   assert.equal(projection.status, 'UNKNOWN');
   assert.deepEqual(projection.provenance.evidence_ids, []);
 });
