@@ -97,9 +97,20 @@ configured host's HTTPS `/api/session`, derives the effective subject, real
 operator, role and impersonation state from that authenticated response, and
 then asks the registry to validate the subject's current actor, company
 membership and device ownership before storing a nonce.
-It accepts no caller-supplied actor, subject or session ID. If #812 has no trusted
-current company/device selection, it must fail closed; do not enumerate all
-switch choices or place them into operation scope.
+It accepts no caller-supplied actor, subject or session ID. When no trusted
+preexisting company/device context is available, the first-session flow may call
+`issueNonceForUniqueCurrentContext({ origin, cookie, authorization: null })`.
+That authenticates `/api/session`, then atomically resolves and stores the
+nonce only if the issuer/subject has exactly one active canonical
+actor/company/membership/device combination. The result includes that single
+company/device pair for trusted server use; the renderer must return only the
+opaque nonce to the browser. Zero eligible pairs fail closed, and multiple
+companies, devices, or distinct actor mappings fail with an explicit ambiguity
+denial. It never picks a first row or exposes a list of switch choices. The
+registry remains the authority for the active binding, membership and device.
+If the context is ambiguous, #812 must use an independently authenticated
+server-side selection source or fail closed; browser input, OS UID and
+DirectAdmin role alone cannot resolve it.
 
 Both nonce issuance and assertion redemption parse the Cookie header with the
 same fixed allowlist: exactly one `session` and one `key` pair, no other cookie
