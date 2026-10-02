@@ -34,7 +34,7 @@ Manifest schema `titan.deployment.release-candidate.v1` requires:
 | --- | --- |
 | `release_id`, `version`, `channel` | Nonempty release identity and intended distribution channel |
 | `source_sha` | Exact 40-character lowercase Git SHA |
-| `created_at`, `expires_at` | ISO timestamps, valid now, maximum 24-hour window |
+| `created_at`, `expires_at` | Canonical UTC timestamps in `YYYY-MM-DDTHH:mm:ss.sssZ` form, valid now, maximum 24-hour window |
 | `profile` | `portable` or `directadmin` |
 | `artifacts` | Records `{role,path,sha256}`; SHA-256 lowercase hex; root-relative portable file paths; no links, traversal, duplicate/case-colliding paths or directories |
 | Artifact roles | Required `web`, `worker`, `workforce`, `config`, `migrations`, `sbom`, `provenance`; `evidence` for referenced verification records. Runtime artifacts must be the shipped builds/images, not source-only archives. Config artifacts contain templates/references, never secret values. |
@@ -44,7 +44,7 @@ Manifest schema `titan.deployment.release-candidate.v1` requires:
 | `unresolved_p0` | Explicit empty array from reviewed current issue/closure evidence |
 | `regression_count` | Exactly 0, without a tolerated failing baseline |
 | `installer_status` | `passed` |
-| `checks` | Unique `{id,status,release_id,source_sha,subject_sha256,evidence_path,observed_at}` records; all passed, candidate-bound, recorded within the manifest time window, referencing checksummed evidence files |
+| `checks` | Unique `{id,status,release_id,source_sha,subject_sha256,evidence_path,observed_at}` records; all passed, candidate-bound, `observed_at` in canonical UTC `YYYY-MM-DDTHH:mm:ss.sssZ` form within the manifest time window, referencing checksummed evidence files |
 
 `subject_sha256` is the SHA-256 of UTF-8 `JSON.stringify(subject)`, where
 `subject` is the artifact array excluding role `evidence`, each record projected
@@ -66,7 +66,10 @@ including exact artifacts/config, compatibility, required closure criteria and
 current unresolved P0 state before signing. Cryptographic authenticity and
 checksums cannot establish that an asserted test was honestly performed. This
 verifier validates assertions and bytes; it does not rerun host acceptance or
-query live GitHub. Reverify immediately before governed promotion, keep staged
-files read-only throughout verification and use the verified immutable digests
-at activation. Preserve the envelope and output as evidence; they grant no
-business authority. Never treat a copied JSON success record as authorization.
+query live GitHub. Reverify immediately before governed promotion. The staging
+directory and its artifacts must be read-only and operator-controlled throughout
+verification and until promotion; the verifier opens artifacts without following
+the final path component and rejects inode or content metadata changes it detects
+while hashing. Promotion must consume the exact verified immutable digests.
+Preserve the envelope and output as evidence; they grant no business authority.
+Never treat a copied JSON success record as authorization.

@@ -1,5 +1,6 @@
 import { createHash, createPublicKey, verify, KeyObject } from 'node:crypto';
-import { open, lstat, realpath } from 'node:fs/promises';
+import { constants as fsConstants } from 'node:fs';
+import fs from 'node:fs/promises';
 import { resolve, relative, sep, isAbsolute } from 'node:path';
 
 const CHECKS = ['ci_648', 'native_fsm_809', 'workforce_811', 'security_302',
@@ -18,8 +19,11 @@ function list(value, name) {
   return value;
 }
 function date(value) {
-  requireValue(typeof value === 'string' && Number.isFinite(Date.parse(value)), 'time-invalid');
-  return Date.parse(value);
+  const timestamp = typeof value === 'string' ? Date.parse(value) : Number.NaN;
+  requireValue(typeof value === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value) &&
+    Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value, 'time-invalid');
+  return timestamp;
 }
 function decode(value, name) {
   requireValue(typeof value === 'string' && value.length > 0 && value.length < 4_000_000, `${name}-invalid`);
@@ -37,19 +41,55 @@ function validatePath(name) {
 async function fileDigest(root, name) {
   validatePath(name);
   let path = root;
-  for (const part of name.split('/')) {
+  const components = [];
+  const parts = name.split('/');
+  for (const [index, part] of parts.entries()) {
     path = resolve(path, part);
-    requireValue(!(await lstat(path)).isSymbolicLink(), 'artifact-path-link');
+    const stat = await fs.lstat(path, { bigint: true });
+    requireValue(!stat.isSymbolicLink(), 'artifact-path-link');
+    if (index < parts.length - 1) requireValue(stat.isDirectory(), 'artifact-path-directory-required');
+    components.push({ path, stat });
   }
-  const actual = await realpath(path);
+  const actual = await fs.realpath(path);
   const rel = relative(root, actual);
   requireValue(rel && !isAbsolute(rel) && rel !== '..' && !rel.startsWith(`..${sep}`), 'artifact-path-escape');
-  requireValue((await lstat(actual)).isFile(), 'artifact-file-required');
-  const file = await open(actual, 'r');
+  const checked = await fs.lstat(actual, { bigint: true });
+  requireValue(checked.isFile(), 'artifact-file-required');
+  requireValue(checked.dev === components.at(-1).stat.dev && checked.ino === components.at(-1).stat.ino,
+    'artifact-path-raced');
+  requireValue(Number.isInteger(fsConstants.O_NOFOLLOW) && fsConstants.O_NOFOLLOW !== 0 &&
+    Number.isInteger(fsConstants.O_NONBLOCK) && fsConstants.O_NONBLOCK !== 0, 'artifact-safe-open-unavailable');
+  let file;
   try {
-    requireValue((await file.stat()).isFile(), 'artifact-file-required');
+    file = await fs.open(actual, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+  } catch (error) {
+    if (error?.code === 'ELOOP') throw new Error('release-candidate:artifact-path-raced', { cause: error });
+    throw error;
+  }
+  try {
+    const before = await file.stat({ bigint: true });
+    requireValue(before.isFile(), 'artifact-file-required');
+    requireValue(before.dev === checked.dev && before.ino === checked.ino, 'artifact-path-raced');
+    const checkPaths = async () => {
+      for (const component of components) {
+        const current = await fs.lstat(component.path, { bigint: true });
+        requireValue(!current.isSymbolicLink(), 'artifact-path-link');
+        requireValue(current.dev === component.stat.dev && current.ino === component.stat.ino &&
+          current.mtimeNs === component.stat.mtimeNs && current.ctimeNs === component.stat.ctimeNs,
+          'artifact-path-raced');
+      }
+      const current = await fs.lstat(actual, { bigint: true });
+      requireValue(current.dev === before.dev && current.ino === before.ino && current.size === before.size &&
+        current.mtimeNs === before.mtimeNs && current.ctimeNs === before.ctimeNs, 'artifact-path-raced');
+    };
+    await checkPaths();
     const hash = createHash('sha256');
     for await (const chunk of file.createReadStream({ autoClose: false })) hash.update(chunk);
+    const after = await file.stat({ bigint: true });
+    requireValue(after.dev === before.dev && after.ino === before.ino && after.size === before.size &&
+      after.mtimeNs === before.mtimeNs && after.ctimeNs === before.ctimeNs,
+    'artifact-mutated-during-verification');
+    await checkPaths();
     return hash.digest('hex');
   } finally { await file.close(); }
 }
@@ -121,7 +161,7 @@ export async function verifyReleaseCandidate({ envelope, publicKey, artifactRoot
       paths.get(check.evidence_path.toLowerCase())?.role === 'evidence' &&
       paths.get(check.evidence_path.toLowerCase()).path === check.evidence_path, `check-${check.id}-evidence-required`);
   }
-  const root = await realpath(artifactRoot);
+  const root = await fs.realpath(artifactRoot);
   for (const artifact of artifacts) {
     requireValue(await fileDigest(root, artifact.path) === artifact.sha256, `artifact-${artifact.role}-checksum-mismatch`);
   }

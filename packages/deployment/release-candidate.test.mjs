@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateKeyPairSync, sign, createHash } from 'node:crypto';
+import fs from 'node:fs/promises';
 import { mkdtemp, writeFile, rm, mkdir, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -58,6 +59,19 @@ test('rejects a candidate signed by an untrusted key', async t => {
   const other = generateKeyPairSync('ed25519');
   await assert.rejects(verify(await fixture(t), other.publicKey), /signature/);
 });
+
+for (const [description, set] of [
+  ['timezone-free created_at', manifest => manifest.created_at = manifest.created_at.slice(0, -1)],
+  ['timezone-free expires_at', manifest => manifest.expires_at = manifest.expires_at.slice(0, -1)],
+  ['timezone-free check.observed_at', manifest => manifest.checks[0].observed_at = manifest.checks[0].observed_at.slice(0, -1)],
+  ['a noncanonical UTC offset', manifest => manifest.created_at = manifest.created_at.replace(/Z$/, '+00:00')],
+]) {
+  test(`rejects ${description}`, async t => {
+    const f = await fixture(t);
+    set(f.manifest);
+    await assert.rejects(verify(f), /time/);
+  });
+}
 
 test('detects changed shipped bytes even if all check records passed', async t => {
   const f = await fixture(t);
@@ -134,6 +148,27 @@ test('rejects a directory link even when its target contains matching evidence',
   f.manifest.artifacts.find(a => a.role === 'evidence').path = 'linked/proof.txt';
   f.manifest.checks.forEach(c => c.evidence_path = 'linked/proof.txt');
   await assert.rejects(verify(f), /path-link/);
+});
+
+test('rejects a final artifact symlink swapped in after path validation', async t => {
+  const f = await fixture(t);
+  const outside = await mkdtemp(join(tmpdir(), 'titan-raced-artifact-'));
+  t.after(() => rm(outside, { recursive: true, force: true }));
+  const artifactPath = join(f.root, 'web.txt');
+  const matchingExternal = join(outside, 'web.txt');
+  await writeFile(matchingExternal, 'fixture web');
+  const originalOpen = fs.open.bind(fs);
+  let replaced = false;
+  t.mock.method(fs, 'open', async function (path, flags, ...rest) {
+    if (!replaced && path === artifactPath) {
+      replaced = true;
+      await rm(artifactPath);
+      await symlink(matchingExternal, artifactPath);
+    }
+    return originalOpen(path, flags, ...rest);
+  });
+  await assert.rejects(verify(f), /artifact-path-raced/);
+  assert.equal(replaced, true);
 });
 
 test('requires and accepts DirectAdmin owner verification for that profile', async t => {
