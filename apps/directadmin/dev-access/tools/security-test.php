@@ -123,6 +123,18 @@ expect_true(directadmin_request_body_length_matches($terminalFields."\n",$termin
 expect_true(directadmin_request_body_length_matches($terminalFields."\r\n",$terminalLength),'one terminal CRLF may be present beyond CONTENT_LENGTH');
 expect_true(!directadmin_request_body_length_matches($terminalFields."\n\n",$terminalLength),'two terminal LF bytes beyond CONTENT_LENGTH must fail');
 expect_true(!directadmin_request_body_length_matches($terminalFields.'x',$terminalLength),'arbitrary CONTENT_LENGTH mismatch must fail');
+
+$nulTerminatedFields=$terminalFields."\0";
+expect_true(directadmin_request_terminal_byte_class($terminalFields)==='printable'&&directadmin_request_terminal_byte_class($terminalFields."\n")==='lf'&&directadmin_request_terminal_byte_class($terminalFields."\r\n")==='crlf','terminal-byte diagnostic must return only a bounded fixed class');
+expect_true(directadmin_request_terminal_byte_class($nulTerminatedFields)==='nul','raw NUL terminal must be classified without exposing its byte value');
+expect_true(directadmin_normalize_stdin_transport_terminator("\0",null)==="\0",'a NUL-only stdin body must not normalize into an empty request');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,null)===$terminalFields,'one terminal raw NUL may be normalized when CONTENT_LENGTH is unavailable');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,$terminalLength)===$terminalFields,'one terminal raw NUL may be normalized when CONTENT_LENGTH matches the form prefix');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,strlen($nulTerminatedFields))===$nulTerminatedFields,'a NUL included in declared CONTENT_LENGTH must not be normalized');
+expect_true(directadmin_normalize_stdin_transport_terminator($terminalFields."\0\0",null)===$terminalFields."\0\0",'repeated terminal raw NUL bytes must not be normalized');
+expect_true(directadmin_normalize_stdin_transport_terminator("csrf=valid\0&run=1",null)==="csrf=valid\0&run=1",'interior raw NUL bytes must not be normalized');
+expect_true(!directadmin_request_body_length_matches($nulTerminatedFields,$terminalLength),'raw NUL is not a generic form length terminator');
+
 $diagnosticReasons=[
  'Invalid content length.'=>'content_length_invalid',
  'Unsupported form content type.'=>'content_type_invalid',
@@ -135,10 +147,10 @@ $diagnosticReasons=[
 ];
 foreach($diagnosticReasons as $message=>$code) expect_true(directadmin_request_error_code(new RuntimeException($message))===$code,'request error text must map only to static code '.$code);
 expect_true(directadmin_request_error_code(new RuntimeException('synthetic-secret-value=must-not-render'))==='request_rejected','unknown request errors must map to a static fallback code');
-$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125];
-expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125','request diagnostics must expose only bounded reason, transport and numeric lengths');
-$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret'];
-expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown','diagnostic output must reject unallowlisted codes, transports and nonnumeric lengths');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125,'terminal_class'=>'nul'];
+expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125 terminal_class=nul','request diagnostics must expose only bounded reason, transport, numeric lengths and fixed terminal-byte class');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret','terminal_class'=>'csrf=must-not-render'];
+expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown terminal_class=unknown','diagnostic output must reject unallowlisted codes, transports, lengths and terminal classes');
 unset($_SERVER['TDA_REQUEST_DIAGNOSTIC']);
 expect_true((directadmin_parse_form_body($terminalFields."\n")['add_key']??null)==='1','one DirectAdmin transport LF must be normalized after the complete form');
 expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??null)==='1','one DirectAdmin transport CRLF must be normalized after the complete form');
@@ -146,6 +158,12 @@ expect_rejected(static function()use($terminalFields){directadmin_parse_form_bod
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&csrf=second');},'duplicate form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf%5B%5D=valid');},'array form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=%ZZ');},'malformed percent encoding must fail closed');
+
+expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\0");},'raw terminal NUL must remain rejected by the strict parser outside the stdin transport boundary');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&command=pwd%00&run=1');},'percent-encoded NUL in a form value must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&cwd=/home'."\0".'/admin');},'interior raw NUL in a form value must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&command=%FF');},'invalid UTF-8 in a decoded form value must fail closed');
+
 expect_rejected(static function(){directadmin_parse_form_body('csrf='.str_repeat('a',16385));},'oversized form bodies must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&run=1&add_key=1');},'multiple actions in one request must fail closed');
 $other=posix_getpwnam(posix_geteuid()===0?'nobody':'root');
