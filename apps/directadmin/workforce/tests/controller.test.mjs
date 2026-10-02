@@ -69,6 +69,45 @@ test('hosted action denial revalidates the same company, while revoked context s
     if (!revoked) assert.match(model.state.error, /denied.*refreshed/);
   }
 });
+test('reassignment denial, unknown outcome and stale response remain distinct and fail closed', async () => {
+  const action = { action: 'reassign', work_id: 'ready-work', target_worker_id: 'worker-target', reason: 'Move the ready item' };
+  const deniedApi = fixture(); const deniedModel = new WorkforceController(deniedApi); await deniedModel.connect();
+  deniedApi.control = async () => { throw Error('directadmin-workforce-action-denied'); };
+  await deniedModel.submit(action);
+  assert.equal(deniedModel.state.phase, 'ready');
+  assert.equal(deniedModel.state.context?.company_id, 'company-a');
+  assert.equal(deniedModel.state.receipt, null);
+  assert.match(deniedModel.state.error, /host denied that request/i);
+
+  const uncertainApi = fixture(); const uncertainModel = new WorkforceController(uncertainApi); await uncertainModel.connect();
+  uncertainApi.control = async () => { throw Error('directadmin-http-503'); };
+  await uncertainModel.submit(action);
+  assert.equal(uncertainModel.state.phase, 'unavailable');
+  assert.equal(uncertainModel.state.context, null);
+  assert.equal(uncertainModel.state.discovery, null);
+  assert.equal(uncertainModel.state.receipt, null);
+  assert.match(uncertainModel.state.error, /outcome is unknown/i);
+
+  const staleApi = fixture(); const staleModel = new WorkforceController(staleApi); await staleModel.connect();
+  let controlCalls = 0; staleApi.control = async () => { controlCalls++; return { company_id: 'company-a', state: 'REQUESTED', receipt_id: 'stale' }; };
+  staleApi.context = async () => ({ ...context(), context_revision: '2' });
+  await staleModel.submit(action);
+  assert.equal(controlCalls, 0, 'stale company/session context prevents the governed request');
+  assert.equal(staleModel.state.phase, 'denied');
+  assert.equal(staleModel.state.context, null);
+  assert.equal(staleModel.state.receipt, null);
+
+  const lateApi = fixture(); let release; let entered;
+  const reachedOwner = new Promise(resolve => { entered = resolve; });
+  lateApi.control = () => new Promise(resolve => { release = resolve; entered(); });
+  const lateModel = new WorkforceController(lateApi); await lateModel.connect();
+  const pending = lateModel.submit(action); await reachedOwner; lateModel.invalidate();
+  release({ company_id: 'company-a', state: 'REQUESTED', receipt_id: 'late-reassignment-receipt', evidence_refs: ['late-evidence'] });
+  await pending;
+  assert.equal(lateModel.state.phase, 'denied');
+  assert.equal(lateModel.state.context, null);
+  assert.equal(lateModel.state.receipt, null, 'a late prior-company acknowledgement cannot restore receipt/evidence');
+});
 test('late 403 after invalidation cannot reconnect or restore company data', async () => {
   for (const error of ['directadmin-http-403', 'directadmin-workforce-action-denied']) {
     const api = fixture();
@@ -162,10 +201,10 @@ test('malformed optional collections fail closed before any view consumes them',
   const worker = { company_id: 'company-a', worker_id: 'w1', kind: 'digital' };
   const work = { company_id: 'company-a', work_id: 'job1', state: 'RUNNING' };
   for (const invalid of [null, {}, 'not-an-array', [null], [''], [{}]]) {
-    for (const field of ['capabilities', 'context_refs', 'evidence_refs', 'controls']) {
+    for (const field of ['capabilities', 'context_refs', 'evidence_refs', 'required_capabilities', 'controls']) {
       const api = fixture();
       api.discover = async () => ({ company_id: 'company-a', workers: [{ ...worker, ...(field === 'capabilities' ? { capabilities: invalid } : {}) }], ...(field === 'controls' ? { controls: invalid } : {}) });
-      api.status = async () => ({ company_id: 'company-a', work: [{ ...work, ...(['context_refs', 'evidence_refs'].includes(field) ? { [field]: invalid } : {}) }] });
+      api.status = async () => ({ company_id: 'company-a', work: [{ ...work, ...(['context_refs', 'evidence_refs', 'required_capabilities'].includes(field) ? { [field]: invalid } : {}) }] });
       const observed = [];
       const model = new WorkforceController(api, state => observed.push(state.phase));
       await model.connect();

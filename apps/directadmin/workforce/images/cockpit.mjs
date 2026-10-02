@@ -107,7 +107,9 @@ function renderControls(view, state, workers, work) {
   view.append(node('p', 'Requests are proposals to the governed host. Role, capability availability and trust do not authorize execution.'));
   // Only the exact host-published allowlist can expose a control. Never raw shell or generic JSON.
   const supported = new Set(['pause', 'resume', 'cancel', 'reassign', 'escalate', 'revoke']);
-  const actions = (state.discovery?.controls ?? []).filter(item => supported.has(item.action) && typeof item.capability_id === 'string').map(item => item.action);
+  const actions = (state.discovery?.controls ?? []).filter(item => supported.has(item.action) && typeof item.capability_id === 'string' &&
+    (item.action !== 'reassign' || (item.capability_id === 'titan.workforce.reassign' &&
+      item.requires_fresh_approval === true && item.grants_authority === false))).map(item => item.action);
   if (!actions.length) {
     if (Array.isArray(state.discovery?.controls) && state.discovery.controls.length === 0) {
       view.append(node('p', 'This is a read-only Workforce projection. The canonical owner has not exposed an authorized lifecycle control; no request was sent.', { class: 'notice', role: 'status' }));
@@ -117,11 +119,49 @@ function renderControls(view, state, workers, work) {
   const form = node('form');
   const select = (label, options) => { const wrapper = node('label', label); const input = node('select'); for (const [value, text] of options) input.append(node('option', text, { value })); wrapper.append(input); form.append(wrapper); return input; };
   const action = select('Operation', actions.map(value => [value, value]));
-  const target = select('Work item', work.map(item => [item.work_id, item.work_id]));
-  const worker = select('Target participant (reassign / escalate)', [['', 'No target'], ...workers.map(item => [item.worker_id, item.worker_id])]);
+  const target = select('Work item', []);
+  const worker = select('Target participant', []);
   const label = node('label', 'Reason'); const reason = node('textarea', undefined, { required: '', maxlength: '2000', rows: '3' }); label.append(reason); form.append(label);
   const send = node('button', 'Submit governed request', { type: 'submit', class: 'primary' }); send.disabled = state.phase !== 'ready' || !work.length || Boolean(state.error); form.append(send);
-  form.addEventListener('submit', event => { event.preventDefault(); if (!reason.value.trim()) return; void controller.submit({ action: action.value, work_id: target.value, target_worker_id: worker.value || undefined, reason: reason.value.trim() }); }); view.append(form);
+  const hint = node('p', '', { class: 'muted', role: 'status' });
+  const replaceOptions = (selectElement, options, emptyLabel) => {
+    const selected = selectElement.value;
+    selectElement.replaceChildren(node('option', emptyLabel, { value: '' }));
+    for (const [value, text] of options) selectElement.append(node('option', text, { value }));
+    if (options.some(([value]) => value === selected)) selectElement.value = selected;
+    else selectElement.value = options[0]?.[0] ?? '';
+  };
+  const refreshChoices = () => {
+    const reassignment = action.value === 'reassign';
+    const workChoices = work.filter(item => !reassignment || item.state === 'READY');
+    replaceOptions(target, workChoices.map(item => [item.work_id, item.work_id]),
+      reassignment ? 'No READY work available' : 'No work available');
+    const selectedWork = workChoices.find(item => item.work_id === target.value);
+    const required = selectedWork?.required_capabilities;
+    const validRequirements = required === undefined || (Array.isArray(required) &&
+      required.every(capability => typeof capability === 'string' && capability.trim()));
+    const workerChoices = workers.filter(item => !reassignment ||
+      (item.active === true && item.worker_id !== selectedWork?.assignee && validRequirements &&
+        (!Array.isArray(required) || required.every(capability => (item.capabilities ?? []).includes(capability)))));
+    replaceOptions(worker, workerChoices.map(item => [item.worker_id, item.worker_id]), 'No eligible participant available');
+    if (!reassignment) worker.value = '';
+    target.required = reassignment;
+    worker.required = reassignment;
+    hint.textContent = reassignment
+      ? 'Reassignment applies to READY work. The request includes the currently projected assignee; the hosted owner rechecks assignment, target eligibility, authority and fresh approval.'
+      : '';
+    send.disabled = state.phase !== 'ready' || Boolean(state.error) || !workChoices.length ||
+      (reassignment && (!selectedWork || !workerChoices.length || !worker.value));
+  };
+  action.addEventListener('change', refreshChoices);
+  target.addEventListener('change', refreshChoices);
+  refreshChoices();
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!reason.value.trim() || (action.value === 'reassign' && (!target.value || !worker.value))) return;
+    void controller.submit({ action: action.value, work_id: target.value,
+      target_worker_id: worker.value || undefined, reason: reason.value.trim() });
+  }); view.append(form, hint);
 }
 
 // #1049 owns the real session, CSRF/origin protection, expiry and cross-plugin invalidation.
