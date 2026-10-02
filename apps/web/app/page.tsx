@@ -4,10 +4,10 @@ import styles from "./marketing.module.css";
 const IMG = "https://raw.githubusercontent.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/main/docs/images";
 
 const capabilities = [
-  ["AI Workforce", "A managed team that handles calls, follow-up, booking, coordination and routine operations across the systems you already use."],
-  ["Works with your stack", "Titan Zero upgrades the business you already have. It connects existing software and fills only the gaps that matter."],
-  ["Human authority", "Consequential actions stay governed. Review, approve, reverse and progressively automate as trust is earned."],
-  ["Private by design", "Use local models and customer-controlled providers where practical, with clear boundaries around business data and AI costs."],
+  ["Cleaning setup", "Choose supported cleaning services, set your own prices and configure where and when your team works."],
+  ["Scope and visits", "Keep property details, agreed service scope, scheduled visits and native job records together."],
+  ["Checklists and evidence", "Give cleaners a clear visit checklist and keep completion notes and evidence with the job."],
+  ["Owner-controlled actions", "Review quotes, schedules and consequential changes through the business's existing authority path."],
 ];
 
 const graphicStyle = { width: "100%", height: "auto", display: "block", borderRadius: "14px" } as const;
@@ -27,17 +27,17 @@ export default function HomePage() {
 
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.kicker}>MANAGED ADVANCED INTELLIGENCE</p>
-          <h1>You don’t need to understand AI to employ an AI workforce.</h1>
-          <p className={styles.lede}>Titan Zero installs and manages an intelligent workforce inside your existing business architecture—so you get more capacity, less admin and better operations without replacing the systems that already work.</p>
-          <div className={styles.actions}><Link href="/workforce">Meet your workforce</Link><Link href="/assessment">Assess your business</Link></div>
-          <div className={styles.proof}><span>Existing systems first</span><span>Company-controlled data</span><span>Governed automation</span></div>
+          <p className={styles.kicker}>CLEANING WORK, CLEARLY COORDINATED</p>
+          <h1>Run your cleaning work with less admin and clearer records.</h1>
+          <p className={styles.lede}>Set up the cleaning services your company offers, configure your own prices and service areas, then coordinate jobs, visits and completion records through Titan's existing native field-service workflows.</p>
+          <div className={styles.actions}><Link href="/workforce">See cleaning workflows</Link><Link href="/assessment">Assess your cleaning operations</Link></div>
+          <div className={styles.proof}><span>Company-configured services</span><span>Prices set by your business</span><span>Governed operations</span></div>
         </div>
         <div className={styles.command}>
-          <div className={styles.commandTop}><span>ZERO / COMMAND</span><i>LIVE</i></div>
-          <div className={styles.chat}><small>YOU</small><p>What needs my attention today?</p></div>
-          <div className={styles.chatAI}><small>TITAN ZERO</small><p>Three customer follow-ups are ready, tomorrow has a capacity gap, and I prepared two options. Nothing consequential has been executed without your authority.</p></div>
-          <div className={styles.cards}><article><b>12</b><span>leads handled</span></article><article><b>3</b><span>decisions ready</span></article><article><b>4.8h</b><span>admin avoided</span></article></div>
+          <div className={styles.commandTop}><span>CLEANING / OPERATIONS</span><i>EXAMPLE</i></div>
+          <div className={styles.chat}><small>YOU</small><p>What should I review before tomorrow’s cleans?</p></div>
+          <div className={styles.chatAI}><small>TITAN ZERO</small><p>Check the visit scope, confirm access details and review any items the team flagged. The records stay with their company and job.</p></div>
+          <div className={styles.cards}><article><b>Scope</b><span>confirm service</span></article><article><b>Visit</b><span>check access</span></article><article><b>Review</b><span>resolve exceptions</span></article></div>
         </div>
       </section>
 
@@ -50,25 +50,25 @@ export default function HomePage() {
       <section className={styles.field}>
         <div>
           <p className={styles.kicker}>BUILT FOR WORK AWAY FROM THE DESK</p>
-          <h2>Talk to the business while you’re doing the work.</h2>
-          <p>Field teams should not have to stop working to feed an office system. Titan Zero turns voice, camera and quick field input into structured operational context your workforce can use.</p>
+          <h2>Keep the cleaning visit moving.</h2>
+          <p>Field teams can record agreed tasks, property access details and visit exceptions as work happens, keeping the job record useful to the office and the next visit.</p>
           <div className={styles.fieldList}>
-            <span><b>VOICE</b> Capture job notes, site conditions and customer context without retyping them later.</span>
-            <span><b>CAMERA</b> Give the system visual evidence for quoting, documentation and field support.</span>
-            <span><b>GO</b> Put the worker experience in the pocket instead of shrinking an office dashboard onto a phone.</span>
+            <span><b>NOTES</b> Record the service scope completed and issues that need owner review.</span>
+            <span><b>EVIDENCE</b> Keep checklist completion and relevant photos with the visit record.</span>
+            <span><b>FIELD</b> Put the assigned cleaning visit and its instructions where the team works.</span>
           </div>
         </div>
         <div className={styles.phone}>
-          <div className={styles.phoneTop}><span>TITAN GO</span><i>● LIVE</i></div>
-          <small>ACTIVE JOB</small><h3>Capture what happened</h3>
-          <div className={styles.voice}><b>VOICE CAPTURE</b><em>00:47</em><div>▂ ▅ ▇ ▃ ▆ █ ▅ ▂ ▇ ▄ ▆ ▃</div><p>Replaced unit, photographed installation and confirmed customer approval…</p></div>
+          <div className={styles.phoneTop}><span>TITAN GO</span><i>EXAMPLE</i></div>
+          <small>CLEANING VISIT</small><h3>Record the visit outcome</h3>
+          <div className={styles.voice}><b>VISIT NOTE</b><em>CHECKLIST</em><div>Kitchen · bathrooms · floors</div><p>Record completed items and flag any access or condition exceptions for review.</p></div>
           <button>Save + continue →</button>
         </div>
       </section>
 
       <section className={styles.section} id="workforce">
         <p className={styles.kicker}>YOUR TEAM, NOT ANOTHER DASHBOARD</p>
-        <h2>An AI workforce that operates the business with you.</h2>
+        <h2>A cleaning workforce that keeps service work connected.</h2>
         <div className={styles.grid}>{capabilities.map(([title,body])=><article key={title}><span>0{capabilities.findIndex(x=>x[0]===title)+1}</span><h3>{title}</h3><p>{body}</p></article>)}</div><div className={styles.actions}><Link href="/workforce">Explore the AI workforce →</Link></div>
       </section>
 
@@ -77,14 +77,14 @@ export default function HomePage() {
       </section>
 
       <section className={styles.operations}>
-        <p className={styles.kicker}>FROM CONVERSATION TO OPERATION</p>
-        <h2>Ask for the outcome. Titan Zero coordinates the work.</h2>
-        <p className={styles.operationsLead}>Instead of hunting through menus, tell the workforce what needs to happen. Titan Zero can gather context, prepare the action and route consequential steps through the authority your business has set.</p>
+        <p className={styles.kicker}>FROM CLEANING REQUEST TO VISIT RECORD</p>
+        <h2>Keep each cleaning job connected from scope to completion.</h2>
+        <p className={styles.operationsLead}>Use the existing company configuration and native job, visit and checklist records. Owners remain responsible for configured prices and consequential decisions.</p>
         <div className={styles.operationGrid}>
-          <article><b>01</b><h3>Capture</h3><p>Turn calls, voice notes, photos and customer conversations into usable business context.</p></article>
-          <article><b>02</b><h3>Prepare</h3><p>Draft quotes, follow-ups, schedules, job updates and next actions from that context.</p></article>
-          <article><b>03</b><h3>Coordinate</h3><p>Keep customers, field teams and office workflows aligned across the systems you already use.</p></article>
-          <article><b>04</b><h3>Act with authority</h3><p>Execute approved work automatically where trust and business policy allow it.</p></article>
+          <article><b>01</b><h3>Set the service</h3><p>Choose a supported cleaning job type and record the company's configured pricing mode and amount.</p></article>
+          <article><b>02</b><h3>Prepare the job</h3><p>Keep the property, agreed scope and exclusions with the existing job record.</p></article>
+          <article><b>03</b><h3>Coordinate the visit</h3><p>Use native scheduling and visit records to keep the office and cleaning team aligned.</p></article>
+          <article><b>04</b><h3>Record completion</h3><p>Complete the selected checklist and retain the visit's evidence and exceptions.</p></article>
         </div>
       </section>
 
@@ -94,13 +94,13 @@ export default function HomePage() {
       </section>
 
       <section className={styles.section} id="how">
-        <p className={styles.kicker}>IMPLEMENTATION, NOT AI HOMEWORK</p>
-        <h2>Keep your business. Upgrade its intelligence.</h2>
-        <div className={styles.steps}><article><b>01</b><h3>Map</h3><p>We identify the expensive gaps, repetitive work and disconnected systems.</p></article><article><b>02</b><h3>Connect</h3><p>We connect Titan Zero to the tools you already use and add missing capabilities only where needed.</p></article><article><b>03</b><h3>Employ</h3><p>Your AI workforce begins under human supervision and earns greater autonomy through evidence and trust.</p></article><article><b>04</b><h3>Manage</h3><p>Titan Zero is maintained as an operating capability, not handed over as another piece of software to learn.</p></article></div>
+        <p className={styles.kicker}>CLEANING SETUP AND OPERATIONS</p>
+        <h2>Start with the services your company is ready to deliver.</h2>
+        <div className={styles.steps}><article><b>01</b><h3>Select</h3><p>Choose from the cleaning job types supported by the existing cleaning workforce bundle.</p></article><article><b>02</b><h3>Configure</h3><p>Set your service areas, working hours and prices. Fixed prices and hourly rates must come from your company.</p></article><article><b>03</b><h3>Coordinate</h3><p>Use native company jobs, schedules and visits to coordinate each cleaning service.</p></article><article><b>04</b><h3>Record</h3><p>Keep checklist completion, evidence and exceptions with the visit for the existing review flow.</p></article></div>
       </section>
 
-      <section className={styles.final}><p>ZERO BS. MORE BUSINESS.</p><h2>Put an intelligent workforce inside the business you already built.</h2><Link href="/app">Open Titan Zero Command →</Link></section>
-      <footer><strong>TITAN ZERO</strong><span>Advanced Intelligence systems for real businesses.</span><span>Command · Go · Hub</span></footer>
+      <section className={styles.final}><p>CLEANING FIRST. OWNER CONTROLLED.</p><h2>Coordinate the cleaning work your company is set up to deliver.</h2><Link href="/app">Open Titan Zero →</Link></section>
+      <footer><strong>TITAN ZERO</strong><span>Cleaning-first field-service operations.</span><span>Command · Go · Hub</span></footer>
     </main>
   );
 }
