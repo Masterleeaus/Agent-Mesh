@@ -305,6 +305,12 @@ function renderMicroweberNode(node:BuilderNode,depth=0,state={count:0}):string {
   case "text":return `<p>${text("text",String(props.content??props.label??""))}${children}</p>`;
   case "article-header":return `<header><h1>${text("title",String(props.text??""))}</h1>${children}</header>`;
   case "article-body":return `<div>${text("text",String(props.content??""))}${children}</div>`;
+  case "image":{
+   const src=props.src,alt=props.alt??"";
+   if(typeof src!=="string"||!src.startsWith("/")||src.startsWith("//")||src.length>2048||/[\u0000-\u0020\\]/.test(src)||typeof alt!=="string")throw new Error("microweber-image-source-invalid");
+   try{safeRoute(src);}catch{throw new Error("microweber-image-source-invalid");}
+   return `<img src=\"${escapeHtml(src)}\" alt=\"${escapeHtml(alt)}\" loading=\"lazy\">`;
+  }
   case "button":{
    const href=props.href;
    if(typeof href!=="string"||!href.trim())throw new Error("microweber-static-link-required");
