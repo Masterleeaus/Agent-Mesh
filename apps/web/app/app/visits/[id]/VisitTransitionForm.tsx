@@ -169,7 +169,7 @@ export function VisitTransitionForm({
         >
           Cancel Visit
         </Button>
-        <CloseoutWizard visitId={visitId} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} />
+        <CloseoutWizard visitId={visitId} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} onVisualAssurance={onVisualAssurance} />
       </div>
     );
   }
