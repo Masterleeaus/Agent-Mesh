@@ -18,6 +18,13 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 MIGRATIONS_DIR="${REPO_ROOT}/db/migrations"
+MIGRATION_TRANSACTION_FILE=""
+cleanup_migration_transaction() {
+  if [[ -n "${MIGRATION_TRANSACTION_FILE}" ]]; then
+    rm -f -- "${MIGRATION_TRANSACTION_FILE}"
+  fi
+}
+trap cleanup_migration_transaction EXIT
 
 # Validate the immutable list before connecting to or changing a database.
 # The tab-separated output preserves the explicit order and expected checksum.
@@ -96,15 +103,31 @@ MIGRATE_MODE="$(psql_cmd -tAc "
 
 echo "migration mode: ${MIGRATE_MODE}"
 
+if [[ "${MIGRATE_MODE}" == "seed" ]]; then
+  # A legacy database with no ledger is adopted as filename-only history. Make
+  # that adoption all-or-nothing; a partial seed would otherwise make the next
+  # run mistake an untracked legacy schema for a fresh database.
+  echo "seeding legacy filename-only history (checksum unverified) in one transaction"
+  MIGRATION_TRANSACTION_FILE="$(mktemp "${TMPDIR:-/tmp}/titan-migration-seed.XXXXXX.sql")"
+  {
+    printf -- '-- mode: seed-legacy-history\n'
+    printf 'BEGIN;\n'
+    while IFS=$'\t' read -r filename expected_checksum; do
+      [[ -n "${filename}" ]] || continue
+      printf "INSERT INTO schema_migrations (filename, checksum) VALUES ('%s', NULL) ON CONFLICT DO NOTHING;\n" "$filename"
+    done <<< "${MIGRATION_MANIFEST}"
+    printf 'COMMIT;\n'
+  } > "${MIGRATION_TRANSACTION_FILE}"
+  psql_cmd -v ON_ERROR_STOP=1 -f "${MIGRATION_TRANSACTION_FILE}"
+  rm -f -- "${MIGRATION_TRANSACTION_FILE}"
+  MIGRATION_TRANSACTION_FILE=""
+  echo "migrations complete"
+  exit 0
+fi
+
 while IFS=$'\t' read -r filename expected_checksum; do
   [[ -n "${filename}" ]] || continue
   file="${MIGRATIONS_DIR}/${filename}"
-
-  if [[ "${MIGRATE_MODE}" == "seed" ]]; then
-    echo "seeding legacy filename-only history (checksum unverified): $filename"
-    psql_cmd -c "INSERT INTO schema_migrations (filename, checksum) VALUES ('$filename', NULL) ON CONFLICT DO NOTHING"
-    continue
-  fi
 
   if [[ -n "${APPLIED_FILES[${filename}]:-}" ]]; then
     if [[ -n "${APPLIED_CHECKSUMS[${filename}]:-}" ]]; then
@@ -116,8 +139,25 @@ while IFS=$'\t' read -r filename expected_checksum; do
   fi
 
   echo "applying migration: $filename"
-  psql_cmd -v ON_ERROR_STOP=1 -f "$file"
-  psql_cmd -c "INSERT INTO schema_migrations (filename, checksum) VALUES ('$filename', '$expected_checksum')"
+  # Execute the migration and ledger write in one PostgreSQL transaction so a
+  # connection failure cannot leave applied SQL without its history record.
+  # Migration 088 contains its own top-level BEGIN/COMMIT; strip only those
+  # exact standalone lines so its statements participate in this outer tx.
+  MIGRATION_TRANSACTION_FILE="$(mktemp "${TMPDIR:-/tmp}/titan-migration.XXXXXX.sql")"
+  {
+    printf -- '-- migration: %s sha256: %s\n' "$filename" "$expected_checksum"
+    printf 'BEGIN;\n'
+    if [[ "${filename}" == "088_condition_tier.sql" ]]; then
+      sed -e '/^BEGIN;$/d' -e '/^COMMIT;$/d' "$file"
+    else
+      cat -- "$file"
+    fi
+    printf "\nINSERT INTO schema_migrations (filename, checksum) VALUES ('%s', '%s');\nCOMMIT;\n" \
+      "$filename" "$expected_checksum"
+  } > "${MIGRATION_TRANSACTION_FILE}"
+  psql_cmd -v ON_ERROR_STOP=1 -f "${MIGRATION_TRANSACTION_FILE}"
+  rm -f -- "${MIGRATION_TRANSACTION_FILE}"
+  MIGRATION_TRANSACTION_FILE=""
 done <<< "${MIGRATION_MANIFEST}"
 
 echo "migrations complete"
