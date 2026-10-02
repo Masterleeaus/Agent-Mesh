@@ -111,6 +111,53 @@ test('roster distinguishes human and AI identities and derives company team memb
   } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
 });
 
+test('company switch while Teams is open clears old memberships before loading the new company', async () => {
+  const folder = await mkdtemp(join(tmpdir(), 'workforce-team-company-switch-'));
+  let browser;
+  try {
+    await cp(new URL('../', import.meta.url), folder, { recursive: true });
+    await writeFile(join(folder, 'images/sdk.mjs'), fixtureSdk);
+    const { renderEntry } = await import(pathToFileURL(join(folder, 'lib/entry.mjs')));
+    browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+    const page = await browser.newPage();
+    const errors = []; page.on('pageerror', error => errors.push(error.message));
+    await page.addInitScript(() => {
+      globalThis.fixtureWorkers = [
+        { company_id: 'fixture-company', worker_id: 'company-a-member', kind: 'human', active: true,
+          team_id: 'company-a-team', capabilities: [] },
+      ];
+      globalThis.fixtureWork = [];
+    });
+    await serveFixtureRelayClient(page);
+    await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry('user') }));
+    await page.goto('https://workforce.test/');
+    await page.getByText('Current hosted projection', { exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Teams', exact: true }).click();
+    await page.getByText('company-a-team', { exact: true }).waitFor();
+
+    await page.evaluate(() => {
+      globalThis.fixtureCompany = 'company-b';
+      globalThis.fixtureWorkers = [{ company_id: 'company-b', worker_id: 'company-b-member', kind: 'digital',
+        active: true, team_id: 'company-b-team', capabilities: [] }];
+      globalThis.fixtureWait = true;
+      window.dispatchEvent(new Event('titan-context-changed'));
+    });
+    assert.match(await page.locator('#titan-workforce').innerText(), /Loading current company context/);
+    assert.equal(await page.getByText('fixture-company', { exact: true }).count(), 0);
+    assert.equal(await page.getByText('company-a-team', { exact: true }).count(), 0);
+    assert.equal(await page.getByRole('navigation').count(), 0);
+
+    await page.evaluate(() => { globalThis.fixtureWait = false; globalThis.fixtureRelease(); });
+    await page.getByText('company-b', { exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Teams', exact: true }).waitFor();
+    await page.getByText('company-b-team', { exact: true }).waitFor();
+    assert.equal(await page.getByText('company-a-team', { exact: true }).count(), 0);
+    assert.equal(await page.getByText('company-b-member (AI / digital)', { exact: true }).count(), 1);
+    assert.equal(await page.locator('#titan-workforce table tbody tr').count(), 1);
+    assert.deepEqual(errors, []);
+  } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
+});
+
 test('existing cockpit consumes the typed READY reassignment contract and displays the receipt/evidence', async () => {
   const folder = await mkdtemp(join(tmpdir(), 'workforce-reassignment-browser-'));
   let browser;
