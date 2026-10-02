@@ -1,8 +1,8 @@
 import { DirectAdminSessionBridge, DIRECTADMIN_RESPONSE_HEADERS, DIRECTADMIN_CLEAR_SESSION_COOKIE,
-  type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
+  matchesDirectAdminContextRevision, type DirectAdminBridgeContext, type WithWorkforceZeroSession } from './directadmin-session-bridge.js';
 import type { GovernedIntentRequest } from './directadmin-plugin.js';
 
-export type DirectAdminPluginId = 'titan_zero' | 'titan_operations' | 'titan_web';
+export type DirectAdminPluginId = 'titan_zero' | 'titan_workforce' | 'titan_operations' | 'titan_web';
 export type DirectAdminProjection = Readonly<{
   company_id: string; source: string; freshness: string | null;
   evidence_refs: readonly string[]; data: unknown;
@@ -104,7 +104,7 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         const switched = await session.switchCompany(input.company_id);
         return json(200, { status: 'context-changed' }, switched.set_cookie);
       }
-      const route = /^\/v1\/directadmin\/(titan_zero|titan_operations|titan_web)\/(projection|intents)$/.exec(path);
+      const route = /^\/v1\/directadmin\/(titan_zero|titan_workforce|titan_operations|titan_web)\/(projection|intents)$/.exec(path);
       if (!route) return json(404, { error: 'unknown-plugin-route' });
       const plugin = route[1] as DirectAdminPluginId;
       if (request.method === 'GET' && route[2] === 'projection') {
@@ -117,8 +117,10 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
       if (request.method === 'POST' && route[2] === 'intents') {
         const input = await body(request);
         const context = await session.revalidate();
+        const contextRevisionMatches = typeof input.context_revision === 'string' &&
+          await matchesDirectAdminContextRevision(input.context_revision, context.context_revision);
         if (input.company_id !== context.company_id || input.actor_id !== context.actor_id ||
-            input.context_revision !== context.context_revision ||
+            !contextRevisionMatches ||
             !['capability_id', 'operation_id', 'correlation_id'].every(k => typeof input[k] === 'string' && /^[A-Za-z0-9:._-]{1,200}$/.test(input[k] as string)) ||
             !input.input || typeof input.input !== 'object' || Array.isArray(input.input) ||
             Object.keys(input).some(k => !['company_id','actor_id','context_revision','capability_id','operation_id','correlation_id','input'].includes(k))) {
@@ -127,10 +129,10 @@ export function createDirectAdminGateway(bridge: DirectAdminSessionBridge, owner
         const intent: GovernedIntentRequest = Object.freeze({ company_id: context.company_id, actor_id: context.actor_id,
           capability_id: input.capability_id as string, operation_id: input.operation_id as string,
           correlation_id: input.correlation_id as string, input: input.input as Record<string, unknown> });
-        // Only Zero Core composes with the Workforce/Zero identity. Other
-        // DirectAdmin plugins may submit their own governed intents, but must
-        // not receive a Workforce child-credential capability.
-        const withWorkforceZeroSession: WithWorkforceZeroSession = plugin === 'titan_zero'
+        // Only the trusted Zero Core and Workforce owners compose with the
+        // fixed Workforce/Zero identity. Other plugins do not receive a
+        // Workforce child-credential capability.
+        const withWorkforceZeroSession: WithWorkforceZeroSession = plugin === 'titan_zero' || plugin === 'titan_workforce'
           ? session.withWorkforceZeroSession
           : async () => { throw new Error('directadmin-workforce-zero-unavailable'); };
         const receipt = await owners.requestIntent(plugin, intent, context, session.revalidate, withWorkforceZeroSession);

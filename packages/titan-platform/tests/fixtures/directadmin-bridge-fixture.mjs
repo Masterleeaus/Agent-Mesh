@@ -20,7 +20,8 @@ export const proof = { ...external, session_id: sessionId, device_id: 'device-1'
 export const expected = { company_id: 'company-a', audience: 'titan-directadmin:node-1' };
 export const csrf = b64(crypto.getRandomValues(new Uint8Array(32)));
 
-export async function fixture(t, { origin = ORIGIN } = {}) {
+export async function fixture(t, { origin = ORIGIN, provider = external.provider } = {}) {
+  const externalIdentity = { provider, subject: external.subject };
   const now = Math.floor(Date.now() / 1000) * 1000;
   let clock = now;
   const storage = createSqliteStorage(':memory:');
@@ -31,14 +32,14 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
   for (const company_id of ['company-a', 'company-b']) {
     await registry.putCompany({ company_id, status: 'active' }, null);
     await registry.putMembership({ actor_id: 'actor-1', company_id, role: 'member', status: 'active' }, null);
-    await registry.putExternalBinding({ ...external, binding_id: `mapping-${company_id}`, company_id, actor_id: 'actor-1', status: 'active' }, null);
+    await registry.putExternalBinding({ ...externalIdentity, binding_id: `mapping-${company_id}`, company_id, actor_id: 'actor-1', status: 'active' }, null);
   }
   const keys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const upstreamKeys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const workforceKeys = await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']);
   const policy = { issuer: 'titan:node-1', audience: expected.audience, key_id: 'key-1', algorithm: 'EdDSA',
     verification_key: keys.publicKey, signing_key: keys.privateKey, registry, lifetime_seconds: 300,
-    upstream: { issuer: external.provider, audience: 'titan-login:node-1', key_id: 'upstream-1', algorithm: 'EdDSA', verification_key: upstreamKeys.publicKey },
+    upstream: { issuer: externalIdentity.provider, audience: 'titan-login:node-1', key_id: 'upstream-1', algorithm: 'EdDSA', verification_key: upstreamKeys.publicKey },
     directadmin: { node_id: 'node-1' },
     workforce_zero_exchange: { issuer: 'titan:workforce', key_id: 'workforce-1', algorithm: 'EdDSA',
       verification_key: workforceKeys.publicKey, signing_key: workforceKeys.privateKey, lifetime_seconds: 120 },
@@ -49,7 +50,7 @@ export async function fixture(t, { origin = ORIGIN } = {}) {
     algorithm: 'EdDSA', verification_key: workforceKeys.publicKey, lifetime_seconds: 120,
     directadmin: { node_id: 'node-1' }, now: () => new Date(clock),
   });
-  const loginClaims = { iss: external.provider, sub: external.subject, aud: policy.upstream.audience,
+  const loginClaims = { iss: externalIdentity.provider, sub: externalIdentity.subject, aud: policy.upstream.audience,
     jti: nonce, company_id: 'company-a', device_id: 'device-1', node_id: 'node-1',
     csrf_sha256: b64(await crypto.subtle.digest('SHA-256', Buffer.from(csrf))), da_role: 'admin', iat: now / 1000, exp: now / 1000 + 120 };
   const loginPayload = `${encode({ alg: 'EdDSA', typ: 'titan-login+jwt', kid: 'upstream-1' })}.${encode(loginClaims)}`;

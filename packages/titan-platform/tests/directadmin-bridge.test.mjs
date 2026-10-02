@@ -121,6 +121,46 @@ test('gateway preserves canonical intent correlation and only reports REQUESTED'
   assert.equal(f.effects.length, 1);
 });
 
+test('shared browser session consumes Workforce and encodes opaque canonical revisions for the fixed relay contract', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  const requests = []; const seen = [];
+  f.owners.projection = async (plugin, context) => {
+    seen.push({ kind: 'projection', plugin, company_id: context.company_id });
+    return { company_id: context.company_id, source: 'canonical-workforce-runtime',
+      freshness: new Date(f.now).toISOString(), evidence_refs: [],
+      data: { schema: 'titan.workforce-cockpit.v1', company_id: context.company_id } };
+  };
+  f.owners.requestIntent = async (plugin, intent, context, revalidate) => {
+    seen.push({ kind: 'intent', plugin, company_id: context.company_id, context_revision: context.context_revision,
+      intent_context_revision: intent.context_revision });
+    assert.equal((await revalidate()).context_revision, f.claims.context_revision);
+    return { receipt_id: 'workforce-receipt-1' };
+  };
+  const session = new DirectAdminCockpitSession(() => csrf, async (path, init) => {
+    requests.push({ path, method: init.method, body: init.body });
+    return gateway(f.request(path, { method: init.method, headers: init.headers,
+      ...(init.body === undefined ? {} : { body: init.body }) }));
+  });
+  t.after(() => session.dispose());
+  await session.connect();
+  const projection = await session.projection('titan_workforce');
+  assert.equal(projection.data.schema, 'titan.workforce-cockpit.v1');
+  const receipt = await session.intent('titan_workforce', { company_id: 'company-a', actor_id: 'actor-1',
+    capability_id: 'workforce.inspect', operation_id: 'operation-workforce-1',
+    correlation_id: 'correlation-workforce-1', input: {} });
+  assert.deepEqual(receipt, { status: 'REQUESTED', receipt_id: 'workforce-receipt-1', correlation_id: 'correlation-workforce-1' });
+  assert.deepEqual(seen.map(item => [item.kind, item.plugin]), [['projection', 'titan_workforce'], ['intent', 'titan_workforce']]);
+  assert.equal(seen[1].company_id, 'company-a');
+  assert.equal(seen[1].context_revision, f.claims.context_revision);
+  assert.equal(seen[1].intent_context_revision, undefined);
+  const wire = JSON.parse(requests.at(-1).body);
+  assert.match(wire.context_revision, /^ctx1_[A-Za-z0-9_-]{43}$/);
+  assert.notEqual(wire.context_revision, f.claims.context_revision);
+  const mismatch = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post({ ...intentBody(f),
+    context_revision: `ctx1_${'A'.repeat(43)}` })));
+  assert.equal(mismatch.status, 409);
+});
+
 test('SDK exchanges the authenticated DA session for a fixed selected-company Workforce child inside the owner callback', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   let childCredential;
@@ -187,6 +227,48 @@ test('gateway refuses to serialize an exchanged Workforce bearer as an owner rec
   assert.equal(response.headers.get('set-cookie'), null);
 });
 
+test('Workforce intent route keeps the owner typed denial while the DirectAdmin session remains current', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  class DirectAdminWorkforceActionDenied extends Error {
+    code = 'directadmin-workforce-action-unsupported';
+    status = 403;
+    constructor() { super('unsupported-action details must stay private'); this.name = 'DirectAdminWorkforceActionDenied'; }
+  }
+  let callbackCount = 0;
+  f.owners.requestIntent = async (plugin, _intent, context, revalidate, withWorkforceZeroSession) => {
+    assert.equal(plugin, 'titan_workforce');
+    assert.equal((await revalidate()).company_id, context.company_id);
+    await withWorkforceZeroSession(async (credential, child) => {
+      callbackCount++;
+      assert.equal((await f.workforceVerifier.authenticate(credential)).context.audience, 'workforce');
+      assert.deepEqual(child.company_ids, ['company-a']);
+      throw new DirectAdminWorkforceActionDenied();
+    });
+    return { receipt_id: 'must-not-be-requested' };
+  };
+  const response = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post(intentBody(f))));
+  assert.equal(callbackCount, 1);
+  assert.equal(response.status, 403);
+  assert.deepEqual(await response.json(), { error: 'directadmin-workforce-action-unsupported', read_only: true });
+});
+
+test('a typed Workforce denial is suppressed when the DirectAdmin source is revoked in its callback', async t => {
+  const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
+  class DirectAdminWorkforceActionDenied extends Error {
+    code = 'directadmin-workforce-action-unsupported';
+    status = 403;
+    constructor() { super('private detail'); this.name = 'DirectAdminWorkforceActionDenied'; }
+  }
+  f.owners.requestIntent = async (_plugin, _intent, _context, _revalidate, withWorkforceZeroSession) =>
+    withWorkforceZeroSession(async () => {
+      await f.registry.revokeSession(proof.session_id, 1);
+      throw new DirectAdminWorkforceActionDenied();
+    });
+  const response = await gateway(f.request('/v1/directadmin/titan_workforce/intents', post(intentBody(f))));
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'directadmin-session-rejected', read_only: true });
+});
+
 test('non-Zero plugin owners cannot exchange the Workforce/Zero child credential', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   let childCredential;
@@ -203,14 +285,14 @@ test('non-Zero plugin owners cannot exchange the Workforce/Zero child credential
   assert.deepEqual(await response.json(), { status: 'REQUESTED', receipt_id: 'receipt-operations', correlation_id: 'correlation-1' });
 });
 
-test('company switch changes canonical revision and old credentials fail for all three plugins', async t => {
+test('company switch changes canonical revision and old credentials fail for every plugin route', async t => {
   const f = await fixture(t); const gateway = createDirectAdminGateway(f.bridge, f.owners);
   const pending = await f.bridge.authenticate(f.request());
   const response = await gateway(f.request('/v1/directadmin/company', post({ company_id: 'company-b' })));
   assert.equal(response.status, 200); assert.match(response.headers.get('set-cookie'), /Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]/);
   assert.deepEqual(await response.json(), { status: 'context-changed' });
   await assert.rejects(pending.revalidate(), /session-rejected/);
-  for (const plugin of ['titan_zero','titan_operations','titan_web']) assert.equal((await gateway(f.request(`/v1/directadmin/${plugin}/projection`))).status, 401);
+  for (const plugin of ['titan_zero','titan_workforce','titan_operations','titan_web']) assert.equal((await gateway(f.request(`/v1/directadmin/${plugin}/projection`))).status, 401);
   const current = await f.registry.resolveCurrentSession({ ...proof, session_revision: 2 }, { ...expected, company_id: 'company-b' }, new Date(f.now).toISOString());
   const token = response.headers.get('set-cookie').split(';')[0].slice('__Host-titan-da-session='.length);
   assert.notEqual(token, f.token);

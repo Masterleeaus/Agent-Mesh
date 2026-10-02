@@ -1,4 +1,4 @@
-import type { DirectAdminBridgeContext } from './directadmin-session-bridge.js';
+import { directAdminContextRevisionAssertion, type DirectAdminBridgeContext } from './directadmin-session-bridge.js';
 import type { DirectAdminPluginId, DirectAdminProjection } from './directadmin-gateway.js';
 import { assertDirectAdminProjection } from './directadmin-gateway.js';
 import type { DirectAdminApiFetch, GovernedIntentRequest } from './directadmin-plugin.js';
@@ -83,7 +83,7 @@ export class DirectAdminCockpitSession {
     return this.accept(result, true);
   }
   async projection(plugin: DirectAdminPluginId): Promise<DirectAdminProjection> {
-    if (!['titan_zero', 'titan_operations', 'titan_web'].includes(plugin)) throw new Error('unknown-plugin');
+    if (!['titan_zero', 'titan_workforce', 'titan_operations', 'titan_web'].includes(plugin)) throw new Error('unknown-plugin');
     const epoch = this.#epoch;
     const result = await this.send(`/v1/directadmin/${plugin}/projection`) as { context: DirectAdminBridgeContext; projection: DirectAdminProjection };
     if (this.#disposed || epoch !== this.#epoch) throw new Error('directadmin-context-invalidated');
@@ -93,11 +93,15 @@ export class DirectAdminCockpitSession {
     return result.projection;
   }
   async intent(plugin: DirectAdminPluginId, intent: GovernedIntentRequest): Promise<unknown> {
-    if (!['titan_zero', 'titan_operations', 'titan_web'].includes(plugin) || !this.#context ||
-        this.#context.expires_at <= Date.now() || intent.company_id !== this.#context.company_id || intent.actor_id !== this.#context.actor_id) {
+    const context = this.#context;
+    const epoch = this.#epoch;
+    if (!['titan_zero', 'titan_workforce', 'titan_operations', 'titan_web'].includes(plugin) || !context ||
+        context.expires_at <= Date.now() || intent.company_id !== context.company_id || intent.actor_id !== context.actor_id) {
       throw new Error('directadmin-intent-context-mismatch');
     }
-    return this.send(`/v1/directadmin/${plugin}/intents`, { ...intent, context_revision: this.#context.context_revision });
+    const context_revision = await directAdminContextRevisionAssertion(context.context_revision);
+    if (this.#disposed || epoch !== this.#epoch || this.#context !== context) throw new Error('directadmin-context-invalidated');
+    return this.send(`/v1/directadmin/${plugin}/intents`, { ...intent, context_revision });
   }
   async switchCompany(company_id: string): Promise<void> {
     this.invalidate(); // Purge every plugin before waiting for the server, even on failure.

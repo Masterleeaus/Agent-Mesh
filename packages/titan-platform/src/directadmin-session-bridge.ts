@@ -1,4 +1,4 @@
-import { directAdminIssuer, type createSessionCredentialService, type AuthenticatedSessionCredential } from './security-boundary.js';
+import type { createSessionCredentialService, AuthenticatedSessionCredential } from './security-boundary.js';
 import type { DirectAdminRole } from './directadmin-plugin.js';
 
 /** Trusted host composition supplies the canonical #302 credential service.
@@ -29,6 +29,22 @@ const id = (v: unknown): v is string => typeof v === 'string' && v.length > 0 &&
 function encode(value: Uint8Array): string {
   return btoa(String.fromCharCode(...value)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
+/** Short, versioned transport assertion for the canonical revision. #302's
+ * revision is an opaque JSON snapshot string; the DirectAdmin relay accepts
+ * bounded URL-safe identifiers only. This digest carries no authority and is
+ * compared with the freshly authenticated canonical revision at the gateway. */
+export async function directAdminContextRevisionAssertion(revision: string): Promise<string> {
+  if (typeof revision !== 'string' || revision.length === 0 || revision.length > 4096) {
+    throw new Error('directadmin-context-revision-invalid');
+  }
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(revision));
+  return `ctx1_${encode(new Uint8Array(digest))}`;
+}
+export async function matchesDirectAdminContextRevision(assertion: unknown, revision: string): Promise<boolean> {
+  if (assertion === revision) return true; // compatibility for direct, non-relayed callers
+  if (typeof assertion !== 'string' || !/^ctx1_[A-Za-z0-9_-]{43}$/.test(assertion)) return false;
+  return assertion === await directAdminContextRevisionAssertion(revision);
+}
 function cookie(request: Request): string {
   const values = (request.headers.get('cookie') ?? '').split(';').map(v => v.trim()).filter(v => v.startsWith(`${COOKIE}=`));
   if (values.length !== 1) return fail();
@@ -46,9 +62,10 @@ export class DirectAdminSessionBridge {
     const origin = new URL(config.origin);
     if (origin.protocol !== 'https:' || origin.origin !== config.origin || !id(config.audience) || !id(config.node_id) ||
         !['authenticate', 'switchCompany', 'revoke', 'exchangeWorkforceZero'].every(method => typeof config.sessions?.[method as keyof typeof config.sessions] === 'function')) fail();
-    const provider = (() => {
-      try { return directAdminIssuer(config.origin); } catch { return fail(); }
-    })();
+    // This is only the expected namespace check; #302 remains the sole
+    // credential authenticator. Keep the browser-shared SDK free of the
+    // server-only security-boundary barrel and its storage/Node dependencies.
+    const provider = `directadmin:${origin.origin}`;
     this.#provider = provider;
     this.#config = Object.freeze({ ...config });
   }
@@ -92,6 +109,7 @@ export class DirectAdminSessionBridge {
         catch { return fail(); }
       };
       const withWorkforceZeroSession: WithWorkforceZeroSession = async consume => {
+        let exchanged: Readonly<{ credential: string; context: WorkforceZeroBridgeContext }>;
         try {
           if (request.method !== 'POST' || typeof consume !== 'function') return fail();
           const source = await authenticateCurrent();
@@ -119,10 +137,21 @@ export class DirectAdminSessionBridge {
             device_id: child.device_id, session_id: child.session_id, context_revision: child.context_revision,
             session_revision: child.session_revision, expires_at: childSessionExpiry,
           });
-          const result = await consume(issued.credential, context);
-          await authenticateCurrent();
-          return result;
+          exchanged = Object.freeze({ credential: issued.credential, context });
         } catch { return fail(); }
+        // The owner may return a typed, read-only denial (for example when
+        // Workforce intentionally does not support an action). Preserve that
+        // contract only while the originating DirectAdmin session is current.
+        // If the source was revoked/switched during the callback, the session
+        // failure takes precedence and the owner's error remains redacted.
+        let result: unknown;
+        try { result = await consume(exchanged.credential, exchanged.context); }
+        catch (error) {
+          try { await authenticateCurrent(); } catch { return fail(); }
+          throw error;
+        }
+        try { await authenticateCurrent(); } catch { return fail(); }
+        return result as Awaited<ReturnType<typeof consume>>;
       };
       return Object.freeze({ context: project(initial), revalidate, withWorkforceZeroSession,
         switchCompany: async (company_id: string) => {
