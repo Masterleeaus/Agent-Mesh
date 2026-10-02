@@ -70,22 +70,17 @@ Unless a canonical document explicitly changes them:
 
 ## 5. GitHub claim and branch discipline
 
-All implementation work maps to an open GitHub **mission issue**. Roadmap subgoals remain planning/traceability and should not be mirrored as separate implementation issues.
+All implementation work maps to an open GitHub issue. Roadmap subgoals may be converted into linked implementation issues when that makes delivery smaller and clearer.
 
-The only implementation claim lock is the exact GitHub branch ref:
-
-`agent/issue-<issue-number>`
+Use short-lived branches from current `main`. The recommended name is `agent/issue-<issue-number>`; a bounded child issue or recovery slice may use its own branch.
 
 Rules:
-1. Immediately before implementation, fetch the issue, current `main` SHA, live `agent/*` refs, dependencies, and relevant PRs.
-2. Use the exact mission branch `agent/issue-<issue-number>` from the required current `main` when it is available.
-3. An existing mission branch is not by itself a reason to stop. Inspect its commits, diff, issue comments, and linked PRs; preserve all existing work and continue on that branch when no active conflicting owner is evident. If another active implementation is evident, coordinate around the shared branch, partition work by files/criteria, and continue on non-overlapping work while preserving their changes. Pause only the conflicting edits until they can be integrated safely.
-4. Do not create suffix, timestamp, worker-name, or alternate-prefix branches for the same mission.
-5. Record branch/base/subgoal context in the issue or PR when starting new implementation work; do not post duplicate claim comments when a valid claim is already recorded. Keep one active implementation claim per agent/workspace by default; when a claim is externally blocked, keep it open and continue only with an independent issue that does not modify the same files or depend on the blocked work.
-6. Use the same mission branch through implementation, verification, PR, fixes, and handoff.
-7. The canonical PR targets `main`. Use `Closes #<issue>` only when the full mission closure gate below is satisfied; partial or unverified work must use `Refs #<issue>`.
-8. After merge, rely on governed cleanup/delete-on-merge. Do not leave replacement branches behind.
-9. Do not create child issues for implementation steps that fit inside the claimed mission. Create a new issue only for a genuinely independent substantial outcome with no existing canonical owner.
+1. Before implementation, fetch the issue, current `main` SHA, relevant PRs and nearby code.
+2. An existing or stale branch is not a stop condition. Inspect and preserve its commits; continue on it when practical, or create a recovery branch from current `main` and link the prior work.
+3. Parallel work is allowed on independent issues and non-overlapping files. Do not serialize unrelated work behind one claim or workspace. Coordinate only actual file/contract conflicts.
+4. Keep each PR bounded and target `main`. Use `Closes #<issue>` only when the linked issue's full acceptance criteria are met; use `Refs #<parent>` for partial slices and keep the parent open.
+5. Split a broad mission whenever an independently reviewable outcome can ship separately. Create linked issues with one observable outcome, clear scope, concise acceptance criteria and focused verification. Check for an existing owner first; keep a parent tracker open for integration/product certification.
+6. Keep work on the branch through review and fixes. After merge, delete obsolete branches when practical. Branch naming and claim comments are coordination aids, not merge prerequisites.
 
 GitHub refs, commits, checks, PRs, merges, and issue state are the coordination and lifecycle record. Do not maintain a second Agent Mesh ledger.
 
@@ -115,9 +110,20 @@ Verification is risk-based and cumulative.
 - For company-scoped changes, include negative cross-company isolation coverage.
 - For consequential execution, distinguish provider acknowledgement from verified outcome.
 
-A failing relevant gate is work, not a footnote. Attempt fixes before escalation. Never mark a check as passed unless it was actually executed and passed.
+A failing check on the changed slice must be addressed or recorded with its concrete impact. Do not report a check as passed unless it ran and passed.
 
-If an environment prevents a required gate, record:
+### Mergeable slices and product gates
+
+Merge is a delivery decision for the code in the PR. Mission closure and product certification are separate decisions.
+
+- Merge a bounded slice when it is reviewable, focused checks for the changed behavior pass, no known high-impact regression or boundary violation remains, and unavailable checks are stated with their exact blocker and risk.
+- Run focused package, lint, typecheck, build or smoke checks for the paths and behavior changed. Do not require the full repository gate, live-host/device acceptance, or every parent-issue criterion for each partial PR.
+- Run broad integration, end-to-end, security, recovery and live-environment checks at the named sub-product or release milestone after its components have landed. Track these as explicit integration/certification issues.
+- A red check blocks merging when it covers the changed slice, is a required GitHub protection, or demonstrates a concrete safety, data-loss, security, tenant-isolation or product-breaking regression. Unrelated, flaky or unavailable checks must be recorded and followed up without holding unrelated code.
+- Keep slice evidence proportional: identify changed paths, focused commands/results, known gaps, and linked parent/child issues. The full parent acceptance map is required only to close the parent issue.
+- Do not disable organization/repository protection rules or falsify results. GitHub-enforced settings remain authoritative.
+
+If an environment prevents a focused check, record:
 - exact command not run,
 - exact blocker,
 - what narrower checks did run,
@@ -136,6 +142,8 @@ These fallbacks keep work moving while preserving the gates above:
 Recovery paths do not lower security, tenant isolation, data-safety, or acceptance requirements. They allow independent work to continue and make blocked evidence explicit; they never authorize a false pass or premature issue closure.
 
 ## 7. Definition of done
+
+A parent mission closes only when all of its acceptance criteria are implemented and verified. A bounded slice may merge earlier under “Mergeable slices and product gates”; merging code does not certify or close the parent product mission.
 
 A mission is complete only when all are true:
 - Acceptance criteria are implemented, not merely described.
