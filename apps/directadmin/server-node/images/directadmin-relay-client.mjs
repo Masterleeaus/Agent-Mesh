@@ -1,6 +1,7 @@
 const endpoint = "/CMD_PLUGINS/titan-server-node/directadmin-gateway.raw";
 const plugins = ["titan_zero", "titan_operations", "titan_web", "titan_workforce"];
 const routes = new Map([
+  ["/v1/directadmin/bootstrap", { route: "bootstrap", method: "POST", bootstrap: true }],
   ["/v1/directadmin/context", { route: "context", method: "GET" }],
   ["/v1/directadmin/logout", { route: "logout", method: "POST" }],
   ["/v1/directadmin/company", { route: "company", method: "POST" }],
@@ -47,18 +48,26 @@ export function createDirectAdminRelayFetch(fetchImpl = globalThis.fetch) {
     if (!route) return failure(404, "unknown_directadmin_route");
     const method = String(init.method ?? "GET").toUpperCase();
     if (method !== route.method) return failure(405, "method_not_allowed");
-    if ((method === "GET" && init.body !== undefined) || (method === "POST" && typeof init.body !== "string")) {
+    if ((method === "GET" && init.body !== undefined) ||
+        (method === "POST" && (route.bootstrap ? init.body !== undefined && init.body !== "" : typeof init.body !== "string"))) {
       return failure(400, "request_body_invalid");
     }
     const headers = new Headers(init.headers);
+    if (route.bootstrap && !headers.has("accept")) headers.set("accept", "application/json");
+    const allowedHeaders = route.bootstrap
+      ? ["accept", "x-titan-da-bootstrap-csrf"]
+      : ["accept", "content-type", "x-titan-csrf"];
     for (const name of headers.keys()) {
-      if (!["accept", "content-type", "x-titan-csrf"].includes(name.toLowerCase())) {
+      if (!allowedHeaders.includes(name.toLowerCase())) {
         return failure(400, "request_header_forbidden");
       }
     }
+    if (route.bootstrap && !/^[A-Za-z0-9_-]{43,128}$/.test(headers.get("x-titan-da-bootstrap-csrf") ?? "")) {
+      return failure(400, "bootstrap_nonce_invalid");
+    }
     const query = new URLSearchParams({ route: route.route, headers_to_env: "yes" });
     if (route.method === "POST") query.set("pipe_post", "yes");
-    return fetchImpl(endpoint + "?" + query.toString(), {
+    const requestInit = {
       ...init,
       method: route.method,
       credentials: "same-origin",
@@ -66,6 +75,8 @@ export function createDirectAdminRelayFetch(fetchImpl = globalThis.fetch) {
       redirect: "error",
       referrerPolicy: "same-origin",
       headers,
-    });
+    };
+    if (route.bootstrap) delete requestInit.body;
+    return fetchImpl(endpoint + "?" + query.toString(), requestInit);
   };
 }
