@@ -71,25 +71,9 @@ Inherit the root `AGENTS.md` claim protocol. Use exactly `agent/issue-<issue-num
 
 ## Mission closure evidence
 
-A child-slice PR may use `Closes #<child>` when every criterion in that child issue is complete, and must set `Parent issue: #<parent>` plus `Refs #<parent>`. This closes only the child. The parent/subproduct PR uses `Closes #<parent>` only after every parent criterion and the declared completion gate pass. Use the `Subproduct gate` field to run broad CI., then record the handoff and close the original issue after merge. This is an administrative handoff, never a claim of full completion.
+A child-slice PR may use `Closes #<child>` when every criterion in the child issue is complete. Set `Parent issue: #<parent>` and reference the parent separately; closing the child does not close the parent. A parent/subproduct PR may close the parent only after every parent criterion and its declared completion gate pass. Set `Subproduct gate: run` to trigger broad Titan CI.
 
-Use the standard `mission-evidence` JSON record from either PR template and follow
-[Mission closure evidence](MISSION_CLOSURE_EVIDENCE.md). Enumerate the current issue's
-required outcomes, acceptance, Done condition and verification items individually;
-map each to implementation paths and executed check records. Bind evidence to the
-current issue body digest. Record every unrun/failed/blocked check, live-host status,
-remaining work and residual risk. Such gaps require non-closing `Refs`.
-
-Classify the issue's outcome as planning/specification, implementation, integration
-or certification. A specification or contract milestone cannot finish an
-implementation or certification mission. Green CI, a commit or provider
-acknowledgement alone is insufficient. The human reviewer must compare actual
-implementation and evidence with the full current issue and Done condition;
-mechanical format validation cannot determine semantic sufficiency.
-
-For premature closure, reopen when authorized and possible or link an implementation
-follow-up preserving all unmet original criteria. Use `SUPERSEDED` only for genuinely
-replaced work with its successor link, never as a shortcut around missing evidence.
+Use the standard `mission-evidence` JSON record from the PR template. Map the linked issue's requirements to implementation paths and checks that actually ran. Bind evidence to the current issue body digest. Record deferred parent-level checks, live-host status, remaining work and residual risk. A slice can close only its child scope; the parent remains open for subproduct completion.
 
 ## Completion report
 Return:
