@@ -44,6 +44,7 @@ type SessionAdmissionContext = Readonly<{
   authenticated_identity: AuthenticatedWorkIdentity;
   source_fenced: boolean;
   signal?: AbortSignal;
+  acquire_deadline_ms?: number;
 }>;
 type SessionAdmission = <T>(input: SessionAdmissionInput, effect: (context: SessionAdmissionContext) => Promise<T> | T) => Promise<T>;
 
@@ -99,7 +100,7 @@ export async function createHostedRuntime(storage: StorageClient, identityStorag
     const context = expected(input, loaded.authenticated_identity);
     if (loaded.proof.source_session !== undefined) {
       return registry.withCurrentSessionFence(loaded.proof, context, { signal: input.signal },
-        (current, signal) => effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal }));
+        (current, signal, acquireDeadlineMs) => effect({ current, proof: loaded.proof, authenticated_identity: loaded.authenticated_identity, source_fenced: true, signal, acquire_deadline_ms: acquireDeadlineMs }));
     }
     // Ordinary Workforce sessions retain their existing current-identity check;
     // lineage is never synthesized for credentials that have no signed source.
