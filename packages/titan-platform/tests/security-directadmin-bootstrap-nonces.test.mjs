@@ -164,6 +164,40 @@ test('first-session issuer authenticates DirectAdmin and atomically resolves one
   assert.equal(assertion.device_id, issued.device_id);
 });
 
+test('unique-context first-session nonce remains bound to the authenticated DirectAdmin operator, role, and impersonation state', async t => {
+  const { storage, registry } = await store();
+  t.after(() => storage.close());
+  await enableNonceStore(storage);
+  await provisionUnique(registry);
+  let authenticatedSession = apiSession('effective-user', 'operator-a', 'admin');
+  const keys = await generateKeyPair('EdDSA');
+  const trust = { issuer: ISSUER, audience: 'titan-login', key_id: 'test-da', algorithm: 'EdDSA', verification_key: keys.publicKey };
+  const flow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, node_id: 'node-a', upstream: trust,
+    signing_key: keys.privateKey, registry, now: () => new Date(NOW),
+    fetcher: async () => response(authenticatedSession) });
+  const issued = await flow.issueNonceForUniqueCurrentContext({ origin: ORIGIN, cookie: COOKIE, authorization: null });
+  assert.deepEqual({ company_id: issued.company_id, device_id: issued.device_id },
+    { company_id: 'company-a', device_id: 'device-a' });
+
+  authenticatedSession = apiSession('effective-user', 'operator-b', 'admin');
+  await assert.rejects(flow.provide({ origin: ORIGIN, cookie: COOKIE, authorization: null, csrf_nonce: issued.csrf_nonce }),
+    { message: 'authentication-denied' });
+  authenticatedSession = apiSession('effective-user', 'operator-a', 'reseller');
+  await assert.rejects(flow.provide({ origin: ORIGIN, cookie: COOKIE, authorization: null, csrf_nonce: issued.csrf_nonce }),
+    { message: 'authentication-denied' });
+  authenticatedSession = apiSession('effective-user', 'effective-user', 'admin');
+  await assert.rejects(flow.provide({ origin: ORIGIN, cookie: COOKIE, authorization: null, csrf_nonce: issued.csrf_nonce }),
+    { message: 'authentication-denied' });
+
+  authenticatedSession = apiSession('effective-user', 'operator-a', 'admin');
+  const assertion = await flow.provide({ origin: ORIGIN, cookie: COOKIE, authorization: null, csrf_nonce: issued.csrf_nonce });
+  assert.equal(assertion.company_id, issued.company_id);
+  assert.equal(assertion.device_id, issued.device_id);
+  const claims = JSON.parse(Buffer.from(assertion.login_assertion.split('.')[1], 'base64url').toString('utf8'));
+  assert.deepEqual({ role: claims.da_role, real_subject: claims.real_sub, impersonating: claims.da_impersonating },
+    { role: 'admin', real_subject: 'operator-a', impersonating: true });
+});
+
 test('first-session selection denies multiple companies instead of choosing a row', async t => {
   const { storage, registry } = await store();
   t.after(() => storage.close());
