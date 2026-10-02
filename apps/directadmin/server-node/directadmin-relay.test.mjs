@@ -5,9 +5,11 @@ import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { createSocket } from "node:dgram";
+import dns from "node:dns/promises";
 import { createServer } from "node:http";
 import { once } from "node:events";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { PassThrough } from "node:stream";
 import { createDirectAdminRelayFetch } from "./images/directadmin-relay-client.mjs";
 import { packagePlugin } from "../../../scripts/package-directadmin-plugin.mjs";
 import {
@@ -70,6 +72,39 @@ async function spawnRaw(rawPath, env, input, { keepInputOpen = false, inputChunk
   } else if (!keepInputOpen) child.stdin.end(input ?? Buffer.alloc(0));
   const [code, signal] = await once(child, "close");
   return { code, signal, stdout: Buffer.concat(out), stderr: Buffer.concat(err) };
+}
+
+async function runExtractedModule(f, env, input, {
+  configLoader,
+  forward,
+  bodyTimeoutMs,
+  upstreamTimeoutMs,
+  keepInputOpen = false,
+  inputChunks,
+} = {}) {
+  const stdin = new PassThrough();
+  const output = [];
+  const stdout = { write(chunk) { output.push(Buffer.from(chunk)); return true; } };
+  if (inputChunks) {
+    for (const chunk of inputChunks) stdin.write(chunk);
+    stdin.end();
+  } else if (!keepInputOpen) stdin.end(input ?? Buffer.alloc(0));
+
+  const options = { env, stdin, stdout };
+  if (configLoader) options.configLoader = configLoader;
+  if (forward) options.forward = forward;
+  if (bodyTimeoutMs !== undefined) options.bodyTimeoutMs = bodyTimeoutMs;
+  if (upstreamTimeoutMs !== undefined) options.upstreamTimeoutMs = upstreamTimeoutMs;
+  await f.api.runRawGateway(options);
+  const raw = Buffer.concat(output);
+  return { ...parseRaw(raw), raw };
+}
+
+function runFixtureCore(f, env, input, options = {}) {
+  return runExtractedModule(f, env, input, {
+    ...options,
+    configLoader: async () => f.config,
+  });
 }
 
 async function fixture(t, responseMode = "normal") {
@@ -139,6 +174,15 @@ async function fixture(t, responseMode = "normal") {
     fs.chmodSync(configPath, 0o644);
   };
   writeConfig();
+  const upstreamUrl = new URL("http://127.0.0.1:" + address.port);
+  const config = Object.freeze({
+    publicHost: new URL(controlOrigin).host,
+    publicOrigin: controlOrigin,
+    upstreamOrigin: upstreamUrl.origin,
+    upstreamUrl,
+  });
+  const relayModulePath = path.join(extracted, "directadmin-relay.mjs");
+  const api = await import(pathToFileURL(relayModulePath).href + "?fixture=" + encodeURIComponent(dir));
   const env = {
     NODE_ENV: "test",
     TITAN_SERVER_NODE_HOME: extracted,
@@ -150,7 +194,18 @@ async function fixture(t, responseMode = "normal") {
     await new Promise((resolve) => upstream.close(resolve));
     fs.rmSync(dir, { recursive: true, force: true });
   });
-  return { dir, rawPath: path.join(extracted, "user/directadmin-gateway.raw"), configPath, writeConfig, env, requests, upstream };
+  return {
+    dir,
+    rawPath: path.join(extracted, "user/directadmin-gateway.raw"),
+    relayModulePath,
+    configPath,
+    writeConfig,
+    env,
+    config,
+    api,
+    requests,
+    upstream,
+  };
 }
 
 function cgi(f, {
@@ -189,23 +244,20 @@ function cgi(f, {
   };
 }
 
-test("extracted RAW role entrypoint maps Workforce projection and strips unrelated DirectAdmin cookies", async (t) => {
+test("extracted RAW module core maps Workforce projection and strips unrelated DirectAdmin cookies", async (t) => {
   const f = await fixture(t, "set-cookie");
   const { env, input } = cgi(f, {
     route: "workforce-projection",
     headerLines: ["Referer: " + controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html"],
   });
   delete env.ORIGIN;
-  const result = await spawnRaw(f.rawPath, env, input);
-  assert.equal(result.code, 0, result.stderr.toString());
-  assert.equal(result.stderr.length, 0);
-  const response = parseRaw(result.stdout);
+  const response = await runFixtureCore(f, env, input);
   assert.equal(response.status, 200);
   assert.deepEqual(response.headers.get("set-cookie"), [setCookie("new-session-fixture")]);
   assert.equal(response.headers.get("cache-control")[0], "no-store");
   assert.equal(response.body.toString(), '{"ok":true}');
-  assert.equal(result.stdout.toString().includes("session-fixture-secret"), false);
-  assert.equal(result.stdout.toString().includes("unrelated-cookie"), false);
+  assert.equal(response.raw.toString().includes("session-fixture-secret"), false);
+  assert.equal(response.raw.toString().includes("unrelated-cookie"), false);
   assert.equal(f.requests.length, 1);
   const request = f.requests[0];
   assert.equal(request.method, "GET");
@@ -244,9 +296,7 @@ test("POST intent uses pipe_post stdin and preserves only approved SDK headers/b
       "Content-Length: " + Buffer.byteLength(body),
     ],
   });
-  const result = await spawnRaw(f.rawPath, env, input);
-  assert.equal(result.code, 0, result.stderr.toString());
-  const response = parseRaw(result.stdout);
+  const response = await runFixtureCore(f, env, input);
   assert.equal(response.status, 200);
   assert.deepEqual(response.headers.get("set-cookie"), [setCookie("")]);
   assert.equal(f.requests.length, 1);
@@ -268,8 +318,8 @@ test("DA-like URL-encoded HEADERS variants and fragmented pipe_post stdin reach 
     headerEncoding: "form-crlf",
     headerLines: ["Referer: " + controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html"],
   });
-  const formResult = await spawnRaw(f.rawPath, formEncoded.env, formEncoded.input);
-  assert.equal(parseRaw(formResult.stdout).status, 200);
+  const formResult = await runFixtureCore(f, formEncoded.env, formEncoded.input);
+  assert.equal(formResult.status, 200);
   assert.equal(f.requests[0].path, "/v1/directadmin/titan_workforce/projection");
   assert.equal(f.requests[0].headers.cookie, DIRECTADMIN_SESSION_COOKIE + "=session-fixture-secret");
   assert.equal(f.requests[0].headers.referer, controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html");
@@ -279,8 +329,8 @@ test("DA-like URL-encoded HEADERS variants and fragmented pipe_post stdin reach 
     headerEncoding: "percent-lf",
     headerLines: ["Referer: " + controlOrigin + "/CMD_PLUGINS/titan_workforce/admin/index.html"],
   });
-  const lfResult = await spawnRaw(f.rawPath, lfEncoded.env, lfEncoded.input);
-  assert.equal(parseRaw(lfResult.stdout).status, 200);
+  const lfResult = await runFixtureCore(f, lfEncoded.env, lfEncoded.input);
+  assert.equal(lfResult.status, 200);
   assert.equal(f.requests.length, 2);
 
   const body = JSON.stringify({
@@ -293,53 +343,11 @@ test("DA-like URL-encoded HEADERS variants and fragmented pipe_post stdin reach 
     headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json", "Content-Length: " + Buffer.byteLength(body)],
   });
   const pieces = [Buffer.from(body.slice(0, 7)), Buffer.from(body.slice(7, 29)), Buffer.from(body.slice(29))];
-  const postResult = await spawnRaw(f.rawPath, post.env, undefined, { inputChunks: pieces });
-  assert.equal(parseRaw(postResult.stdout).status, 200);
+  const postResult = await runFixtureCore(f, post.env, undefined, { inputChunks: pieces });
+  assert.equal(postResult.status, 200);
   assert.equal(f.requests.length, 3);
   assert.equal(f.requests[2].path, "/v1/directadmin/titan_workforce/intents");
   assert.deepEqual(f.requests[2].body, Buffer.from(body));
-});
-
-test("Apache cookie-boundary source fixture models vhost scope and cookie edge cases", () => {
-  const boundaryPath = path.join(sourceRoot, "operator-config/apache-443-cookie-boundary.conf");
-  const template = fs.readFileSync(boundaryPath, "utf8");
-  const directive = template.split(/\r?\n/).find((line) => line.startsWith("RequestHeader "));
-  assert.equal(
-    directive,
-    'RequestHeader unset Cookie "expr=%{req:Cookie} =~ m#(^|;[[:blank:]]*)__Host-titan-da-session=#"',
-  );
-  assert.equal(template.split(/\r?\n/).some((line) => /^Header\s/.test(line)), false,
-    "the template only edits request headers; it declares no response-header mutation");
-  const titanCookie = new RegExp("(^|;[ \\t]*)__Host-titan-da-session=");
-  const beforeApplication = (vhost, cookie) =>
-    vhost === "titan-443" && titanCookie.test(cookie) ? undefined : cookie;
-  for (const header of [
-    DIRECTADMIN_SESSION_COOKIE + "=fixture; marketing=ok", // first
-    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=fixture; preference=dark", // middle
-    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=fixture", // last
-    "marketing=ok; " + DIRECTADMIN_SESSION_COOKIE + "=one; " + DIRECTADMIN_SESSION_COOKIE + "=two", // duplicate names
-    DIRECTADMIN_SESSION_COOKIE + "=encoded%3Bvalue; marketing=ok", // encoded delimiter in value
-  ]) {
-    assert.equal(beforeApplication("titan-443", header), undefined);
-  }
-  for (const header of [
-    "marketing=ok; preference=dark",
-    "marketing=__Host-titan-da-session%3Dfixture",
-    "marketing=ok; __Host-titan-da-session-extra=lookalike",
-    "marketing=ok; %5F%5FHost-titan-da-session=encoded-name",
-    "marketing=ok; __HOST-titan-da-session=case-variant",
-  ]) {
-    assert.equal(beforeApplication("titan-443", header), header);
-  }
-  const mixedCookies = "marketing=login-state; " + DIRECTADMIN_SESSION_COOKIE + "=fixture";
-  assert.equal(beforeApplication("other-443", mixedCookies), mixedCookies,
-    "the candidate directive must be scoped to the selected HTTPS vhost");
-  assert.equal(beforeApplication("directadmin-2222", mixedCookies), mixedCookies,
-    "the Apache :443 vhost filter must not alter DirectAdmin port 2222");
-  assert.equal(beforeApplication("titan-443", "marketing=login-state; preference=dark"),
-    "marketing=login-state; preference=dark");
-  assert.deepEqual(template.split(/\r?\n/).filter((line) => /^(?:RequestHeader|Header)\s/.test(line)), [directive],
-    "the candidate source contains only a request-header directive; runtime response behavior is not exercised here");
 });
 
 test("shared browser fetch helper maps fixed SDK routes and refuses arbitrary URLs, methods, and identity headers", async () => {
@@ -391,78 +399,76 @@ test("duplicate headers, cookie names, query keys and JSON keys fail before Work
     "Sec-Fetch-Site: same-origin", "X-Titan-CSRF: " + csrf, "Accept: application/json",
   ].join("\r\n"));
   for (const bad of badCases) {
-    const result = await spawnRaw(f.rawPath, bad.env, bad.input);
-    assert.equal(parseRaw(result.stdout).status >= 400, true);
+    const result = await runFixtureCore(f, bad.env, bad.input);
+    assert.equal(result.status >= 400, true);
   }
   assert.equal(f.requests.length, 0);
 });
 
-test("invalid and uncommissioned configuration fails closed without logging request credentials", async (t) => {
+test("extracted RAW entrypoint stays disabled for test env, caller fields, and legacy configs", async (t) => {
   const f = await fixture(t);
-  const request = cgi(f, { route: "context" });
-  const valid = await spawnRaw(f.rawPath, request.env, request.input);
-  assert.equal(parseRaw(valid.stdout).status, 200);
-  assert.equal(f.requests.length, 1);
-  f.writeConfig("http://203.0.113.10:3010");
-  const publicPlainHttp = await spawnRaw(f.rawPath, request.env, request.input);
-  assert.equal(parseRaw(publicPlainHttp.stdout).status, 503);
-  assert.equal(f.requests.length, 1);
-  f.writeConfig("https://gateway.example.com:3010");
-  const nonPrivateHttps = await spawnRaw(f.rawPath, request.env, request.input);
-  assert.equal(parseRaw(nonPrivateHttps.stdout).status, 503);
-  assert.equal(f.requests.length, 1);
-
-  for (const config of [
-    { schema: "titan.server-node.directadmin-relay.v1", public_origin: controlOrigin, workforce_origin: "http://127.0.0.1:3010" },
-    { schema: "titan.server-node.directadmin-relay.v2", public_origin: controlOrigin, workforce_origin: "http://127.0.0.1:3010" },
-    { schema: "titan.server-node.directadmin-relay.v2", cookie_boundary: "unverified", public_origin: controlOrigin, workforce_origin: "http://127.0.0.1:3010" },
-  ]) {
-    fs.writeFileSync(f.configPath, JSON.stringify(config), { mode: 0o644 });
-    const missingBoundary = await spawnRaw(f.rawPath, request.env, request.input);
-    assert.equal(parseRaw(missingBoundary.stdout).status, 503);
-    assert.equal(f.requests.length, 1);
+  const origins = [
+    "https://titanzero.io:2222",
+    "https://other.example.test:2222",
+    "https://future-control.example:8443",
+  ];
+  const configs = [
+    (publicOrigin) => ({ schema: "titan.server-node.directadmin-relay.v1", public_origin: publicOrigin, workforce_origin: f.config.upstreamOrigin }),
+    (publicOrigin) => ({ schema: "titan.server-node.directadmin-relay.v2", cookie_boundary: "apache-443-strip-titan-cookie-v1", public_origin: publicOrigin, workforce_origin: f.config.upstreamOrigin }),
+  ];
+  for (const publicOrigin of origins) {
+    for (const makeConfig of configs) {
+      fs.writeFileSync(f.configPath, JSON.stringify(makeConfig(publicOrigin)), { mode: 0o644 });
+      const request = cgi(f, {
+        route: "context",
+        headerLines: [
+          "Node_Env: test",
+          "Titan-Server-Node-DirectAdmin-Relay-Test-Config: " + f.configPath,
+        ],
+        extraEnv: {
+          HTTP_NODE_ENV: "test",
+          HTTP_TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: f.configPath,
+        },
+      });
+      const result = await spawnRaw(f.rawPath, request.env, request.input);
+      const response = parseRaw(result.stdout);
+      assert.equal(response.status, 503, publicOrigin + " / " + makeConfig(publicOrigin).schema);
+      assert.equal(response.body.toString(), '{"error":"cookie_boundary_unverified","read_only":true}');
+      assert.equal(result.stdout.toString().includes("session-fixture-secret"), false);
+      assert.equal(result.stderr.length, 0);
+      assert.equal(f.requests.length, 0);
+    }
   }
 
-  const symlinkPath = path.join(f.dir, "relay-config-link.json");
-  fs.symlinkSync(f.configPath, symlinkPath);
-  const linkedConfig = cgi(f, {
-    route: "context",
-    extraEnv: { TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: symlinkPath },
-  });
-  const symlinkConfig = await spawnRaw(f.rawPath, linkedConfig.env, linkedConfig.input);
-  assert.equal(parseRaw(symlinkConfig.stdout).status, 503);
-  assert.equal(f.requests.length, 1);
+  const request = cgi(f, { route: "context", queryExtras: "&target=http%3A%2F%2F127.0.0.1%3A3010" });
+  const invalidQuery = await spawnRaw(f.rawPath, request.env, request.input);
+  assert.equal(parseRaw(invalidQuery.stdout).status, 400);
+  assert.equal(invalidQuery.stdout.toString().includes("session-fixture-secret"), false);
+  assert.equal(f.requests.length, 0);
 
-  f.writeConfig();
-  for (const mode of [0o620, 0o602]) {
-    fs.chmodSync(f.configPath, mode);
-    const writableConfig = await spawnRaw(f.rawPath, request.env, request.input);
-    assert.equal(parseRaw(writableConfig.stdout).status, 503, mode.toString(8));
-    assert.equal(f.requests.length, 1);
-  }
-
-  f.writeConfig();
-  fs.unlinkSync(f.configPath);
-  const absent = await spawnRaw(f.rawPath, request.env, request.input);
-  assert.equal(parseRaw(absent.stdout).status, 503);
-  assert.equal(absent.stdout.toString().includes("session-fixture-secret"), false);
-  assert.equal(absent.stderr.length, 0);
-  assert.equal(f.requests.length, 1);
+  const validTransport = cgi(f, { route: "context" });
+  const noAmbientSelection = await runExtractedModule(f, {
+    ...validTransport.env,
+    NODE_ENV: "production",
+    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: f.configPath,
+  }, validTransport.input);
+  assert.equal(noAmbientSelection.status, 503);
+  assert.equal(noAmbientSelection.body.toString(), '{"error":"cookie_boundary_unverified","read_only":true}');
+  assert.equal(f.requests.length, 0);
 });
 
 test("busy gateway backpressure and redirects are handled without following them", async (t) => {
   const busy = await fixture(t, "busy");
   const request = cgi(busy, { route: "context" });
-  const result = await spawnRaw(busy.rawPath, request.env, request.input);
-  const busyResponse = parseRaw(result.stdout);
+  const busyResponse = await runFixtureCore(busy, request.env, request.input);
   assert.equal(busyResponse.status, 503);
   assert.equal(busyResponse.body.toString(), '{"error":"directadmin-busy","read_only":true}');
   assert.equal(busy.requests.length, 1);
 
   const redirect = await fixture(t, "redirect");
   const redirectRequest = cgi(redirect, { route: "context" });
-  const refused = await spawnRaw(redirect.rawPath, redirectRequest.env, redirectRequest.input);
-  assert.equal(parseRaw(refused.stdout).status, 502);
+  const refused = await runFixtureCore(redirect, redirectRequest.env, redirectRequest.input);
+  assert.equal(refused.status, 502);
   assert.equal(redirect.requests.length, 1);
 });
 
@@ -470,21 +476,19 @@ test("duplicate and malformed upstream Set-Cookie headers fail closed", async (t
   for (const mode of ["duplicate-cookie", "malformed-cookie"]) {
     const f = await fixture(t, mode);
     const request = cgi(f, { route: "context" });
-    const result = await spawnRaw(f.rawPath, request.env, request.input);
-    const response = parseRaw(result.stdout);
+    const response = await runFixtureCore(f, request.env, request.input);
     assert.equal(response.status, 502, mode);
     assert.equal(response.body.toString(), '{"error":"workforce_response_invalid","read_only":true}');
     assert.equal(f.requests.length, 1);
-    assert.equal(result.stdout.toString().includes("first-session"), false);
-    assert.equal(result.stdout.toString().includes("bad value"), false);
+    assert.equal(response.raw.toString().includes("first-session"), false);
+    assert.equal(response.raw.toString().includes("bad value"), false);
   }
 });
 
 test("oversized Workforce responses exceed the 1 MiB cap and are not relayed", async (t) => {
   const f = await fixture(t, "large-response");
   const request = cgi(f, { route: "context" });
-  const result = await spawnRaw(f.rawPath, request.env, request.input);
-  const response = parseRaw(result.stdout);
+  const response = await runFixtureCore(f, request.env, request.input);
   assert.equal(response.status, 502);
   assert.equal(response.body.toString(), '{"error":"workforce_response_too_large","read_only":true}');
   assert.equal(response.body.length < 1024, true);
@@ -537,7 +541,7 @@ test("the overall Workforce deadline includes DNS and blocks a connection after 
   assert.deepEqual(upstreamRequests, []);
 });
 
-test("the extracted RAW process cancels native DNS and exits on its deadline", async (t) => {
+test("the extracted RAW module cancels injected native DNS on its deadline", async (t) => {
   const f = await fixture(t);
   const dnsServer = createSocket("udp4");
   let queryCount = 0;
@@ -547,15 +551,28 @@ test("the extracted RAW process cancels native DNS and exits on its deadline", a
   t.after(() => dnsServer.close());
 
   const address = dnsServer.address();
-  f.writeConfig("https://workforce-" + process.pid + ".internal:3010");
   const request = cgi(f, { route: "context" });
-  request.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_DNS_SERVER = "127.0.0.1:" + address.port;
-  request.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_UPSTREAM_TIMEOUT_MS = "40";
+  const config = {
+    ...f.config,
+    upstreamUrl: new URL("http://workforce-" + process.pid + ".internal:" + f.upstream.address().port),
+  };
+  const forward = (requestConfig, envelope, body, options) => f.api.forwardRequest(requestConfig, envelope, body, {
+    ...options,
+    createResolver: () => {
+      const resolver = new dns.Resolver();
+      resolver.setServers(["127.0.0.1:" + address.port]);
+      return resolver;
+    },
+  });
   const startedAt = Date.now();
-  const result = await spawnRaw(f.rawPath, request.env, request.input);
+  const result = await runExtractedModule(f, request.env, request.input, {
+    configLoader: async () => config,
+    forward,
+    upstreamTimeoutMs: 40,
+  });
   const elapsed = Date.now() - startedAt;
 
-  assert.equal(parseRaw(result.stdout).status, 504);
+  assert.equal(result.status, 504);
   assert.equal(queryCount > 0, true, "the native Resolver query must be outstanding when timed out");
   assert.equal(elapsed < 500, true, "standalone RAW process should exit promptly after resolver cancellation");
 });
@@ -599,9 +616,8 @@ test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW 
     body,
     headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json", "Content-Length: " + Buffer.byteLength(body)],
   });
-  post.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_BODY_TIMEOUT_MS = "35";
-  const stalled = await spawnRaw(f.rawPath, post.env, undefined, { keepInputOpen: true });
-  assert.equal(parseRaw(stalled.stdout).status, 408);
+  const stalled = await runFixtureCore(f, post.env, undefined, { keepInputOpen: true, bodyTimeoutMs: 35 });
+  assert.equal(stalled.status, 408);
   assert.equal(f.requests.length, 0);
 
   const tooLargeBody = "x".repeat(64 * 1024 + 1);
@@ -611,14 +627,13 @@ test("POST body caps/timeouts and Workforce upstream timeout return bounded RAW 
     body: tooLargeBody,
     headerLines: ["Origin: " + controlOrigin, "Content-Type: application/json", "Content-Length: " + Buffer.byteLength(tooLargeBody)],
   });
-  const oversized = await spawnRaw(f.rawPath, large.env, large.input);
-  assert.equal(parseRaw(oversized.stdout).status, 413);
+  const oversized = await runFixtureCore(f, large.env, large.input);
+  assert.equal(oversized.status, 413);
   assert.equal(f.requests.length, 0);
 
   const get = cgi(f, { route: "context" });
-  get.env.TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_UPSTREAM_TIMEOUT_MS = "35";
-  const timedOut = await spawnRaw(f.rawPath, get.env, get.input);
-  assert.equal(parseRaw(timedOut.stdout).status, 504);
+  const timedOut = await runFixtureCore(f, get.env, get.input, { upstreamTimeoutMs: 35 });
+  assert.equal(timedOut.status, 504);
   assert.equal(f.requests.length, 1);
 });
 
