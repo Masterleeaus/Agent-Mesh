@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 export type DistributionProfile =
   | "BROWSER_EXTENSION"
   | "CMS_WEB"
@@ -17,7 +19,8 @@ export type DistributionState =
   | "PUBLISHED"
   | "REJECTED"
   | "SUPERSEDED"
-  | "RETIRED";
+  | "RETIRED"
+  | "REVOKED";
 
 export type DistributionManifest = Readonly<{
   schema: "titan.distribution-manifest.v1";
@@ -104,13 +107,29 @@ export function transitionDistribution(
     READY_TO_SUBMIT: ["SUBMITTED"],
     SUBMITTED: ["REVIEWING", "REJECTED"],
     REVIEWING: ["PUBLISHED", "REJECTED"],
-    PUBLISHED: ["SUPERSEDED", "RETIRED"],
+    PUBLISHED: ["SUPERSEDED", "RETIRED", "REVOKED"],
     REJECTED: ["BUILT"],
-    SUPERSEDED: ["RETIRED"],
+    SUPERSEDED: ["RETIRED", "REVOKED"],
     RETIRED: [],
+    REVOKED: [],
   };
   if (!allowed[manifest.state].includes(state)) throw new Error("distribution-transition-invalid");
   return Object.freeze({ ...manifest, state });
+}
+
+export function verifyDistributionArtifact(
+  manifest: DistributionManifest,
+  artifactBytes: Uint8Array,
+): DistributionManifest {
+  if (!(artifactBytes instanceof Uint8Array)) throw new Error("artifact-bytes-invalid");
+  if (artifactBytes.byteLength === 0) throw new Error("artifact-bytes-empty");
+
+  const actualHash = "sha256:" + createHash("sha256").update(artifactBytes).digest("hex");
+  if (actualHash !== manifest.artifact_hash.toLowerCase()) {
+    throw new Error("artifact-hash-mismatch");
+  }
+
+  return transitionDistribution(manifest, "VERIFIED");
 }
 
 export function projectMatrix(
