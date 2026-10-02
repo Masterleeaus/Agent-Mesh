@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { withAuth, withRole } from "@/lib/auth/middleware";
 import { appendAuditLog } from "@/lib/db/audit";
-import { getPool, queryOne } from "@/lib/db";
+import { getPool } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -51,11 +52,12 @@ export const POST = withRole(["owner", "admin", "tech"], async (request, session
     await client.query("BEGIN");
 
     // Verify estimate belongs to account and is approved
-    const estimate = await queryOne<{ id: string; status: string; client_id: string }>(
-      `SELECT id, status, client_id FROM estimates WHERE id = $1 AND account_id = $2`,
+    const { rows: estimates } = await client.query<{ id: string; status: string; client_id: string }>(
+      `SELECT id, status, client_id FROM estimates WHERE id = $1 AND account_id = $2 FOR UPDATE`,
       [data.estimate_id, session.accountId]
     );
 
+    const estimate = estimates[0];
     if (!estimate) {
       await client.query("ROLLBACK");
       return NextResponse.json(
@@ -80,24 +82,22 @@ export const POST = withRole(["owner", "admin", "tech"], async (request, session
     const totalCents = subtotalCents + taxCents;
 
     // Create change order
-    const { rows } = await client.query<{ id: string }>(
-      `INSERT INTO change_orders (estimate_id, account_id, title, description, notes,
+    const changeOrderId = randomUUID();
+    await client.query(
+      `INSERT INTO change_orders (id, estimate_id, account_id, title, description, notes,
                                    subtotal_cents, tax_cents, total_cents, status, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'draft', $9)
-       RETURNING id`,
-      [data.estimate_id, session.accountId, data.title, data.description ?? null, data.notes ?? null,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'draft', $10)`,
+      [changeOrderId, data.estimate_id, session.accountId, data.title, data.description ?? null, data.notes ?? null,
        subtotalCents, taxCents, totalCents, session.userId]
     );
-
-    const changeOrderId = rows[0].id;
 
     // Insert line items
     for (let i = 0; i < data.line_items.length; i++) {
       const item = data.line_items[i];
       await client.query(
-        `INSERT INTO change_order_line_items (change_order_id, description, quantity, unit_price_cents, total_cents, sort_order)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [changeOrderId, item.description, item.quantity, item.unit_price_cents,
+        `INSERT INTO change_order_line_items (id, change_order_id, description, quantity, unit_price_cents, total_cents, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [randomUUID(), changeOrderId, item.description, item.quantity, item.unit_price_cents,
          Math.round(item.quantity * item.unit_price_cents), item.sort_order ?? i]
       );
     }

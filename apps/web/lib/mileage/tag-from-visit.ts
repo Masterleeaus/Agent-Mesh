@@ -1,4 +1,4 @@
-import type { PoolClient } from "pg";
+import type { DbClient } from "@/lib/db-contract";
 import {
   isClaimMilesSource,
   isGpsEstimateSource,
@@ -9,7 +9,7 @@ import {
 const PAD_MS = 30 * 60 * 1000;
 
 export async function tagMileageForCompletedVisit(
-  client: PoolClient,
+  client: DbClient,
   opts: {
     accountId: string;
     jobId: string;
