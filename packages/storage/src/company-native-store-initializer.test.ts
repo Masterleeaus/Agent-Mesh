@@ -165,6 +165,18 @@ describe("fresh native-work-orders-visits-v2 schema producer", () => {
     expect(after).toEqual(before);
   });
 
+  it("initializes an explicitly selected fresh v1 profile for existing native consumers", async () => {
+    const storage = memoryStore();
+    const legacyPlacement = { ...placement, schema_version: companyNativeWorkOrdersManifest.schema_version };
+    await expect(initializeFreshCompanyNativeStore({
+      storage, placement: legacyPlacement, company_profile: companyProfile,
+    })).resolves.toMatchObject({ schema_version: companyNativeWorkOrdersManifest.schema_version });
+    expect((await storage.query("SELECT name FROM sqlite_master WHERE name='visit_tasks'")).rows).toEqual([]);
+    expect((await storage.query<{ migration_id: string }>(
+      "SELECT migration_id FROM titan_company_native_schema_migrations",
+    )).rows).toEqual([{ migration_id: "company-native-fsm/0001-work-orders" }]);
+  });
+
   it("rejects an existing mixed store without changing its historical schema or ledger", async () => {
     const storage = memoryStore();
     await storage.query("CREATE TABLE schema_migrations(filename TEXT PRIMARY KEY, applied_at TEXT NOT NULL)");

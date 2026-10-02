@@ -53,6 +53,9 @@ bounded bootstrap profile, not that complete mature migration family. Its immuta
 `company-native-work-orders-v1` profile stays available to verify existing stores
 and backups; the additive `company-native-work-orders-visits-v2` profile adds only
 the canonical visit-to-`work_order_tasks` plan relation. Fresh placements use v2.
+The fresh-only initializer also accepts an explicitly registered v1 schema
+version for existing native consumers; the default placement provisioner selects
+v2. Selecting v1 never upgrades or changes an existing store.
 There is no implicit in-place v1 upgrade: existing v1 stores remain v1 until a
 placement owner publishes a maintenance-gated migration coordinator. A consumer
 must declare the schema version its operation needs and verify the matching

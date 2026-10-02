@@ -9,9 +9,7 @@ import {
   type CompanyNativeSchemaManifest,
   type VerifiedCompanyNativeSchemaAttestation,
 } from "./company-native-schema-attestation.js";
-import {
-  companyNativeWorkOrdersVisitsManifest,
-} from "./company-native-schema-manifest.js";
+import { getCompanyNativeSchemaManifest } from "./company-native-schema-manifest.js";
 import type { CompanyDatabasePlacementDescriptor } from "./company-storage-resolver.js";
 import type { StorageClient } from "./index.js";
 
@@ -55,10 +53,12 @@ async function loadProfileMigration(path: string): Promise<string> {
 }
 
 /**
- * Initialize only a genuinely empty SQLite file for the bounded
- * native-work-orders-visits-v2 profile. This function is a COMPANY_NATIVE_FSM owner
- * operation: it creates DB-local schema, ledger and marker atomically, returns
- * a fresh witness, and never writes GLOBAL_REGISTRY or promotes READY.
+ * Initialize only a genuinely empty SQLite file for a known bounded native
+ * profile explicitly selected by the placement schema version. This function
+ * is a COMPANY_NATIVE_FSM owner operation: it creates DB-local schema, ledger
+ * and marker atomically, returns a fresh witness, and never writes GLOBAL_REGISTRY
+ * or promotes READY. New provisioners select v2; explicit v1 placements remain
+ * supported for existing native consumers and compatibility tests.
  *
  * Existing files, including the historical mixed compatibility schema, fail
  * closed. The new migration id is independent of db/sqlite/001 and 005.
@@ -69,7 +69,8 @@ export async function initializeFreshCompanyNativeStore(input: {
   company_profile: Readonly<{ name: string }>;
 }): Promise<VerifiedCompanyNativeSchemaAttestation> {
   const { storage, placement, company_profile: companyProfile } = input;
-  const manifest: CompanyNativeSchemaManifest = companyNativeWorkOrdersVisitsManifest;
+  const manifest: CompanyNativeSchemaManifest | null = getCompanyNativeSchemaManifest(placement.schema_version);
+  if (!manifest) fail("company-native-schema-placement-mismatch");
   if (storage.dialect !== "sqlite" || placement.provider !== "sqlite") {
     fail("company-native-schema-provider-unsupported");
   }
@@ -78,7 +79,7 @@ export async function initializeFreshCompanyNativeStore(input: {
     fail("company-native-schema-provider-unsupported");
   }
   if (!placement.company_id || !placement.placement_id || !Number.isSafeInteger(placement.placement_revision)
-    || placement.placement_revision < 1 || placement.schema_version !== manifest.schema_version) {
+    || placement.placement_revision < 1) {
     fail("company-native-schema-placement-mismatch");
   }
   if (typeof companyProfile?.name !== "string" || companyProfile.name.trim().length === 0) {
@@ -89,8 +90,8 @@ export async function initializeFreshCompanyNativeStore(input: {
     if (sourceSha256(sql) !== migration.sha256) fail("company-native-schema-migration-source-mismatch");
     return { migration, sql };
   }));
-  if (migrations.length !== 2 || migrations[0]?.migration.migration_id !== "company-native-fsm/0001-work-orders"
-    || migrations[1]?.migration.migration_id !== "company-native-fsm/0002-visit-tasks") {
+  if (migrations.length !== manifest.migrations.length || migrations.some(({ migration }, index) =>
+    migration !== manifest.migrations[index])) {
     fail("company-native-schema-manifest-invalid");
   }
   await assertFresh(storage);
