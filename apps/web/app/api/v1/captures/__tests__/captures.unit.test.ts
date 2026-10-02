@@ -89,6 +89,23 @@ beforeEach(() => {
 });
 
 describe("POST /api/v1/captures", () => {
+  it("rejects queued media from another company before database or file access", async () => {
+    const form = new FormData();
+    form.append("company_id", "other-company");
+    form.append("transcript", "Private offline note");
+    const response = await POST(postRequest(form));
+    expect(response.status).toBe(403);
+    expect(mockWithDbSession).not.toHaveBeenCalled();
+    expect(fsMocks.writeFileSync).not.toHaveBeenCalled();
+  });
+
+  it("accepts queued media bound to the authenticated company", async () => {
+    const form = new FormData();
+    form.append("company_id", mockSession.accountId);
+    form.append("transcript", "My offline note");
+    expect((await POST(postRequest(form))).status).toBe(201);
+  });
+
   it("owner upload succeeds and stores the original under /app/uploads/captures/<id>/", async () => {
     const form = new FormData();
     form.append("audio", audioFile());
