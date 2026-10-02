@@ -6,23 +6,20 @@ on:
     paths:
       - "packages/titan-platform/src/distribution-gateway.ts"
       - "packages/titan-platform/src/distribution-catalog.ts"
-      - "scripts/generate-distribution-coverage.mjs"
-      - "packages/titan-platform/src/distribution-catalog.ts"
       - "packages/titan-platform/tests/distribution-gateway.test.mjs"
       - "packages/titan-platform/tests/distribution-catalog.test.mjs"
-      - "packages/titan-platform/tests/distribution-catalog.test.mjs"
       - "packages/titan-platform/package.json"
-      - "pnpm-lock.yaml"
+      - "scripts/generate-distribution-coverage.mjs"
       - ".github/workflows/distribution-gateway-contract.yml"
   push:
     branches: [main]
     paths:
       - "packages/titan-platform/src/distribution-gateway.ts"
       - "packages/titan-platform/src/distribution-catalog.ts"
-      - "scripts/generate-distribution-coverage.mjs"
       - "packages/titan-platform/tests/distribution-gateway.test.mjs"
+      - "packages/titan-platform/tests/distribution-catalog.test.mjs"
       - "packages/titan-platform/package.json"
-      - "pnpm-lock.yaml"
+      - "scripts/generate-distribution-coverage.mjs"
       - ".github/workflows/distribution-gateway-contract.yml"
 
 permissions:
