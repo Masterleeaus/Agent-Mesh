@@ -90,8 +90,10 @@ const distributionFamilies: DistributionFamily[] = [
   { family_id: "accounting-xero", label: "Xero", conformance_profile: "ACCOUNTING_DISTRIBUTION", adapter_ids: ["xero"] },
   { family_id: "accounting-quickbooks", label: "QuickBooks Online", conformance_profile: "ACCOUNTING_DISTRIBUTION", adapter_ids: ["quickbooks-online"] },
   { family_id: "ai-host-distribution", label: "AI-host distribution", conformance_profile: "AI_HOST", adapter_ids: ["chatgpt", "claude"] },
-].map((family) => Object.freeze({ ...family, adapter_ids: Object.freeze(family.adapter_ids) }));
-export const DISTRIBUTION_FAMILIES: readonly DistributionFamily[] = Object.freeze(distributionFamilies);
+];
+export const DISTRIBUTION_FAMILIES: readonly DistributionFamily[] = Object.freeze(
+  distributionFamilies.map((family) => Object.freeze({ ...family, adapter_ids: Object.freeze([...family.adapter_ids]) })),
+);
 
 export type ConfigurationCoverageRow = Readonly<{
   configuration_id: string;
@@ -159,7 +161,7 @@ export function buildDistributionCoverageSnapshot(): DistributionCoverageSnapsho
         tier_ref: tier.canonical_ref,
         input_revisions: null,
         disposition: "BLOCKED" as const,
-        gap_owner: vertical.disposition === "IDENTITY_PENDING" ? 719 as const : product.owner_issue,
+        gap_owner: vertical.disposition === "IDENTITY_PENDING" ? 719 as const : 1042 as const,
         reason: vertical.disposition === "IDENTITY_PENDING"
           ? "vertical_identity_and_revision_pending_from_canonical_owner"
           : "canonical_product_vertical_and_tier_references_or_revisions_not_verified",
