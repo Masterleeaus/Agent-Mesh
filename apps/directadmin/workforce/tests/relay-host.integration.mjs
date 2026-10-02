@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import { mkdtemp, mkdir, readFile, rm, writeFile, chmod, symlink } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, symlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { once } from 'node:events';
+import { PassThrough } from 'node:stream';
 import https from 'node:https';
 import http from 'node:http';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -26,10 +27,11 @@ const browserPackage = join(scratch, 'workforce-extracted');
 const workforceArchiveRoot = join(scratch, 'workforce-package');
 const certPath = join(scratch, 'panel.crt');
 const keyPath = join(scratch, 'panel.key');
-const configPath = join(scratch, 'directadmin-relay.json');
 let host;
 let panel;
 let browser;
+let relayCore;
+let relayFixtureConfig = null;
 const cleanup = [];
 const relayObservations = [];
 const panelObservations = [];
@@ -78,22 +80,17 @@ function parseRaw(bytes) {
   assert.equal(Number(headers['content-length']?.[0]), body.length, 'RAW Content-Length matches the response body');
   return { status, headers, body };
 }
-async function spawnRaw(env, input) {
-  return await new Promise((resolve, reject) => {
-    const child = spawn(join(relayRoot, 'user/directadmin-gateway.raw'), [], { env, stdio: ['pipe', 'pipe', 'pipe'] });
-    const stdout = [];
-    let stderrBytes = 0;
-    const timer = setTimeout(() => child.kill('SIGKILL'), 15_000);
-    child.stdout.on('data', chunk => stdout.push(chunk));
-    child.stderr.on('data', chunk => { stderrBytes += chunk.byteLength; });
-    child.once('error', error => { clearTimeout(timer); reject(error); });
-    child.once('close', (code, signal) => {
-      clearTimeout(timer);
-      if (code !== 0 || signal) return reject(new Error(`RAW relay exited unsuccessfully (stderr bytes=${stderrBytes})`));
-      resolve(parseRaw(Buffer.concat(stdout)));
-    });
-    child.stdin.end(input);
-  });
+async function runRelayCore(env, input) {
+  const stdin = new PassThrough();
+  const chunks = [];
+  const stdout = { write(chunk) { chunks.push(Buffer.from(chunk)); return true; } };
+  stdin.end(input);
+  const options = { env, stdin, stdout };
+  // The production default is used for the denied/unconfigured request. The
+  // fake config loader is injected only for explicit in-process fixture runs.
+  if (relayFixtureConfig) options.configLoader = async () => relayFixtureConfig;
+  await relayCore.runRawGateway(options);
+  return parseRaw(Buffer.concat(chunks));
 }
 function cgiEnv(request, query, body) {
   const headers = request.headers;
@@ -111,9 +108,6 @@ function cgiEnv(request, query, body) {
   const env = {
     PATH: process.env.PATH,
     NODE_ENV: 'test',
-    TITAN_SERVER_NODE_HOME: relayRoot,
-    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_CONFIG: configPath,
-    TITAN_SERVER_NODE_DIRECTADMIN_RELAY_TEST_NODE_BIN: process.execPath,
     REQUEST_METHOD: request.method,
     QUERY_STRING: query,
     HEADERS: encodeURIComponent(lines.join('\r\n')),
@@ -137,7 +131,10 @@ try {
   const relayPackage = packagePlugin({ sourceDir: join(relaySourceRoot, 'apps/directadmin/server-node'), outputDir: relayArchiveRoot });
   await mkdir(relayRoot, { recursive: true });
   execFileSync('tar', ['-xzf', relayPackage.archive, '-C', relayRoot]);
+  const relayManifest = await readFile(join(relayRoot, 'plugin.conf'), 'utf8');
+  assert.match(relayManifest, /^version=0\.3\.0$/m, 'integration extracts the current Server Node relay contract');
   const relayClient = await readFile(join(relayRoot, 'images/directadmin-relay-client.mjs'), 'utf8');
+  relayCore = await import(`${pathToFileURL(join(relayRoot, 'directadmin-relay.mjs')).href}?fixture=${encodeURIComponent(scratch)}`);
   const certResult = spawn('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyPath, '-out', certPath,
     '-subj', '/CN=127.0.0.1', '-days', '1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore' });
   const [certCode] = await once(certResult, 'close');
@@ -186,7 +183,7 @@ try {
           } catch { observation.bodyKeys = ['invalid-json']; }
         }
         relayObservations.push(observation);
-        const result = await spawnRaw(cgiEnv(request, url.search.slice(1), body), body);
+        const result = await runRelayCore(cgiEnv(request, url.search.slice(1), body), body);
         observation.status = result.status;
         try { observation.code = JSON.parse(result.body.toString('utf8')).error ?? null; } catch { observation.code = 'non-json-response'; }
         const outgoingHeaders = Object.create(null);
@@ -277,12 +274,17 @@ try {
   await page.goto(panelOrigin);
   await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
   assert.equal(relayObservations.length, 1, `real relay received the initial context request; panel=${JSON.stringify(panelObservations)} page=${JSON.stringify(pageErrors)}`);
+  assert.equal(relayObservations[0].status, 503, 'the extracted relay production default fails closed without configuration');
+  assert.ok(['relay_not_configured', 'cookie_boundary_unverified'].includes(relayObservations[0].code),
+    'the current-main and #812 draft defaults both expose a sanitized unavailable response');
   assert.equal(hostedObservations.length, 0, 'missing relay config refuses before calling the hosted owner');
   assert.equal(await page.getByRole('navigation').count(), 0, 'missing config exposes no company views');
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'missing config exposes no controls');
 
-  await writeFile(configPath, JSON.stringify({ schema: 'titan.server-node.directadmin-relay.v1', public_origin: panelOrigin, workforce_origin: workforceOrigin }), { mode: 0o600 });
-  await chmod(configPath, 0o600);
+  // Only the extracted module's in-process test harness receives this fixture.
+  // No environment variable, config file, or production RAW executable enables forwarding.
+  relayFixtureConfig = Object.freeze({ publicOrigin: panelOrigin, publicHost: new URL(panelOrigin).host,
+    upstreamOrigin: workforceOrigin, upstreamUrl: new URL(workforceOrigin) });
   await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
   try { await page.getByText('Current hosted projection', { exact: true }).waitFor(); }
   catch {
@@ -413,8 +415,8 @@ try {
   assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0, 'expired upstream session clears current projection');
   assert.deepEqual(pageErrors, [], 'security denial and expiry remain handled states');
 
-  console.log('PASS extracted Workforce 0.1.4 + actual #812 RAW relay + #811 hosted optional gateway');
-  console.log(`PASS scenarios: missing relay config (HTTP 503), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; RAW requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
+  console.log('PASS extracted Workforce 0.1.5 + Server Node 0.3.0 relay module + current #811 hosted source; production default denied, fixture config-loader injected in-process only; no CGI config or Apache proof');
+  console.log(`PASS scenarios: production default unavailable (HTTP 503 ${relayObservations[0].code}), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; relay requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
 } finally {
   await browser?.close().catch(() => {});
   await host?.close().catch(() => {});
