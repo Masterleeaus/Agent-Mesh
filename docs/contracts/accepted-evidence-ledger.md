@@ -14,7 +14,7 @@ Status: active for the certified job-completion slice (`titan.business.accepted-
 | Workforce/value analytics | `packages/titan-platform/src/workforce-evidence/*` | Derived performance/value evidence; it cannot manufacture authority or business fact. |
 | Provider receipts | `ExecutionGateway` evidence sink input | Intermediate execution history; provider acknowledgement is never a verified outcome. |
 
-This matrix is intentionally scoped to the certified job-completion slice. The linked inventory combines active ledger-named sources with the critical gateway, runtime adapter, and restart-checkpoint paths, and records their reachability so recovery, configuration audit, commercial projections, development tooling, and value analytics are not mistaken for accepted factual history. It is not yet a repository-wide exhaustive census of every evidence-bearing module; issue #1235 remains open for the broader scan and convergence.
+This matrix is intentionally scoped to the certified job-completion slice. The linked inventory combines ledger-named sources, detected durable evidence writers, and declared ownership-critical paths. It records the raw capture route and legacy mutable Workforce implementation as non-accepted evidence roles, alongside recovery, configuration audit, commercial projections, development tooling, and value analytics. It is not yet a repository-wide exhaustive census of every evidence-bearing module; issue #1235 remains open for the broader scan and convergence.
 
 ## Certified flow
 

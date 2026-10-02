@@ -11,7 +11,9 @@
     "packages/titan-platform/src/ported/titan-revenue-journey/lead-opportunity-evidence.ts",
     "packages/titan-platform/src/ported/titan-revenue-journey/quote-lifecycle-evidence.ts",
     "packages/titan-platform/src/ported/titan-revenue-journey/canonical-reconciliation.ts",
-    "packages/titan-platform/src/ported/titan-revenue-journey/revenue-journey-projection.ts"
+    "packages/titan-platform/src/ported/titan-revenue-journey/revenue-journey-projection.ts",
+    "apps/web/app/api/v1/captures/route.ts",
+    "packages/workforce/src/index.ts"
   ],
   "inventory": [
     {
@@ -164,6 +166,22 @@
       "durability": "No persistence in this module; immutable projections are built from supplied workspace state.",
       "consumers": [],
       "limitations": ["No active source import was found in the production application entrypoints during this inventory."]
+    },
+    {
+      "path": "apps/web/app/api/v1/captures/route.ts",
+      "role": "observed-verification-artifact",
+      "scope": "Stores an authenticated company-scoped raw voice/photo/transcript capture with processing_state=pending; capture content is untrusted input and cannot establish a business outcome.",
+      "durability": "Persists capture metadata in capture_evidence and media files in the capture directory.",
+      "consumers": ["apps/web/app/api/v1/captures/[id]/review/route.ts"],
+      "limitations": ["Capture is not independently verified and must not self-promote into accepted factual history."]
+    },
+    {
+      "path": "packages/workforce/src/index.ts",
+      "role": "donor-history-compatibility",
+      "scope": "Legacy standalone WorkforceService persists mutable work state, event rows, and caller-supplied evidenceRefs; it is excluded from production imports and is not the accepted factual history owner.",
+      "durability": "Company-keyed workforce_work and workforce_events storage tables.",
+      "consumers": ["packages/workforce/src/index.test.ts"],
+      "limitations": ["Completion accepts mutable result/evidence references without canonical accepted-evidence verification; production must continue excluding this legacy path."]
     }
   ]
 }

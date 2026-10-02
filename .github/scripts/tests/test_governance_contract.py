@@ -1,9 +1,11 @@
 """Keep repository guidance aligned with the single existing claim gate."""
 import json
+import importlib.util
 from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -66,6 +68,23 @@ class GovernanceContractTests(unittest.TestCase):
         self.assertIn('check-evidence-ledger-ownership.py', workflow)
         contract = (ROOT / 'docs/contracts/accepted-evidence-ledger.md').read_text()
         self.assertIn('evidence-ledger-ownership.json', contract)
+
+    def test_evidence_guard_discovers_durable_writer_without_ledger_filename(self):
+        script = ROOT / '.github/scripts/check-evidence-ledger-ownership.py'
+        spec = importlib.util.spec_from_file_location('evidence_ownership_guard', script)
+        guard = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(guard)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            writer = root / 'services/workforce/evidence-store.ts'
+            writer.parent.mkdir(parents=True)
+            writer.write_text('await db.query("INSERT INTO accepted_evidence (id) VALUES (?)")')
+            builder = root / 'packages/evidence-presentation.ts'
+            builder.parent.mkdir(parents=True)
+            builder.write_text('export function buildEvidenceView(input) { return input }')
+            found = guard.active_evidence_sources(root)
+        self.assertIn('services/workforce/evidence-store.ts', found)
+        self.assertNotIn('packages/evidence-presentation.ts', found)
 
 
 if __name__ == '__main__':

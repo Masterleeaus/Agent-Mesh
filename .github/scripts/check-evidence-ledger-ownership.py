@@ -2,6 +2,7 @@
 """Require active ledger-named and ownership-critical sources to be classified."""
 import json
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -10,21 +11,32 @@ SOURCE_ROOTS = ("packages", "apps", "services")
 EXTENSIONS = {".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"}
 IGNORED_PARTS = {"archive", "ported", "imports", "node_modules", "tests", "test", "__tests__"}
 IGNORED_SUFFIXES = (".test.js", ".test.jsx", ".test.mjs", ".test.cjs", ".test.ts", ".test.tsx", ".spec.js", ".spec.ts")
+PERSISTENT_EVIDENCE_WRITES = re.compile(
+    r"(?:INSERT\s+INTO\s+[\w\"`]*evidence\b|CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?\s+[\w\"`]*evidence\b|"
+    r"(?:evidenceSink|persistEvidence|appendEvidence|saveEvidence|writeEvidence)\s*[:=(])",
+    re.IGNORECASE,
+)
 
 
-def active_ledger_sources():
+def active_evidence_sources(root=ROOT):
     found = set()
     for root_name in SOURCE_ROOTS:
-        root = ROOT / root_name
-        for path in root.rglob("*"):
-            if not path.is_file() or path.suffix not in EXTENSIONS or "ledger" not in path.stem.lower():
+        source_root = root / root_name
+        for path in source_root.rglob("*"):
+            if not path.is_file() or path.suffix not in EXTENSIONS:
                 continue
-            relative = path.relative_to(ROOT)
+            relative = path.relative_to(root)
             if any(part in IGNORED_PARTS for part in relative.parts):
                 continue
             if path.name.lower().endswith(IGNORED_SUFFIXES):
                 continue
-            found.add(relative.as_posix())
+            ledger_named = "ledger" in path.stem.lower()
+            try:
+                persistent_writer = bool(PERSISTENT_EVIDENCE_WRITES.search(path.read_text(errors="ignore")))
+            except OSError:
+                persistent_writer = False
+            if ledger_named or persistent_writer:
+                found.add(relative.as_posix())
     return found
 
 
@@ -55,7 +67,7 @@ def main():
         if not isinstance(consumers, list) or any(not isinstance(path, str) or not (ROOT / path).is_file() for path in consumers):
             raise ValueError(f"consumer paths must exist and be listed as an array: {row['path']}")
 
-    sources = active_ledger_sources() | set(critical)
+    sources = active_evidence_sources() | set(critical)
     missing = sorted(sources - by_path.keys())
     stale = sorted(by_path.keys() - sources)
     if missing or stale:
