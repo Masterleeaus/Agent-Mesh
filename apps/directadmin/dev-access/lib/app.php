@@ -1,7 +1,37 @@
 <?php
 function h($v){return htmlspecialchars((string)$v,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
 function env_user(){return getenv('USERNAME') ?: (getenv('USER') ?: get_current_user());}
-function home_dir(){ $u=env_user(); $p=function_exists('posix_getpwnam')?@posix_getpwnam($u):false; return ($p&&isset($p['dir']))?$p['dir']:(getenv('HOME')?:'/tmp'); }
+function directadmin_identity_uid_allowed($uid){return is_int($uid)&&$uid>0;}
+function directadmin_identity_context(){
+ if(!function_exists('posix_geteuid')||!function_exists('posix_getpwuid')||!function_exists('posix_getpwnam')) return null;
+ $uid=posix_geteuid(); $account=@posix_getpwuid($uid);
+ if(!directadmin_identity_uid_allowed($uid)||!$account||!isset($account['name'],$account['dir'])) return null;
+ $username=(string)(getenv('USERNAME') ?: getenv('USER') ?: '');
+ if($username===''||preg_match('/^[A-Za-z0-9_.-]{1,128}$/D',$username)!==1) return null;
+ $named=@posix_getpwnam($username);
+ if(!$named||!isset($named['uid'])||(int)$named['uid']!==$uid) return null;
+ $accountHome=realpath($account['dir']);
+ if(!$accountHome||!is_dir($accountHome)) return null;
+ $requestedHome=getenv('HOME');
+ $home=($requestedHome!==false&&$requestedHome!=='')?realpath($requestedHome):$accountHome;
+ if(!$home||!is_dir($home)||!path_within($home,$accountHome)) return null;
+ $stat=@stat($home);
+ if(!$stat||!isset($stat['uid'])||(int)$stat['uid']!==$uid) return null;
+ return ['uid'=>$uid,'username'=>$username,'home'=>$home];
+}
+function home_dir(){
+ if(PHP_SAPI==='cli'){
+  $context=directadmin_identity_context();
+  if($context!==null) return $context['home'];
+  if(function_exists('posix_geteuid')&&function_exists('posix_getpwuid')){
+   $account=@posix_getpwuid(posix_geteuid());
+   if($account&&isset($account['dir'])) return $account['dir'];
+  }
+  return '/nonexistent';
+ }
+ $u=env_user(); $p=function_exists('posix_getpwnam')?@posix_getpwnam($u):false;
+ return ($p&&isset($p['dir']))?$p['dir']:(getenv('HOME')?:'/tmp');
+}
 function csrf_secret_file(){ return home_dir().'/.titan-dev-access/csrf.key'; }
 function csrf_secret(){
  $path=csrf_secret_file(); $dir=dirname($path);
@@ -20,12 +50,134 @@ function csrf_secret(){
 }
 function csrf(){ return hash_hmac('sha256','titan_dev_access_form_v2',csrf_secret()); }
 function check_csrf(){
- $v=$_POST['tda_token']??null;
- return is_string($v) && $v!=='' && hash_equals(csrf(),trim($v));
+ $v=$_POST['csrf']??null;
+ return is_string($v) && preg_match('/^[a-f0-9]{64}$/D',$v)===1 && hash_equals(csrf(),$v);
 }
 function post_string($name,$default=''){
  $v=$_POST[$name]??$default;
  return is_string($v)?$v:$default;
+}
+function directadmin_post_field_names(){return ['csrf','cwd','command','run','public_key','add_key','remove_key'];}
+function directadmin_validate_post_fields($fields){
+ if(!is_array($fields)||count($fields)>count(directadmin_post_field_names())) throw new RuntimeException('Invalid form fields.');
+ $allowed=array_flip(directadmin_post_field_names()); $size=0;
+ foreach($fields as $name=>$value){
+  if(!is_string($name)||!isset($allowed[$name])||!is_string($value)) throw new RuntimeException('Invalid form field.');
+  if(strpos($value,"\0")!==false||preg_match('//u',$value)!==1) throw new RuntimeException('Invalid form value.');
+  $size+=strlen($name)+strlen($value);
+  if($size>16384||strlen($value)>16384) throw new RuntimeException('Form data exceeds the limit.');
+ }
+ $actions=0;
+ foreach(['run','add_key','remove_key'] as $action){
+  if(!array_key_exists($action,$fields)) continue;
+  $actions++;
+  if($action==='remove_key'){
+   if(preg_match('/^[0-9]{1,9}$/D',$fields[$action])!==1) throw new RuntimeException('Invalid form action.');
+  }elseif($fields[$action]!=='1'){
+   throw new RuntimeException('Invalid form action.');
+  }
+ }
+ if($actions>1) throw new RuntimeException('Ambiguous form action.');
+ return $fields;
+}
+function directadmin_parse_form_body($body){
+ if(!is_string($body)||strlen($body)>16384) throw new RuntimeException('Form data exceeds the limit.');
+ if($body==='') return [];
+ $pairs=explode('&',$body);
+ if(count($pairs)>count(directadmin_post_field_names())) throw new RuntimeException('Too many form fields.');
+ $fields=[];
+ foreach($pairs as $pair){
+  if($pair===''||preg_match('/%(?![a-f0-9]{2})/i',$pair)) throw new RuntimeException('Malformed form encoding.');
+  $equals=strpos($pair,'=');
+  if($equals===false||$equals===0) throw new RuntimeException('Malformed form field.');
+  $name=urldecode(substr($pair,0,$equals));
+  $value=urldecode(substr($pair,$equals+1));
+  if(array_key_exists($name,$fields)) throw new RuntimeException('Duplicate form field.');
+  if($name===''||strpos($name,'[')!==false||strpos($name,']')!==false) throw new RuntimeException('Array form fields are not allowed.');
+  $fields[$name]=$value;
+ }
+ return directadmin_validate_post_fields($fields);
+}
+function directadmin_form_content_length(){
+ $raw=getenv('CONTENT_LENGTH');
+ if($raw===false||$raw==='') return null;
+ if(preg_match('/^[0-9]{1,5}$/D',(string)$raw)!==1) throw new RuntimeException('Invalid content length.');
+ $length=(int)$raw;
+ if($length>16384) throw new RuntimeException('Form data exceeds the limit.');
+ return $length;
+}
+function directadmin_validate_form_content_type(){
+ $type=getenv('CONTENT_TYPE');
+ if($type!==false&&$type!==''&&preg_match('/^application\/x-www-form-urlencoded(?:\s*;|$)/i',trim((string)$type))!==1){
+  throw new RuntimeException('Unsupported form content type.');
+ }
+}
+function directadmin_fields_from_environment(){
+ $environment=getenv();
+ if(!is_array($environment)) throw new RuntimeException('Unable to read request environment.');
+ $allowed=directadmin_post_field_names(); $fields=[];
+ foreach($environment as $name=>$value){
+  $lower=strtolower((string)$name);
+  foreach($allowed as $field){
+   if($lower===$field){
+    if($name!==$field||array_key_exists($field,$fields)||!is_string($value)) throw new RuntimeException('Ambiguous environment form field.');
+    $fields[$field]=$value;
+    break;
+   }
+   if(strncmp($lower,$field.'[',strlen($field)+1)===0) throw new RuntimeException('Array form fields are not allowed.');
+  }
+ }
+ return directadmin_validate_post_fields($fields);
+}
+function directadmin_fields_from_stdin($expectedLength){
+ directadmin_validate_form_content_type();
+ $stream=@fopen('php://stdin','rb');
+ if(!$stream) throw new RuntimeException('Unable to read request body.');
+ $body=stream_get_contents($stream,16385);
+ fclose($stream);
+ if(!is_string($body)||strlen($body)>16384) throw new RuntimeException('Form data exceeds the limit.');
+ if($expectedLength!==null&&$expectedLength!==strlen($body)) throw new RuntimeException('Request body length mismatch.');
+ return directadmin_parse_form_body($body);
+}
+function directadmin_fields_from_request(){
+ $length=directadmin_form_content_length();
+ directadmin_validate_form_content_type();
+ $query=(string)(getenv('QUERY_STRING')?:'');
+ if(strlen($query)>16384) throw new RuntimeException('Query data exceeds the limit.');
+ if($query!==''){
+  foreach(explode('&',$query) as $pair){
+   $rawName=explode('=',$pair,2)[0];
+   if(preg_match('/%(?![a-f0-9]{2})/i',$rawName)) throw new RuntimeException('Malformed query encoding.');
+   $queryName=strtolower(urldecode($rawName));
+   foreach(directadmin_post_field_names() as $field){
+    if($queryName===$field||strncmp($queryName,$field.'[',strlen($field)+1)===0) throw new RuntimeException('Form fields cannot be supplied in the query string.');
+   }
+  }
+ }
+ $marker=getenv('POST');
+ if($marker==='stdin=true') return directadmin_fields_from_stdin($length);
+ if($marker!==false&&$marker!==''){
+  directadmin_validate_form_content_type();
+  if(strlen($marker)>16384) throw new RuntimeException('Form data exceeds the limit.');
+  if($length!==null&&$length!==strlen($marker)) throw new RuntimeException('Request body length mismatch.');
+  return directadmin_parse_form_body($marker);
+ }
+ return directadmin_fields_from_environment();
+}
+function bootstrap_directadmin_request(){
+ if(PHP_SAPI!=='cli') return;
+ $method=strtoupper(trim((string)(getenv('REQUEST_METHOD')?:'GET')));
+ $_POST=[]; $_SERVER['REQUEST_METHOD']=$method;
+ unset($_SERVER['TDA_REQUEST_REJECTED']);
+ if(!in_array($method,['GET','POST'],true)){
+  $_SERVER['REQUEST_METHOD']='POST'; $_SERVER['TDA_REQUEST_REJECTED']='input'; return;
+ }
+ if(directadmin_identity_context()===null){
+  $_SERVER['TDA_REQUEST_REJECTED']='context'; return;
+ }
+ if($method!=='POST') return;
+ try{$_POST=directadmin_fields_from_request();}
+ catch(Throwable $e){$_POST=[];$_SERVER['TDA_REQUEST_REJECTED']='input';}
 }
 function key_dir(){return home_dir().'/.ssh';}
 function key_file(){return key_dir().'/authorized_keys';}
@@ -194,6 +346,15 @@ function diagnostics_report($diag,$keys,$readiness=[]){
  return redact_text(implode("\n",$lines));
 }
 function render(){
+ $rejected=$_SERVER['TDA_REQUEST_REJECTED']??'';
+ if($rejected==='context'){
+  echo '<div class="notice">Request rejected: DirectAdmin execution identity is ambiguous. Reopen this page through DirectAdmin.</div>';
+  return;
+ }
+ if($rejected==='input'){
+  echo '<div class="notice">Request rejected: malformed or ambiguous form data.</div>';
+  return;
+ }
  $msg='';$output='';$rc=null;$commandClass=null;$cwd=safe_cwd(post_string('cwd',''));
  if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   if(!check_csrf()){$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
@@ -219,10 +380,10 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
   echo '<div><b>'.h(str_replace('_',' ',$name)).'</b><br><span class="'.h($class).'">'.h($display).'</span></div>';
  }
  echo '</div></div>';
- echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post"><input type="hidden" name="tda_token" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
+ echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
  if($rc!==null) echo '<p>Class: '.h($commandClass).' · Exit code: '.h($rc).'</p><div class="term">'.h($output).'</div>'; echo '</div>';
- echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post"><input type="hidden" name="tda_token" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
- if(!$keys) echo '<p>No public keys installed.</p>'; foreach($keys as [$i,$fp]){echo '<div class="keyrow"><b>'.h($fp).'</b><form method="post"><input type="hidden" name="tda_token" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>'; } echo '</div>';
+ echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
+ if(!$keys) echo '<p>No public keys installed.</p>'; foreach($keys as [$i,$fp]){echo '<div class="keyrow"><b>'.h($fp).'</b><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>'; } echo '</div>';
  echo '<div class="card"><h3>Plugin Diagnostics</h3><p class="muted">Read-only support report. Tokens, secrets, passwords, cookies and private-key blocks are redacted.</p><div class="copyrow"><button type="button" onclick="tdaCopyDiagnostics()">Copy Full Diagnostics</button><span id="tda-copy-status" class="copy-status"></span></div><textarea id="tda-full-diagnostics" class="diagbox" readonly>'.h($fullDiag).'</textarea></div>';
  echo '<script>function tdaCopyDiagnostics(){var el=document.getElementById("tda-full-diagnostics"),status=document.getElementById("tda-copy-status"),text=el.value;if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(function(){status.textContent="Copied";}).catch(function(){el.focus();el.select();document.execCommand("copy");status.textContent="Copied";});}else{el.focus();el.select();try{document.execCommand("copy");status.textContent="Copied";}catch(e){status.textContent="Select all and copy manually";}}}</script>';
  echo '<div class="card"><h3>Safety boundary</h3><p class="footer-note">Developer Portal does not grant Titan business authority, root or sudo. Working directories are restricted to HOME and real descendants. Unknown or mutating commands fail closed and must use canonical governed execution elsewhere.</p></div></div>';

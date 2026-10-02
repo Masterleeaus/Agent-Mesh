@@ -12,7 +12,11 @@ Current implemented slice:
 - Read/verify/build-test terminal allowlist only; shell chaining, redirection, Git mutation, package installation, destructive and privileged commands are rejected.
 - 30-second command timeout and a true 512 KiB streaming output ceiling that terminates over-limit processes.
 - Copyable diagnostics with token/password/cookie/private-key redaction.
+- DirectAdmin CLI request handling for bounded environment POST fields and optional `pipe_post=yes` stdin bodies, with strict duplicate/array/malformed-input rejection and the installed `csrf` field name.
+- Effective-user-bound HOME validation for DirectAdmin CLI requests, including account-scoped CSRF tokens.
 - No private-key storage and no automatic sudo/root elevation.
+
+Version 1.3.1 changes only request transport and form compatibility. It keeps the `titan_dev_access` plugin ID, CSRF secret path/token derivation, SSH key paths and flat archive identity; it adds no persistent data migration. Retain the last server-validated archive until DirectAdmin accepts and verifies this candidate. Live upgrade and downgrade behavior still require a disposable-host check.
 
 This plugin does **not** grant Titan business authority. Mutating or privileged repair work belongs to canonical governed execution and deployment/runtime owners.
 

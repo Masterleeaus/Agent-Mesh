@@ -1,18 +1,63 @@
 <?php
 declare(strict_types=1);
 
-$root=sys_get_temp_dir().'/titan-dev-security-'.bin2hex(random_bytes(4));
+function expect_true($condition,string $message):void{
+ if(!$condition){fwrite(STDERR,"FAIL: ".$message.PHP_EOL);exit(1);}
+}
+function remove_test_tree(string $path):void{
+ if(is_link($path)||is_file($path)){@unlink($path);return;}
+ if(!is_dir($path)) return;
+ foreach(scandir($path)?:[] as $entry){
+  if($entry==='.'||$entry==='..') continue;
+  remove_test_tree($path.'/'.$entry);
+ }
+ @rmdir($path);
+}
+function expect_rejected(callable $action,string $message):void{
+ try{$action();}catch(Throwable $e){return;}
+ expect_true(false,$message);
+}
+
+expect_true(function_exists('posix_geteuid')&&function_exists('posix_getpwuid')&&function_exists('posix_getpwnam'),'POSIX account context is required for DirectAdmin CLI verification');
+$account=posix_getpwuid(posix_geteuid());
+expect_true(is_array($account)&&isset($account['name'],$account['dir']),'effective UNIX account must resolve');
+$accountHome=realpath($account['dir']);
+expect_true($accountHome!==false,'effective UNIX home must resolve');
+$root=$accountHome.'/.titan-dev-security-'.bin2hex(random_bytes(6));
 $home=$root.'/home/admin';
 $sibling=$root.'/home/admin-other';
 mkdir($home,0700,true);
 mkdir($sibling,0700,true);
-putenv('USERNAME=titan-dev-test-user-not-present');
+register_shutdown_function(static function()use($root):void{remove_test_tree($root);});
+putenv('USERNAME='.$account['name']);
+putenv('USER='.$account['name']);
 putenv('HOME='.$home);
 
 require dirname(__DIR__).'/lib/app.php';
 
-function expect_true($condition,string $message):void{
- if(!$condition){fwrite(STDERR,"FAIL: ".$message.PHP_EOL);exit(1);}
+expect_true(directadmin_identity_context()!==null,'same-account HOME descendant must be accepted');
+expect_true(directadmin_identity_uid_allowed(posix_geteuid()),'non-root effective UID must pass the DirectAdmin identity policy');
+expect_true(!directadmin_identity_uid_allowed(0),'root execution must fail closed before SSH key management or command diagnostics');
+expect_true(!directadmin_identity_uid_allowed(-1),'invalid effective UID must fail closed');
+putenv('USERNAME='.$account['name']);
+putenv('USER=root');
+putenv('HOME='.$home);
+expect_true(directadmin_identity_context()!==null,'documented USERNAME must remain authoritative when inherited USER differs');
+putenv('USER='.$account['name']);
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&csrf=second');},'duplicate form fields must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf%5B%5D=valid');},'array form fields must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=%ZZ');},'malformed percent encoding must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf='.str_repeat('a',16385));},'oversized form bodies must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&run=1&add_key=1');},'multiple actions in one request must fail closed');
+$other=posix_getpwnam(posix_geteuid()===0?'nobody':'root');
+if($other&&isset($other['uid'])&&(int)$other['uid']!==posix_geteuid()){
+ putenv('USERNAME='.$other['name']);
+ putenv('USER='.$other['name']);
+ putenv('HOME='.$other['dir']);
+ expect_true(directadmin_identity_context()===null,'cross-account environment identity must be rejected');
+ putenv('USERNAME='.$account['name']);
+ putenv('USER='.$account['name']);
+ putenv('HOME='.$home);
 }
 
 expect_true(path_within($home,$home)===true,'home must be accepted');

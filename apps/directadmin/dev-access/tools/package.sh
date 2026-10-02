@@ -2,13 +2,14 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DIST="$ROOT/dist"
+DIST="${TDA_PACKAGE_DIST:-$ROOT/dist}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
 mkdir -p "$DIST"
 
 php -l "$ROOT/lib/app.php" >/dev/null
+php -l "$ROOT/tools/request-integration-test.php" >/dev/null
 php "$ROOT/tools/security-test.php"
 
 for item in plugin.conf README.md AGENTS.md admin reseller user hooks lib scripts; do
@@ -51,6 +52,8 @@ EOF
 for f in "$VERIFY"/scripts/*.sh; do
   bash -n "$f"
 done
+
+php "$ROOT/tools/request-integration-test.php" "$VERIFY"
 
 test -x "$VERIFY/admin/index.html"
 test -x "$VERIFY/reseller/index.html"
