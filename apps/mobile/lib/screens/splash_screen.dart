@@ -52,23 +52,30 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: const [
             Icon(Icons.change_history_rounded, size: 72),
             SizedBox(height: 12),
             Text('TITAN ZERO', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
-            if (_bootstrapError != null) ...[
-              SizedBox(height: 12),
-              Text(_bootstrapError!, textAlign: TextAlign.center),
-              SizedBox(height: 8),
-              TextButton(onPressed: () => unawaited(_openProduction()), child: Text('Retry')),
-            ],
+
           ],
         ),
       ),
+      if (_bootstrapError != null)
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_bootstrapError!, textAlign: TextAlign.center),
+              const SizedBox(height: 8),
+              TextButton(onPressed: _openProduction, child: const Text('Retry')),
+            ],
+          ),
+        ),
     );
   }
 }
