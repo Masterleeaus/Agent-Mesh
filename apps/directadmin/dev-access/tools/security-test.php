@@ -178,6 +178,19 @@ $outsideInitErr=(string)stream_get_contents($outsidePipes[2]);
 fclose($outsidePipes[1]); fclose($outsidePipes[2]);
 expect_true(proc_close($outsideInit)===0&&$outsideInitOut===''&&$outsideInitErr==='','external synthetic Git fixture must initialize without errors');
 
+$nestedPack=$gitRepo.'/.git/objects/pack';
+if(!is_dir($nestedPack)) expect_true(mkdir($nestedPack,0700,true),'nested Git pack directory must be created for symlink regression');
+$nestedPackEntries=array_values(array_diff(scandir($nestedPack)?:[],['.','..']));
+expect_true($nestedPackEntries===[],'synthetic Git pack directory must be empty before symlink regression');
+expect_true(rmdir($nestedPack),'empty synthetic Git pack directory must be removed before link setup');
+$outsidePack=$outsideRepo.'/.git/objects/pack';
+if(!is_dir($outsidePack)) expect_true(mkdir($outsidePack,0700,true),'outside Git pack directory must be created for symlink regression');
+expect_true(symlink($outsidePack,$nestedPack),'nested Git object pack symlink must be created');
+expect_true(directadmin_git_repository_context($gitRepo)===null,'nested Git object symlink outside HOME must be rejected before Git runs');
+expect_true(unlink($nestedPack),'nested Git object symlink must be removed after regression');
+expect_true(mkdir($nestedPack,0700),'empty Git object pack directory must be restored after regression');
+expect_true(directadmin_git_repository_context($gitRepo)!==null,'contained Git repository must recover after nested symlink removal');
+
 $linkedEscape=$home.'/linked-gitdir-escape';
 expect_true(mkdir($linkedEscape,0700,true),'linked Git escape fixture must be created');
 expect_true(file_put_contents($linkedEscape.'/.git',"gitdir: ".$outsideRepo.'/.git'."\n")!==false,'synthetic linked-worktree pointer must be written');
