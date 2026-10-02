@@ -95,8 +95,12 @@ transaction. Legacy no-ledger adoption seeds all filenames in one transaction,
 so an interrupted seed cannot look like a partial established history.
 Migration 088's explicit top-level transaction markers are removed only in the
 generated execution wrapper so its unchanged, checksum-verified source
-participates in the same transaction. Before certifying a supported historical deployment, collect a
-sanitized per-company filename inventory and schema fingerprint, then classify
+participates in the same transaction. Migration 089 is split at its enum-add
+statement because PostgreSQL requires that enum value to be committed before
+later statements can use it. Its earlier writes are idempotent upserts; if the
+final transaction fails, the manifest ledger remains absent and a retry safely
+replays those stages. Before certifying a supported historical deployment,
+collect a sanitized per-company filename inventory and schema fingerprint, then classify
 each pair as applied/not applied for that installation. Do not infer live
 history from the repository manifest.
 
