@@ -29,7 +29,7 @@ test("compiles webhook operations, standalone JSON Schema and MCP tools", async 
     source("JSON_SCHEMA", { $id: "urn:titan:customer", $defs: { Address: { type: "object" } } }, "customer.json"),
     source("MCP", { tools: [{ name: "searchJobs" }, { name: "createJob" }] }, "mcp.json"),
   ]);
-  assert.deepEqual(inventory.items.map((item) => item.operation), ["MCP_TOOL", "MCP_TOOL", "JSON_SCHEMA", "POST invoicePaid"]);
+  assert.deepEqual(inventory.items.map((item) => item.operation), ["JSON_SCHEMA", "MCP_TOOL", "MCP_TOOL", "POST invoicePaid"]);
 });
 
 test("fails closed for malformed contracts and duplicate source-local identities", async () => {
