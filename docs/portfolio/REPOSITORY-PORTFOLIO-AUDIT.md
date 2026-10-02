@@ -143,7 +143,7 @@ A targeted review of ten substantive repositories found active pull requests acr
 
 ## Rebranding handoff
 
-A repository-by-repository naming map with proposed GitHub slugs, README titles, provenance notes, and disposition guidance is in [REPOSITORY-NAMING-PLAN.md](REPOSITORY-NAMING-PLAN.md). Repository names and descriptions were not changed because the connected GitHub capability here does not expose repository settings edits; the owner can apply the proposed slugs in GitHub.
+A repository-by-repository naming map with proposed GitHub slugs, README titles, suggested repository descriptions, provenance notes, and disposition guidance is in [REPOSITORY-NAMING-PLAN.md](REPOSITORY-NAMING-PLAN.md). Repository names and descriptions were not changed because the connected GitHub capability here does not expose repository settings edits; the owner can apply the proposed slugs and descriptions in GitHub.
 
 
 ### Portfolio branding pass — 2026-10-02
