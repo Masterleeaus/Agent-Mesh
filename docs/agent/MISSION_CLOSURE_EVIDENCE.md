@@ -17,20 +17,13 @@ mission tracker, runtime ledger or definition of authority.
 - **Certification** establishes the required observed results in the declared
   environment, including the commissioned live host when the mission requires it.
 
-These are different issue outcomes, not automatic promotion states. A related
-commit, green CI, provider acknowledgement or checked box alone proves none of
-the parent mission's semantic completion. Ordinary implementation steps stay in
-the existing mission; create a separate issue only for an independently substantial
-outcome with no existing canonical owner.
+These are different issue outcomes, not automatic promotion states. A related commit, green CI, provider acknowledgement or checked box alone proves none of the parent mission's semantic completion. Split a broad parent into mergeable child issues when a child has one observable outcome, bounded scope, and its own acceptance. Each child links to the parent; it closes only its own outcome. Keep broad integration and certification on the parent/subproduct issue.
 
 ## PR relationship
 
-Use the exact claim `agent/issue-N`, target `main`, and set the single metadata line
-`**Linked issue:** Refs #N` while any mission requirement remains unproven.
-The matching `**Claim branch:** agent/issue-N` is required. `Subgoal ID` is optional
-planning traceability, never an implementation claim or a second issue owner.
+Use the exact claim `agent/issue-N`, target `main`, and set `**Linked issue:** Closes #child` for a completed child slice or `Refs #parent` for a parent-level partial. A child PR also sets `**Parent issue:** Refs #parent`. The matching `**Claim branch:** agent/issue-N` is required. `Subgoal ID` is optional traceability.
 
-Only a full mission candidate uses `**Linked issue:** Closes #N`. The gate rejects
+`Closes #child` means the child issue's scoped outcome is complete; it does not close the parent. Only the parent completion PR may close the parent, after its full declared subproduct gate passes. The gate rejects
 extra closing targets, cross-repository closure, hidden closing directives in a
 partial PR, obsolete/suffixed agent branches, forks impersonating the claim, a
 closed/non-issue target, claim/head SHA drift, non-current-main ancestry and
@@ -71,10 +64,7 @@ Fields:
 - `remaining_work`: concrete strings; empty only for a full mission candidate
 - `human_review_required`: literal `true`; never a claim that review occurred
 
-For closing records, every declared check must have run and passed. Any failed,
-blocked, unknown or unrun check, outstanding live-host verification, or remaining
-mission work keeps the PR non-closing. Placeholder paths/evidence do not pass.
-A follow-up issue does not excuse omitting an original acceptance requirement.
+For closing records, every check declared as required for the linked issue must have run and passed. A child slice does not inherit parent-level integration, recovery or live-host checks unless its own scope requires them. The parent remains open and owns deferred subproduct checks. Any failed required check, placeholder evidence, or unmet criterion in the linked issue keeps that PR non-closing.
 
 ### Enumerating current acceptance
 
@@ -98,9 +88,7 @@ python3 -c 'import hashlib,json; x=json.load(open("/tmp/mission-issue.json")); p
 
 ## Mandatory human review
 
-A passing format check is **not approval to merge or close**. The human reviewer
-must read the complete current issue and Done condition, compare every requirement
-with actual implementation and executed evidence, and confirm:
+A passing format check is **not approval to merge or close**. Review the linked child scope for a slice PR, or the full parent Done condition for a subproduct completion PR. Compare the applicable requirements with implementation and executed evidence, and confirm:
 
 1. Nothing was narrowed to a contract/schema/projection slice without an explicit
    scope decision by the mission owner
@@ -144,25 +132,15 @@ suite and trusted-workflow activation. Never bypass branch protection, execute
 candidate code in the trusted job, or claim live enforcement from local tests.
 The workflow itself never writes to or closes an issue.
 
-## Bounded blocked-work handoff
+## Small slice delivery
 
-A small, separately executable remainder blocked outside the current branch may use
-the handoff process in root `AGENTS.md`. The PR remains non-closing:
-`**Linked issue:** Refs #N` with `mode: partial`. It links the successor issue and
-records all unmet criteria, checks, live-host work and risks. This PR does not claim
-the original mission is fully delivered.
+Create a child implementation issue when a broad parent can be divided into independently mergeable outcomes. Each child states its parent, canonical owner, narrow file/contract scope, acceptance criteria and slice checks. Link the PR to the child and parent separately. Merge and close the child when its own outcome is done; record deferred product-level checks on the still-open parent.
 
-Create the successor before closing the original. Copy every unmet requirement,
-Done condition and verification item into that issue, name the blocker and canonical
-owner, and link the predecessor and delivered PR. After the non-closing slice merges,
-add a durable handoff record to the original issue identifying the merged change and
-remaining scope, then close that issue administratively. Keep the successor open and
-authoritative for the remainder. This handoff is not full-completion evidence and
-does not relax the normal evidence gate for a PR that claims `complete`.
+The parent is the subproduct completion gate. It owns full integration, recovery, live-host and release certification. Mark `**Subproduct gate:** run` on the PR that completes this gate. Do not use a child issue to discard unmet parent criteria or to bypass a focused safety check required by the changed boundary.
 
-If a gate prevents the sequence, keep the original issue open and resolve the gate;
-do not bypass branch protection. Do not use this procedure to move ordinary
-implementation steps, avoid required tests/review, or narrow the original issue.
+## Merge blocker triage
+
+For conflicts, update the existing claim branch. For drafts, mark ready when reviewable. For failed required checks, inspect and fix relevant failures. For repository protection or missing review, satisfy the configured rule. For evidence mismatch, narrow the child scope or correct the evidence. Do not bypass required protections.
 
 ## Premature closure and supersession
 
