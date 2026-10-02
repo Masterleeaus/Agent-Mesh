@@ -113,7 +113,7 @@ function directadmin_validate_form_content_type(){
   throw new RuntimeException('Unsupported form content type.');
  }
 }
-function directadmin_fields_from_environment(){
+function directadmin_fields_from_environment($expectedLength){
  $environment=getenv();
  if(!is_array($environment)) throw new RuntimeException('Unable to read request environment.');
  $allowed=directadmin_post_field_names(); $fields=[];
@@ -128,7 +128,10 @@ function directadmin_fields_from_environment(){
    if(strncmp($lower,$field.'[',strlen($field)+1)===0) throw new RuntimeException('Array form fields are not allowed.');
   }
  }
- return directadmin_validate_post_fields($fields);
+ $fields=directadmin_validate_post_fields($fields);
+ if($expectedLength===null) throw new RuntimeException('Missing environment form length.');
+ if(strlen(http_build_query($fields,'','&',PHP_QUERY_RFC1738))!==$expectedLength) throw new RuntimeException('Environment form length mismatch.');
+ return $fields;
 }
 function directadmin_fields_from_stdin($expectedLength){
  directadmin_validate_form_content_type();
@@ -163,7 +166,7 @@ function directadmin_fields_from_request(){
   if($length!==null&&$length!==strlen($marker)) throw new RuntimeException('Request body length mismatch.');
   return directadmin_parse_form_body($marker);
  }
- return directadmin_fields_from_environment();
+ return directadmin_fields_from_environment($length);
 }
 function bootstrap_directadmin_request($role='admin'){
  if(!in_array($role,['admin','reseller','user'],true)) $role='user';
@@ -437,10 +440,10 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
  }
  echo '</div>';
  if($canMutate) {
- echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
+ echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
  if($rc!==null) echo '<p>Class: '.h($commandClass).' · Exit code: '.h($rc).'</p><div class="term">'.h($output).'</div>'; echo '</div>';
- echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
- if(!$keys) echo '<p>No public keys installed.</p>'; foreach($keys as [$i,$fp]){echo '<div class="keyrow"><b>'.h($fp).'</b><form method="post"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>'; } echo '</div>';
+ echo '<div class="card"><h3>Codex / Agent SSH Keys</h3><p>Paste only a public SSH key. Private keys are never requested or stored. Installed keys are displayed by fingerprint only.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><textarea name="public_key" rows="3" placeholder="ssh-ed25519 AAAA... codex"></textarea><button name="add_key" value="1">Add public key</button></form>';
+ if(!$keys) echo '<p>No public keys installed.</p>'; foreach($keys as [$i,$fp]){echo '<div class="keyrow"><b>'.h($fp).'</b><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><button name="remove_key" value="'.h($i).'">Revoke</button></form></div>'; } echo '</div>';
  } else {
   echo '<div class="card"><h3>Operator actions</h3><p class="muted">Terminal and SSH key mutation are available only on the DirectAdmin admin route. This role is intentionally read-only.</p></div>';
  }

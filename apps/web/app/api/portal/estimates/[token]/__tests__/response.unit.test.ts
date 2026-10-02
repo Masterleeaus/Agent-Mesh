@@ -49,6 +49,21 @@ describe("public estimate response transaction", () => {
     expect(mocks.release).toHaveBeenCalledOnce();
   });
 
+  it.fails("establishes trusted company RLS context before the token row lookup", async () => {
+    await POST(request(), params);
+    const calls = mocks.query.mock.calls as unknown as Array<[string, unknown[]?]>;
+    const lookupIndex = calls.findIndex(([sql]) =>
+      sql.includes("SELECT id, status, account_id FROM estimates WHERE share_token = $1 FOR UPDATE"),
+    );
+    const contextIndex = calls.findIndex(([sql]) =>
+      sql.includes("set_config('app.current_account_id'"),
+    );
+
+    expect(lookupIndex).toBeGreaterThanOrEqual(0);
+    expect(contextIndex).toBeGreaterThanOrEqual(0);
+    expect(contextIndex).toBeLessThan(lookupIndex);
+  });
+
   it.each(["draft", "approved", "declined", "expired"])("rejects %s without another transition, audit or artifacts", async (status) => {
     mocks.query.mockResolvedValue({ rows: [{ ...estimate, status }], rowCount: 1 });
     expect((await POST(request(), params)).status).toBe(422);

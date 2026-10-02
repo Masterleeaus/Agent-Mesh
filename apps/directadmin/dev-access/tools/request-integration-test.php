@@ -201,6 +201,7 @@ $environment=$common+[
 foreach($fields as $name=>$value)$environment[$name]=$value;
 [$html]=integration_run_role($root,'admin',$environment);
 integration_expect_successful_pwd($html,$homeA);
+integration_expect(substr_count($html,'action="?pipe_post=yes"')===3,'rendered admin forms must request DirectAdmin stdin POST transport');
 
 foreach(['reseller','user'] as $role){
  $actions=[
@@ -276,20 +277,31 @@ $environment=$common+[
 [$result]=integration_run_role($root,'admin',$environment);
 integration_expect_transport_rejected($result,'oversized environment payload');
 
+$caseVariantFields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
+$caseVariantBody=http_build_query($caseVariantFields).'&CSRF='.rawurlencode($token);
 $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
- 'CONTENT_LENGTH'=>'0','csrf'=>$token,'CSRF'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
+ 'CONTENT_LENGTH'=>(string)strlen($caseVariantBody),'csrf'=>$token,'CSRF'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
 [$result]=integration_run_role($root,'admin',$environment);
 integration_expect_transport_rejected($result,'case-variant duplicate field');
 
+$arrayFields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'];
+$arrayBody=http_build_query($arrayFields).'&csrf%5B%5D='.rawurlencode($token);
 $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
- 'CONTENT_LENGTH'=>'0','csrf[]'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
+ 'CONTENT_LENGTH'=>(string)strlen($arrayBody),'csrf'=>$token,'csrf[]'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
 ];
 [$result]=integration_run_role($root,'admin',$environment);
-integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false||strpos($result,'Request rejected: malformed or ambiguous form data.')!==false,'array-shaped environment fields must fail closed even when PHP omits the bracketed environment name');
-integration_expect(strpos($result,'Exit code:')===false,'array-shaped environment fields must not execute a command');
+integration_expect_transport_rejected($result,'valid scalar CSRF with bracketed environment field');
+integration_expect(strpos($result,'Exit code:')===false,'a bracketed environment field must not execute a command');
+
+$missingLengthEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
+ 'csrf'=>$token,'cwd'=>$homeA,'command'=>'pwd','run'=>'1'
+];
+[$result]=integration_run_role($root,'admin',$missingLengthEnvironment);
+integration_expect_transport_rejected($result,'environment fields without CONTENT_LENGTH');
 
 $environment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'csrf='.rawurlencode($token),
@@ -304,9 +316,11 @@ $homeBEnvironment=array_replace($common,[
 [$htmlB]=integration_run_role($root,'admin',$homeBEnvironment);
 $tokenB=integration_token($htmlB);
 integration_expect(!hash_equals($token,$tokenB),'separate HOME contexts must have separate CSRF tokens');
+$crossHomeFields=['csrf'=>$token,'cwd'=>$homeB,'command'=>'pwd','run'=>'1'];
 $crossHome=array_replace($common,[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'','HOME'=>$homeB,
- 'CONTENT_LENGTH'=>'0','csrf'=>$token,'cwd'=>$homeB,'command'=>'pwd','run'=>'1'
+ 'CONTENT_LENGTH'=>(string)strlen(http_build_query($crossHomeFields)),
+ 'csrf'=>$crossHomeFields['csrf'],'cwd'=>$crossHomeFields['cwd'],'command'=>$crossHomeFields['command'],'run'=>$crossHomeFields['run']
 ]);
 [$result]=integration_run_role($root,'admin',$crossHome);
 integration_expect(strpos($result,'Request rejected: invalid CSRF token.')!==false,'CSRF token from another account HOME must be rejected');
@@ -324,9 +338,11 @@ if($other&&isset($other['uid'])&&(int)$other['uid']!==posix_geteuid()){
  integration_expect(strpos($result,'Exit code:')===false,'cross-account identity must not authorize a command');
 }
 
+$disallowedFields=['csrf'=>$token,'cwd'=>$homeA,'command'=>'cat /etc/passwd','run'=>'1'];
 $disallowed=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
- 'CONTENT_LENGTH'=>'0','csrf'=>$token,'cwd'=>$homeA,'command'=>'cat /etc/passwd','run'=>'1'
+ 'CONTENT_LENGTH'=>(string)strlen(http_build_query($disallowedFields)),
+ 'csrf'=>$disallowedFields['csrf'],'cwd'=>$disallowedFields['cwd'],'command'=>$disallowedFields['command'],'run'=>$disallowedFields['run']
 ];
 [$result]=integration_run_role($root,'admin',$disallowed);
 integration_expect(strpos($result,'Blocked by Developer Portal policy')!==false,'disallowed command must remain blocked');
