@@ -56,6 +56,14 @@ Every migration must declare one primary storage owner:
 
 The historical `scripts/sqlite-migrate.mjs` stream is compatibility-only because it mixes owners. New company provisioning must apply only the COMPANY_NATIVE_FSM migration manifest plus explicitly justified local projections.
 
+The immutable manifest at `db/migrations/MANIFEST.json` covers only the legacy
+PostgreSQL compatibility stream. It freezes existing filenames, bytes and
+explicit ordering without renumbering duplicates. No deployed application
+history snapshot is present, so legacy filename-only rows remain checksum-
+unverified and historical duplicate-pair application status is not certified.
+This manifest is not the owner-classified COMPANY_NATIVE_FSM manifest and must
+not be used to provision a company database.
+
 Existing shared PostgreSQL/SQLite installations require an explicit, restartable export/transform/import/cutover with backup, checksums, row-count/reconciliation evidence and rollback. Never silently reinterpret a shared database as one company's isolated database.
 
 ## Isolation acceptance
