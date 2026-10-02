@@ -124,6 +124,8 @@ jobs:
             return {
               identityStoragePath,
               credentialVerifier: { verify: disabled },
+              companyPlacementRegistry: { findByCompanyId: disabled },
+              companyStoreOpener: { open: disabled },
               workOrders: { read: disabled, complete: disabled },
               async readiness() {
                 return { authentication: false, authority: false, provider: false, evidence: false };
