@@ -57,13 +57,13 @@ function normalizeAuthenticationFailure(error: unknown): never {
   const message = safeErrorMessage(error);
   if (message === 'directadmin-session-rejected-request') return rejectRequest();
   if (message === 'directadmin-session-rejected' || message === 'authentication-denied') return fail();
+  if (message === 'identity-registry-unavailable' || message === 'directadmin-service-unavailable') return unavailable();
   return unavailable();
 }
 async function normalizePostAuthenticationFailure(_error: unknown, verifyCurrent: () => Promise<unknown>): Promise<never> {
-  // Any operation failure gets a fresh identity read. #302 deliberately gives
-  // identity failures one stable public error, so this read distinguishes an
-  // operation/service outage from a source session revoked or switched while
-  // the operation ran without exposing the original failure.
+  // A fresh canonical read distinguishes an explicitly rejected/revoked source
+  // (401) from the registry's sanitized availability failure (503). Hide the
+  // original operation failure in either case.
   try { await verifyCurrent(); } catch (verificationError) { return normalizeAuthenticationFailure(verificationError); }
   return unavailable();
 }

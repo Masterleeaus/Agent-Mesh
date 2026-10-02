@@ -511,6 +511,35 @@ test('an unavailable canonical authentication service returns a redacted 503', a
   assert.equal(text.includes(f.token), false);
 });
 
+test('canonical identity-registry outage maps to unavailable, not a rejected browser session', async t => {
+  const ingress = await fixture(t, { sessionOverrides: {
+    authenticate: async () => { throw new Error('identity-registry-unavailable'); },
+  } });
+  const ingressResponse = await createDirectAdminGateway(ingress.bridge, ingress.owners)(ingress.request());
+  assert.equal(ingressResponse.status, 503);
+  assert.deepEqual(await ingressResponse.json(), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(ingressResponse.headers.get('set-cookie'), null);
+
+  const f = await fixture(t);
+  const canonicalAuthenticate = f.sessions.authenticate.bind(f.sessions);
+  let authenticationCalls = 0;
+  f.bridgeSessions.authenticate = async (...args) => {
+    authenticationCalls++;
+    if (authenticationCalls === 3) throw new Error('identity-registry-unavailable');
+    return canonicalAuthenticate(...args);
+  };
+  f.bridgeSessions.switchCompany = async () => { throw new Error(`provider detail ${f.token}`); };
+  const response = await createDirectAdminGateway(f.bridge, f.owners)(
+    f.request('/v1/directadmin/company', post({ company_id: 'company-b' })),
+  );
+  assert.equal(authenticationCalls, 3);
+  assert.equal(response.status, 503);
+  const bodyText = await response.text();
+  assert.deepEqual(JSON.parse(bodyText), { error: 'directadmin-context-or-owner-unavailable', read_only: true });
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal(bodyText.includes(f.token), false);
+});
+
 test('Workforce exchange service failure is a redacted 503 while the source session remains usable', async t => {
   const f = await fixture(t, { sessionOverrides: {
     exchangeWorkforceZero: async () => { throw new Error(`bearer=${f.token}; db=/private/path`); },
