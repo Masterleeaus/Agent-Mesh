@@ -412,7 +412,8 @@ function validateSessionSetCookie(value) {
     attrs.set(name, index < 0 ? "" : part.slice(index + 1));
   }
   if (attrs.has("domain") || attrs.get("path") !== "/" || !attrs.has("secure") || !attrs.has("httponly") ||
-      attrs.get("samesite")?.toLowerCase() !== "strict" || !/^(0|[1-9][0-9]{0,5})$/.test(attrs.get("max-age") ?? "")) {
+      attrs.get("samesite")?.toLowerCase() !== "strict" || !/^(0|[1-9][0-9]{0,5})$/.test(attrs.get("max-age") ?? "") ||
+      Number(attrs.get("max-age")) > 300) {
     throw relayError(502, "workforce_response_invalid");
   }
   if (!cookieValue && attrs.get("max-age") !== "0") throw relayError(502, "workforce_response_invalid");
@@ -463,7 +464,7 @@ function validateBootstrapResponse(result) {
     const equals = pair.indexOf("=");
     if (equals <= 0 || pair.slice(0, equals) !== DIRECTADMIN_SESSION_COOKIE || !TOKEN.test(pair.slice(equals + 1))) invalid();
     const maxAge = /(?:^|;)\s*max-age=([0-9]+)\s*(?:;|$)/i.exec(cookie);
-    if (!maxAge || Number(maxAge[1]) < 1) invalid();
+    if (!maxAge || Number(maxAge[1]) < 1 || Number(maxAge[1]) > 300) invalid();
     return result;
   }
   const error = result.status === 401 ? "directadmin-session-rejected" :

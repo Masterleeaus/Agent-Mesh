@@ -23,8 +23,8 @@ const controlOrigin = "https://panel.example.test:2222";
 const csrf = "c".repeat(43);
 const bootstrapNonce = "N".repeat(43);
 
-function setCookie(value) {
-  return DIRECTADMIN_SESSION_COOKIE + "=" + value + "; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=" + (value ? "120" : "0");
+function setCookie(value, maxAge = value ? "120" : "0") {
+  return DIRECTADMIN_SESSION_COOKIE + "=" + value + "; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=" + maxAge;
 }
 
 function headerBlock(extra = [], { browserCookie, includeTitanCsrf = true } = {}) {
@@ -158,6 +158,16 @@ async function fixture(t, responseMode = "normal") {
       }
       if (responseMode === "bootstrap-success") {
         response.setHeader("set-cookie", setCookie("bootstrap-session-fixture"));
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-long-cookie") {
+        response.setHeader("set-cookie", setCookie("bootstrap-session-fixture", "301"));
+        response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
+        return;
+      }
+      if (responseMode === "bootstrap-success-huge-cookie") {
+        response.setHeader("set-cookie", setCookie("bootstrap-session-fixture", "999999"));
         response.end(JSON.stringify({ csrf_token: "b".repeat(43) }));
         return;
       }
@@ -595,6 +605,8 @@ test("bootstrap accepts only exact 200, 401 and 503 gateway response bodies and 
     "bootstrap-success-missing-cookie",
     "bootstrap-success-duplicate-cookie",
     "bootstrap-success-weak-cookie",
+    "bootstrap-success-long-cookie",
+    "bootstrap-success-huge-cookie",
     "bootstrap-denial-cookie",
     "bootstrap-rate-limited",
     "normal",
