@@ -123,6 +123,18 @@ expect_true(directadmin_request_body_length_matches($terminalFields."\n",$termin
 expect_true(directadmin_request_body_length_matches($terminalFields."\r\n",$terminalLength),'one terminal CRLF may be present beyond CONTENT_LENGTH');
 expect_true(!directadmin_request_body_length_matches($terminalFields."\n\n",$terminalLength),'two terminal LF bytes beyond CONTENT_LENGTH must fail');
 expect_true(!directadmin_request_body_length_matches($terminalFields.'x',$terminalLength),'arbitrary CONTENT_LENGTH mismatch must fail');
+
+$nulTerminatedFields=$terminalFields."\0";
+expect_true(directadmin_request_terminal_byte_class($terminalFields)==='printable'&&directadmin_request_terminal_byte_class($terminalFields."\n")==='lf'&&directadmin_request_terminal_byte_class($terminalFields."\r\n")==='crlf','terminal-byte diagnostic must return only a bounded fixed class');
+expect_true(directadmin_request_terminal_byte_class($nulTerminatedFields)==='nul','raw NUL terminal must be classified without exposing its byte value');
+expect_true(directadmin_normalize_stdin_transport_terminator("\0",null)==="\0",'a NUL-only stdin body must not normalize into an empty request');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,null)===$terminalFields,'one terminal raw NUL may be normalized when CONTENT_LENGTH is unavailable');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,$terminalLength)===$terminalFields,'one terminal raw NUL may be normalized when CONTENT_LENGTH matches the form prefix');
+expect_true(directadmin_normalize_stdin_transport_terminator($nulTerminatedFields,strlen($nulTerminatedFields))===$nulTerminatedFields,'a NUL included in declared CONTENT_LENGTH must not be normalized');
+expect_true(directadmin_normalize_stdin_transport_terminator($terminalFields."\0\0",null)===$terminalFields."\0\0",'repeated terminal raw NUL bytes must not be normalized');
+expect_true(directadmin_normalize_stdin_transport_terminator("csrf=valid\0&run=1",null)==="csrf=valid\0&run=1",'interior raw NUL bytes must not be normalized');
+expect_true(!directadmin_request_body_length_matches($nulTerminatedFields,$terminalLength),'raw NUL is not a generic form length terminator');
+
 $diagnosticReasons=[
  'Invalid content length.'=>'content_length_invalid',
  'Unsupported form content type.'=>'content_type_invalid',
@@ -135,10 +147,10 @@ $diagnosticReasons=[
 ];
 foreach($diagnosticReasons as $message=>$code) expect_true(directadmin_request_error_code(new RuntimeException($message))===$code,'request error text must map only to static code '.$code);
 expect_true(directadmin_request_error_code(new RuntimeException('synthetic-secret-value=must-not-render'))==='request_rejected','unknown request errors must map to a static fallback code');
-$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125];
-expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125','request diagnostics must expose only bounded reason, transport and numeric lengths');
-$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret'];
-expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown','diagnostic output must reject unallowlisted codes, transports and nonnumeric lengths');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'body_length_mismatch','transport'=>'stdin','declared_bytes'=>123,'body_bytes_read'=>125,'terminal_class'=>'nul'];
+expect_true(directadmin_request_diagnostic_summary()==='code=body_length_mismatch transport=stdin declared_bytes=123 body_bytes_read=125 terminal_class=nul','request diagnostics must expose only bounded reason, transport, numeric lengths and fixed terminal-byte class');
+$_SERVER['TDA_REQUEST_DIAGNOSTIC']=['code'=>'synthetic-secret','transport'=>'/home/private','declared_bytes'=>'secret','body_bytes_read'=>'secret','terminal_class'=>'csrf=must-not-render'];
+expect_true(directadmin_request_diagnostic_summary()==='code=request_rejected transport=unknown declared_bytes=unknown body_bytes_read=unknown terminal_class=unknown','diagnostic output must reject unallowlisted codes, transports, lengths and terminal classes');
 unset($_SERVER['TDA_REQUEST_DIAGNOSTIC']);
 expect_true((directadmin_parse_form_body($terminalFields."\n")['add_key']??null)==='1','one DirectAdmin transport LF must be normalized after the complete form');
 expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??null)==='1','one DirectAdmin transport CRLF must be normalized after the complete form');
@@ -146,6 +158,12 @@ expect_rejected(static function()use($terminalFields){directadmin_parse_form_bod
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&csrf=second');},'duplicate form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf%5B%5D=valid');},'array form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=%ZZ');},'malformed percent encoding must fail closed');
+
+expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\0");},'raw terminal NUL must remain rejected by the strict parser outside the stdin transport boundary');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&command=pwd%00&run=1');},'percent-encoded NUL in a form value must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&cwd=/home'."\0".'/admin');},'interior raw NUL in a form value must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&command=%FF');},'invalid UTF-8 in a decoded form value must fail closed');
+
 expect_rejected(static function(){directadmin_parse_form_body('csrf='.str_repeat('a',16385));},'oversized form bodies must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&run=1&add_key=1');},'multiple actions in one request must fail closed');
 $other=posix_getpwnam(posix_geteuid()===0?'nobody':'root');
@@ -223,6 +241,59 @@ expect_true(is_array($gitContext)&&$gitContext['root']===$gitRepo,'ordinary HOME
 [$gitStatus,$gitStatusExit,$gitStatusClass]=run_cmd('git status --short',$gitRepo);
 expect_true($gitStatusExit===0&&$gitStatusClass==='READ','allowlisted status must run successfully inside the validated repository');
 
+expect_true(directadmin_git_parse_divergence("1\t2")===['ahead'=>1,'behind'=>2],'Git divergence parser must read bounded ahead/behind counts');
+foreach(['','1 2',"01\t2","1\t02","1\t2 extra","99999999999\t1","-1\t0"] as $invalidDivergence){
+ expect_true(directadmin_git_parse_divergence($invalidDivergence)===null,'malformed or oversized Git divergence must fail closed');
+}
+foreach(['git rev-list --left-right --count HEAD...@{u}','git rev-parse --symbolic-full-name @{u}'] as $internalOnlyGitCommand){
+ [$internalClass,, $internalAllowed]=command_policy($internalOnlyGitCommand);
+ expect_true($internalAllowed===false&&$internalClass==='UNKNOWN',$internalOnlyGitCommand.' must not widen the user-facing Git command policy');
+}
+
+$workflowRepo=$home.'/workflow-readiness';
+expect_true(mkdir($workflowRepo,0700,true),'workflow readiness repository fixture must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'init','--quiet'],$home),'workflow readiness repository must initialize');
+expect_true(file_put_contents($workflowRepo.'/base.txt','base')!==false,'workflow base file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','base.txt'],$home),'workflow base file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','workflow base'],$home),'workflow base commit must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'branch','--move','agent/issue-1048'],$home),'canonical claim fixture branch must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','upstream-side'],$home),'upstream fixture branch must be created');
+expect_true(file_put_contents($workflowRepo.'/upstream.txt','upstream')!==false,'upstream side file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','upstream.txt'],$home),'upstream side file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','upstream fixture'],$home),'upstream-side commit must be created');
+[$upstreamHeadExit,$upstreamHead,$upstreamHeadError]=run_security_git_capture(['-C',$workflowRepo,'rev-parse','HEAD'],$home);
+expect_true($upstreamHeadExit===0&&$upstreamHeadError===''&&preg_match('/^[0-9a-f]{40}$/D',trim($upstreamHead))===1,'upstream fixture commit must resolve');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','agent/issue-1048'],$home),'canonical claim fixture branch must be checked out');
+expect_true(file_put_contents($workflowRepo.'/local.txt','local')!==false,'local side file must be written');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'add','--','local.txt'],$home),'local side file must be staged');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'-c','user.name=Developer Portal Security Test','-c','user.email=dev-portal-security-test@example.invalid','commit','--quiet','--message','local fixture'],$home),'local-side commit must be created');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'update-ref','refs/remotes/origin/agent/issue-1048',trim($upstreamHead)],$home),'local cached upstream ref must be installed');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/issue-1048.remote','origin'],$home),'fixture upstream remote name must be configured');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'config','branch.agent/issue-1048.merge','refs/heads/agent/issue-1048'],$home),'fixture upstream branch must be configured');
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'remote','add','origin','https://synthetic-user:synthetic-token@example.invalid/repository.git'],$home),'credential-shaped fixture remote must be configured without connecting');
+$workflowContext=directadmin_git_repository_context($workflowRepo);
+expect_true(is_array($workflowContext),'workflow readiness fixture must pass the HOME-bounded repository resolver');
+$workflowHeadBefore=directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD']);
+$workflowConfigBefore=hash_file('sha256',$workflowRepo.'/.git/config');
+$workflowReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($workflowReadiness['git_claim_branch_format_valid']===true&&$workflowReadiness['git_claim_issue_number']==='1048','canonical issue branch must be identified without asserting remote ownership');
+expect_true($workflowReadiness['git_upstream_configured']===true&&$workflowReadiness['git_ahead']===1&&$workflowReadiness['git_behind']===1,'local-only comparison must report one ahead and one behind commit');
+expect_true($workflowReadiness['git_dirty']===false,'read-only workflow diagnostics must preserve clean worktree state');
+$workflowJson=json_encode($workflowReadiness);
+expect_true(is_string($workflowJson)&&strpos($workflowJson,'synthetic-user')===false&&strpos($workflowJson,'synthetic-token')===false&&strpos($workflowJson,'example.invalid')===false,'workflow readiness must never expose remote URLs or credentials');
+expect_true(directadmin_git_probe($workflowContext,['rev-parse','--verify','HEAD'])===$workflowHeadBefore,'workflow readiness must not move HEAD or create commits');
+expect_true(hash_file('sha256',$workflowRepo.'/.git/config')===$workflowConfigBefore,'workflow readiness must not modify Git configuration');
+expect_true(directadmin_git_probe($workflowContext,['status','--porcelain'])==='','workflow readiness must not modify the worktree');
+
+expect_true(run_security_git_fixture(['-C',$workflowRepo,'switch','--quiet','--create','agent/issue-01048'],$home),'noncanonical padded issue branch fixture must be created');
+$paddedReadiness=codex_readiness($workflowRepo,[],['git'=>'/usr/bin/git']);
+expect_true($paddedReadiness['git_claim_branch_format_valid']===false&&$paddedReadiness['git_claim_issue_number']===null,'padded issue numbers must not be shown as canonical claim branches');
+expect_true($paddedReadiness['git_upstream_configured']===false&&$paddedReadiness['git_ahead']===null&&$paddedReadiness['git_behind']===null,'missing upstream must produce unknown divergence counts');
+$notRepo=$home.'/not-a-repository';
+expect_true(mkdir($notRepo,0700,true),'non-repository fixture must be created');
+$notRepoReadiness=codex_readiness($notRepo,[],['git'=>'/usr/bin/git']);
+expect_true($notRepoReadiness['git_repository']===false&&$notRepoReadiness['git_claim_branch_format_valid']===null&&$notRepoReadiness['git_upstream_configured']===null,'non-repository checkout must report claim/upstream state as unknown');
+
 $textconvHelper=$home.'/synthetic-textconv-helper';
 $textconvMarker=$home.'/synthetic-textconv-marker';
 $textconvScript="#!/bin/sh\nprintf invoked >> ".escapeshellarg($textconvMarker)."\ncat \"$1\"\n";
@@ -252,6 +323,7 @@ foreach(['diff','show'] as $gitSubcommand){
  expect_true(in_array('--no-pager',$hardenedArguments,true),$gitSubcommand.' must explicitly disable configured pagers');
 }
 expect_true(($pagerEnvironment['GIT_PAGER']??null)==='cat'&&($pagerEnvironment['PAGER']??null)==='cat','Git process environment must override configured pagers');
+expect_true(($pagerEnvironment['GIT_NO_LAZY_FETCH']??null)==='1','Git process environment must disable promisor lazy fetches');
 $safeDiffArguments=directadmin_git_command_args($gitContext,['diff']);
 [$safeDiffExit,$safeDiffOutput,$safeDiffError]=run_security_git_capture(array_slice($safeDiffArguments,1),$home);
 expect_true($safeDiffExit===0&&$safeDiffError===''&&$safeDiffOutput!=='','bounded Git diff must continue to return read-only output');

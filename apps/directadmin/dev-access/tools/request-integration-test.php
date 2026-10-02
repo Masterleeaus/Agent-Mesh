@@ -206,6 +206,10 @@ function integration_expect_transport_rejected(string $html,string $case='invali
  integration_expect(strpos($html,'Exit code:')===false,$case.' must not execute a command');
  if($expectedDiagnostic!==null) integration_expect(strpos($html,$expectedDiagnostic)!==false,$case.' must expose the expected allowlisted diagnostic without form contents');
 }
+function integration_expect_safe_diagnostic(string $html,string $expected,string $case):void{
+ integration_expect(preg_match('/Diagnostic: ([^<]+)/',$html,$matches)===1,$case.' must include a bounded diagnostic');
+ integration_expect($matches[1]===$expected,$case.' diagnostic must contain only the expected fixed code, transport, lengths and terminal class');
+}
 
 integration_expect(count($argv)>=2,'pass the extracted final archive directory');
 $root=realpath($argv[1]);
@@ -308,12 +312,87 @@ $stdinEnvironment=$common+[
 [$html]=integration_run_role($root,'admin',$stdinEnvironment,$body);
 integration_expect_successful_pwd($html,$homeA);
 
+$nulTerminatedBody=$body."\0";
+$nulWithoutLengthEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true'
+];
+[$html]=integration_run_role($root,'admin',$nulWithoutLengthEnvironment,$nulTerminatedBody);
+integration_expect_successful_pwd($html,$homeA);
+
+$nulWithPrefixLengthEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
+];
+[$html]=integration_run_role($root,'admin',$nulWithPrefixLengthEnvironment,$nulTerminatedBody);
+integration_expect_successful_pwd($html,$homeA);
+
+$nulIncludedLengthEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($nulTerminatedBody)
+];
+[$html]=integration_run_role($root,'admin',$nulIncludedLengthEnvironment,$nulTerminatedBody);
+$nulIncludedLengthDiagnostic='code=field_value_invalid transport=stdin declared_bytes='.strlen($nulTerminatedBody).' body_bytes_read='.strlen($nulTerminatedBody).' terminal_class=nul';
+integration_expect_transport_rejected($html,'terminal NUL included in CONTENT_LENGTH',$nulIncludedLengthDiagnostic);
+integration_expect_safe_diagnostic($html,$nulIncludedLengthDiagnostic,'terminal NUL inside declared content');
+
+$repeatedNulBody=$body."\0\0";
+$repeatedNulEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($body)
+];
+[$html]=integration_run_role($root,'admin',$repeatedNulEnvironment,$repeatedNulBody);
+$repeatedNulDiagnostic='code=body_length_mismatch transport=stdin declared_bytes='.strlen($body).' body_bytes_read='.strlen($repeatedNulBody).' terminal_class=nul';
+integration_expect_transport_rejected($html,'repeated terminal raw NUL',$repeatedNulDiagnostic);
+integration_expect_safe_diagnostic($html,$repeatedNulDiagnostic,'repeated terminal raw NUL');
+
+$interiorNulBody=str_replace('command=pwd','command=pu'."\0".'d',$body);
+$interiorNulEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($interiorNulBody)
+];
+[$html]=integration_run_role($root,'admin',$interiorNulEnvironment,$interiorNulBody);
+$interiorNulDiagnostic='code=field_value_invalid transport=stdin declared_bytes='.strlen($interiorNulBody).' body_bytes_read='.strlen($interiorNulBody).' terminal_class=printable';
+integration_expect_transport_rejected($html,'interior raw NUL',$interiorNulDiagnostic);
+integration_expect_safe_diagnostic($html,$interiorNulDiagnostic,'interior raw NUL');
+
+$encodedNulBody=str_replace('command=pwd','command=pwd%00',$body);
+$encodedNulEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($encodedNulBody)
+];
+[$html]=integration_run_role($root,'admin',$encodedNulEnvironment,$encodedNulBody);
+$encodedNulDiagnostic='code=field_value_invalid transport=stdin declared_bytes='.strlen($encodedNulBody).' body_bytes_read='.strlen($encodedNulBody).' terminal_class=printable';
+integration_expect_transport_rejected($html,'percent-encoded NUL',$encodedNulDiagnostic);
+integration_expect_safe_diagnostic($html,$encodedNulDiagnostic,'percent-encoded NUL');
+
+$invalidUtf8Body=str_replace('command=pwd','command=%FF',$body);
+$invalidUtf8Environment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($invalidUtf8Body)
+];
+[$html]=integration_run_role($root,'admin',$invalidUtf8Environment,$invalidUtf8Body);
+$invalidUtf8Diagnostic='code=field_value_invalid transport=stdin declared_bytes='.strlen($invalidUtf8Body).' body_bytes_read='.strlen($invalidUtf8Body).' terminal_class=printable';
+integration_expect_transport_rejected($html,'invalid UTF-8 form value',$invalidUtf8Diagnostic);
+integration_expect_safe_diagnostic($html,$invalidUtf8Diagnostic,'invalid UTF-8 form value');
+
 $rawPostEnvironment=$common+[
  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
  'POST'=>$body,'CONTENT_LENGTH'=>(string)strlen($body)
 ];
 [$html]=integration_run_role($root,'admin',$rawPostEnvironment);
 integration_expect_successful_pwd($html,$homeA);
+
+// POSIX process environment values cannot contain raw NUL; keep raw framing coverage on stdin and reject encoded NUL here.
+$rawEnvironmentEncodedNulBody=str_replace('command=pwd','command=pwd%00',$body);
+$rawEnvironmentEncodedNulPost=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
+ 'POST'=>$rawEnvironmentEncodedNulBody,'CONTENT_LENGTH'=>(string)strlen($rawEnvironmentEncodedNulBody)
+];
+[$html]=integration_run_role($root,'admin',$rawEnvironmentEncodedNulPost);
+$rawEnvironmentEncodedNulDiagnostic='code=field_value_invalid transport=environment declared_bytes='.strlen($rawEnvironmentEncodedNulBody).' body_bytes_read='.strlen($rawEnvironmentEncodedNulBody).' terminal_class=printable';
+integration_expect_transport_rejected($html,'environment POST percent-encoded NUL',$rawEnvironmentEncodedNulDiagnostic);
+integration_expect_safe_diagnostic($html,$rawEnvironmentEncodedNulDiagnostic,'environment POST percent-encoded NUL');
 
 foreach(["\n","\r\n"] as $terminator){
  $terminatedBody=$body.$terminator;
@@ -690,5 +769,5 @@ foreach(['admin','reseller','user'] as $role){
 }
 integration_stop_web_server($webServer);
 
-echo "DirectAdmin role request integration tests passed (actual admin CLI environment/POST/stdin transports; reseller/user CLI and all-role cli-server GET plus valid-CSRF run/key mutation denial; read-only HOME snapshots; malformed, ambiguous, cross-HOME and command-policy cases).".PHP_EOL;
+echo "DirectAdmin role request integration tests passed (actual admin CLI environment/POST/stdin transports including bounded raw-NUL framing; strict malformed/ambiguous/UTF-8/CSRF/role/HOME and command-policy cases; reseller/user read-only behavior and clean archive checks).".PHP_EOL;
 
