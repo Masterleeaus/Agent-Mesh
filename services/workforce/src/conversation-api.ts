@@ -53,6 +53,8 @@ export type ConversationResponse = {
 
 export interface ConversationHostRuntime {
   dispatch(input: ZeroWorkforceDispatchInput): Promise<ZeroWorkforceDispatchResult>;
+  /** Explicit authenticated recovery observes uncertain execution; never retries its effect. */
+  recover?(input: ZeroWorkforceDispatchInput): Promise<ZeroWorkforceDispatchResult>;
   cancel?(input: {
     company_id: string;
     actor_id: string;
@@ -98,7 +100,9 @@ export function normalizeConversationRequest(input: unknown): ConversationReques
   if (!input || typeof input !== "object") throw new Error("conversation-request-invalid");
   const value = input as Record<string, unknown>;
   const action = value.action === undefined ? "start" : value.action;
-  if (!["start", "continue", "resume", "cancel"].includes(String(action))) throw new Error("conversation-action-invalid");
+  if (typeof action !== "string" || !["start", "continue", "resume", "cancel"].includes(action)) throw new Error("conversation-action-invalid");
+  if (action === "start" && value.continuation_token !== undefined) throw new Error("conversation-action-invalid");
+  if (action !== "start" && (typeof value.continuation_token !== "string" || !value.continuation_token.trim())) throw new Error("conversation-continuation-required");
   return {
     action: action as ConversationRequest["action"],
     company_id: bounded(value.company_id, "conversation-company-id-required", 256),
@@ -183,7 +187,9 @@ export async function handleConversationRequest(
         reason: "cancelled-by-client", session_id: context.session_id, context_revision: context.context_revision,
         authenticated_identity: context.authenticated_identity,
       }) : Promise.reject(new Error("conversation-cancellation-unavailable")))
-    : await runtime.dispatch(toDispatch(request, context));
+    : request.action === "resume"
+      ? await (runtime.recover ? runtime.recover(toDispatch(request, context)) : Promise.reject(new Error("conversation-recovery-unavailable")))
+      : await runtime.dispatch(toDispatch(request, context));
   return {
     accepted: true, schema_version, company_id: context.company_id, actor_id: context.actor_id,
     device_id: context.device_id, session_id: context.session_id, context_revision: context.context_revision, surface: context.surface,

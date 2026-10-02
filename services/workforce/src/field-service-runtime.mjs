@@ -1,10 +1,11 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { createProductionRuntimeBootstrap } from './production-runtime-bootstrap.ts';
 import { SqliteWorkforceStore } from './sqlite-store.ts';
 import { assertAuthorityDecisionAllowsExecution } from '../../../packages/runtime/authority/authority-evaluator.mjs';
 import { SqliteAuthorityStore, AuthorityContextResolver, WorkerAccessResolver, SqliteWorkerAccessStore } from '../../../packages/runtime/authority/index.mjs';
-import { ExecutionGateway } from '../../../packages/tools/execution-gateway.mjs';
+import { ExecutionGateway, boundedAdapterCall, executionRequestFingerprint } from '../../../packages/tools/execution-gateway.mjs';
+import { GovernedExecutionRecovery, SqliteExecutionLifecycleStore } from '../../../packages/tools/governed-execution-recovery.mjs';
 import { AcceptedEvidenceLedger, rebuildJobProjection } from '../../../packages/tools/accepted-evidence-ledger.mjs';
 
 const CAPABILITY = 'crm.work_order.complete';
@@ -15,7 +16,7 @@ const one = async (storage, sql, params) => (await storage.query(sql, params)).r
  * Authority material is read, never issued here. The explicit command adapter is
  * deliberately limited; it is not a general language planner or another engine.
  */
-export async function createFieldServiceRuntime({ storage, workOrders, revalidateIdentity } = {}) {
+export async function createFieldServiceRuntime({ storage, workOrders, revalidateIdentity, timeoutMs = 30_000, signal } = {}) {
   if (!storage || storage.dialect !== 'sqlite') throw new Error('zero-sqlite-storage-required');
   for (const method of ['complete', 'read']) if (typeof workOrders?.[method] !== 'function') throw new Error(`production-runtime-port-required:workOrders.${method}`);
   if (revalidateIdentity !== undefined && typeof revalidateIdentity !== 'function') throw new Error('production-runtime-port-required:revalidateIdentity');
@@ -42,29 +43,46 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
       if (statement.trim()) throw new Error(`incomplete-owner-migration:${migration}`);
     });
   }
+  const lifecycleStore = new SqliteExecutionLifecycleStore(storage);
+  await lifecycleStore.migrate();
+  const executionId = (company_id, work_order_id) => `native:${createHash('sha256').update(JSON.stringify([company_id, CAPABILITY, work_order_id])).digest('hex')}`;
+  const callAdapter = async (operation, input, callSignal = signal) => {
+    const result = await boundedAdapterCall(childSignal => operation({ ...input, signal: childSignal }), { timeoutMs, signal: callSignal });
+    callSignal?.throwIfAborted();
+    return result;
+  };
+  const currentIdentity = async (input, callSignal = signal) => {
+    if (revalidateIdentity) await callAdapter(revalidateIdentity, input, callSignal);
+    callSignal?.throwIfAborted();
+  };
+  const readBusiness = (input, callSignal = signal) => callAdapter(value => workOrders.read(value), input, callSignal);
   const authorityStore = new SqliteAuthorityStore(storage);
   const accessResolver = new WorkerAccessResolver({ store: new SqliteWorkerAccessStore(storage) });
   const workers = new SqliteWorkforceStore(storage);
   await workers.migrate();
 
-  async function authorize(input) {
+  async function authorize(input, options = {}) {
     const { company_id, actor_id, agent_id, work_id, run_id } = input;
-    await revalidateIdentity?.({ company_id, actor_id, run_id, work_id });
+    if (!options.skipIdentity) await currentIdentity({ company_id, actor_id, run_id, work_id });
+    const control = options.control ?? storage;
+    const decisions = control === storage ? authorityStore : new SqliteAuthorityStore(control);
+    const access = control === storage ? accessResolver : new WorkerAccessResolver({ store: new SqliteWorkerAccessStore(control) });
+    const roster = control === storage ? workers : new SqliteWorkforceStore(control);
     const work_order_id = input.input?.work_order_id;
-    const row = await one(storage, 'SELECT envelope FROM authority_state WHERE company_id=$1 AND subject_type=$2 AND subject_id=$3', [company_id, 'worker_capability', `${agent_id}/${CAPABILITY}`]);
+    const row = await one(control, 'SELECT envelope FROM authority_state WHERE company_id=$1 AND subject_type=$2 AND subject_id=$3', [company_id, 'worker_capability', `${agent_id}/${CAPABILITY}`]);
     const grant = row ? JSON.parse(row.envelope) : {};
-    const worker = await workers.getWorker(company_id, agent_id);
-    const business = await workOrders.read({ company_id, actor_id, work_order_id });
+    const worker = await roster.getWorker(company_id, agent_id);
+    const business = Object.hasOwn(options, 'business') ? options.business : await readBusiness({ company_id, actor_id, work_order_id });
     const refs = [];
     for (const id of Array.isArray(grant.evidence_refs) ? grant.evidence_refs : []) {
-      const proof = await one(storage, `SELECT id FROM evidence WHERE company_id=$1 AND id=$2 AND subject_type=$3 AND subject_id=$4 AND evidence_type='field_completion'`, [company_id, id, 'work_order', work_order_id]);
+      const proof = await one(control, `SELECT id FROM evidence WHERE company_id=$1 AND id=$2 AND subject_type=$3 AND subject_id=$4 AND evidence_type='field_completion'`, [company_id, id, 'work_order', work_order_id]);
       if (proof) refs.push(proof.id);
     }
     const scoped = grant.actor_id === actor_id && grant.work_order_id === work_order_id && !!business && worker?.active && worker.capabilities.includes(CAPABILITY);
     const resolver = new AuthorityContextResolver({
-      authorityStore,
+      authorityStore: decisions,
       requirementResolver: { async resolve() { return { company_id, capability: CAPABILITY, operation: 'complete', effect: 'write', required_permissions: [CAPABILITY], required_evidence: ['field_completion'], minimum_autonomy_score: 51 }; } },
-      accessResolver,
+      accessResolver: access,
       governanceResolver: { async resolve() { return {
         policy_allows: scoped && grant.policy_allows === true,
         governance_allows: scoped && grant.governance_allows === true,
@@ -80,7 +98,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     });
     const decision = { ...authority, decision_id: authority.authority_decision_id, actor_id, run_id, work_id, work_order_id, risk: grant.risk ?? "critical",
       status: authority.decision === 'ALLOW' ? 'allowed' : authority.decision === 'APPROVAL_REQUIRED' ? 'approval_required' : 'denied' };
-    await authorityStore.appendDecision(decision);
+    await decisions.appendDecision(decision);
     return decision;
   }
 
@@ -96,7 +114,8 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     assertAuthorityDecisionAllowsExecution(current, { company_id, capability: CAPABILITY, operation_id: work_id, action_id: current.work_order_id, worker_id: agent_id, now: new Date().toISOString() });
     const businessInput = { company_id, actor_id: current.actor_id, work_order_id: current.work_order_id };
     const idempotency_key = JSON.stringify([CAPABILITY, current.work_order_id]);
-    const toResult = evidence => ({ execution_id: evidence.execution_id, company_id, state: evidence.state, capability: CAPABILITY, evidence });
+    const toResult = evidence => ({ request_fingerprint: executionRequestFingerprint({ company_id: evidence.company_id, capability: evidence.capability, input: evidence.request_summary?.input, idempotency_key: evidence.idempotency_key }), execution_id: evidence.execution_id, company_id, state: evidence.state, capability: CAPABILITY, evidence });
+    let effectDecision;
     const evidenceSink = async evidence => storage.transaction(async tx => {
       // Rebuild through the canonical ledger inside the append transaction. The
       // existing evidence table remains the durable owner; no parallel ledger.
@@ -117,17 +136,17 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
         trace_id: identity.trace_id ?? null, correlation_id: identity.correlation_id ?? null,
         interaction_id: identity.interaction_id ?? null,
         idempotency_key: identity.idempotency_key ?? idempotency_key, execution_idempotency_key: idempotency_key,
-        source_evidence_refs: current.evidence_refs };
+        source_evidence_refs: current.evidence_refs, effect_authority_decision_id: effectDecision?.decision_id ?? null };
       await tx.query('INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,$3,$4,$5,$6,$7)',
         [evidence.evidence_id, company_id, 'work', work_id, 'gateway_execution', JSON.stringify(provenance), JSON.stringify({ ...evidence, provenance, accepted_evidence })]);
     });
     const gateway = new ExecutionGateway({
-      evidenceSink,
+      timeoutMs, evidenceSink,
       idempotencyStore: {
         async get() {
           const row = await one(storage, "SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND json_extract(payload,'$.idempotency_key')=$2 AND json_extract(payload,'$.state')='VERIFIED' ORDER BY created_at DESC LIMIT 1", [company_id, idempotency_key]);
           if (!row) return null;
-          const business = await workOrders.read(businessInput);
+          const business = await readBusiness(businessInput);
           if (business?.status !== 'completed' || !business.completed_at) throw new Error('zero-replay-outcome-no-longer-verified');
           return toResult(JSON.parse(row.payload));
         },
@@ -139,25 +158,82 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
       },
       providers: [{
         id: 'native-assigned-work-order', executionClass: 'native', company_id, capabilities: [CAPABILITY],
-        async execute() {
-          await revalidateIdentity?.({ company_id, actor_id: current.actor_id, run_id, work_id });
-          // Identity and authority reads can yield while cancellation commits.
-          // Re-read the canonical run at the last boundary before native effect.
-          const run = await bootstrap.runStore.get(company_id, run_id);
-          if (run?.state === 'CANCELLED') throw new Error('zero-run-cancelled');
-          if (!run || run.work_id !== work_id || !['RUNNING', 'WAITING_TOOL'].includes(run.state)) throw new Error('zero-run-not-executing');
-          const result = await workOrders.complete(businessInput);
+        async execute(request) {
+          const business = await readBusiness(businessInput, request.signal);
+          // The provider read may yield long enough for a session revocation or
+          // company switch. Resolve identity again after it, before the fence.
+          await currentIdentity({ company_id, actor_id: current.actor_id, run_id, work_id }, request.signal);
+          // BEGIN IMMEDIATE fences current control authority through the bounded
+          // provider handoff. Company business storage is physically independent.
+          // The explicit legacy port alone may reuse this transaction.
+          let fencedDecision;
+          const result = await storage.transaction(async tx => {
+            request.signal?.throwIfAborted();
+            fencedDecision = await authorize({ company_id, actor_id: current.actor_id, agent_id, run_id, work_id, input: input.input }, { control: tx, skipIdentity: true, business });
+            if (fencedDecision.status !== 'allowed') throw new Error('zero-effect-authority-revoked');
+            const row = await one(tx, 'SELECT payload FROM agent_runs WHERE company_id=$1 AND run_id=$2', [company_id, run_id]);
+            const run = row ? JSON.parse(row.payload) : null;
+            if (run?.state === 'CANCELLED') throw new Error('zero-run-cancelled');
+            if (!run || run.work_id !== work_id || !['RUNNING', 'WAITING_TOOL'].includes(run.state)) throw new Error('zero-run-not-executing');
+            const assertCurrent = () => {
+              request.signal?.throwIfAborted();
+              assertAuthorityDecisionAllowsExecution(fencedDecision, { company_id, capability: CAPABILITY, operation_id: work_id, action_id: current.work_order_id, worker_id: agent_id, now: new Date().toISOString() });
+            };
+            assertCurrent();
+            const completed = await boundedAdapterCall(childSignal => {
+              childSignal.throwIfAborted();
+              const operation = { ...businessInput, signal: childSignal, authorityFence: { assertCurrent: () => { childSignal.throwIfAborted(); assertCurrent(); } } };
+              return workOrders.completeInControlTransaction ? workOrders.completeInControlTransaction(operation, tx) : workOrders.complete(operation);
+            }, { timeoutMs, signal: request.signal });
+            assertCurrent();
+            return completed;
+          });
+          effectDecision = fencedDecision;
+          request.signal?.throwIfAborted();
           if (result.kind !== 'ok') throw new Error(`work-order-${result.kind}:${result.message ?? 'completion rejected'}`);
           return { external_ref: current.work_order_id, result };
         },
-        async verify() {
-          const business = await workOrders.read(businessInput);
+        async verify(_raw, request) {
+          await currentIdentity({ company_id, actor_id: current.actor_id, run_id, work_id }, request.signal);
+          const business = await readBusiness(businessInput, request.signal);
           return { verified: business?.status === 'completed' && !!business.completed_at, method: 'independent-company-scoped-business-reread', work_order_id: current.work_order_id, observed_status: business?.status ?? null };
         },
       }],
     });
-    return gateway.execute({ execution_id: randomUUID(), company_id, decision_id: current.decision_id, work_id, run_id, agent_id, capability: CAPABILITY, idempotency_key,
-      input: { work_order_id: current.work_order_id }, authority: { status: 'approved', expires_at: current.authority_lease?.lease_expires_at }, risk: { status: 'approved' } });
+    const run = await bootstrap.runStore.get(company_id, run_id);
+    const request = { execution_id: executionId(company_id, current.work_order_id), company_id, decision_id: current.decision_id,
+      actor_id: current.actor_id, work_id, run_id, agent_id, capability: CAPABILITY, idempotency_key,
+      conversation_id: run?.conversation_id, request_id: run?.request_id, operation_id: run?.operation_id,
+      trace_id: run?.trace_id, correlation_id: run?.correlation_id, interaction_id: run?.interaction_id,
+      input: { work_order_id: current.work_order_id }, signal, timeoutMs,
+      authority: { status: 'approved', expires_at: current.authority_lease?.lease_expires_at }, risk: { status: 'approved' } };
+    const recovery = new GovernedExecutionRecovery({ gateway, store: lifecycleStore });
+    const previous = await recovery.start(request);
+    if (input.recovery && previous.status === 'READY') throw new Error('zero-execution-not-started');
+    if (previous.status === 'VERIFIED') {
+      const observed = await readBusiness(businessInput);
+      if (observed?.status !== 'completed' || !observed.completed_at) throw new Error('zero-replay-outcome-no-longer-verified');
+    }
+    return recovery.resume(request.execution_id, request);
+  }
+
+  async function prepareRecovery(input) {
+    const work_order_id = input.tool_call?.arguments?.work_order_id;
+    if (input.tool_call?.name !== CAPABILITY || !work_order_id) throw new Error('zero-execution-recovery-unavailable');
+    const execution_id = executionId(input.company_id, work_order_id);
+    const record = await lifecycleStore.get(input.company_id, execution_id);
+    if (!record || record.status === 'READY' || record.request?.run_id !== input.run_id || record.request?.work_id !== input.work_id || record.request?.actor_id !== input.actor_id) throw new Error('zero-execution-recovery-binding-conflict');
+    const decision = await authorize({ ...input, input: { work_order_id } });
+    if (decision.status !== 'allowed') throw new Error('zero-recovery-authority-required');
+    return { tool_call: input.tool_call, decision, execution: { state: 'UNCERTAIN', execution_id, company_id: input.company_id } };
+  }
+
+  async function resume(input) {
+    const work_order_id = input.tool_input?.work_order_id;
+    if (input.execution?.execution_id !== executionId(input.company_id, work_order_id)) throw new Error('zero-execution-recovery-binding-conflict');
+    const decision = await authorize({ ...input, input: { work_order_id } });
+    if (decision.status !== 'allowed') return { state: decision.status === 'approval_required' ? 'WAITING_APPROVAL' : 'DENIED' };
+    return execute({ ...input, decision, input: { work_order_id }, recovery: true });
   }
 
   const bootstrap = await createProductionRuntimeBootstrap({ storage, ports: {
@@ -174,7 +250,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
       return name === CAPABILITY && worker?.active && worker.capabilities.includes(name) ? { name } : null;
     } },
     contextProvider: { async load({ company_id }) { return { company_id }; } },
-    authorityGateway: { authorize, execute },
+    authorityGateway: { authorize, execute, resume, prepareRecovery },
   } });
 
   async function project({ company_id, actor_id, work_id }) {
@@ -182,7 +258,7 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     if (!work || work.origin?.actor_id !== actor_id) return null;
     const run = await bootstrap.runStore.findByWork(company_id, work_id);
     const id = run?.messages.filter(m => m.role === 'user').map(m => command(m.content)).find(Boolean);
-    const business = id ? await workOrders.read({ company_id, actor_id, work_order_id: id }) : null;
+    const business = id ? await readBusiness({ company_id, actor_id, work_order_id: id }) : null;
     const rows = await storage.query("SELECT payload FROM evidence WHERE company_id=$1 AND evidence_type='gateway_execution' AND (subject_id=$2 OR id IN (SELECT value FROM json_each($3))) ORDER BY rowid", [company_id, work_id, JSON.stringify(work.evidence_refs)]);
     const evidence = rows.rows.map(row => JSON.parse(row.payload));
     // Legacy gateway rows are normalized on read, preserving existing history.
@@ -199,5 +275,5 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     const verified = accepted_projections.some(projection => projection.status === 'VERIFIED' && accepted_evidence.some(e => e.evidence_id === projection.provenance.terminal_evidence_id && e.verification?.verified === true && e.verification.work_order_id === id));
     return { work, run, business, evidence, accepted_evidence, accepted_projections, outcome: verified && business?.status === 'completed' ? 'verified' : run?.state === 'FAILED' ? 'failed' : work.state.startsWith('WAITING') ? 'waiting' : 'unverified' };
   }
-  return Object.freeze({ ...bootstrap, project });
+  return Object.freeze({ ...bootstrap, project, lifecycleStore, recover: input => bootstrap.zeroDispatcher.recoverInterrupted(input) });
 }

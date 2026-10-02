@@ -15,7 +15,7 @@ import type { HostedWorkforceDependencies } from "../services/workforce/src/host
 import { SqliteWorkforceStore } from "../services/workforce/src/sqlite-store.js";
 
 const capability = "crm.work_order.complete";
-async function fixture() {
+async function fixture(options: { adapterTimeoutMs?: number; shutdownTimeoutMs?: number; legacyControlPort?: () => Promise<never> } = {}) {
   const { createWorkforceServer } = await import("../services/workforce/src/server.ts");
   const dir = mkdtempSync(join(tmpdir(), "titan-hosted-"));
   const storagePath = join(dir, "control.db");
@@ -67,30 +67,46 @@ async function fixture() {
   await workforce.migrate();
   await workforce.putWorker({ company_id: "a", worker_id: "manager", kind: "digital", active: true, capabilities: ["work.delegate", capability] });
   const mapped = (company: string) => { if (company !== "a" && company !== "b") throw new Error("company-storage-unmapped"); return stores[company]; };
-  let beforeRead: (() => Promise<void>) | undefined;
+  let beforeRead: ((signal?: AbortSignal) => Promise<void>) | undefined;
+  let beforeComplete: ((signal?: AbortSignal) => Promise<void>) | undefined;
+  let afterComplete: ((signal?: AbortSignal) => Promise<void>) | undefined;
+  let nativeInvocations = 0;
+  let beforeVerify: ((signal?: AbortSignal) => Promise<void>) | undefined;
   let dependencyCloseCount = 0;
   let readinessHook: (() => ReturnType<HostedWorkforceDependencies["readiness"]>) | undefined;
   const dependencies: HostedWorkforceDependencies = {
-    identityStoragePath,
-    credentialVerifier: { async verify(authorization) {
+    identityStoragePath, adapterTimeoutMs: options.adapterTimeoutMs,
+    credentialVerifier: { async verify(authorization, options) {
+      if (beforeVerify) await beforeVerify(options?.signal);
+      options?.signal.throwIfAborted();
       const match = /^Bearer ([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/.exec(authorization);
       if (!match || !verify(null, Buffer.from(match[1]), keys.publicKey, Buffer.from(match[2], "base64url"))) throw new Error("signature-invalid");
       return JSON.parse(Buffer.from(match[1], "base64url").toString("utf8"));
     } },
     workOrders: {
-      complete: ({ company_id, actor_id, work_order_id }) => mapped(company_id).transaction(tx => completeAssignedWorkOrder(tx, work_order_id, company_id, actor_id)),
-      async read({ company_id, actor_id, work_order_id }) {
-        if (beforeRead) { const hook = beforeRead; beforeRead = undefined; await hook(); }
+      async complete({ company_id, actor_id, work_order_id, signal, authorityFence }) {
+        if (beforeComplete) await beforeComplete(signal);
+        signal?.throwIfAborted();
+        nativeInvocations += 1;
+        const result = await mapped(company_id).transaction(tx => completeAssignedWorkOrder(tx, work_order_id, company_id, actor_id, authorityFence));
+        if (afterComplete) await afterComplete(signal);
+        signal?.throwIfAborted();
+        return result;
+      },
+      async read({ company_id, actor_id, work_order_id, signal }) {
+        if (beforeRead) { const hook = beforeRead; beforeRead = undefined; await hook(signal); }
+        signal?.throwIfAborted();
         return (await mapped(company_id).query("SELECT id,status,completed_at FROM work_orders WHERE company_id=$1 AND id=$2 AND assigned_user_id=$3", [company_id, work_order_id, actor_id])).rows[0] ?? null;
       },
     },
     async close() { dependencyCloseCount += 1; },
     async readiness() { if (readinessHook) return readinessHook(); await Promise.all([identity.query("SELECT 1"), control.query("SELECT 1"), stores.a.query("SELECT 1"), stores.b.query("SELECT 1")]); return { authentication: true, authority: true, provider: true, evidence: true }; },
   };
+  if (options.legacyControlPort) Object.assign(dependencies.workOrders, { completeInControlTransaction: options.legacyControlPort });
   let host: WorkforceServer;
   let base: string;
   async function start() {
-    host = await createWorkforceServer({ storagePath, dependencies });
+    host = await createWorkforceServer({ storagePath, dependencies, shutdownTimeoutMs: options.shutdownTimeoutMs });
     await new Promise<void>(resolve => host.server.listen(0, "127.0.0.1", resolve));
     const address = host.server.address(); assert.ok(address && typeof address !== "string");
     base = `http://127.0.0.1:${address.port}`;
@@ -101,7 +117,11 @@ async function fixture() {
     async post(overrides: Record<string, unknown> = {}, token: string | null = credential()) { const response = await fetch(`${base}/v1/workforce/conversations`, { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: token } : {}) }, body: JSON.stringify({ ...input, ...overrides }) }); return { status: response.status, body: await response.json() as any }; },
     async status(company: "a" | "b" = "a") { return (await stores[company].query<{ status: string }>("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status; },
     async run() { const rows = await control.query<{ payload: string }>("SELECT payload FROM agent_runs WHERE company_id='a'"); return rows.rows.map(row => JSON.parse(row.payload)); },
-    beforeRead(hook: () => Promise<void>) { beforeRead = hook; },
+    get nativeInvocations() { return nativeInvocations; },
+    afterComplete(hook: (signal?: AbortSignal) => Promise<void>) { afterComplete = hook; },
+    beforeVerify(hook: (signal?: AbortSignal) => Promise<void>) { beforeVerify = hook; },
+    beforeComplete(hook: (signal?: AbortSignal) => Promise<void>) { beforeComplete = hook; },
+    beforeRead(hook: (signal?: AbortSignal) => Promise<void>) { beforeRead = hook; },
     readiness(hook?: () => ReturnType<HostedWorkforceDependencies["readiness"]>) { readinessHook = hook; },
     async get(path: string) { return fetch(`${base}${path}`); },
     closeHost() { return host.close(); },
@@ -232,4 +252,170 @@ test("host readiness rejects degraded dependencies and bounds a coalesced stalle
     release(); await new Promise<void>(resolve => setImmediate(resolve)); f.readiness();
     assert.equal((await f.get("/ready")).status, 200);
   } finally { release?.(); await f.close(); }
+});
+
+test("permanently hung credential verification times out, aborts and creates no work", { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 30 }); let adapterSignal: AbortSignal | undefined;
+  try {
+    f.beforeVerify(async signal => { adapterSignal = signal; await new Promise<void>(() => {}); });
+    const started = Date.now(); const response = await f.post();
+    assert.equal(response.status, 401); assert.ok(Date.now() - started < 1000);
+    assert.equal(adapterSignal?.aborted, true); assert.equal((await f.run()).length, 0);
+    assert.equal(await f.status(), "in_progress");
+  } finally { await f.close(); }
+});
+
+for (const adapter of ["read", "complete"] as const) test(`shutdown deadline aborts hung native ${adapter} and late release cannot complete`, { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 2000, shutdownTimeoutMs: 50 });
+  let enter!: () => void; let release!: () => void; let adapterSignal: AbortSignal | undefined;
+  const entered = new Promise<void>(resolve => { enter = resolve; });
+  const blocked = new Promise<void>(resolve => { release = resolve; });
+  let invocations = 0;
+  const hook = async (signal?: AbortSignal) => { invocations += 1; adapterSignal = signal; enter(); await blocked; };
+  try {
+    if (adapter === "read") f.beforeRead(hook); else f.beforeComplete(hook);
+    const pending = f.post().catch(error => ({ disconnected: true, error })); await entered;
+    const started = Date.now(); await f.closeHost();
+    assert.ok(Date.now() - started < 1000, "shutdown must bound hung adapter");
+    assert.equal(adapterSignal?.aborted, true); await pending;
+    release(); await new Promise<void>(resolve => setImmediate(resolve));
+    assert.equal(await f.status(), "in_progress");
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 0);
+    if (adapter === "complete") {
+      assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
+      assert.ok((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='UNCERTAIN'")).rowCount > 0);
+      await f.restart(); const restored = await f.post();
+      assert.ok(restored.body.continuation_token);
+      const observed = await f.post({ action: "resume", continuation_token: restored.body.continuation_token });
+      assert.equal(observed.status, 200, JSON.stringify(observed.body));
+      assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
+      assert.equal(invocations, 1, "uncertain execution must never replay the provider mutation");
+      assert.equal(await f.status(), "in_progress");
+    }
+  } finally { release(); await f.close(); }
+});
+
+test("readiness replaces a timed-out probe without waiting for the old adapter promise", { timeout: 5000 }, async () => {
+  const f = await fixture();
+  try {
+    f.readiness(async () => new Promise<never>(() => {}));
+    const response = await f.get("/ready"); assert.equal(response.status, 503);
+    f.readiness();
+    const recovered = await f.get("/ready"); assert.equal(recovered.status, 200);
+    assert.equal((await f.get("/health")).status, 200);
+  } finally { await f.close(); }
+});
+
+for (const alias of ["symlink", "hardlink", "directory-symlink"] as const) test(`host rejects identity/control physical ${alias} alias before migration`, async () => {
+  const { createWorkforceServer } = await import("../services/workforce/src/server.ts");
+  const { symlinkSync, linkSync } = await import("node:fs");
+  const dir = mkdtempSync(join(tmpdir(), "titan-identity-alias-"));
+  const storagePath = join(dir, "existing.db");
+  const db = new Database(storagePath);
+  db.exec("CREATE TABLE operator_marker(id INTEGER PRIMARY KEY); INSERT INTO operator_marker VALUES(1)"); db.close();
+  let identityStoragePath = join(dir, "identity.db");
+  if (alias === "symlink") symlinkSync(storagePath, identityStoragePath);
+  else if (alias === "hardlink") linkSync(storagePath, identityStoragePath);
+  else { symlinkSync(dir, join(dir, "alias")); identityStoragePath = join(dir, "alias", "existing.db"); }
+  try {
+    const unavailable = async (): Promise<never> => { throw new Error("must-not-call-adapter"); };
+    await assert.rejects(() => createWorkforceServer({ storagePath, dependencies: {
+      identityStoragePath, credentialVerifier: { verify: unavailable }, workOrders: { read: unavailable, complete: unavailable }, readiness: unavailable,
+    } }), /workforce-separate-identity-storage-required/);
+    const observed = new Database(storagePath);
+    try { assert.deepEqual(observed.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all(), [{ name: "operator_marker" }]); }
+    finally { observed.close(); }
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+for (const boundary of ["current", "revoked-session", "revoked-authority"] as const) test(`HTTP resume observes committed effect with ${boundary} and never reexecutes`, { timeout: 5000 }, async () => {
+  const f = await fixture({ adapterTimeoutMs: 30 });
+  try {
+    f.afterComplete(async () => new Promise<void>(() => {}));
+    const started = await f.post(); assert.equal(started.status, 200, JSON.stringify(started.body));
+    assert.equal(await f.status(), "completed"); assert.equal(f.nativeInvocations, 1);
+    assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 0);
+    if (boundary === "revoked-session") await f.registry.revokeSession("session", 1);
+    if (boundary === "revoked-authority") await f.authority.appendApproval({ company_id: "a", ...f.envelope.approval, approval_id: "zzz-revoked", status: "revoked" });
+    await f.restart();
+    assert.ok(started.body.continuation_token);
+    const resumed = await f.post({ action: "resume", continuation_token: started.body.continuation_token });
+    const verified = (await f.control.query<{ payload: string }>("SELECT payload FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rows.map(row => JSON.parse(row.payload));
+    if (boundary === "current") {
+      assert.equal(resumed.status, 200, JSON.stringify(resumed.body));
+      assert.equal((await f.run())[0].state, "COMPLETED"); assert.equal(verified.length, 1);
+      assert.equal(verified[0].accepted_evidence.schema, "titan.business.accepted-evidence/v1");
+      assert.equal(verified[0].run_id, (await f.run())[0].run_id);
+    } else {
+      if (boundary === "revoked-session") assert.equal(resumed.status, 401);
+      assert.equal(verified.length, 0);
+      assert.equal((await f.run())[0].state, "WAITING_EXTERNAL");
+    }
+    assert.equal(f.nativeInvocations, 1);
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 1);
+    assert.equal(await f.status("b"), "in_progress");
+  } finally { await f.close(); }
+});
+
+test("signed malformed lifecycle actions and missing or conflicting continuations cannot reserve execution", async () => {
+  const f = await fixture();
+  try {
+    for (const action of [["cancel"], ["resume"], ["start"], null, {}, { toString: "cancel" }]) {
+      const response = await f.post({ action });
+      assert.equal(response.status, 400, JSON.stringify(response));
+      assert.deepEqual(response.body, { error: "conversation-action-invalid" });
+    }
+    for (const action of ["cancel", "continue", "resume"]) {
+      for (const continuation_token of [undefined, null, "", "  ", []]) {
+        const response = await f.post({ action, continuation_token });
+        assert.equal(response.status, 400, JSON.stringify(response));
+        assert.deepEqual(response.body, { error: "conversation-continuation-required" });
+      }
+    }
+    assert.equal((await f.post({ action: "start", continuation_token: "caller-supplied" })).status, 400);
+    assert.equal((await f.run()).length, 0); assert.equal(f.nativeInvocations, 0);
+    assert.equal((await f.control.query("SELECT work_id FROM workforce_work_items")).rowCount, 0);
+    assert.equal(await f.status(), "in_progress");
+  } finally { await f.close(); }
+});
+
+for (const surface of ["hub", "go"]) test(`signed ${surface} credentials cannot invoke zero-only native host`, async () => {
+  const f = await fixture();
+  try {
+    const response = await f.post({ surface }, f.credential({ surface }));
+    assert.equal(response.status, 401); assert.deepEqual(response.body, { error: "conversation-authentication-failed" });
+    assert.equal((await f.run()).length, 0); assert.equal(f.nativeInvocations, 0);
+    assert.equal((await f.control.query("SELECT work_id FROM workforce_work_items")).rowCount, 0);
+    assert.equal(await f.status(), "in_progress");
+  } finally { await f.close(); }
+});
+
+for (const change of ["revoke", "company-switch"] as const) test(`identity ${change} during final provider read blocks the mutation fence`, async () => {
+  const f = await fixture(); let reads = 0;
+  const hook = async () => {
+    reads += 1;
+    if (reads < 3) { f.beforeRead(hook); return; }
+    if (change === "revoke") await f.registry.revokeSession("session", 1);
+    else await f.registry.switchCompany(f.claims, { audience: "workforce", company_id: "a", actor_id: "lead", context_revision: f.context.context_revision }, "b", new Date().toISOString());
+  };
+  try {
+    f.beforeRead(hook); await f.post();
+    assert.equal(reads, 3); assert.equal(f.nativeInvocations, 0);
+    assert.equal(await f.status(), "in_progress"); assert.equal(await f.status("b"), "in_progress");
+    assert.equal((await f.stores.a.query<{ n: number }>("SELECT n FROM mutation_count")).rows[0].n, 0);
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 0);
+  } finally { await f.close(); }
+});
+
+test("host strips legacy provider control-transaction port before native runtime composition", async () => {
+  let legacyCalls = 0;
+  const f = await fixture({ legacyControlPort: async () => { legacyCalls += 1; throw new Error("must-not-pass-control-storage-to-provider"); } });
+  try {
+    const response = await f.post(); assert.equal(response.status, 200, JSON.stringify(response.body));
+    assert.equal(legacyCalls, 0); assert.equal(f.nativeInvocations, 1);
+    assert.equal(await f.status(), "completed"); assert.equal(await f.status("b"), "in_progress");
+    assert.equal((await f.control.query("SELECT status FROM work_orders WHERE id='wo'")).rows[0].status, "in_progress");
+    assert.equal((await f.control.query("SELECT id FROM evidence WHERE evidence_type='gateway_execution' AND json_extract(payload,'$.state')='VERIFIED'")).rowCount, 1);
+  } finally { await f.close(); }
 });

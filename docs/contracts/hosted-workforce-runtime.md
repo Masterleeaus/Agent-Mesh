@@ -15,11 +15,18 @@ The module exports async `createWorkforceDependencies()` returning the
 - `identityStoragePath`: the separately provisioned GLOBAL_REGISTRY SQLite file;
 - `credentialVerifier.verify(authorization)`: authenticate the credential
   cryptographically and return its bound issuer/subject/session/device/revision,
-  `audience: workforce`, and authorized Zero/Go/Hub surface;
+  `audience: workforce`, and `surface: zero`; the bounded native manager host
+  rejects Go/Hub until their authority-aware dispatch contracts are implemented;
 - `workOrders.complete/read`: resolve current registered physical company storage
   and call the existing native business owner / independent observed-state read;
 - `readiness`: actual authentication, authority, provider and evidence observations;
-- optional `close`: dispose provider resources after accepted requests drain.
+- optional `adapterTimeoutMs` (1–120000ms, default30000) bounds external calls;
+- optional `close({signal})`: dispose provider resources after accepted requests drain.
+Credential verification and readiness receive `{signal}`; native provider input
+also carries `signal` and an ephemeral `authorityFence.assertCurrent()` guard.
+Adapters must invoke that guard immediately before the actual mutation, as the
+canonical native completion owner does. An adapter that ignores abort can still cause a late effect;
+Titan records uncertainty and never treats its deadline as proof of non-execution.
 
 The factory is trusted commissioning code, never an HTTP-selectable module or a
 credential issuer. No default verifier, sample credential, business fixture,
@@ -51,6 +58,16 @@ membership/session, switched company/context, expired session or mismatched
 actor fail closed. Identity never grants execution authority: the existing
 worker access, policy, risk, assurance, evidence and approval owners still decide.
 
+At the effect boundary a SQLite `BEGIN IMMEDIATE` transaction rereads canonical
+control authority and cancellation, then holds that authority fence through the
+bounded provider call. A separate connection cannot commit revocation between
+that read and effect. Identity is revalidated before this transaction; business
+data stays in its physical company database. The optional trusted
+`completeInControlTransaction` port is only for the existing legacy same-store
+web composition; hosted providers receive no control transaction. This is not an
+atomic transaction across identity, control and company databases. The ephemeral
+guard also checks abort and authority expiry immediately before native mutation.
+
 Work/run identity preserves company, actor, conversation, interaction, request,
 operation, trace, correlation and idempotency values. Conflicting start replay
 is rejected; continuation receipts live in the canonical run payload and are
@@ -61,16 +78,35 @@ Provider effects still require observed verification and factual evidence.
 ## Lifecycle and evidence
 
 Readiness requires actual runtime tables, current identity storage and all
-required dependency observations. Probe requests coalesce and time out; liveness
-remains independent. Shutdown stops ingress, drains delegated requests (including
-requests whose clients disconnected), then closes dependencies and stores.
-A provider or verifier promise that never settles currently prevents graceful drain;
-request-body timeouts do not cancel consequential provider execution. A stuck
-readiness dependency keeps its shared probe unavailable until it settles or the
-process restarts. Bounded cancellable provider contracts remain a commissioning
-requirement. A supervisor must allow an adequate drain window; a forced kill can leave a run
-in an explicit recovery-required state. This implementation never blindly replays
-uncertain in-flight effects on restart.
+required dependency observations. Probe requests coalesce; the canonical bounded
+adapter call aborts and releases an expired probe so a later probe can retry.
+Liveness remains independent. Shutdown stops ingress and grants accepted work a
+bounded drain interval (default5000ms). At the deadline it aborts adapter signals
+and closes connections, waits for the bounded handlers to persist recovery state,
+then closes dependencies and stores. Dependency cleanup itself is bounded.
+
+Canonical ExecutionGateway now distinguishes UNCERTAIN from FAILED/VERIFIED.
+Timeout, abort, exception after dispatch, missing verifier and an unverified
+acknowledgement never prove non-execution. The canonical governed-execution
+lifecycle has atomic SQLite records/events, stable company/operation binding,
+and compare-and-swap claims. An interrupted RUNNING or UNCERTAIN operation can
+only reconcile by observed verification; it cannot invoke the provider again.
+An explicitly proven non-executed failure is a different recovery case.
+
+`action` must be a primitive string. `continue`, `resume`, and `cancel` require
+a continuation token; `start` forbids one. Authenticated `resume` is the explicit
+verification-only recovery route, distinct from normal user continuation. It
+preserves the work/run/session binding and revalidates current session and
+authority. No startup scan automatically takes ownership of another live run.
+A locally active driver rejects recovery. Shared-store multi-process ownership
+still requires commissioning discipline: recovery does not establish that another
+host is dead, and compare-and-swap conflicts never authorize another effect.
+
+Real process tests interrupt the native provider before mutation and after a
+committed mutation but before acknowledgement. Both remain uncertain across
+SIGKILL/restart until explicit verification; the first never retries and the
+second verifies without a second mutation. These are process-interruption tests,
+not VPS power-loss or backup anti-rollback certification.
 
 Native execution persists gateway receipts with canonical AcceptedEvidenceLedger
 normalization in the existing evidence table. Projection rebuilds from accepted
@@ -87,7 +123,7 @@ second-surface acceptance remain commissioning evidence, not unit-test claims.
 
 ## Dependency provenance and rollback
 
-Preserved #1179 prerequisite `ad43d010d50ba262c02beaf0ed892b656174ff58`,
+Preserved #1179 prerequisite `743e70789b85571fa0eafb1029630f0cbc6b7eb6`,
 including #811 readiness, malformed URL protection, restored exports and compiler
 coverage; integrated #302 resolver `68e4804f594503f3a205d2caefdb2f9f75701ee4`.
 No edits to the DirectAdmin identity bridge or Server Node runtime owners.

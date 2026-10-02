@@ -56,6 +56,8 @@ export interface ZeroPersistentRuntimePort {
     input?: { role: string; content: string };
     continuation?: WorkCorrelation & { client_message_id: string; fingerprint: string; interaction_id: string; correlation_id: string };
   }): Promise<ZeroRuntimeRun>;
+  isWorkActive?(input: { company_id: CompanyId; work_id: WorkId }): boolean;
+  recoverInterrupted?(input: { company_id: CompanyId; run_id: string }): Promise<ZeroRuntimeRun>;
   cancel?(input: { company_id: CompanyId; run_id: string; reason?: string }): Promise<ZeroRuntimeRun>;
 }
 
@@ -238,7 +240,7 @@ export class ZeroWorkforceRuntimeDispatcher {
           role: 'workforce-manager', messages: [{ role: 'user', content: work.objective }],
         });
       } catch (error) {
-        if (!(error instanceof Error) || !['runtime-run-exists', 'runtime-resume-conflict', 'runtime-run-busy-or-recovery-required'].includes(error.message)) throw error;
+        if (!(error instanceof Error) || !['runtime-run-exists', 'runtime-resume-conflict', 'runtime-run-busy-or-recovery-required', 'runtime-run-active'].includes(error.message)) throw error;
         run = await lookup.call(this.runtime, { company_id: input.company_id, work_id }) as ZeroRuntimeRun | null;
       }
     }
@@ -246,7 +248,7 @@ export class ZeroWorkforceRuntimeDispatcher {
     if (run?.state === 'QUEUED') {
       try { run = await this.runtime.resume({ company_id: input.company_id, run_id: run.run_id }); }
       catch (error) {
-        if (!(error instanceof Error) || !['runtime-resume-conflict', 'runtime-run-busy-or-recovery-required', 'runtime-run-terminal'].includes(error.message)) throw error;
+        if (!(error instanceof Error) || !['runtime-resume-conflict', 'runtime-run-busy-or-recovery-required', 'runtime-run-terminal', 'runtime-run-active'].includes(error.message)) throw error;
         run = await lookup.call(this.runtime, { company_id: input.company_id, work_id }) as ZeroRuntimeRun | null;
       }
     }
@@ -282,6 +284,38 @@ export class ZeroWorkforceRuntimeDispatcher {
     await this.syncWorkFromRun(run, runtimeEvents);
     const updated = (await this.store.get(input.company_id, work.work_id))!;
     return this.result(input, updated, runtimeEvents, run);
+  }
+
+  /** Explicit recovery only: authenticated replay identity, no model/provider retry. */
+  async recoverInterrupted(input: ZeroWorkforceDispatchInput): Promise<ZeroWorkforceDispatchResult> {
+    const normalized = this.normalize(input);
+    const continuation = normalized.continuation_token ? decodeContinuation(normalized.continuation_token) : null;
+    const work_id = continuation?.work_id ?? `zero:${normalized.conversation_id}:${normalized.client_message_id}`;
+    if (this.runtime.isWorkActive?.({ company_id: normalized.company_id, work_id })) throw new Error("runtime-run-active");
+    const work = await this.store.get(normalized.company_id, work_id);
+    if (!work) throw new Error("zero-continuation-work-not-found");
+    this.assertOrigin(work, normalized);
+    if (!continuation) this.assertReplay(work, normalized);
+    const lookup = this.runtime.findByWork ?? this.runtime.findRecoverableByWork;
+    const previous = await lookup.call(this.runtime, { company_id: normalized.company_id, work_id }) as ZeroRuntimeRun | null;
+    if (!previous || (continuation && previous.run_id !== continuation.run_id)) throw new Error("zero-continuation-run-not-found");
+    this.assertRun(previous, normalized.company_id, work_id, normalized.conversation_id, work.assignee!);
+    if (!this.runtime.recoverInterrupted) throw new Error("zero-recovery-unavailable");
+    const events: ZeroRuntimeEvent[] = [];
+    const unsubscribe = this.runtime.events.subscribe(event => {
+      if (event.company_id === normalized.company_id && event.run_id === previous.run_id) events.push(structuredClone(event));
+    });
+    try {
+      let run = previous;
+      if (!terminalRuntimeStates.has(run.state)) {
+        run = await this.runtime.recoverInterrupted({ company_id: normalized.company_id, run_id: run.run_id });
+        if (run.state === "WAITING_EXTERNAL") run = await this.runtime.resume({ company_id: normalized.company_id, run_id: run.run_id });
+        else if (!terminalRuntimeStates.has(run.state)) throw new Error("zero-execution-recovery-unavailable");
+      }
+      this.assertRun(run, normalized.company_id, work_id, normalized.conversation_id, work.assignee!);
+      await this.syncWorkFromRun(run, events);
+      return this.result(normalized, (await this.store.get(normalized.company_id, work_id))!, events, run);
+    } finally { unsubscribe(); }
   }
 
   async cancel(input: WorkCorrelation & { company_id: CompanyId; actor_id: string; conversation_id: string; continuation_token: string; reason?: string }): Promise<ZeroWorkforceDispatchResult> {

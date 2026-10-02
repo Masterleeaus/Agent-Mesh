@@ -106,3 +106,13 @@ test("JSON and SSE project public lifecycle without provider errors or approval 
     } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
   }
 });
+
+test("action must be a primitive string and every continuation action requires its token", () => {
+  for (const action of [["cancel"], ["resume"], {}, null, 1, true]) {
+    assert.throws(() => request({ action }), /conversation-action-invalid/);
+  }
+  for (const action of ["continue", "resume", "cancel"]) {
+    for (const continuation_token of [undefined, "", " ", ["token"]]) assert.throws(() => request({ action, continuation_token }), /conversation-continuation-required/);
+  }
+  assert.throws(() => request({ action: "start", continuation_token: "token" }), /conversation-action-invalid/);
+});
