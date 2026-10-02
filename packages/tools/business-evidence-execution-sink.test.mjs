@@ -51,7 +51,12 @@ test("ExecutionGateway routes ACK and verified outcomes into company-scoped cano
   assert.equal(jobFact.verification_id, "verify-1");
   assert.equal(jobFact.company_id, "company-a");
   assert.equal(jobFact.execution_id, verified.execution_id);
+  assert.equal(jobFact.actor_id, "actor-1");
+  assert.equal(jobFact.agent_id, "agent-1");
+  assert.equal(jobFact.correlation_id, "job-1");
+  assert.equal(jobFact.causation_id, "decision-1");
   assert.equal(jobFact.decision_id, verified.decision_id);
+  assert.equal(jobFact.authority_decision_id, "authority-1");
 });
 
 test("stable evidence identities repair a partial append and make sink replay idempotent", async () => {
