@@ -18,6 +18,33 @@ Use an isolated VM for these tests if the access host also runs DirectAdmin.
 
 ## Install and upgrade
 
+Before first install, prepare the private environment file from
+`infra/vps.env.example`. Replace the `REPLACE_WITH_*` Workforce issuer values
+with the identifiers issued by the trusted Titan and DirectAdmin session
+issuers. Install each issuer's **public** PEM key at the configured path under
+`/opt/titan-zero/shared/keys/`; never copy private issuer keys to this VPS.
+The installer validates these values and key files before building the release.
+The canonical global identity/placement registry database must also already be
+commissioned at the path configured by `WORKFORCE_IDENTITY_SQLITE_HOST_PATH`.
+The installer intentionally will not create identity or placement authority.
+
+```bash
+sudo install -d -m 700 /opt/titan-zero/shared/env /opt/titan-zero/shared/keys
+sudo install -m 600 infra/vps.env.example /opt/titan-zero/shared/env/.env
+sudoedit /opt/titan-zero/shared/env/.env
+# Copy the trusted public key PEMs to the matching paths in the env file.
+# Provision the canonical global identity/placement registry at the configured
+# WORKFORCE_IDENTITY_SQLITE_HOST_PATH before running the installer.
+```
+
+The installer creates the company-store root. It does not create the global
+identity/placement registry, actors, memberships, authority, or company
+placements. Workforce `/health` confirms the process started; `/ready` remains
+503 until the identity, authority, evidence, and at least one company placement
+are commissioned by their owning flows. A 503 at that stage is expected and
+does not mean the server process failed. Fresh end-to-end VPS commissioning
+remains blocked on the active #1233 storage-resolver and registry work.
+
 Run the installer from the same commit as the supplied ZIP:
 
 ```bash
@@ -33,9 +60,10 @@ sets insecure cookies only for this explicit mode).
 
 The installer builds before migration, runs the migration script bundled in the
 web image without masking its installed modules with a source bind mount, then
-starts services and checks `/api/health`. It keeps immutable release directories
-and updates `/opt/titan-zero/current`. Rerun with a new exact ZIP to upgrade after
-backing up. The legacy in-place updater is disabled.
+starts services and checks `/api/health` and Workforce `/health` separately from
+`/ready`. It keeps immutable release directories and updates
+`/opt/titan-zero/current`. Rerun with a new exact ZIP to upgrade after backing
+up. The legacy in-place updater is disabled.
 
 Inspect the actual services (no `titan-zero-status` helper is installed):
 
