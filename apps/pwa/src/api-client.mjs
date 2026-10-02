@@ -1,5 +1,29 @@
 import { normalizePwaContext } from "./scope.mjs";
 
+function hasPathBoundaryEscape(path) {
+  const endpointPath = path.split(/[?#]/, 1)[0].slice(1);
+  const separatorCount = value => (value.match(/\//g) ?? []).length;
+  const hasDotSegment = value => value.split("/").some(segment => segment === "." || segment === "..");
+  const allowedSeparators = separatorCount(endpointPath);
+  let decoded = endpointPath;
+
+  for (let depth = 0; depth < 8; depth += 1) {
+    if (decoded.includes("\\") || hasDotSegment(decoded)) return true;
+
+    let next;
+    try {
+      next = decodeURIComponent(decoded);
+    } catch {
+      return true;
+    }
+    if (next.includes("\\") || hasDotSegment(next) || separatorCount(next) > allowedSeparators) return true;
+    if (next === decoded) return false;
+    decoded = next;
+  }
+
+  return /%[\da-f]{2}/i.test(decoded);
+}
+
 /** Read-only, same-origin projection transport. Mutations are deliberately not exposed. */
 export function createPwaProjectionClient({ apiBaseUrl, context, fetchImpl = globalThis.fetch, origin = globalThis.location?.origin }) {
   const scope = normalizePwaContext(context);
@@ -13,6 +37,7 @@ export function createPwaProjectionClient({ apiBaseUrl, context, fetchImpl = glo
     context: scope,
     async get(path, { signal } = {}) {
       if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//") || path.includes("\\")) throw new Error("pwa-api:path-invalid");
+      if (hasPathBoundaryEscape(path)) throw new Error("pwa-api:path-invalid");
       const url = new URL(path.slice(1), `${base.origin}${basePath}`);
       if (url.origin !== base.origin || !url.pathname.startsWith(basePath)) throw new Error("pwa-api:path-invalid");
       const response = await fetchImpl(url, {

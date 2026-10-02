@@ -56,6 +56,9 @@ test("projection client is same-origin, GET-only, no-store and validates respons
   assert.throws(() => createPwaProjectionClient({ apiBaseUrl: "https://evil.example/", context: context(), origin: "https://titan.example", fetchImpl: fetch }), /origin-not-approved/);
   await assert.rejects(api.get("//evil.example/data"), /path-invalid/);
   await assert.rejects(api.get("/../private"), /path-invalid/);
+  await assert.rejects(api.get("/..%2fprivate"), /path-invalid/);
+  await assert.rejects(api.get("/..%5cprivate"), /path-invalid/);
+  await assert.rejects(api.get("/..%252fprivate"), /path-invalid/);
   const wrongCompany = createPwaProjectionClient({ apiBaseUrl: "/api/", context: context(), origin: "https://titan.example", fetchImpl: async () => ({ ok: true, json: async () => ({ company_id: "c-b" }) }) });
   await assert.rejects(wrongCompany.get("/projection"), /company-mismatch/);
 });
