@@ -6,8 +6,10 @@ on:
     paths:
       - "packages/titan-platform/src/distribution-gateway.ts"
       - "packages/titan-platform/src/distribution-catalog.ts"
+      - "packages/titan-platform/src/distribution-contract-compiler.ts"
       - "packages/titan-platform/tests/distribution-gateway.test.mjs"
       - "packages/titan-platform/tests/distribution-catalog.test.mjs"
+      - "packages/titan-platform/tests/distribution-contract-compiler.test.mjs"
       - "packages/titan-platform/package.json"
       - "scripts/generate-distribution-coverage.mjs"
       - ".github/workflows/distribution-gateway-contract.yml"
@@ -40,7 +42,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
       - name: Compile isolated distribution contract
-        run: pnpm exec tsc packages/titan-platform/src/distribution-gateway.ts packages/titan-platform/src/distribution-catalog.ts --target ES2022 --module NodeNext --moduleResolution NodeNext --outDir packages/titan-platform/.test-dist --skipLibCheck --strict
+        run: pnpm exec tsc packages/titan-platform/src/distribution-gateway.ts packages/titan-platform/src/distribution-catalog.ts packages/titan-platform/src/distribution-contract-compiler.ts --target ES2022 --module NodeNext --moduleResolution NodeNext --outDir packages/titan-platform/.test-dist --skipLibCheck --strict
       - name: Run focused distribution tests
         run: node --test packages/titan-platform/tests/distribution-gateway.test.mjs packages/titan-platform/tests/distribution-catalog.test.mjs
       - name: Generate commit-bound gap inventory
