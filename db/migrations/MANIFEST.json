@@ -1432,6 +1432,13 @@
       "filename": "189_audit_log_nullable_actor.sql",
       "prefix": "189",
       "sha256": "d612dbb4d11dad8eccb177c8e4e0b68a49e03fea97fb12849a130561815d52b6"
+    },
+    {
+      "sequence": 205,
+      "migration_id": "db/migrations/190_workforce_six_table_rls_parent_integrity.sql",
+      "filename": "190_workforce_six_table_rls_parent_integrity.sql",
+      "prefix": "190",
+      "sha256": "b27246bff10863a891a62fef1dbfa3f27c7d48ad91a18e79c93ecdd132afb82a"
     }
   ],
   "prefix_collisions": [

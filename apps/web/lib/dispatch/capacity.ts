@@ -1,9 +1,8 @@
-import { portableQuery } from "@/lib/db/portable";
+import type { DbClient } from "@/lib/db-contract";
 import { buildFullAddress } from "@/lib/travel/distance";
 import { buildDispatchRouteLegs, type DispatchRouteReadiness } from "./routing";
 import { availableMinutesInRange, loadAvailabilityForAccount, type AvailabilityWindow } from "@/lib/workforce/availability";
 import { loadTechnicianSkills, type TechnicianSkill } from "@/lib/workforce/skills";
-import { withPortableTransaction } from "@/lib/db/portable";
 import { loadCurrentVehicleAssignments } from "@/lib/workforce/vehicle-assignment";
 
 export interface DispatchTechnicianCapacity {
@@ -115,8 +114,8 @@ export function buildCapacity(
   }).sort((a, b) => a.utilizationPct - b.utilizationPct || a.name.localeCompare(b.name));
 }
 
-export async function loadDispatchBoard(accountId: string, rangeStart: Date, rangeEnd: Date) {
-  const technicians = await portableQuery<DbTech>(
+export async function loadDispatchBoard(client: DbClient, accountId: string, rangeStart: Date, rangeEnd: Date) {
+  const techniciansResult = await client.query<DbTech>(
     `SELECT u.id, u.full_name, u.email
        FROM business_memberships bm
        JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id
@@ -126,19 +125,21 @@ export async function loadDispatchBoard(accountId: string, rangeStart: Date, ran
       ORDER BY u.full_name ASC, u.email ASC`,
     [accountId],
   );
+  const technicians = techniciansResult.rows;
   const [availability, skillsByUser, vehicleAssignments] = await Promise.all([
-    loadAvailabilityForAccount(accountId),
-    loadTechnicianSkills(accountId),
-    withPortableTransaction((client) => loadCurrentVehicleAssignments(client, accountId)),
+    loadAvailabilityForAccount(client, accountId),
+    loadTechnicianSkills(client, accountId),
+    loadCurrentVehicleAssignments(client, accountId),
   ]);
   const vehiclesByUser = new Map(vehicleAssignments.map((assignment) => [assignment.userId, { id: assignment.vehicleId, name: assignment.vehicleName, plate: assignment.plate }]));
 
-  const fieldVehicles = await portableQuery<Record<string, unknown> & { id: string; nickname: string; plate: string | null }>(
+  const fieldVehiclesResult = await client.query<Record<string, unknown> & { id: string; nickname: string; plate: string | null }>(
     `SELECT id, nickname, plate FROM vehicles WHERE account_id = $1 AND is_active = true AND kind <> 'trailer' ORDER BY nickname ASC`,
     [accountId],
   );
+  const fieldVehicles = fieldVehiclesResult.rows;
 
-  const visits = await portableQuery<DbVisit>(
+  const visitsResult = await client.query<DbVisit>(
     `SELECT v.id, v.job_id, v.work_order_id, v.assigned_user_id,
             v.scheduled_start, v.scheduled_end, v.status,
             j.title AS job_title, c.name AS client_name,
@@ -161,6 +162,7 @@ export async function loadDispatchBoard(accountId: string, rangeStart: Date, ran
       ORDER BY v.scheduled_start ASC`,
     [accountId, rangeStart.toISOString(), rangeEnd.toISOString()],
   );
+  const visits = visitsResult.rows;
 
   const planningDays = Math.max(1, Math.round((rangeEnd.getTime() - rangeStart.getTime()) / 86_400_000));
   const normalized = visits.map((visit) => ({

@@ -7,6 +7,10 @@ vi.mock("../env", () => ({
   getEnv: () => ({ DATABASE_URL: process.env.TEST_RUNTIME_DATABASE_URL }),
 }));
 import { getPool, withDbSession } from "../db";
+import { withTenantTransaction } from "../db/portable";
+import { loadAvailabilityForAccount } from "../workforce/availability";
+import { loadTechnicianSkills } from "../workforce/skills";
+import { loadFieldJobTemplates } from "../work-orders/field-job-templates";
 
 const enabled = !!process.env.TEST_DATABASE_URL && !!process.env.TEST_RUNTIME_DATABASE_URL;
 if (process.env.CI && !enabled) {
@@ -18,7 +22,19 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   const accountA = randomUUID();
   const accountB = randomUUID();
   const userA = randomUUID();
+  const userATech = randomUUID();
+  const userBOwner = randomUUID();
+  const extraMemberA = randomUUID();
+  const unassignedUserA = randomUUID();
   const clientB = randomUUID();
+  const skillA = randomUUID();
+  const skillB = randomUUID();
+  const availabilityA = randomUUID();
+  const availabilityB = randomUUID();
+  const templateA = randomUUID();
+  const templateB = randomUUID();
+  const taskA = randomUUID();
+  const taskB = randomUUID();
   const email = `rls-${randomUUID()}@test.invalid`;
   const duplicateEmail = `rls-duplicate-${randomUUID()}@test.invalid`;
   const session = { accountId: accountA, userId: userA, role: "owner" as const };
@@ -30,12 +46,51 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       `INSERT INTO users (id, account_id, email, full_name, password_hash, role)
        VALUES ($1, $2, $3, 'RLS owner', $4, 'owner'),
               ($5, $2, $6, 'Duplicate A', $4, 'tech'),
-              ($7, $8, $6, 'Duplicate B', $4, 'owner')`,
-      [userA, accountA, email, passwordHash, randomUUID(), duplicateEmail, randomUUID(), accountB],
+              ($7, $8, $6, 'Duplicate B', $4, 'owner'),
+              ($9, $2, $10, 'Extra A', $4, 'tech'),
+              ($11, $2, $12, 'Unassigned A', $4, 'tech')`,
+      [userA, accountA, email, passwordHash, userATech, duplicateEmail, userBOwner, accountB, extraMemberA, `extra-${randomUUID()}@test.invalid`, unassignedUserA, `unassigned-${randomUUID()}@test.invalid`],
+    );
+    // A principal may retain a membership in more than one company.
+    // Do not add an account_id=user.account_id membership invariant.
+    await admin.query(
+      `INSERT INTO business_memberships (account_id, user_id, role, status)
+       VALUES ($1, $3, 'owner', 'active'),
+              ($1, $4, 'tech', 'active'),
+              ($1, $5, 'tech', 'active'),
+              ($2, $6, 'owner', 'active'),
+              ($2, $3, 'tech', 'active')`,
+      [accountA, accountB, userA, userATech, extraMemberA, userBOwner],
     );
     await admin.query(
       "INSERT INTO clients (id, account_id, name) VALUES ($1, $2, 'Other account client')",
       [clientB, accountB],
+    );
+    await admin.query(
+      `INSERT INTO workforce_skills (id, account_id, name, category)
+       VALUES ($1, $2, 'A skill', 'field'), ($3, $4, 'B skill', 'field')`,
+      [skillA, accountA, skillB, accountB],
+    );
+    await admin.query(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency)
+       VALUES ($1, $2, $3, 3), ($4, $5, $6, 4), ($4, $7, $6, 2)`,
+      [accountA, userATech, skillA, accountB, userBOwner, skillB, userA],
+    );
+    await admin.query(
+      `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time)
+       VALUES ($1, $2, $3, 1, '08:00', '16:00'),
+              ($4, $5, $6, 2, '09:00', '17:00')`,
+      [availabilityA, accountA, userATech, availabilityB, accountB, userA],
+    );
+    await admin.query(
+      `INSERT INTO field_job_templates (id, account_id, name)
+       VALUES ($1, $2, 'A template'), ($3, $4, 'B template')`,
+      [templateA, accountA, templateB, accountB],
+    );
+    await admin.query(
+      `INSERT INTO field_job_template_tasks (id, account_id, template_id, label)
+       VALUES ($1, $2, $3, 'A task'), ($4, $5, $6, 'B task')`,
+      [taskA, accountA, templateA, taskB, accountB, templateB],
     );
   });
 
@@ -97,5 +152,379 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
     await withDbSession({ ...session, accountId: accountB }, async (client) => {
       expect((await client.query("SELECT id FROM clients")).rows).toEqual([{ id: clientB }]);
     });
+  });
+
+  it("keeps the six Workforce tables default-deny and reads one account through tenant helpers", async () => {
+    const protectedTables = [
+      "business_memberships",
+      "workforce_skills",
+      "technician_skills",
+      "technician_availability",
+      "field_job_templates",
+      "field_job_template_tasks",
+    ];
+    const flags = await admin.query(
+      `SELECT c.relname, c.relrowsecurity, c.relforcerowsecurity
+         FROM pg_class c
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = 'public' AND c.relname = ANY($1::text[])
+        ORDER BY c.relname`,
+      [protectedTables],
+    );
+    expect(flags.rows).toHaveLength(protectedTables.length);
+    expect(flags.rows.every((row) => row.relrowsecurity && row.relforcerowsecurity)).toBe(true);
+
+    const privileges = await getPool().query(
+      `SELECT c.relname,
+              has_table_privilege(current_user, c.oid, 'SELECT') AS can_select,
+              has_table_privilege(current_user, c.oid, 'INSERT') AS can_insert,
+              has_table_privilege(current_user, c.oid, 'UPDATE') AS can_update,
+              has_table_privilege(current_user, c.oid, 'DELETE') AS can_delete
+         FROM pg_class c
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = 'public' AND c.relname = ANY($1::text[])
+        ORDER BY c.relname`,
+      [protectedTables],
+    );
+    expect(privileges.rows).toHaveLength(protectedTables.length);
+    expect(privileges.rows.every((row) => row.can_select && row.can_insert && row.can_update && row.can_delete)).toBe(true);
+
+    const contextlessInserts: Array<{ table: string; sql: string; params: unknown[] }> = [
+      {
+        table: "business_memberships",
+        sql: `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'tech', 'active')`,
+        params: [accountA, unassignedUserA],
+      },
+      {
+        table: "workforce_skills",
+        sql: `INSERT INTO workforce_skills (id, account_id, name) VALUES ($1, $2, 'Contextless skill')`,
+        params: [randomUUID(), accountA],
+      },
+      {
+        table: "technician_skills",
+        sql: `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 1)`,
+        params: [accountA, userATech, skillA],
+      },
+      {
+        table: "technician_availability",
+        sql: `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time) VALUES ($1, $2, $3, 0, '08:00', '16:00')`,
+        params: [randomUUID(), accountA, userATech],
+      },
+      {
+        table: "field_job_templates",
+        sql: `INSERT INTO field_job_templates (id, account_id, name) VALUES ($1, $2, 'Contextless template')`,
+        params: [randomUUID(), accountA],
+      },
+      {
+        table: "field_job_template_tasks",
+        sql: `INSERT INTO field_job_template_tasks (id, account_id, template_id, label) VALUES ($1, $2, $3, 'Contextless task')`,
+        params: [randomUUID(), accountA, templateA],
+      },
+    ];
+
+    for (const table of protectedTables) {
+      expect((await getPool().query(`SELECT account_id FROM ${table}`)).rows).toEqual([]);
+      const insert = contextlessInserts.find((candidate) => candidate.table === table);
+      expect(insert).toBeDefined();
+      await expect(getPool().query(insert!.sql, insert!.params))
+        .rejects.toMatchObject({ code: "42501" });
+    }
+
+    // This injects the session payload after authentication to exercise the DB
+    // boundary. It is not a login/bootstrap test; #302 owns that resolver.
+    await withTenantTransaction(session, async (client, accountId) => {
+      expect(accountId).toBe(accountA);
+      const memberships = await client.query<{ user_id: string }>(
+        `SELECT user_id FROM business_memberships ORDER BY user_id`,
+      );
+      expect(memberships.rows.map((row) => row.user_id).sort()).toEqual([userA, userATech, extraMemberA].sort());
+
+      const skillMap = await loadTechnicianSkills(client, accountId);
+      expect(skillMap.get(userATech)?.map((skill) => skill.skillId)).toEqual([skillA]);
+      const availability = await loadAvailabilityForAccount(client, accountId);
+      expect(availability.map((window) => [window.id, window.userId])).toEqual([[availabilityA, userATech]]);
+      const templates = await loadFieldJobTemplates(client, accountId);
+      expect(templates.map((template) => [template.id, template.tasks.map((task) => task.id)])).toEqual([[templateA, [taskA]]]);
+
+      for (const table of protectedTables) {
+        expect((await client.query(`SELECT account_id FROM ${table} WHERE account_id = $1`, [accountB])).rows).toEqual([]);
+        expect((await client.query(`UPDATE ${table} SET account_id = $1 WHERE account_id = $2`, [accountA, accountB])).rowCount).toBe(0);
+        expect((await client.query(`DELETE FROM ${table} WHERE account_id = $1`, [accountB])).rowCount).toBe(0);
+      }
+    });
+
+    // A verified selected-company context can view its own membership row for
+    // the same principal even though legacy users.account_id points at A.
+    await withTenantTransaction({ ...session, accountId: accountB, userId: userA, role: "tech" }, async (client) => {
+      const { rows } = await client.query<{ user_id: string }>(
+        `SELECT user_id FROM business_memberships WHERE user_id = $1`, [userA],
+      );
+      expect(rows).toEqual([{ user_id: userA }]);
+    });
+  });
+
+  it("allows same-account owner CRUD and rejects forged account and parent references", async () => {
+    const transientSkill = randomUUID();
+    const transientTemplate = randomUUID();
+    const transientTask = randomUUID();
+    const transientAvailability = randomUUID();
+    const inactiveSkill = randomUUID();
+
+    await withTenantTransaction(session, async (client, accountId) => {
+      await client.query(
+        `INSERT INTO workforce_skills (id, account_id, name) VALUES ($1, $2, 'Inactive skill')`,
+        [inactiveSkill, accountId],
+      );
+      await client.query(`UPDATE workforce_skills SET active = false WHERE id = $1 AND account_id = $2`, [inactiveSkill, accountId]);
+    });
+    await expect(withTenantTransaction(session, (client) => client.query(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 1)`,
+      [accountA, userATech, inactiveSkill],
+    ))).rejects.toMatchObject({ code: "42501" });
+    await withTenantTransaction(session, (client) => client.query(
+      `DELETE FROM workforce_skills WHERE id = $1 AND account_id = $2`,
+      [inactiveSkill, accountA],
+    ));
+
+    await withTenantTransaction(session, (client) => client.query(
+      `UPDATE business_memberships SET status = 'revoked' WHERE account_id = $1 AND user_id = $2`,
+      [accountA, userATech],
+    ));
+    await withTenantTransaction(session, async (client) => {
+      expect((await client.query(
+        `SELECT skill_id FROM technician_skills WHERE account_id = $1 AND user_id = $2`,
+        [accountA, userATech],
+      )).rows).toEqual([]);
+      expect((await client.query(
+        `SELECT id FROM technician_availability WHERE account_id = $1 AND user_id = $2`,
+        [accountA, userATech],
+      )).rows).toEqual([]);
+    });
+    await expect(withTenantTransaction(session, (client) => client.query(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 1)`,
+      [accountA, userATech, skillA],
+    ))).rejects.toMatchObject({ code: "42501" });
+    await expect(withTenantTransaction(session, (client) => client.query(
+      `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time)
+       VALUES ($1, $2, $3, 6, '08:00', '16:00')`,
+      [randomUUID(), accountA, userATech],
+    ))).rejects.toMatchObject({ code: "42501" });
+    await withTenantTransaction(session, (client) => client.query(
+      `UPDATE business_memberships SET status = 'active' WHERE account_id = $1 AND user_id = $2`,
+      [accountA, userATech],
+    ));
+
+    await withTenantTransaction(session, async (client, accountId) => {
+      expect((await client.query(
+        `UPDATE business_memberships SET role = 'admin' WHERE account_id = $1 AND user_id = $2`,
+        [accountId, extraMemberA],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `DELETE FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
+        [accountId, extraMemberA],
+      )).rowCount).toBe(1);
+
+      await client.query(
+        `INSERT INTO workforce_skills (id, account_id, name, category) VALUES ($1, $2, 'Transient skill', 'test')`,
+        [transientSkill, accountId],
+      );
+      expect((await client.query(
+        `UPDATE workforce_skills SET category = 'changed' WHERE id = $1 AND account_id = $2`,
+        [transientSkill, accountId],
+      )).rowCount).toBe(1);
+      expect((await client.query(`DELETE FROM workforce_skills WHERE id = $1 AND account_id = $2`, [transientSkill, accountId])).rowCount).toBe(1);
+
+      expect((await client.query(
+        `UPDATE technician_skills SET proficiency = 1 WHERE account_id = $1 AND user_id = $2 AND skill_id = $3`,
+        [accountId, userATech, skillA],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `DELETE FROM technician_skills WHERE account_id = $1 AND user_id = $2 AND skill_id = $3`,
+        [accountId, userATech, skillA],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 3)`,
+        [accountId, userATech, skillA],
+      )).rowCount).toBe(1);
+
+      await client.query(
+        `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time, note)
+         VALUES ($1, $2, $3, 3, '08:00', '16:00', 'before')`,
+        [transientAvailability, accountId, userATech],
+      );
+      expect((await client.query(
+        `UPDATE technician_availability SET note = 'after' WHERE id = $1 AND account_id = $2`,
+        [transientAvailability, accountId],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `DELETE FROM technician_availability WHERE id = $1 AND account_id = $2`,
+        [transientAvailability, accountId],
+      )).rowCount).toBe(1);
+
+      await client.query(
+        `INSERT INTO field_job_templates (id, account_id, name) VALUES ($1, $2, 'Transient template')`,
+        [transientTemplate, accountId],
+      );
+      await client.query(
+        `INSERT INTO field_job_template_tasks (id, account_id, template_id, label) VALUES ($1, $2, $3, 'Transient task')`,
+        [transientTask, accountId, transientTemplate],
+      );
+      expect((await client.query(
+        `UPDATE field_job_template_tasks SET required = false WHERE id = $1 AND account_id = $2`,
+        [transientTask, accountId],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `DELETE FROM field_job_template_tasks WHERE id = $1 AND account_id = $2`,
+        [transientTask, accountId],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `UPDATE field_job_templates SET active = false WHERE id = $1 AND account_id = $2`,
+        [transientTemplate, accountId],
+      )).rowCount).toBe(1);
+      expect((await client.query(
+        `DELETE FROM field_job_templates WHERE id = $1 AND account_id = $2`,
+        [transientTemplate, accountId],
+      )).rowCount).toBe(1);
+    });
+
+    const denyFor = async (
+      activeSession: { accountId: string; userId: string; role: "owner" | "admin" | "tech" },
+      sql: string,
+      params: unknown[],
+    ) => {
+      await expect(withTenantTransaction(activeSession, (client) => client.query(sql, params)))
+        .rejects.toMatchObject({ code: "42501" });
+    };
+    const deny = (sql: string, params: unknown[]) => denyFor(session, sql, params);
+    await deny(
+      `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'tech', 'active')`,
+      [accountB, userATech],
+    );
+    await deny(
+      `INSERT INTO workforce_skills (id, account_id, name) VALUES ($1, $2, 'Forged B skill')`,
+      [randomUUID(), accountB],
+    );
+    await deny(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 1)`,
+      [accountA, userBOwner, skillA],
+    );
+    await deny(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 1)`,
+      [accountA, userATech, skillB],
+    );
+    await deny(
+      `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time) VALUES ($1, $2, $3, 4, '08:00', '16:00')`,
+      [randomUUID(), accountA, userBOwner],
+    );
+    await deny(
+      `INSERT INTO field_job_templates (id, account_id, name) VALUES ($1, $2, 'Forged B template')`,
+      [randomUUID(), accountB],
+    );
+    await deny(
+      `INSERT INTO field_job_template_tasks (id, account_id, template_id, label) VALUES ($1, $2, $3, 'Forged parent task')`,
+      [randomUUID(), accountA, templateB],
+    );
+
+    const updatesToOtherAccount: Array<{ sql: string; params: unknown[] }> = [
+      {
+        sql: `UPDATE business_memberships SET account_id = $1 WHERE account_id = $2 AND user_id = $3`,
+        params: [accountB, accountA, userATech],
+      },
+      {
+        sql: `UPDATE workforce_skills SET account_id = $1 WHERE account_id = $2 AND id = $3`,
+        params: [accountB, accountA, skillA],
+      },
+      {
+        sql: `UPDATE technician_skills SET account_id = $1 WHERE account_id = $2 AND user_id = $3 AND skill_id = $4`,
+        params: [accountB, accountA, userATech, skillA],
+      },
+      {
+        sql: `UPDATE technician_availability SET account_id = $1 WHERE account_id = $2 AND id = $3`,
+        params: [accountB, accountA, availabilityA],
+      },
+      {
+        sql: `UPDATE field_job_templates SET account_id = $1 WHERE account_id = $2 AND id = $3`,
+        params: [accountB, accountA, templateA],
+      },
+      {
+        sql: `UPDATE field_job_template_tasks SET account_id = $1 WHERE account_id = $2 AND id = $3`,
+        params: [accountB, accountA, taskA],
+      },
+    ];
+    for (const { sql, params } of updatesToOtherAccount) await deny(sql, params);
+
+    const techWriteAttempts: Array<{ sql: string; params: unknown[] }> = [
+      {
+        sql: `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'tech', 'active')`,
+        params: [accountA, unassignedUserA],
+      },
+      {
+        sql: `INSERT INTO workforce_skills (id, account_id, name) VALUES ($1, $2, 'Tech-forged skill')`,
+        params: [randomUUID(), accountA],
+      },
+      {
+        sql: `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 1)`,
+        params: [accountA, userA, skillA],
+      },
+      {
+        sql: `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time)
+              VALUES ($1, $2, $3, 1, '08:00', '16:00')`,
+        params: [randomUUID(), accountA, userATech],
+      },
+      {
+        sql: `INSERT INTO field_job_templates (id, account_id, name) VALUES ($1, $2, 'Tech-forged template')`,
+        params: [randomUUID(), accountA],
+      },
+      {
+        sql: `INSERT INTO field_job_template_tasks (id, account_id, template_id, label) VALUES ($1, $2, $3, 'Tech-forged task')`,
+        params: [randomUUID(), accountA, templateA],
+      },
+    ];
+    for (const { sql, params } of techWriteAttempts) {
+      await denyFor({ ...session, role: "tech", userId: userATech }, sql, params);
+    }
+
+    await expect(admin.query(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id) VALUES ($1, $2, $3)`,
+      [accountA, userATech, skillB],
+    )).rejects.toMatchObject({ code: "23503" });
+    await expect(admin.query(
+      `INSERT INTO technician_skills (account_id, user_id, skill_id) VALUES ($1, $2, $3)`,
+      [accountA, userBOwner, skillA],
+    )).rejects.toMatchObject({ code: "23503" });
+    await expect(admin.query(
+      `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time)
+       VALUES ($1, $2, $3, 5, '08:00', '16:00')`,
+      [randomUUID(), accountA, userBOwner],
+    )).rejects.toMatchObject({ code: "23503" });
+    await expect(admin.query(
+      `INSERT INTO field_job_template_tasks (id, account_id, template_id, label) VALUES ($1, $2, $3, 'Wrong account')`,
+      [randomUUID(), accountA, templateB],
+    )).rejects.toMatchObject({ code: "23503" });
+
+    await withTenantTransaction(session, async (client, accountId) => {
+      await client.query(
+        `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'tech', 'active')`,
+        [accountId, unassignedUserA],
+      );
+      await client.query(
+        `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency) VALUES ($1, $2, $3, 2)`,
+        [accountId, unassignedUserA, skillA],
+      );
+      await client.query(
+        `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time)
+         VALUES ($1, $2, $3, 2, '08:00', '16:00')`,
+        [randomUUID(), accountId, unassignedUserA],
+      );
+      expect((await client.query(`DELETE FROM users WHERE id = $1 AND account_id = $2`, [unassignedUserA, accountId])).rowCount).toBe(1);
+    });
+    const afterUserDelete = await admin.query(
+      `SELECT
+         (SELECT count(*) FROM business_memberships WHERE account_id = $1 AND user_id = $2) AS memberships,
+         (SELECT count(*) FROM technician_skills WHERE account_id = $1 AND user_id = $2) AS skills,
+         (SELECT count(*) FROM technician_availability WHERE account_id = $1 AND user_id = $2) AS availability`,
+      [accountA, unassignedUserA],
+    );
+    expect(afterUserDelete.rows[0]).toEqual({ memberships: "0", skills: "0", availability: "0" });
   });
 });

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
-import { getPool, queryOne } from "@/lib/db";
+import { withTenantTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 import { getPathId } from "@/lib/route-utils";
@@ -28,10 +28,13 @@ export const GET = withAuth(async (request: NextRequest, session: AuthSession) =
       { status: 403 }
     );
   }
-  const row = await queryOne(
-    `SELECT id, full_name, email, phone, role, created_at FROM users WHERE id = $1 AND account_id = $2`,
-    [id, session.accountId]
-  );
+  const row = await withTenantTransaction(session, async (client, accountId) => {
+    const { rows } = await client.query(
+      `SELECT id, full_name, email, phone, role, created_at FROM users WHERE id = $1 AND account_id = $2`,
+      [id, accountId],
+    );
+    return rows[0] ?? null;
+  });
   if (!row) {
     return NextResponse.json(
       { error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } },
@@ -63,31 +66,13 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
 
   const { full_name, email, phone, role } = parsed.data;
 
-  // Role changes: owner only, and can't orphan the last owner
+  // Role changes: owner only, and can't orphan the last owner.
   if (role !== undefined) {
     if (session.role !== "owner") {
       return NextResponse.json(
         { error: { code: "FORBIDDEN", message: "Only owners can change roles", traceId: session.traceId } },
         { status: 403 }
       );
-    }
-    if (role !== "owner" && isSelf) {
-      // Check if this would remove the last owner
-      const client = await getPool().connect();
-      try {
-        const { rows } = await client.query(
-          `SELECT COUNT(*)::int AS cnt FROM users WHERE account_id = $1 AND role = 'owner'`,
-          [session.accountId]
-        );
-        if ((rows[0]?.cnt ?? 0) <= 1) {
-          return NextResponse.json(
-            { error: { code: "FORBIDDEN", message: "Cannot remove the last owner", traceId: session.traceId } },
-            { status: 422 }
-          );
-        }
-      } finally {
-        client.release();
-      }
     }
   }
 
@@ -101,72 +86,71 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
     }
   }
 
-  const pool = getPool();
-  const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    await client.query(
-      `SELECT set_config('app.current_user_id', $1, true),
-              set_config('app.current_account_id', $2, true),
-              set_config('app.current_role', $3, true)`,
-      [session.userId, session.accountId, session.role]
-    );
-
-    const before = await client.query(
-      `SELECT id, full_name, email, phone, role FROM users WHERE id = $1 AND account_id = $2`,
-      [id, session.accountId]
-    );
-    if (!before.rowCount) {
-      await client.query("ROLLBACK");
-      return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
-    }
-
-    const setClauses: string[] = ["updated_at = now()"];
-    const params: unknown[] = [];
-    let idx = 1;
-
-    if (full_name !== undefined) { setClauses.push(`full_name = $${idx++}`); params.push(full_name); }
-    if (email !== undefined) { setClauses.push(`email = $${idx++}`); params.push(email.toLowerCase().trim()); }
-    if (phone !== undefined) { setClauses.push(`phone = $${idx++}`); params.push(phone || null); }
-    if (role !== undefined) { setClauses.push(`role = $${idx++}`); params.push(role); }
-    params.push(id);
-
-    const { rows } = await client.query(
-      `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} AND account_id = $${idx + 1} RETURNING id, full_name, email, phone, role`,
-      [...params, session.accountId]
-    );
-
-    if (role !== undefined) {
-      // Membership is the session role source. Synchronize only this company;
-      // never recreate a missing membership or reactivate an inactive one.
-      await client.query(
-        `UPDATE business_memberships SET role = $1 WHERE user_id = $2 AND account_id = $3`,
-        [role, id, session.accountId]
+    return await withTenantTransaction(session, async (client, accountId) => {
+      const before = await client.query(
+        `SELECT id, full_name, email, phone, role FROM users WHERE id = $1 AND account_id = $2`,
+        [id, accountId],
       );
-    }
+      if (!before.rowCount) {
+        return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
+      }
 
-    await appendAuditLog(client, {
-      account_id: session.accountId,
-      entity_type: "user",
-      entity_id: id,
-      action: "update",
-      actor_id: session.userId,
-      trace_id: session.traceId,
-      old_value: before.rows[0] as Record<string, unknown>,
-      new_value: rows[0] as Record<string, unknown>,
+      if (role !== undefined && role !== "owner" && isSelf) {
+        const { rows: ownerRows } = await client.query<{ cnt: number }>(
+          `SELECT COUNT(*)::int AS cnt FROM users WHERE account_id = $1 AND role = 'owner'`,
+          [accountId],
+        );
+        if ((ownerRows[0]?.cnt ?? 0) <= 1) {
+          return NextResponse.json(
+            { error: { code: "FORBIDDEN", message: "Cannot remove the last owner", traceId: session.traceId } },
+            { status: 422 },
+          );
+        }
+      }
+
+      const setClauses: string[] = ["updated_at = now()"];
+      const params: unknown[] = [];
+      let idx = 1;
+
+      if (full_name !== undefined) { setClauses.push(`full_name = $${idx++}`); params.push(full_name); }
+      if (email !== undefined) { setClauses.push(`email = $${idx++}`); params.push(email.toLowerCase().trim()); }
+      if (phone !== undefined) { setClauses.push(`phone = $${idx++}`); params.push(phone || null); }
+      if (role !== undefined) { setClauses.push(`role = $${idx++}`); params.push(role); }
+      params.push(id);
+
+      const { rows } = await client.query(
+        `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} AND account_id = $${idx + 1} RETURNING id, full_name, email, phone, role`,
+        [...params, accountId],
+      );
+
+      if (role !== undefined) {
+        // Membership is the session role source. Synchronize only this company;
+        // never recreate a missing membership or reactivate an inactive one.
+        await client.query(
+          `UPDATE business_memberships SET role = $1 WHERE user_id = $2 AND account_id = $3`,
+          [role, id, accountId],
+        );
+      }
+
+      await appendAuditLog(client, {
+        account_id: accountId,
+        entity_type: "user",
+        entity_id: id,
+        action: "update",
+        actor_id: session.userId,
+        trace_id: session.traceId,
+        old_value: before.rows[0] as Record<string, unknown>,
+        new_value: rows[0] as Record<string, unknown>,
+      });
+      return NextResponse.json({ data: rows[0] });
     });
-
-    await client.query("COMMIT");
-    return NextResponse.json({ data: rows[0] });
   } catch (error) {
-    await client.query("ROLLBACK");
     logger.error("PATCH /api/v1/users/[id] error", error, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to update user", traceId: session.traceId } },
       { status: 500 }
     );
-  } finally {
-    client.release();
   }
 });
 
@@ -186,58 +170,45 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
     );
   }
 
-  const pool = getPool();
-  const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    await client.query(
-      `SELECT set_config('app.current_user_id', $1, true),
-              set_config('app.current_account_id', $2, true),
-              set_config('app.current_role', $3, true)`,
-      [session.userId, session.accountId, session.role]
-    );
-
-    const before = await client.query(
-      `SELECT id, full_name, email, role FROM users WHERE id = $1 AND account_id = $2`,
-      [id, session.accountId]
-    );
-    if (!before.rowCount) {
-      await client.query("ROLLBACK");
-      return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
-    }
-
-    const target = before.rows[0] as { role: string; full_name: string; email: string };
-    if (target.role === "owner") {
-      const { rows } = await client.query(
-        `SELECT COUNT(*)::int AS cnt FROM users WHERE account_id = $1 AND role = 'owner'`,
-        [session.accountId]
+    return await withTenantTransaction(session, async (client, accountId) => {
+      const before = await client.query(
+        `SELECT id, full_name, email, role FROM users WHERE id = $1 AND account_id = $2`,
+        [id, accountId],
       );
-      if ((rows[0]?.cnt ?? 0) <= 1) {
-        await client.query("ROLLBACK");
-        return NextResponse.json(
-          { error: { code: "FORBIDDEN", message: "Cannot remove the last owner", traceId: session.traceId } },
-          { status: 422 }
-        );
+      if (!before.rowCount) {
+        return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
       }
-    }
 
-    await client.query(`DELETE FROM users WHERE id = $1 AND account_id = $2`, [id, session.accountId]);
+      const target = before.rows[0] as { role: string; full_name: string; email: string };
+      if (target.role === "owner") {
+        const { rows } = await client.query<{ cnt: number }>(
+          `SELECT COUNT(*)::int AS cnt FROM users WHERE account_id = $1 AND role = 'owner'`,
+          [accountId],
+        );
+        if ((rows[0]?.cnt ?? 0) <= 1) {
+          return NextResponse.json(
+            { error: { code: "FORBIDDEN", message: "Cannot remove the last owner", traceId: session.traceId } },
+            { status: 422 },
+          );
+        }
+      }
 
-    await appendAuditLog(client, {
-      account_id: session.accountId,
-      entity_type: "user",
-      entity_id: id,
-      action: "delete",
-      actor_id: session.userId,
-      trace_id: session.traceId,
-      old_value: before.rows[0] as Record<string, unknown>,
-      new_value: null,
+      await client.query(`DELETE FROM users WHERE id = $1 AND account_id = $2`, [id, accountId]);
+
+      await appendAuditLog(client, {
+        account_id: accountId,
+        entity_type: "user",
+        entity_id: id,
+        action: "delete",
+        actor_id: session.userId,
+        trace_id: session.traceId,
+        old_value: before.rows[0] as Record<string, unknown>,
+        new_value: null,
+      });
+      return NextResponse.json({ deleted: true });
     });
-
-    await client.query("COMMIT");
-    return NextResponse.json({ deleted: true });
   } catch (error: unknown) {
-    await client.query("ROLLBACK");
     // FK constraint — user has jobs/visits that reference them
     if (typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23503") {
       return NextResponse.json(
@@ -250,7 +221,5 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
       { error: { code: "INTERNAL_ERROR", message: "Failed to remove user", traceId: session.traceId } },
       { status: 500 }
     );
-  } finally {
-    client.release();
   }
 });
