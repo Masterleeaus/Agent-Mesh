@@ -6,7 +6,7 @@ import { companyNativeCleaningJobsManifest, companyNativeVisitChecklistManifest 
 import { isWebAuthSetupRequiredError } from "../../../../../../../lib/auth/web-session-runtime";
 import { withWebNativeCompanyStore } from "../../../../../../../lib/company-storage/request-runtime";
 import { logger } from "../../../../../../../lib/logger";
-import { updateNativeVisitChecklistItem } from "../../../../../../../lib/visits/native-checklist";
+import { NativeVisitChecklistForbiddenError, updateNativeVisitChecklistItem } from "../../../../../../../lib/visits/native-checklist";
 import { getTraceId } from "../../../../../../../lib/tracing";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +57,9 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json({ data: result.value });
   } catch (error) {
+    if (error instanceof NativeVisitChecklistForbiddenError) {
+      return NextResponse.json({ error: { code: "FORBIDDEN", message: "Visit is not assigned to this technician", traceId } }, { status: 403 });
+    }
     if (unavailable(error)) {
       return NextResponse.json({
         error: { code: "NATIVE_COMPANY_STORAGE_UNAVAILABLE", message: "Native company storage is unavailable.", traceId },
