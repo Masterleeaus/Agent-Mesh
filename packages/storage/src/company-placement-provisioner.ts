@@ -2,7 +2,7 @@ import { mkdir, open, lstat, realpath } from "node:fs/promises";
 import { isAbsolute, join, resolve } from "node:path";
 import { createSqliteCompanyPlacementRegistryWriter, type GlobalRegistryStorageInput } from "./company-placement-registry.js";
 import { initializeFreshCompanyNativeStore } from "./company-native-store-initializer.js";
-import { companyNativeWorkOrdersManifest } from "./company-native-schema-manifest.js";
+import { companyNativeWorkOrdersVisitsManifest } from "./company-native-schema-manifest.js";
 import { createSqliteCompanyStoreOpener } from "./company-store-opener.js";
 import { openExistingSqliteStorage } from "./sqlite-client.js";
 import type { StorageClient } from "./index.js";
@@ -39,7 +39,7 @@ export async function provisionSqliteCompanyPlacement(input: {
   const writer = await createSqliteCompanyPlacementRegistryWriter(input.registry);
   const reserved = await writer.beginProvisioning({
     company_id: input.company_id,
-    schema_version: companyNativeWorkOrdersManifest.schema_version,
+    schema_version: companyNativeWorkOrdersVisitsManifest.schema_version,
   });
   const dbPath = join(dbRoot, `${reserved.database.placement_id}.sqlite`);
   const filePath = join(fileRoot, reserved.files.file_placement_id);
