@@ -4,22 +4,24 @@ import { getCurrentSiteContext } from '../config/siteContext'
 const hubColumns = {
   Product: [
     ['How it works', '/#how-it-works'],
-    ['Cleaning SaaS', '/industries/cleaning'],
+    ['Cleaning system', '/industries/cleaning'],
     ['Features', '/features'],
     ['AI workforce', '/ai-workforce'],
     ['Works Everywhere', '/works-everywhere'],
+    ['WordPress plugins', '/wordpress-plugins'],
+    ['Chrome extensions', '/chrome-extensions'],
     ['Pricing', '/pricing'],
     ['Managed service', '/fully-managed'],
   ],
-  Resources: [
-    ['Privacy & architecture', '/privacy-architecture'],
-    ['Cost sovereignty', '/cost-sovereignty'],
-    ['Security & recovery', '/security-recovery'],
-    ['Resources', '/resources'],
+  Titan Zero: [
+    ['What is Titan Zero?', '/titan-zero'],
+    ['Privacy & data', '/faq#privacy'],
+    ['AI Assist & approvals', '/faq#ai-assist'],
   ],
-  Company: [
+  Resources: [
+    ['Resources', '/resources'],
+    ['Frequently asked questions', '/faq'],
     ['About', '/about'],
-    ['System evolution', '/changelog'],
   ],
 }
 
@@ -28,12 +30,16 @@ const cleaningColumns = {
     ['Overview', '/'],
     ['Workflows', '/#workflows'],
     ['Features', '/#features'],
+    ['AI workforce', '/ai-workforce'],
     ['Works Everywhere', '/works-everywhere'],
+    ['WordPress plugins', '/wordpress-plugins'],
+    ['Chrome extensions', '/chrome-extensions'],
     ['Pricing', '/pricing'],
     ['Managed service', '/fully-managed'],
   ],
   Platform: [
-    ['Titan Zero platform', 'https://titanzero.io/'],
+    ['What is Titan Zero?', '/titan-zero'],
+    ['Resources & FAQ', '/resources'],
   ],
 }
 
@@ -47,13 +53,11 @@ function FooterLink({ label, href }) {
 function ConfiguredFooter({ context }) {
   const columns = context.kind === 'industry' ? cleaningColumns : hubColumns
   const brand = context.kind === 'industry' ? 'Titan Zero Cleaning' : 'Titan Zero'
-  const description = context.kind === 'industry'
-    ? 'Cleaning service workflows, product capabilities and work-surface release states.'
-    : 'Cleaning-first SaaS, the managed-service offer and evidence-based product information.'
+  const description = 'The cleaning workforce and business system, from the first enquiry through repeat service.'
 
   return <footer className="border-t border-nx-border mt-16">
     <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
         <div>
           <Link to="/" className="flex items-center gap-2 font-extrabold text-lg"><span className="w-2 h-2 bg-nx-purple rounded-full" />{brand}</Link>
           <p className="text-sm text-nx-muted mt-3 max-w-[280px] leading-relaxed">{description}</p>
