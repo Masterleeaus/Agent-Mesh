@@ -24,7 +24,7 @@ export default function Workforce() {
         <div className="max-w-5xl mx-auto">
           <SectionLabel>Cleaning AI workforce</SectionLabel>
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-5">A specialist team for every part of the cleaning journey.</h1>
-          <p className="text-lg text-nx-muted max-w-3xl mx-auto leading-relaxed">Six AI roles coordinate the digital work around your human team—from the first enquiry to the completed clean, invoice and next booking. Each role has a defined job, shared company context and clear limits.</p>
+          <p className="text-lg text-nx-muted max-w-3xl mx-auto leading-relaxed">Six role-based specialist workflows coordinate the digital work around your human team—from the first enquiry to the completed clean, invoice and next booking. AI Assist helps each workflow handle language and information work; every role has a defined scope, company context and clear limits.</p>
         </div>
       </section>
 
