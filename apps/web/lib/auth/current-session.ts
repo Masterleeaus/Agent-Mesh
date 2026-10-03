@@ -110,6 +110,13 @@ function credentialFromRequest(request: Pick<Request, "headers">): string | null
   return credential;
 }
 
+/** Extracts only the bounded canonical bearer from the unique current-session
+ * cookie. Mutating request handlers should pass it straight to the canonical
+ * runtime; caller-supplied principal/session values are never accepted here. */
+export function currentWebSessionCredentialFromRequest(request: Pick<Request, "headers">): string | null {
+  return credentialFromRequest(request);
+}
+
 function canonicalCredential(value: unknown): value is string {
   return typeof value === "string" && value.length > 0 && value.length <= MAX_CREDENTIAL_LENGTH
     && /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(value);

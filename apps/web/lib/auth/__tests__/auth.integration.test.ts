@@ -9,6 +9,9 @@ import { describe, expect, it } from "vitest";
 
 const RUN_HTTP_INTEGRATION =
   !!process.env.TEST_BASE_URL && !!process.env.TEST_DATABASE_URL;
+const WEB_ORIGIN = "https://field.example.test";
+const COMPANY_B = "55555555-5555-4555-8555-555555555555";
+const UNMAPPED_COMPANY = "66666666-6666-4666-8666-666666666666";
 
 type ErrorBody = { error?: { code?: string; message?: string } };
 
@@ -37,6 +40,10 @@ describe.skipIf(!RUN_HTTP_INTEGRATION)("Auth API (HTTP integration)", () => {
     return `__Host-titan-web-session=${match[1]}`;
   }
 
+  function sessionMaxAge(response: Response): number {
+    return Number((response.headers.get("set-cookie") ?? "").match(/(?:^|;\s*)Max-Age=(\d+)/i)?.[1]);
+  }
+
   describe("POST /api/v1/auth/login", () => {
     it("authenticates with valid credentials and sets HTTP-only cookie", async () => {
       const response = await login();
@@ -47,7 +54,7 @@ describe.skipIf(!RUN_HTTP_INTEGRATION)("Auth API (HTTP integration)", () => {
       expect(setCookie).toContain("Secure");
       expect(setCookie).toMatch(/SameSite=Lax/i);
       expect(setCookie).toContain("Path=/");
-      const maxAge = Number(setCookie.match(/(?:^|;\s*)Max-Age=(\d+)/i)?.[1]);
+      const maxAge = sessionMaxAge(response);
       expect(maxAge).toBeGreaterThan(0);
       expect(maxAge).toBeLessThanOrEqual(300);
 
@@ -159,6 +166,69 @@ describe.skipIf(!RUN_HTTP_INTEGRATION)("Auth API (HTTP integration)", () => {
       });
       expect(response.status).toBe(401);
       expect((await json<ErrorBody>(response)).error?.code).toBe("UNAUTHORIZED");
+    });
+  });
+
+  describe("POST /api/v1/auth/switch-company", () => {
+    async function switchCompany(cookie: string, body: unknown, origin = WEB_ORIGIN) {
+      return fetch(`${BASE_URL}/api/v1/auth/switch-company`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", origin, cookie },
+        body: JSON.stringify(body),
+      });
+    }
+
+    it("switches only from the current cookie and rejects the prior context", async () => {
+      const loginResponse = await login();
+      expect(loginResponse.status).toBe(200);
+      const originalCookie = sessionCookie(loginResponse);
+
+      const response = await switchCompany(originalCookie, { company_id: COMPANY_B });
+      expect(response.status).toBe(200);
+      const body = await json<{ company_id: string; role: string }>(response);
+      expect(body).toEqual({ company_id: COMPANY_B, role: "tech" });
+      const switchedCookie = sessionCookie(response);
+      expect(switchedCookie).not.toBe(originalCookie);
+      expect(sessionMaxAge(response)).toBeLessThanOrEqual(sessionMaxAge(loginResponse));
+
+      const current = await fetch(`${BASE_URL}/api/v1/navigation/capabilities`, {
+        headers: { cookie: switchedCookie },
+      });
+      expect(current.status).toBe(200);
+      expect((await json<{ role: string }>(current)).role).toBe("tech");
+
+      const staleReplay = await fetch(`${BASE_URL}/api/v1/navigation/capabilities`, {
+        headers: { cookie: originalCookie },
+      });
+      expect(staleReplay.status).toBe(401);
+    });
+
+    it("keeps the current context when the registry choice has no approved web mapping", async () => {
+      const loginResponse = await login();
+      const cookie = sessionCookie(loginResponse);
+      const response = await switchCompany(cookie, { company_id: UNMAPPED_COMPANY });
+
+      expect(response.status).toBe(403);
+      expect((await json<ErrorBody>(response)).error?.code).toBe("WEB_IDENTITY_SETUP_REQUIRED");
+      const current = await fetch(`${BASE_URL}/api/v1/navigation/capabilities`, { headers: { cookie } });
+      expect(current.status).toBe(200);
+      expect((await json<{ role: string }>(current)).role).toBe("admin");
+    });
+
+    it("rejects missing auth, caller session identifiers, and cross-origin switch requests", async () => {
+      const noCookie = await switchCompany("", { company_id: COMPANY_B });
+      expect(noCookie.status).toBe(401);
+
+      const loginResponse = await login();
+      const cookie = sessionCookie(loginResponse);
+      const forged = await switchCompany(cookie, { company_id: COMPANY_B, session_id: "caller-session" });
+      expect(forged.status).toBe(400);
+      const crossOrigin = await switchCompany(cookie, { company_id: COMPANY_B }, "https://attacker.invalid");
+      expect(crossOrigin.status).toBe(403);
+
+      const stillCurrent = await fetch(`${BASE_URL}/api/v1/navigation/capabilities`, { headers: { cookie } });
+      expect(stillCurrent.status).toBe(200);
+      expect((await json<{ role: string }>(stillCurrent)).role).toBe("admin");
     });
   });
 
