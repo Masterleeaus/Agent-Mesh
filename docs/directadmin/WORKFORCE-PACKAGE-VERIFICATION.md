@@ -478,3 +478,44 @@ disabled pending verified cookie isolation on an authorized disposable host;
 upstream credentials/protected provisioning and a real DirectAdmin install are
 still uncommissioned. #1395 and #1405 remain drafts, and #1050 stays open for
 its remaining acceptance criteria.
+
+### Canonical company and revocation regression — 2026-10-03
+
+The focused packaged RAW session-chain test now uses the shared
+`directadmin-bridge-fixture.mjs` SQLite identity registry and the canonical
+session credential service. It no longer creates a plugin-specific cleaning
+company or chooses a company from a DirectAdmin role/session response. That
+response remains a controlled `/api/session` identity projection fixture
+(subject and role only); the company/device tuple, binding, membership and
+revocation are all resolved through the canonical registry.
+
+The Admin, Reseller and User packaged nonce/bootstrap route pairs each reject
+the initially ambiguous two-company context. After the fixture revokes the
+second membership in the canonical store, all three pairs can issue only for
+`company-a` / `device-1`. The test also revokes that membership between nonce
+and bootstrap (no cookie or call to session issuance), verifies that the
+resulting credential cannot authenticate for another company, and revokes the
+membership again after issuance to prove both bridge context and nonce requests
+fail closed. Replaying that stale nonce after membership restoration remains
+denied, and changing the authenticated DirectAdmin role between nonce and
+bootstrap is also rejected. Host, Origin, injected role/company headers, cookie
+forwarding, `redirect: error`, `cache: no-store`, `credentials: omit`, and the
+absence of a company selector in the host session projection remain asserted.
+The bridge context explicitly carries `authority: not-carried`.
+
+Focused verification on Node v22.23.3:
+
+```sh
+TMPDIR=/workspace/.tmp-1050-workforce \
+  /tmp/1050-node22/node-v22.23.3-linux-x64/bin/node --test \
+  apps/directadmin/workforce/tests/bootstrap-session-chain.integration.mjs
+```
+
+Result: **3/3 passed**, including all three role routes. This is canonical-store
+integration coverage with a controlled DirectAdmin HTTP identity response; it
+does not certify protected production identity provisioning, a live DirectAdmin
+cookie boundary, or an installed production host.
+
+The complete Workforce consumer/browser/package/SDK/hosted suite was rerun after
+these additional assertions and passed **61/61** on the same Node/Chromium/SDK
+configuration.

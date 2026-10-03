@@ -34,21 +34,39 @@ const { withDirectAdminBootstrapNonceRoute } = nonceRoute;
 
 const DA_COOKIE = 'session=synthetic-session; key=synthetic-key';
 const NONCE = /^[A-Za-z0-9_-]{43,128}$/;
-let selectedIdentity = { effectiveRole: 'admin', effectiveUsername: external.subject, realUsername: 'operator-a' };
-let issueInputs = [];
+const DIRECTADMIN_ROLES = ['admin', 'reseller', 'user'];
 let handler;
 
-async function provisionCleaningCompany(registry) {
-  await registry.putExternalBinding({ provider: external.provider, subject: external.subject, binding_id: 'mapping-company-a',
-    actor_id: 'actor-1', company_id: 'company-a', status: 'revoked' }, 1);
-  await registry.putExternalBinding({ provider: external.provider, subject: external.subject, binding_id: 'mapping-company-b',
-    actor_id: 'actor-1', company_id: 'company-b', status: 'revoked' }, 1);
-  await registry.putActor({ actor_id: 'cleaning-owner-1', status: 'active' }, null);
-  await registry.putCompany({ company_id: 'cleaning-company-1', status: 'active' }, null);
-  await registry.putMembership({ actor_id: 'cleaning-owner-1', company_id: 'cleaning-company-1', role: 'owner', status: 'active' }, null);
-  await registry.putDevice({ actor_id: 'cleaning-owner-1', device_id: 'cleaning-device-1', status: 'active' }, null);
-  await registry.putExternalBinding({ provider: external.provider, subject: external.subject, binding_id: 'cleaning-binding-1',
-    actor_id: 'cleaning-owner-1', company_id: 'cleaning-company-1', status: 'active' }, null);
+function hostSessionInfo(role) {
+  return { effectiveRole: role, effectiveUsername: external.subject, realUsername: `operator-${role}` };
+}
+
+function bootstrapTrust(f) {
+  // The DirectAdmin bootstrap contract mints the narrowly scoped titan-login
+  // assertion consumed by the canonical session service.
+  const upstream = { ...f.policy.upstream, audience: 'titan-login' };
+  const sessions = security.createSessionCredentialService({ ...f.policy, upstream });
+  return { upstream, sessions };
+}
+
+function flowFor(f, sessionInfo, apiCalls = []) {
+  const { upstream } = bootstrapTrust(f);
+  return security.createDirectAdminBootstrapFlow({ origin: ORIGIN, registry: f.registry, node_id: 'node-1',
+    upstream, signing_key: f.upstreamKeys.privateKey, now: () => new Date(f.now),
+    fetcher: async (url, init) => {
+      const identity = typeof sessionInfo === 'function' ? sessionInfo() : sessionInfo;
+      apiCalls.push({ url: String(url), method: init?.method, cookie: init?.headers?.cookie,
+        authorization: init?.headers?.authorization ?? null, redirect: init?.redirect, cache: init?.cache,
+        credentials: init?.credentials, identity });
+      return new Response(JSON.stringify(identity), { status: 200, headers: { 'content-type': 'application/json' } });
+    } });
+}
+
+function contextRequest(credential, csrfToken) {
+  return new Request(`${ORIGIN}/v1/directadmin/context`, { method: 'GET', headers: {
+    origin: ORIGIN, 'sec-fetch-site': 'same-origin', 'x-titan-csrf': csrfToken,
+    cookie: `__Host-titan-da-session=${credential}`,
+  } });
 }
 
 const host = createServer(async (incoming, outgoing) => {
@@ -138,111 +156,155 @@ function gatewayFor(f, sessions, flow, { substituteCompany } = {}) {
   return withDirectAdminBootstrapNonceRoute(gateway, { publicOrigin: ORIGIN, flow });
 }
 
-test('packaged RAW nonce to #302 assertion to #1049 session issuance preserves the selected tuple', async t => {
+test('all packaged role RAW routes bind one canonical company and reject stale or revoked membership', async t => {
   const f = await fixture(t);
-  await provisionCleaningCompany(f.registry);
   await security.initializeDirectAdminBootstrapNonceStore({ storage: f.storage, storage_role: 'GLOBAL_REGISTRY' });
-  const upstream = { issuer: external.provider, audience: 'titan-login', key_id: 'upstream-1', algorithm: 'EdDSA',
-    verification_key: f.upstreamKeys.publicKey };
-  const baseSessions = security.createSessionCredentialService({ issuer: f.policy.issuer, audience: f.policy.audience,
-    key_id: f.policy.key_id, algorithm: 'EdDSA', verification_key: f.policy.verification_key,
-    signing_key: f.policy.signing_key, registry: f.registry, lifetime_seconds: 300, upstream,
-    directadmin: { node_id: 'node-1' }, now: () => new Date(f.now) });
-  const sessions = { ...baseSessions, issue: async (assertion, expected) => {
+  const { sessions: canonicalSessions } = bootstrapTrust(f);
+  const issueInputs = [];
+  const sessions = { ...canonicalSessions, issue: async (assertion, expected) => {
     issueInputs.push(expected);
-    return baseSessions.issue(assertion, expected);
+    return canonicalSessions.issue(assertion, expected);
   } };
-  const flow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, registry: f.registry, node_id: 'node-1', upstream,
-    signing_key: f.upstreamKeys.privateKey, now: () => new Date(f.now),
-    fetcher: async (url, init) => {
-      apiCalls.push({ url: String(url), cookie: init?.headers?.cookie, authorization: init?.headers?.authorization ?? null });
-      assert.equal(String(url), `${ORIGIN}/api/session`);
-      assert.equal(init?.method, 'GET');
-      assert.equal(init?.redirect, 'error');
-      return new Response(JSON.stringify(selectedIdentity), { status: 200, headers: { 'content-type': 'application/json' } });
-    } });
-  handler = gatewayFor(f, sessions, flow);
-
   const apiCalls = [];
-  const issuedNonce = await runRaw('nonce', { role: 'reseller' });
-  assert.equal(issuedNonce.status, 200);
-  assert.deepEqual(Object.keys(issuedNonce.body), ['csrf_nonce']);
-  assert.match(issuedNonce.body.csrf_nonce, NONCE);
-  assert.equal(issuedNonce.headers.has('set-cookie'), false);
-  assert.deepEqual(apiCalls.at(-1), { url: `${ORIGIN}/api/session`, cookie: DA_COOKIE, authorization: null });
+  const flowByRole = role => flowFor(f, () => hostSessionInfo(role), apiCalls);
 
-  const result = await runRaw('bootstrap', { role: 'admin', nonce: issuedNonce.body.csrf_nonce });
-  assert.equal(result.status, 200, JSON.stringify(result.body));
-  assert.deepEqual(result.body, { csrf_token: result.body.csrf_token });
-  assert.match(result.body.csrf_token, NONCE);
-  assert.equal(result.headers.get('set-cookie')?.length, 1, 'one HttpOnly session cookie survives the trusted RAW response');
-  assert.match(result.headers.get('set-cookie')[0], /^__Host-titan-da-session=[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+; Path=\/; Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]\d*$/);
-  assert.deepEqual(issueInputs, [{ company_id: 'cleaning-company-1', device_id: 'cleaning-device-1' }]);
-  const issuedCredential = result.headers.get('set-cookie')[0].split(';', 1)[0].slice('__Host-titan-da-session='.length);
-  const authenticated = await baseSessions.authenticate(issuedCredential, { company_id: 'cleaning-company-1', device_id: 'cleaning-device-1' });
-  assert.deepEqual({ company_id: authenticated.context.company_id, device_id: authenticated.context.device_id },
-    { company_id: 'cleaning-company-1', device_id: 'cleaning-device-1' });
+  // The canonical fixture starts with active company-A and company-B bindings.
+  // The first-session path must not guess which company to use from role/order.
+  for (const role of DIRECTADMIN_ROLES) {
+    handler = gatewayFor(f, sessions, flowByRole(role));
+    const ambiguous = await runRaw('nonce', { role });
+    assert.equal(ambiguous.status, 401, `${role} nonce route rejects ambiguous current company membership`);
+    assert.deepEqual(ambiguous.body, { error: 'directadmin-session-rejected', read_only: true });
+    assert.equal(ambiguous.headers.has('set-cookie'), false);
+  }
 
-  const replay = await runRaw('bootstrap', { nonce: issuedNonce.body.csrf_nonce });
-  assert.equal(replay.status, 401);
-  assert.deepEqual(replay.body, { error: 'directadmin-session-rejected', read_only: true });
-  assert.equal(replay.headers.has('set-cookie'), false);
-  assert.equal(issueInputs.length, 1, 'replay never calls canonical sessions.issue');
+  // Revoke only company B in #302's SQLite identity store. Company A is now the
+  // one unique canonical context for the same authenticated external subject.
+  await f.registry.putMembership({ actor_id: 'actor-1', company_id: 'company-b', role: 'member', status: 'revoked' }, 1);
+  let companyARevision = 1;
+  const setCompanyAMembership = async status => {
+    companyARevision = await f.registry.putMembership({ actor_id: 'actor-1', company_id: 'company-a', role: 'member', status }, companyARevision);
+  };
+
+  for (const role of DIRECTADMIN_ROLES) {
+    handler = gatewayFor(f, sessions, flowByRole(role));
+    const staleNonce = await runRaw('nonce', { role });
+    assert.equal(staleNonce.status, 200, `${role} route gets an opaque nonce for the unique canonical company`);
+    assert.deepEqual(Object.keys(staleNonce.body), ['csrf_nonce'], 'company and device remain private in the canonical registry');
+    assert.match(staleNonce.body.csrf_nonce, NONCE);
+    assert.equal(staleNonce.headers.has('set-cookie'), false);
+
+    const issueCount = issueInputs.length;
+    await setCompanyAMembership('revoked');
+    const staleBootstrap = await runRaw('bootstrap', { role, nonce: staleNonce.body.csrf_nonce });
+    assert.equal(staleBootstrap.status, 401, `${role} bootstrap rejects membership revoked after nonce issuance`);
+    assert.deepEqual(staleBootstrap.body, { error: 'directadmin-session-rejected', read_only: true });
+    assert.equal(staleBootstrap.headers.has('set-cookie'), false);
+    assert.equal(issueInputs.length, issueCount, 'stale membership never reaches canonical session issuance');
+    await setCompanyAMembership('active');
+    const restoredReplay = await runRaw('bootstrap', { role, nonce: staleNonce.body.csrf_nonce });
+    assert.equal(restoredReplay.status, 401, `${role} nonce stays burned after the stale membership rejection`);
+    assert.equal(restoredReplay.headers.has('set-cookie'), false);
+    assert.equal(issueInputs.length, issueCount, 'restoring membership cannot revive a consumed nonce');
+
+    const nonce = await runRaw('nonce', { role });
+    assert.equal(nonce.status, 200);
+    const result = await runRaw('bootstrap', { role, nonce: nonce.body.csrf_nonce });
+    assert.equal(result.status, 200, `${role} RAW pair issues only after fresh registry validation: ${JSON.stringify(result.body)}`);
+    assert.match(result.body.csrf_token, NONCE);
+    assert.equal(result.headers.get('set-cookie')?.length, 1, 'one HttpOnly session cookie survives the trusted RAW response');
+    assert.match(result.headers.get('set-cookie')[0], /^__Host-titan-da-session=[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+; Path=\/; Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]\d*$/);
+    assert.deepEqual(issueInputs.at(-1), { company_id: 'company-a', device_id: 'device-1' },
+      'the selected tuple comes from the canonical identity store, not the role route or host projection');
+    const issuedCredential = result.headers.get('set-cookie')[0].split(';', 1)[0].slice('__Host-titan-da-session='.length);
+    const authenticated = await sessions.authenticate(issuedCredential, { company_id: 'company-a', device_id: 'device-1' });
+    assert.deepEqual({ company_id: authenticated.context.company_id, device_id: authenticated.context.device_id,
+      allowed_company_ids: authenticated.context.allowed_company_ids },
+    { company_id: 'company-a', device_id: 'device-1', allowed_company_ids: ['company-a'] });
+    await assert.rejects(() => sessions.authenticate(issuedCredential, { company_id: 'company-b', device_id: 'device-1' }),
+      undefined, 'issued session is not portable to another company');
+
+    const contextResponse = await handler(contextRequest(issuedCredential, result.body.csrf_token));
+    assert.equal(contextResponse.status, 200);
+    const context = await contextResponse.json();
+    assert.equal(context.company_id, 'company-a');
+    assert.deepEqual(context.company_ids, ['company-a']);
+    assert.equal(context.authority, 'not-carried', 'session identity does not imply Workforce authority');
+
+    // A later membership revocation invalidates the existing #1049 credential
+    // and prevents another nonce on each packaged role route.
+    await setCompanyAMembership('revoked');
+    const revokedContext = await handler(contextRequest(issuedCredential, result.body.csrf_token));
+    assert.equal(revokedContext.status, 401, `${role} bridge revalidates membership on each context request`);
+    const revokedNonce = await runRaw('nonce', { role });
+    assert.equal(revokedNonce.status, 401, `${role} nonce route refuses a currently revoked membership`);
+    await setCompanyAMembership('active');
+  }
+
+  for (const call of apiCalls) {
+    assert.equal(call.url, `${ORIGIN}/api/session`);
+    assert.equal(call.method, 'GET');
+    assert.equal(call.cookie, DA_COOKIE, 'only DirectAdmin cookies reach the #302 session API');
+    assert.equal(call.authorization, null);
+    assert.equal(call.redirect, 'error');
+    assert.equal(call.cache, 'no-store');
+    assert.equal(call.credentials, 'omit');
+    assert.equal(Object.hasOwn(call.identity, 'company_id'), false, 'the host session projection is not the company selector');
+  }
+  assert.equal(issueInputs.length, DIRECTADMIN_ROLES.length, 'only three fresh current contexts reach session issuance');
 });
 
 test('nonce is bound to the authenticated DA operator and signed assertion tuple mismatches fail before cookie issuance', async t => {
   const f = await fixture(t);
-  await provisionCleaningCompany(f.registry);
   await security.initializeDirectAdminBootstrapNonceStore({ storage: f.storage, storage_role: 'GLOBAL_REGISTRY' });
-  const upstream = { issuer: external.provider, audience: 'titan-login', key_id: 'upstream-1', algorithm: 'EdDSA',
-    verification_key: f.upstreamKeys.publicKey };
-  const baseSessions = security.createSessionCredentialService({ issuer: f.policy.issuer, audience: f.policy.audience,
-    key_id: f.policy.key_id, algorithm: 'EdDSA', verification_key: f.policy.verification_key,
-    signing_key: f.policy.signing_key, registry: f.registry, lifetime_seconds: 300, upstream,
-    directadmin: { node_id: 'node-1' }, now: () => new Date(f.now) });
+  await f.registry.putMembership({ actor_id: 'actor-1', company_id: 'company-b', role: 'member', status: 'revoked' }, 1);
+  const { sessions: canonicalSessions } = bootstrapTrust(f);
   const calls = [];
-  const sessions = { ...baseSessions, issue: async (assertion, expected) => {
+  const sessions = { ...canonicalSessions, issue: async (assertion, expected) => {
     calls.push(expected);
-    return baseSessions.issue(assertion, expected);
+    return canonicalSessions.issue(assertion, expected);
   } };
-  const flow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, registry: f.registry, node_id: 'node-1', upstream,
-    signing_key: f.upstreamKeys.privateKey, now: () => new Date(f.now),
-    fetcher: async () => new Response(JSON.stringify(selectedIdentity), { status: 200, headers: { 'content-type': 'application/json' } }) });
+  let selectedIdentity = hostSessionInfo('admin');
+  const flow = flowFor(f, () => selectedIdentity);
   handler = gatewayFor(f, sessions, flow);
-  const selected = await runRaw('nonce');
+  const selected = await runRaw('nonce', { role: 'admin' });
   assert.equal(selected.status, 200);
   selectedIdentity = { ...selectedIdentity, realUsername: 'operator-substitute' };
-  const substituted = await runRaw('bootstrap', { nonce: selected.body.csrf_nonce });
+  const substituted = await runRaw('bootstrap', { role: 'admin', nonce: selected.body.csrf_nonce });
   assert.equal(substituted.status, 401);
   assert.deepEqual(substituted.body, { error: 'directadmin-session-rejected', read_only: true });
   assert.equal(substituted.headers.has('set-cookie'), false);
   assert.equal(calls.length, 0, 'operator substitution is denied before session issuance');
 
-  selectedIdentity = { effectiveRole: 'admin', effectiveUsername: external.subject, realUsername: 'operator-a' };
-  const mismatchNonce = await runRaw('nonce');
+  selectedIdentity = hostSessionInfo('admin');
+  const roleNonce = await runRaw('nonce', { role: 'admin' });
+  assert.equal(roleNonce.status, 200);
+  selectedIdentity = { ...selectedIdentity, effectiveRole: 'reseller' };
+  const roleChanged = await runRaw('bootstrap', { role: 'admin', nonce: roleNonce.body.csrf_nonce });
+  assert.equal(roleChanged.status, 401, 'changing the authenticated DA role invalidates the issued nonce');
+  assert.deepEqual(roleChanged.body, { error: 'directadmin-session-rejected', read_only: true });
+  assert.equal(roleChanged.headers.has('set-cookie'), false);
+  assert.equal(calls.length, 0, 'role substitution is denied before session issuance');
+
+  selectedIdentity = hostSessionInfo('admin');
+  const mismatchNonce = await runRaw('nonce', { role: 'admin' });
   assert.equal(mismatchNonce.status, 200);
   handler = gatewayFor(f, sessions, flow, { substituteCompany: 'company-b' });
-  const mismatch = await runRaw('bootstrap', { nonce: mismatchNonce.body.csrf_nonce });
+  const mismatch = await runRaw('bootstrap', { role: 'admin', nonce: mismatchNonce.body.csrf_nonce });
   assert.equal(mismatch.status, 401);
   assert.deepEqual(mismatch.body, { error: 'directadmin-session-rejected', read_only: true });
   assert.equal(mismatch.headers.has('set-cookie'), false);
-  assert.deepEqual(calls, [{ company_id: 'company-b', device_id: 'cleaning-device-1' }]);
+  assert.deepEqual(calls, [{ company_id: 'company-b', device_id: 'device-1' }]);
 });
 
 test('RAW wrong Host, Origin, role identity headers and injected context do not reach #302', async t => {
   const f = await fixture(t);
-  await provisionCleaningCompany(f.registry);
   await security.initializeDirectAdminBootstrapNonceStore({ storage: f.storage, storage_role: 'GLOBAL_REGISTRY' });
-  const upstream = { issuer: external.provider, audience: 'titan-login', key_id: 'upstream-1', algorithm: 'EdDSA',
-    verification_key: f.upstreamKeys.publicKey };
+  const { sessions } = bootstrapTrust(f);
   let fetchCalls = 0;
-  const flow = security.createDirectAdminBootstrapFlow({ origin: ORIGIN, registry: f.registry, node_id: 'node-1', upstream,
-    signing_key: f.upstreamKeys.privateKey, now: () => new Date(f.now),
-    fetcher: async () => { fetchCalls += 1; return new Response(JSON.stringify(selectedIdentity), { status: 200, headers: { 'content-type': 'application/json' } }); } });
+  const flow = flowFor(f, hostSessionInfo('admin'), { push(value) { fetchCalls += 1; return value; } });
   const gateway = createDirectAdminGateway(new DirectAdminSessionBridge({ origin: ORIGIN, audience: 'titan-directadmin:node-1',
-    node_id: 'node-1', sessions: security.createSessionCredentialService({ issuer: f.policy.issuer, audience: f.policy.audience,
-      key_id: f.policy.key_id, algorithm: 'EdDSA', verification_key: f.policy.verification_key, signing_key: f.policy.signing_key,
-      registry: f.registry, lifetime_seconds: 300, upstream, directadmin: { node_id: 'node-1' }, now: () => new Date(f.now) }) }), f.owners, flow);
+    node_id: 'node-1', sessions }), f.owners, flow);
   handler = withDirectAdminBootstrapNonceRoute(gateway, { publicOrigin: ORIGIN, flow });
   const badHost = await runRaw('nonce', { host: 'attacker.example' });
   const badOrigin = await runRaw('nonce', { origin: 'https://attacker.example' });
