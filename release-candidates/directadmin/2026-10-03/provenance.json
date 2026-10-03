@@ -5,7 +5,7 @@
   "branch": "release/directadmin-candidates-20261003",
   "base_commit": "512f623e065242b3d6066b493130148989a37ab7",
   "issue_ref": "Refs #1157",
-  "status": "partial_repository_publication_waiting_for_portal_owner_commit",
+  "status": "repository_candidate_artifacts_published_pending_review",
   "distribution": {
     "repository_license_decision": "OWNER_DECISION_REQUIRED",
     "this_scope_decision": "PROPRIETARY_ALL_RIGHTS_RESERVED",
@@ -47,23 +47,28 @@
         "packaged_paths_changed_since_pin": false
       },
       "operational_status": "candidate; no live DirectAdmin Manager lifecycle or production session certification"
+    },
+    {
+      "display_name": "Developer Portal",
+      "plugin_id": "titan_dev_access",
+      "version": "1.3.10",
+      "path": "developer-portal/titan_dev_access.tar.gz",
+      "sha256": "90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27",
+      "source_commit": "10f5ee96626663abea770132de6397063b5b688c",
+      "source_manifest": "developer-portal/SOURCE-MANIFEST.json",
+      "source_manifest_sha256": "4931ad7963961217b6770d69f79139bb9b7e56481195106a47a807bae3f840c9",
+      "license": "developer-portal/LICENSE.txt",
+      "component_notice": "developer-portal/COMPONENT-NOTICES.txt",
+      "notice": "developer-portal/THIRD_PARTY_NOTICES.txt",
+      "build_time_provenance": "developer-portal/titan_dev_access-v1.3.10-NOT-LIVE-CERTIFIED.provenance.json",
+      "build_time_provenance_sha256": "fbd0e8fc74b5b035cf7a32600bccf94cf6e5ec9141e39819b5a5f26937926a36",
+      "archive_bytes_unchanged": true,
+      "workflow_run_id": 37077046801,
+      "workflow_artifact_zip_sha256": "715a65fe02801244fdb0fbf13675e0e9d1b569b55d472c15072b6ba0ced7a8d0",
+      "independent_source_review": "cleared for exact source head in PR comment 5963160873",
+      "operational_status": "candidate; not live-certified; no DirectAdmin Manager lifecycle or production SSH certification"
     }
   ],
-  "portal_pending_owner_commit": {
-    "display_name": "Developer Portal",
-    "plugin_id": "titan_dev_access",
-    "version": "1.3.10",
-    "target_directory": "developer-portal/",
-    "expected_filename": "titan_dev_access.tar.gz",
-    "expected_archive_sha256": "90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27",
-    "source_pr": 1391,
-    "source_commit": "10f5ee96626663abea770132de6397063b5b688c",
-    "workflow_run_id": 37077046801,
-    "workflow_artifact_zip_sha256": "715a65fe02801244fdb0fbf13675e0e9d1b569b55d472c15072b6ba0ced7a8d0",
-    "verified_files": 13,
-    "workflow_artifact_and_inner_archive_verified": true,
-    "release_branch_writer": "Portal owner will append exact archive and companion files; do not rewrite or repack."
-  },
   "portfolio_dependencies": {
     "workforce_requires_server_node": {
       "version": "0.3.0",
@@ -72,8 +77,8 @@
     "portal_independent_of_server_node": true
   },
   "verification": {
-    "sidecars": "Server Node and Workforce supplied sidecars match unchanged TAR bytes. Portal workflow artifact ZIP digest and inner TAR sidecar also match; owner branch write pending.",
-    "archive_structure": "Server Node 15/15 and Workforce 26/26 safe regular file members; executable modes retained. Portal 13/13 members byte-match exact source commit and package allowlist.",
+    "sidecars": "All three package sidecars match their unchanged TAR bytes. Portal's 13 packaged-file hashes are recorded in its source manifest and match exact source commit 10f5ee96626663abea770132de6397063b5b688c. Companion notices and source records remain outside the validated installer archive.",
+    "archive_structure": "Server Node 15/15, Workforce 26/26, and Developer Portal 13/13 safe regular file members; exact source hashes match; required executable modes are preserved; no unsafe paths, links, or special files were found.",
     "workforce_sdk": "Rebuilt with esbuild 0.28.1 exact flags; output matches packaged SDK SHA-256.",
     "live_host_operations": false,
     "source_pr_merges": false,
@@ -106,7 +111,16 @@
         "command": "GitHub Actions run 37077046801 / artifact 11256863509 (Portal)",
         "result": "artifact ZIP digest and inner TAR checksum verified; 13/13 inner package files byte-match source commit 10f5ee9."
       }
-    ]
+    ],
+    "portal_repository_append": {
+      "target_directory": "developer-portal/",
+      "archive_sha256": "90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27",
+      "archive_bytes_unchanged": true,
+      "source_manifest_sha256": "4931ad7963961217b6770d69f79139bb9b7e56481195106a47a807bae3f840c9",
+      "build_time_provenance_sha256": "fbd0e8fc74b5b035cf7a32600bccf94cf6e5ec9141e39819b5a5f26937926a36",
+      "exact_source_commit": "10f5ee96626663abea770132de6397063b5b688c",
+      "packaged_source_files_verified": 13
+    }
   },
   "limits": [
     "These are candidate installer packages, not live-certified production releases.",
