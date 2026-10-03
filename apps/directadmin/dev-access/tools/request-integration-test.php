@@ -386,15 +386,15 @@ foreach([
 }
 $inspectionLink=$inspectionHome.'/repo-link';
 integration_expect(symlink($inspectionHome,$inspectionLink),'in-HOME cwd symlink fixture must be created');
-$linkedCwd=$terminalPost('cat README.md',$inspectionLink);
+$linkedCwd=$terminalPost('pwd',$inspectionLink);
 integration_expect_terminal_blocked($linkedCwd,'in-HOME symlink working-directory path',$canary);
 $untrustedToolDirectory=$fixture.'/untrusted-bin';
 integration_expect(mkdir($untrustedToolDirectory,0700),'untrusted PATH fixture directory must be created');
 integration_expect(file_put_contents($untrustedToolDirectory.'/timeout',"#!/bin/sh\nshift\nexec \"\$@\"\n")!==false,'synthetic timeout PATH canary must be written');
 integration_expect(file_put_contents($untrustedToolDirectory.'/cat',"#!/bin/sh\nprintf '%s\\n' 'UNTRUSTED_PATH_CANARY'\n")!==false,'synthetic cat PATH canary must be written');
 chmod($untrustedToolDirectory.'/timeout',0700);chmod($untrustedToolDirectory.'/cat',0700);
-$untrustedPathResult=$terminalPost('cat README.md',$inspectionHome,['PATH'=>$untrustedToolDirectory]);
-integration_expect(strpos($untrustedPathResult,'Exit code: 0')!==false&&strpos($untrustedPathResult,'repo-safe-marker')!==false,'terminal execution must use a fixed trusted PATH despite DirectAdmin process environment');
+$untrustedPathResult=$terminalPost('pwd',$inspectionHome,['PATH'=>$untrustedToolDirectory]);
+integration_expect(strpos($untrustedPathResult,'Exit code: 0')!==false&&strpos($untrustedPathResult,$inspectionHome)!==false,'terminal execution must use a fixed trusted PATH despite DirectAdmin process environment');
 integration_expect(strpos($untrustedPathResult,'UNTRUSTED_PATH_CANARY')===false,'untrusted PATH executable output must never reach the terminal');
 $secretReadAttempts=[
  'cat relative SSH key path'=>'cat .ssh/id_rsa',
@@ -411,6 +411,9 @@ $secretReadAttempts=[
  'outside-HOME symlink to canary fixture'=>'cat outside-key-link',
  'in-HOME hardlink to a synthetic private-key fixture'=>'cat hardlinked-key',
  'private-key file passed to PHP lint'=>'php -l .ssh/id_rsa',
+ 'date file-input option targeting a private-key file'=>'date -f .ssh/id_rsa',
+ 'disk diagnostic with a private-key path operand'=>'df -h .ssh/id_rsa',
+ 'working-directory command with a private-key path operand'=>'pwd .ssh/id_rsa',
  'recursive listing of a private-key directory'=>'ls -la .ssh',
  'package test script execution'=>'npm test',
  'Node test script execution'=>'node --test',
