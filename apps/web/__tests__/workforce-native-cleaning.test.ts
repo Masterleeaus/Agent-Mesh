@@ -157,6 +157,37 @@ describe("cleaning Workforce native profile bindings", () => {
     calls.mockRestore();
   });
 
+  it("consumes the bound cleaning intake through its authenticated read operation", async () => {
+    const calls = vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+      expect(new URL(String(input)).origin).toBe("https://cleaning.test");
+      expect(new URL(String(input)).pathname).toBe("/api/v1/booking-requests");
+      expect(init?.method).toBe("GET");
+      expect(new Headers(init?.headers).get("cookie")).toBe(`fsm_session=${state.token}`);
+      expect(new Headers(init?.headers).get("x-titan-company-id")).toBe(company);
+      return new Response(JSON.stringify({ company_id: company, requests: [{ id: "request-a" }] }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    });
+
+    const response = await post(receptionPost, "/api/v1/titan/workforce/native/reception", {
+      action: "list_service_requests",
+      cleaningProfileId: "titan.cleaning.scope_assessor",
+    });
+
+    expect(response.status).toBe(200);
+    const result = await response.json();
+    expect(result.executed).toBe(true);
+    expect(result.dryRun).toBe(false);
+    expect(result.plan.company_id).toBe(company);
+    expect(result.plan.actor_id).toBe(principal);
+    expect(result.plan.operation.id).toBe("booking_requests.list");
+    expect(result.plan.cleaning_profile_binding.profileId).toBe("titan.cleaning.scope_assessor");
+    expect(result.upstream.result).toEqual({ company_id: company, requests: [{ id: "request-a" }] });
+    expect(calls).toHaveBeenCalledOnce();
+    calls.mockRestore();
+  });
+
   it("consumes the other two real native bindings without granting mutation authority", async () => {
     const cases = [
       {
