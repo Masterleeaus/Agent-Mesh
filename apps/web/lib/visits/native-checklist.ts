@@ -31,6 +31,15 @@ type ItemRow = {
   updated_at: string;
 };
 
+export class NativeVisitChecklistForbiddenError extends Error {
+  readonly code = "NATIVE_VISIT_CHECKLIST_FORBIDDEN";
+
+  constructor() {
+    super("native-checklist-visit-not-assigned");
+    this.name = "NativeVisitChecklistForbiddenError";
+  }
+}
+
 function timestamp(value: string): string {
   const normalized = value.includes("T") ? value : `${value.replace(" ", "T")}Z`;
   const parsed = new Date(normalized);
@@ -59,6 +68,7 @@ async function authorizedVisit(
   storage: StorageClient,
   currentSession: CurrentWebSession,
   visitId: string,
+  throwWhenTechUnassigned = false,
 ): Promise<VisitRow | null> {
   const companyId = currentSession.context.company_id;
   const rows = await storage.query<VisitRow>(
@@ -73,7 +83,10 @@ async function authorizedVisit(
   const visit = rows.rows[0];
   if (!visit) return null;
   if (visit.property_id !== visit.resolved_property_id) return null;
-  if (currentSession.session.role === "tech" && visit.assigned_user_id !== currentSession.context.actor_id) return null;
+  if (currentSession.session.role === "tech" && visit.assigned_user_id !== currentSession.context.actor_id) {
+    if (throwWhenTechUnassigned) throw new NativeVisitChecklistForbiddenError();
+    return null;
+  }
   return visit;
 }
 
@@ -136,7 +149,10 @@ export async function updateNativeVisitChecklistItem(
 ): Promise<NativeVisitChecklistItem | null> {
   const companyId = currentSession.context.company_id;
   return storage.transaction(async tx => {
-    const visit = await authorizedVisit(tx, currentSession, visitId);
+    // Preserve the PATCH API's same-company assignment denial (403). GET still
+    // treats an unassigned visit like a missing visit, and cross-company IDs
+    // remain indistinguishable from missing rows because the lookup is scoped.
+    const visit = await authorizedVisit(tx, currentSession, visitId, true);
     if (!visit?.work_order_id) return null;
     const values: unknown[] = [companyId, visitId, visit.work_order_id, taskId];
     const fields: string[] = [];

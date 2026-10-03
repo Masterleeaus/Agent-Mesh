@@ -1,6 +1,7 @@
 import type { CurrentWebSession } from "../auth/current-session";
 import { getWebSessionRuntime } from "../auth/web-session-runtime";
 import {
+  companyNativeCleaningJobsManifest,
   companyNativeVisitChecklistManifest,
   companyNativeWorkOrdersManifest,
   companyNativeWorkOrdersVisitsManifest,
@@ -57,6 +58,7 @@ export async function initializeCleaningProfileForLogin(options: CleaningProfile
         ? options.resolveCurrentSession(options.issued.credential)
         : runtime!.resolveCredential(options.issued.credential),
       requiredSchemaVersions: Object.freeze([
+        companyNativeCleaningJobsManifest.schema_version,
         companyNativeWorkOrdersManifest.schema_version,
         companyNativeWorkOrdersVisitsManifest.schema_version,
         companyNativeVisitChecklistManifest.schema_version,

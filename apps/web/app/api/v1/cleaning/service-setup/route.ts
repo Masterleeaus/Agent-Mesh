@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
+  companyNativeCleaningJobsManifest,
   companyNativeVisitChecklistManifest,
   companyNativeWorkOrdersManifest,
   companyNativeWorkOrdersVisitsManifest,
@@ -36,6 +37,7 @@ const SERVICE_SETUP_SCHEMA = z.object({
 }).strict();
 
 const schemaVersions = Object.freeze([
+  companyNativeCleaningJobsManifest.schema_version,
   companyNativeWorkOrdersManifest.schema_version,
   companyNativeWorkOrdersVisitsManifest.schema_version,
   companyNativeVisitChecklistManifest.schema_version,

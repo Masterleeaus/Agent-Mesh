@@ -1,5 +1,22 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { randomBytes } from "node:crypto";
+import {
+  createIdentitySessionRegistry,
+  type IdentitySessionRegistry,
+} from "@titan-zero/titan-platform/security-boundary";
+import {
+  createSqliteStorage,
+  initializeSqliteCompanyPlacementRegistry,
+  provisionSqliteCompanyPlacement,
+  type StorageClient,
+} from "../../../../../../../packages/storage/src/index";
+import { companyNativeVisitChecklistManifest } from "../../../../../../../packages/storage/src/company-native-schema-manifest";
+import { CURRENT_WEB_SESSION_COOKIE_NAME } from "../../../../../lib/auth/current-session";
+import { _resetWebSessionRuntimeForTests, getWebSessionRuntime } from "../../../../../lib/auth/web-session-runtime";
 
 // ---------------------------------------------------------------------------
 // Mock auth middleware — inject controlled session
@@ -29,6 +46,7 @@ vi.mock("../../../../../lib/db", () => ({
   query: (...args: unknown[]) => mockQuery(...args),
   queryOne: (...args: unknown[]) => mockQueryOne(...args),
   getPool: () => mockPool,
+  getDatabaseDialect: () => "postgres",
 }));
 
 // Also mock the @/ alias path used by lib/visits/checklist.ts
@@ -36,6 +54,7 @@ vi.mock("@/lib/db", () => ({
   query: (...args: unknown[]) => mockQuery(...args),
   queryOne: (...args: unknown[]) => mockQueryOne(...args),
   getPool: () => mockPool,
+  getDatabaseDialect: () => "postgres",
 }));
 
 vi.mock("../../../../../lib/db/audit", () => ({
@@ -63,10 +82,105 @@ const JOBS_BASE = "http://localhost:3000/api/v1/jobs";
 const VISITS_BASE = "http://localhost:3000/api/v1/visits";
 const JOB_ID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
 const VISIT_ID = "cccccccc-cccc-cccc-cccc-cccccccccccc";
+const EMPTY_VISIT_ID = "cccccccc-cccc-cccc-cccc-cccccccccccd";
 const BOOKING_REQUEST_ID = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
 const WORK_ORDER_ID = "dddddddd-dddd-dddd-dddd-dddddddddddd";
+const ITEM_ID = "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee";
 const USER_ID = "00000000-0000-0000-0000-000000000001";
 const NOW = new Date().toISOString();
+
+const CHECKLIST_COMPANIES = [
+  { companyId: "10000000-0000-4000-8000-000000000001", accountId: "10000000-0000-4000-8000-000000000011", actorId: USER_ID, userId: "10000000-0000-4000-8000-000000000021", deviceId: "10000000-0000-4000-8000-000000000031", role: "owner" },
+  { companyId: "10000000-0000-4000-8000-000000000002", accountId: "10000000-0000-4000-8000-000000000012", actorId: "10000000-0000-4000-8000-000000000042", userId: "10000000-0000-4000-8000-000000000022", deviceId: "10000000-0000-4000-8000-000000000032", role: "tech" },
+] as const;
+const checklistOrigin = "https://field.example.test";
+const checklistLoginIssuer = `titan:web-login:${checklistOrigin}`;
+let checklistDirectory: string;
+let checklistStoreRoot: string;
+let checklistFileRoot: string;
+let checklistIdentityStorage: StorageClient;
+let checklistIdentityRegistry: IdentitySessionRegistry;
+let checklistOldEnvironment: Record<string, string | undefined>;
+const checklistEnvironmentNames = [
+  "TITAN_WEB_PUBLIC_ORIGIN", "TITAN_WEB_IDENTITY_REGISTRY_PATH", "TITAN_WEB_LOGIN_KEY_ID",
+  "TITAN_WEB_LOGIN_SIGNING_SECRET", "TITAN_WEB_SESSION_KEY_ID", "TITAN_WEB_SESSION_SIGNING_SECRET",
+  "TITAN_WEB_IDENTITY_BINDINGS_JSON", "TITAN_COMPANY_DATA_ROOT",
+];
+
+function checklistRequest(path: string, credential: string, init?: RequestInit): NextRequest {
+  const headers = new Headers(init?.headers);
+  headers.set("cookie", `${CURRENT_WEB_SESSION_COOKIE_NAME}=${credential}`);
+  return new NextRequest(`${checklistOrigin}${path}`, { ...init, headers });
+}
+
+async function createChecklistCompanyStore(company: (typeof CHECKLIST_COMPANIES)[number]): Promise<void> {
+  const placement = await provisionSqliteCompanyPlacement({
+    registry: { storage: checklistIdentityStorage, storage_role: "GLOBAL_REGISTRY", companyStoreRoot: checklistStoreRoot, companyFileStoreRoot: checklistFileRoot },
+    company_id: company.companyId,
+    company_name: company.companyId,
+    schema_version: companyNativeVisitChecklistManifest.schema_version,
+  });
+  const storage = createSqliteStorage(join(checklistStoreRoot, `${placement.placement_id}.sqlite`));
+  try {
+    await storage.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", ["dddddddd-dddd-4ddd-8ddd-ddddddddddd1", company.companyId, `${company.companyId} client`]);
+    await storage.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", ["dddddddd-dddd-4ddd-8ddd-ddddddddddd2", company.companyId, "dddddddd-dddd-4ddd-8ddd-ddddddddddd1", `${company.companyId} address`]);
+    await storage.query("INSERT INTO jobs(id,company_id,client_id,property_id,title,created_by) VALUES($1,$2,$3,$4,$5,$6)", [JOB_ID, company.companyId, "dddddddd-dddd-4ddd-8ddd-ddddddddddd1", "dddddddd-dddd-4ddd-8ddd-ddddddddddd2", `${company.companyId} job`, company.actorId]);
+    await storage.query("INSERT INTO work_orders(id,company_id,job_id,client_id,title,created_by) VALUES($1,$2,$3,$4,$5,$6)", [WORK_ORDER_ID, company.companyId, JOB_ID, "dddddddd-dddd-4ddd-8ddd-ddddddddddd1", `${company.companyId} work order`, company.actorId]);
+    await storage.query("INSERT INTO work_order_tasks(id,company_id,work_order_id,label,note) VALUES($1,$2,$3,$4,$5)", [ITEM_ID, company.companyId, WORK_ORDER_ID, "Roof condition (visible)", "configured task"]);
+    await storage.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [VISIT_ID, company.companyId, JOB_ID, CHECKLIST_COMPANIES[0].actorId, NOW, NOW, WORK_ORDER_ID]);
+    await storage.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [EMPTY_VISIT_ID, company.companyId, JOB_ID, CHECKLIST_COMPANIES[0].actorId, NOW, NOW, WORK_ORDER_ID]);
+    await storage.query("INSERT INTO visit_tasks(company_id,visit_id,work_order_id,task_id,item_key,section,disposition,note) VALUES($1,$2,$3,$4,$5,$6,NULL,NULL)", [company.companyId, VISIT_ID, WORK_ORDER_ID, ITEM_ID, "ext_roof_condition", "Exterior"]);
+  } finally {
+    await storage.close();
+  }
+}
+
+async function setupChecklistRuntime(): Promise<void> {
+  _resetWebSessionRuntimeForTests();
+  checklistOldEnvironment = Object.fromEntries(checklistEnvironmentNames.map(name => [name, process.env[name]]));
+  checklistDirectory = await mkdtemp(join(tmpdir(), "titan-visits-unit-checklist-"));
+  checklistStoreRoot = join(checklistDirectory, "companies");
+  checklistFileRoot = join(checklistDirectory, "company-files");
+  await mkdir(checklistStoreRoot, { mode: 0o700 });
+  await mkdir(checklistFileRoot, { mode: 0o700 });
+  const registryPath = join(checklistDirectory, "global-registry.sqlite");
+  const bindings = CHECKLIST_COMPANIES.map(company => ({
+    legacy_user_id: company.userId, legacy_account_id: company.accountId,
+    company_id: company.companyId, actor_id: company.actorId, device_id: company.deviceId,
+  }));
+  Object.assign(process.env, {
+    TITAN_WEB_PUBLIC_ORIGIN: checklistOrigin,
+    TITAN_WEB_IDENTITY_REGISTRY_PATH: registryPath,
+    TITAN_WEB_LOGIN_KEY_ID: "web-login-test-key",
+    TITAN_WEB_LOGIN_SIGNING_SECRET: randomBytes(32).toString("base64url"),
+    TITAN_WEB_SESSION_KEY_ID: "web-session-test-key",
+    TITAN_WEB_SESSION_SIGNING_SECRET: randomBytes(32).toString("base64url"),
+    TITAN_WEB_IDENTITY_BINDINGS_JSON: JSON.stringify(bindings),
+    TITAN_COMPANY_DATA_ROOT: checklistStoreRoot,
+  });
+  checklistIdentityStorage = createSqliteStorage(registryPath);
+  checklistIdentityRegistry = await createIdentitySessionRegistry({ storage: checklistIdentityStorage, storage_role: "GLOBAL_REGISTRY" });
+  await initializeSqliteCompanyPlacementRegistry({ storage: checklistIdentityStorage, storage_role: "GLOBAL_REGISTRY" });
+  for (const company of CHECKLIST_COMPANIES) {
+    await checklistIdentityRegistry.putActor({ actor_id: company.actorId, status: "active" }, null);
+    await checklistIdentityRegistry.putCompany({ company_id: company.companyId, status: "active" }, null);
+    await checklistIdentityRegistry.putMembership({ actor_id: company.actorId, company_id: company.companyId, role: company.role, status: "active" }, null);
+    await checklistIdentityRegistry.putDevice({ device_id: company.deviceId, actor_id: company.actorId, status: "active" }, null);
+    await checklistIdentityRegistry.putExternalBinding({ binding_id: `web-login-${company.companyId}`, provider: checklistLoginIssuer, subject: company.userId, actor_id: company.actorId, company_id: company.companyId, status: "active" }, null);
+  }
+  for (const company of CHECKLIST_COMPANIES) await createChecklistCompanyStore(company);
+}
+
+async function cleanupChecklistRuntime(): Promise<void> {
+  await getWebSessionRuntime().then(runtime => runtime.close()).catch(() => undefined);
+  _resetWebSessionRuntimeForTests();
+  await checklistIdentityStorage?.close();
+  await rm(checklistDirectory, { recursive: true, force: true });
+  for (const name of checklistEnvironmentNames) {
+    const previous = checklistOldEnvironment[name];
+    if (previous === undefined) delete process.env[name]; else process.env[name] = previous;
+  }
+}
 
 const SAMPLE_VISIT = {
   id: VISIT_ID,
@@ -718,78 +832,49 @@ describe("POST /api/v1/visits/[id]/transition", () => {
 // GET /api/v1/visits/[id]/checklist
 // ---------------------------------------------------------------------------
 describe("GET /api/v1/visits/[id]/checklist", () => {
-  const CHECKLIST_ITEM = {
-    id: "item-1",
-    item_key: "ext_roof_condition",
-    section: "Exterior",
-    label: "Roof condition (visible)",
-    disposition: null,
-    note: null,
-    sort_order: 0,
-    account_id: mockSession.accountId,
-    visit_id: VISIT_ID,
-    created_at: NOW,
-    updated_at: NOW,
-  };
+  beforeEach(async () => setupChecklistRuntime());
+  afterEach(async () => cleanupChecklistRuntime());
 
-  function withChecklistContextMocks() {
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [] }) // BEGIN
-      .mockResolvedValueOnce({ rows: [] }) // set_config user
-      .mockResolvedValueOnce({ rows: [] }) // set_config account
-      .mockResolvedValueOnce({ rows: [] }); // set_config role
-  }
-
-  it("returns 200 with seeded items on first access", async () => {
-    withChecklistContextMocks();
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: VISIT_ID, assigned_user_id: null }] }) // visit SELECT
-      .mockResolvedValueOnce({ rows: [{ count: "0" }] }) // COUNT
-      .mockResolvedValueOnce({ rows: [] }) // INSERT seed
-      .mockResolvedValueOnce({ rows: [CHECKLIST_ITEM] }) // SELECT items
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
-    const res = await checklistGet(makeRequest("GET", `${VISITS_BASE}/${VISIT_ID}/checklist`));
+  it("returns 200 and leaves an unconfigured native visit checklist empty on first access", async () => {
+    const owner = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[0].userId, CHECKLIST_COMPANIES[0].accountId,
+    ));
+    const res = await checklistGet(checklistRequest(`/api/v1/visits/${EMPTY_VISIT_ID}/checklist`, owner.credential));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(Array.isArray(json.data)).toBe(true);
+    expect(json.data).toEqual([]);
   });
 
-  it("returns 200 with existing items when already seeded", async () => {
-    withChecklistContextMocks();
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: VISIT_ID, assigned_user_id: null }] })
-      .mockResolvedValueOnce({ rows: [{ count: "28" }] }) // COUNT → already seeded
-      .mockResolvedValueOnce({ rows: [CHECKLIST_ITEM] }) // SELECT items
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
-    const res = await checklistGet(makeRequest("GET", `${VISITS_BASE}/${VISIT_ID}/checklist`));
+  it("returns the visit's existing company-native work-order task links", async () => {
+    const owner = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[0].userId, CHECKLIST_COMPANIES[0].accountId,
+    ));
+    const res = await checklistGet(checklistRequest(`/api/v1/visits/${VISIT_ID}/checklist`, owner.credential));
     expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.data).toMatchObject([{
+      id: ITEM_ID, company_id: CHECKLIST_COMPANIES[0].companyId,
+      visit_id: VISIT_ID, item_key: "ext_roof_condition", disposition: null,
+    }]);
   });
 
   it("returns 404 when visit not found", async () => {
-    withChecklistContextMocks();
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [] }) // visit SELECT → not found
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
-    const res = await checklistGet(makeRequest("GET", `${VISITS_BASE}/${VISIT_ID}/checklist`));
+    const owner = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[0].userId, CHECKLIST_COMPANIES[0].accountId,
+    ));
+    const missingVisit = "cccccccc-cccc-cccc-cccc-ccccccccccce";
+    const res = await checklistGet(checklistRequest(`/api/v1/visits/${missingVisit}/checklist`, owner.credential));
     expect(res.status).toBe(404);
     const json = await res.json();
     expect(json.error.code).toBe("NOT_FOUND");
   });
 
   it("returns 404 for tech accessing unassigned visit", async () => {
-    Object.assign(mockSession, { role: "tech" });
-    withChecklistContextMocks();
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: VISIT_ID, assigned_user_id: "other-user" }] })
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
-    const res = await checklistGet(makeRequest("GET", `${VISITS_BASE}/${VISIT_ID}/checklist`));
+    const tech = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[1].userId, CHECKLIST_COMPANIES[1].accountId,
+    ));
+    const res = await checklistGet(checklistRequest(`/api/v1/visits/${VISIT_ID}/checklist`, tech.credential));
     expect(res.status).toBe(404);
-
-    Object.assign(mockSession, { role: "owner" });
   });
 });
 
@@ -797,32 +882,24 @@ describe("GET /api/v1/visits/[id]/checklist", () => {
 // PATCH /api/v1/visits/[id]/checklist/[itemId]
 // ---------------------------------------------------------------------------
 describe("PATCH /api/v1/visits/[id]/checklist/[itemId]", () => {
-  const ITEM_ID = "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee";
-
-  function withChecklistContextMocks() {
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [] }) // BEGIN
-      .mockResolvedValueOnce({ rows: [] }) // set_config user
-      .mockResolvedValueOnce({ rows: [] }) // set_config account
-      .mockResolvedValueOnce({ rows: [] }); // set_config role
-  }
+  beforeEach(async () => setupChecklistRuntime());
+  afterEach(async () => cleanupChecklistRuntime());
 
   it("returns 200 with updated item on valid body", async () => {
-    withChecklistContextMocks();
-    const updated = { id: ITEM_ID, disposition: "ok", note: null };
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: VISIT_ID, assigned_user_id: null }] }) // visit SELECT
-      .mockResolvedValueOnce({ rows: [updated] }) // UPDATE
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
+    const owner = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[0].userId, CHECKLIST_COMPANIES[0].accountId,
+    ));
     const res = await checklistPatch(
-      makeRequest("PATCH", `${VISITS_BASE}/${VISIT_ID}/checklist/${ITEM_ID}`, {
-        disposition: "ok",
+      checklistRequest(`/api/v1/visits/${VISIT_ID}/checklist/${ITEM_ID}`, owner.credential, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ disposition: "ok" }),
       })
     );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.disposition).toBe("ok");
+    expect(json.data.company_id).toBe(CHECKLIST_COMPANIES[0].companyId);
   });
 
   it("returns 422 when body has neither disposition nor note", async () => {
@@ -844,47 +921,43 @@ describe("PATCH /api/v1/visits/[id]/checklist/[itemId]", () => {
   });
 
   it("returns 404 when visit not found", async () => {
-    withChecklistContextMocks();
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [] }) // visit SELECT → not found
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
+    const owner = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[0].userId, CHECKLIST_COMPANIES[0].accountId,
+    ));
+    const missingVisit = "cccccccc-cccc-cccc-cccc-ccccccccccce";
     const res = await checklistPatch(
-      makeRequest("PATCH", `${VISITS_BASE}/${VISIT_ID}/checklist/${ITEM_ID}`, {
-        disposition: "ok",
+      checklistRequest(`/api/v1/visits/${missingVisit}/checklist/${ITEM_ID}`, owner.credential, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ disposition: "ok" }),
       })
     );
     expect(res.status).toBe(404);
   });
 
   it("returns 403 for tech accessing unassigned visit", async () => {
-    Object.assign(mockSession, { role: "tech" });
-    withChecklistContextMocks();
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: VISIT_ID, assigned_user_id: "different-user" }] })
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
+    const tech = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[1].userId, CHECKLIST_COMPANIES[1].accountId,
+    ));
     const res = await checklistPatch(
-      makeRequest("PATCH", `${VISITS_BASE}/${VISIT_ID}/checklist/${ITEM_ID}`, {
-        disposition: "ok",
+      checklistRequest(`/api/v1/visits/${VISIT_ID}/checklist/${ITEM_ID}`, tech.credential, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ disposition: "ok" }),
       })
     );
     expect(res.status).toBe(403);
-
-    Object.assign(mockSession, { role: "owner" });
   });
 
   it("accepts note-only patch", async () => {
-    withChecklistContextMocks();
-    const updated = { id: ITEM_ID, disposition: null, note: "needs attention" };
-    mockClientQuery
-      .mockResolvedValueOnce({ rows: [{ id: VISIT_ID, assigned_user_id: null }] })
-      .mockResolvedValueOnce({ rows: [updated] })
-      .mockResolvedValueOnce({ rows: [] }); // COMMIT
-
+    const owner = await getWebSessionRuntime().then(runtime => runtime.issueForAuthenticatedWebUser(
+      CHECKLIST_COMPANIES[0].userId, CHECKLIST_COMPANIES[0].accountId,
+    ));
     const res = await checklistPatch(
-      makeRequest("PATCH", `${VISITS_BASE}/${VISIT_ID}/checklist/${ITEM_ID}`, {
-        note: "needs attention",
+      checklistRequest(`/api/v1/visits/${VISIT_ID}/checklist/${ITEM_ID}`, owner.credential, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ note: "needs attention" }),
       })
     );
     expect(res.status).toBe(200);
