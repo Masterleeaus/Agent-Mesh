@@ -35,7 +35,6 @@ const { withDirectAdminBootstrapNonceRoute } = nonceRoute;
 const DA_COOKIE = 'session=synthetic-session; key=synthetic-key';
 const NONCE = /^[A-Za-z0-9_-]{43,128}$/;
 let selectedIdentity = { effectiveRole: 'admin', effectiveUsername: external.subject, realUsername: 'operator-a' };
-let issueInputs = [];
 let handler;
 
 async function provisionCleaningCompany(registry) {
@@ -144,6 +143,7 @@ test('packaged RAW nonce to #302 assertion to #1049 session issuance preserves t
   await security.initializeDirectAdminBootstrapNonceStore({ storage: f.storage, storage_role: 'GLOBAL_REGISTRY' });
   const upstream = { issuer: external.provider, audience: 'titan-login', key_id: 'upstream-1', algorithm: 'EdDSA',
     verification_key: f.upstreamKeys.publicKey };
+  const issueInputs = [];
   const baseSessions = security.createSessionCredentialService({ issuer: f.policy.issuer, audience: f.policy.audience,
     key_id: f.policy.key_id, algorithm: 'EdDSA', verification_key: f.policy.verification_key,
     signing_key: f.policy.signing_key, registry: f.registry, lifetime_seconds: 300, upstream,
@@ -183,11 +183,45 @@ test('packaged RAW nonce to #302 assertion to #1049 session issuance preserves t
   assert.deepEqual({ company_id: authenticated.context.company_id, device_id: authenticated.context.device_id },
     { company_id: 'cleaning-company-1', device_id: 'cleaning-device-1' });
 
+  // Exercise each packaged role route through the same #302 selection and
+  // #1049 session issuer. Carry the browser's HttpOnly cookie across routes;
+  // the selected company/device must remain the canonical tuple each time.
+  const browserCookies = new Map([['session', 'synthetic-session'], ['key', 'synthetic-key']]);
+  const initialTitanCookie = result.headers.get('set-cookie')[0].split(';', 1)[0];
+  let previousTitanCookie = initialTitanCookie;
+  browserCookies.set('__Host-titan-da-session', initialTitanCookie.slice(initialTitanCookie.indexOf('=') + 1));
+  const cookieHeader = () => [...browserCookies].map(([name, value]) => `${name}=${value}`).join('; ');
+  const expectedTuple = { company_id: 'cleaning-company-1', device_id: 'cleaning-device-1' };
+  for (const role of ['admin', 'reseller', 'user']) {
+    const requestCookies = cookieHeader();
+    const roleNonce = await runRaw('nonce', { role, cookie: requestCookies });
+    assert.equal(roleNonce.status, 200, `${role} nonce route: ${JSON.stringify(roleNonce.body)}`);
+    assert.equal(roleNonce.headers.has('set-cookie'), false);
+    assert.deepEqual(apiCalls.at(-1), { url: `${ORIGIN}/api/session`, cookie: DA_COOKIE, authorization: null },
+      `${role} nonce strips the Titan cookie before the canonical #302 lookup`);
+
+    const roleBootstrap = await runRaw('bootstrap', { role, cookie: requestCookies, nonce: roleNonce.body.csrf_nonce });
+    assert.equal(roleBootstrap.status, 200, `${role} bootstrap route: ${JSON.stringify(roleBootstrap.body)}`);
+    const rotatedCookie = roleBootstrap.headers.get('set-cookie')?.[0];
+    assert.match(rotatedCookie ?? '', /^__Host-titan-da-session=[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+; Path=\/; Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]\d*$/,
+      `${role} bootstrap returns only the canonical HttpOnly session cookie`);
+    const nextTitanCookie = rotatedCookie.split(';', 1)[0];
+    assert.notEqual(nextTitanCookie, previousTitanCookie, `${role} route rotates the browser session`);
+    previousTitanCookie = nextTitanCookie;
+    browserCookies.set('__Host-titan-da-session', nextTitanCookie.slice(nextTitanCookie.indexOf('=') + 1));
+    const roleCredential = nextTitanCookie.slice('__Host-titan-da-session='.length);
+    const roleSession = await baseSessions.authenticate(roleCredential, expectedTuple);
+    assert.deepEqual({ company_id: roleSession.context.company_id, device_id: roleSession.context.device_id }, expectedTuple,
+      `${role} route preserves the selected company/device tuple`);
+  }
+  assert.deepEqual(issueInputs, Array.from({ length: 4 }, () => expectedTuple),
+    'each role route pair passes only the same canonical selected tuple to sessions.issue');
+
   const replay = await runRaw('bootstrap', { nonce: issuedNonce.body.csrf_nonce });
   assert.equal(replay.status, 401);
   assert.deepEqual(replay.body, { error: 'directadmin-session-rejected', read_only: true });
   assert.equal(replay.headers.has('set-cookie'), false);
-  assert.equal(issueInputs.length, 1, 'replay never calls canonical sessions.issue');
+  assert.equal(issueInputs.length, 4, 'replay never calls canonical sessions.issue');
 });
 
 test('nonce is bound to the authenticated DA operator and signed assertion tuple mismatches fail before cookie issuance', async t => {
