@@ -519,3 +519,56 @@ cookie boundary, or an installed production host.
 The complete Workforce consumer/browser/package/SDK/hosted suite was rerun after
 these additional assertions and passed **61/61** on the same Node/Chromium/SDK
 configuration.
+
+### Packaged RAW to canonical company-scoped hosted Workforce — 2026-10-03
+
+The updated `relay-host.integration.mjs` now drives the browser through the
+extracted package's actual User nonce and bootstrap RAW scripts. It removes the
+former test-only `panel.selectedCompany` bootstrap and uses the #302 bootstrap
+flow, the shared SQLite identity registry, the canonical session credential
+service, the #1049 session bridge and company-switch gateway, and the current
+#811 `createWorkforceServer`/Workforce owners with A/B company rows in one
+disposable SQLite Workforce store. This proves logical company filtering, not
+separate physical company database isolation. The `/api/session` endpoint is
+still a controlled DirectAdmin HTTP fixture. It accepts only the exact fixture
+DirectAdmin cookie pair, returns host user/role identity without a company
+selector, and asserts `redirect: error`, `cache: no-store`, omitted fetch
+credentials and no Authorization header. It does not validate real DirectAdmin
+credentials, upstream revocation or host-session expiry; the renewal scenario
+expires the Titan session while this host fixture remains valid.
+
+The canonical registry starts with only company A active, so the real packaged
+nonce route can issue the first session without an injected company. Activating
+B and switching through `/v1/directadmin/company` rotates the canonical
+session; the actual Workforce owner then returns only B's worker/work/evidence.
+That route is called through the extracted relay, then the host's
+`titan-context-changed` event is dispatched by the test; this does not exercise
+`DirectAdminCockpitSession.switchCompany()` or certify a user-visible company
+picker. This end-to-end browser journey executes the User role only; Admin and
+Reseller nonce/bootstrap, renewal, revocation and hostile-input paths are
+covered separately by the 4-case session-chain suite.
+With A and B active, a fresh packaged bootstrap is denied as ambiguous. After
+the fixture canonically revokes A, B is the unique binding and the packaged
+reload/expiry-renewal succeeds. Revoking B clears the rendered company data and
+governed controls. The projection's controls remain empty; its governed action
+is denied by the actual #811 owner, and the test verifies no business/event
+writes. The production relay default remains an explicit `503
+cookie_boundary_unverified`; the test-only relay configuration is injected
+in-process and does not certify Apache/CGI cookie isolation.
+
+Focused verification on Node v22.23.3 and Chromium:
+
+- `node --test apps/directadmin/workforce/tests/*.test.mjs apps/directadmin/workforce/tests/sdk-contract.integration.mjs apps/directadmin/workforce/tests/hosted-sdk.integration.mjs`: **61/61 passed**.
+- `node --test apps/directadmin/workforce/tests/bootstrap-session-chain.integration.mjs`: **4/4 passed** for Admin, Reseller, User, role/session renewal, canonical membership, revocation and hostile request rejection.
+- `node --import tsx --test apps/directadmin/workforce/tests/relay-host.integration.mjs`: **1/1 passed**, 15 relay requests and 21 hosted routes.
+- Shared DirectAdmin SDK/browser suite: **123/123 passed**.
+- Two fresh 26-file v0.1.6 package builds are byte-identical; SHA256 and sidecar: `100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26`.
+
+These disposable tests prove the current local package-to-canonical-owner path,
+not production DirectAdmin `/api/session` provisioning, protected upstream
+credentials, multi-company selection during bootstrap, authorized hosted
+controls, or live install/update/rollback. Active A+B bootstrap intentionally
+fails closed because no trusted selected-company binding is provided to the
+nonce route. Real selection requires a canonical #302/#1049 host contract; this
+plugin does not invent one. #1050 remains open for the rest of its acceptance
+criteria and approved live-host commissioning.

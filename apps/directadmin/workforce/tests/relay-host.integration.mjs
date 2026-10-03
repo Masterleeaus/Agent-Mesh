@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { spawn } from 'node:child_process';
-import { lstat, mkdtemp, mkdir, readFile, rm, symlink } from 'node:fs/promises';
+import { lstat, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -10,7 +11,6 @@ import { PassThrough } from 'node:stream';
 import https from 'node:https';
 import http from 'node:http';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createHash, randomBytes } from 'node:crypto';
 
 const repo = resolve(fileURLToPath(new URL('../../../../', import.meta.url)));
 const scratch = await mkdtemp(join(tmpdir(), '1050-relay-host-'));
@@ -34,11 +34,15 @@ let panel;
 let browser;
 let relayCore;
 let relayFixtureConfig = null;
+let rawPrivatePortConfig;
+let workforceOrigin;
+let auth;
+let identityClock;
 const cleanup = [];
 const relayObservations = [];
 const panelObservations = [];
 const hostedObservations = [];
-const bootstrapNonces = new Set();
+const bootstrapIdentityObservations = [];
 
 function requiredPath(name) {
   const value = process.env[name];
@@ -123,6 +127,53 @@ function cgiEnv(request, query, body) {
   return env;
 }
 
+function runPackagedRoleRaw(action, role, request, url, body) {
+  const rawName = action === 'nonce' ? 'bootstrap-nonce' : 'bootstrap';
+  const binary = join(browserPackage, role, `${rawName}.raw`);
+  const lines = [];
+  const copy = (name, label) => {
+    const value = request.headers[name];
+    if (typeof value === 'string') lines.push(`${label}: ${value}`);
+  };
+  copy('host', 'Host');
+  copy('origin', 'Origin');
+  copy('sec-fetch-site', 'Sec-Fetch-Site');
+  copy('referer', 'Referer');
+  copy('cookie', 'Cookie');
+  copy('accept', 'Accept');
+  copy('content-type', 'Content-Type');
+  copy('content-length', 'Content-Length');
+  copy('x-titan-da-bootstrap-csrf', 'X-Titan-DA-Bootstrap-CSRF');
+  // Keep the packaged RAW child isolated from ambient CI/developer credentials.
+  const env = { NODE_ENV: 'test', REQUEST_METHOD: request.method,
+    QUERY_STRING: url.search.slice(1), HEADERS: encodeURIComponent(lines.join('\r\n')) };
+  if (request.method === 'POST') {
+    env.POST = 'stdin=true';
+    env.CONTENT_LENGTH = String(body.byteLength);
+    if (typeof request.headers['content-type'] === 'string') env.CONTENT_TYPE = request.headers['content-type'];
+  }
+  env.TITAN_WORKFORCE_DIRECTADMIN_RAW_TEST_CONFIG = rawPrivatePortConfig;
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [binary], { env, stdio: ['pipe', 'pipe', 'pipe'] });
+    const chunks = [];
+    const stderr = [];
+    child.stdout.on('data', value => chunks.push(Buffer.from(value)));
+    child.stderr.on('data', value => stderr.push(Buffer.from(value)));
+    child.once('error', reject);
+    child.once('close', code => {
+      try {
+        const parsed = parseRaw(Buffer.concat(chunks));
+        resolve({ ...parsed, code, stderr: Buffer.concat(stderr).toString('utf8') });
+      } catch (error) { reject(error); }
+    });
+    child.stdin.end(body);
+  });
+}
+
+async function titanBrowserCookie(context, origin) {
+  return (await context.cookies(origin)).find(cookie => cookie.name === '__Host-titan-da-session') ?? null;
+}
+
 try {
   const sdkModulePath = requiredPath('TITAN_COCKPIT_SDK_MODULE');
   const { buildPackage } = await import(pathToFileURL(join(repo, 'apps/directadmin/workforce/tools/package.mjs')).href);
@@ -151,55 +202,54 @@ try {
       const chunks = [];
       for await (const chunk of request) chunks.push(chunk);
       const body = Buffer.concat(chunks);
-      const roleRaw = '/CMD_PLUGINS/titan_workforce/';
-      if (url.pathname === `${roleRaw}bootstrap-nonce.raw` || url.pathname === `${roleRaw}bootstrap.raw`) {
+      const roleRoutes = [
+        ['/CMD_PLUGINS_ADMIN/titan_workforce/', 'admin'],
+        ['/CMD_PLUGINS_RESELLER/titan_workforce/', 'reseller'],
+        ['/CMD_PLUGINS/titan_workforce/', 'user'],
+      ];
+      const roleRoute = roleRoutes.find(([prefix]) => url.pathname === `${prefix}bootstrap-nonce.raw` ||
+        url.pathname === `${prefix}bootstrap.raw`);
+      if (roleRoute) {
+        const [prefix, role] = roleRoute;
         const isNonce = url.pathname.endsWith('bootstrap-nonce.raw');
+        const action = isNonce ? 'nonce' : 'bootstrap';
         const observed = { method: request.method, pathname: url.pathname, search: url.search,
           contentType: request.headers['content-type'] ?? null, bodyBytes: body.byteLength,
           origin: request.headers.origin ?? null, secFetchSite: request.headers['sec-fetch-site'] ?? null,
           cookie: request.headers.cookie ?? null, nonce: request.headers['x-titan-da-bootstrap-csrf'] ?? null };
         panelObservations.push(observed);
         if (request.method !== 'POST' || url.search !== '?headers_to_env=yes&pipe_post=yes' ||
-            observed.contentType !== null || body.byteLength !== 0 || request.headers.origin !== panelOrigin ||
+            !url.pathname.startsWith(prefix) || observed.contentType !== null || body.byteLength !== 0 || request.headers.origin !== panelOrigin ||
             request.headers['sec-fetch-site'] !== 'same-origin' ||
             !request.headers.cookie?.includes('session=fixture-da-session') || !request.headers.cookie?.includes('key=fixture-da-key') ||
-            request.headers.authorization || request.headers['x-titan-csrf']) {
+            request.headers.authorization || request.headers['x-titan-csrf'] || (isNonce && observed.nonce) ||
+            (!isNonce && !/^[A-Za-z0-9_-]{43,128}$/.test(observed.nonce ?? ''))) {
           response.writeHead(400, { 'content-type': 'application/json', 'cache-control': 'no-store' });
           response.end('{"error":"fixture-bootstrap-raw-rejected","read_only":true}'); return;
         }
-        if (isNonce) {
-          const csrf_nonce = `N${String(bootstrapNonces.size + panelObservations.length).padStart(42, '0')}`;
-          bootstrapNonces.add(csrf_nonce);
-          response.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
-          response.end(JSON.stringify({ csrf_nonce })); return;
+        const result = await runPackagedRoleRaw(action, role, request, url, body);
+        observed.status = result.status;
+        observed.stderr = result.stderr ? safeError(new Error(result.stderr)) : null;
+        const outgoingHeaders = Object.create(null);
+        for (const [name, values] of Object.entries(result.headers)) {
+          outgoingHeaders[name] = values.length === 1 ? values[0] : values;
         }
-        if (!bootstrapNonces.delete(observed.nonce)) {
-          response.writeHead(403, { 'content-type': 'application/json', 'cache-control': 'no-store' });
-          response.end('{"error":"fixture-bootstrap-rejected","read_only":true}'); return;
-        }
-        const bootstrapRequest = new Request(`${panelOrigin}/v1/directadmin/bootstrap`, { method: 'POST', headers: {
-          origin: panelOrigin, 'sec-fetch-site': 'same-origin',
-          'x-titan-da-bootstrap-csrf': observed.nonce,
-          ...(observed.cookie ? { cookie: observed.cookie } : {}),
-        } });
-        const bootstrap = await auth.bridge.bootstrapBrowserSession(bootstrapRequest, async proof => {
-          if (proof.origin !== panelOrigin || proof.authorization !== null || proof.csrf_nonce !== observed.nonce ||
-              proof.cookie !== 'session=fixture-da-session; key=fixture-da-key') {
-            throw new Error('fixture-directadmin-proof-rejected');
+        if (!isNonce && result.status === 200) {
+          const cookies = result.headers['set-cookie'] ?? [];
+          const value = JSON.parse(result.body.toString('utf8'));
+          if (cookies.length === 1 && typeof value.csrf_token === 'string') {
+            panel.fixtureCsrf = value.csrf_token;
+            panel.fixtureSessionToken = cookies[0].slice('__Host-titan-da-session='.length).split(';', 1)[0];
           }
-          const csrf_token = randomBytes(32).toString('base64url');
-          const company_id = panel.selectedCompany ?? 'company-a';
-          const login_assertion = await auth.loginFor(`directadmin:${panelOrigin}`, `raw-bootstrap-${randomBytes(12).toString('hex')}`, {
-            company_id, device_id: bridgeFixture.proof.device_id, node_id: 'node-1', da_role: 'user',
-            csrf_sha256: createHash('sha256').update(csrf_token).digest('base64url'),
-          });
-          return { login_assertion, company_id, device_id: bridgeFixture.proof.device_id, csrf_token };
-        });
-        panel.fixtureCsrf = bootstrap.csrf_token;
-        panel.fixtureSessionToken = bootstrap.set_cookie.slice('__Host-titan-da-session='.length).split(';', 1)[0];
-        response.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store',
-          'set-cookie': bootstrap.set_cookie });
-        response.end(JSON.stringify({ csrf_token: bootstrap.csrf_token })); return;
+        }
+        response.writeHead(result.status, outgoingHeaders);
+        response.end(result.body);
+        return;
+      }
+      if (url.pathname === '/test/session') {
+        response.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
+        response.end('<!doctype html><title>Workforce integration harness</title><main></main>');
+        return;
       }
       if (url.pathname === '/') {
         response.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
@@ -236,9 +286,6 @@ try {
         }
         relayObservations.push(observation);
         const result = await runRelayCore(cgiEnv(request, url.search.slice(1), body), body);
-        if (route === 'company' && result.status === 200 && typeof observation.companyId === 'string') {
-          panel.selectedCompany = observation.companyId;
-        }
         observation.status = result.status;
         try { observation.code = JSON.parse(result.body.toString('utf8')).error ?? null; } catch { observation.code = 'non-json-response'; }
         const outgoingHeaders = Object.create(null);
@@ -296,13 +343,43 @@ try {
 
   const bridgeFixture = await import(pathToFileURL(bridgeFixturePath).href);
   const identityStoragePath = join(scratch, 'identity.db');
-  const auth = await bridgeFixture.fixture({ after: cleanupFn => lifecycleCallbacks.push(cleanupFn) }, {
+  auth = await bridgeFixture.fixture({ after: cleanupFn => lifecycleCallbacks.push(cleanupFn) }, {
     origin: panelOrigin, provider: `directadmin:${panelOrigin}`, storagePath: identityStoragePath,
   });
-  panel.fixtureCsrf = bridgeFixture.csrf;
-  panel.fixtureSessionToken = auth.token;
-  panel.selectedCompany = 'company-a';
-  const { createDirectAdminGateway } = await import(pathToFileURL(hostSdkModulePath).href);
+  // A first login may proceed only from a unique canonical membership. Keep
+  // company B denied until after the A session exists; the later switch test
+  // reactivates B through the identity registry itself.
+  let companyBRevision = await auth.registry.putMembership(
+    { actor_id: 'actor-1', company_id: 'company-b', role: 'member', status: 'revoked' }, 1);
+  identityClock = auth.now;
+  const serviceRequire = createRequire(join(repo, 'services/workforce/package.json'));
+  const { tsImport } = await import(pathToFileURL(serviceRequire.resolve('tsx/esm/api')).href);
+  const security = await tsImport(join(repo, 'packages/titan-platform/src/security-boundary.ts'),
+    { parentURL: import.meta.url, tsconfig: false });
+  await security.initializeDirectAdminBootstrapNonceStore({ storage: auth.storage, storage_role: 'GLOBAL_REGISTRY' });
+  const { createDirectAdminGateway, DirectAdminSessionBridge } = await import(pathToFileURL(hostSdkModulePath).href);
+  const upstream = { ...auth.policy.upstream, audience: 'titan-login' };
+  const hostedSessions = security.createSessionCredentialService({ ...auth.policy, upstream,
+    now: () => new Date(identityClock) });
+  const bootstrapFlow = security.createDirectAdminBootstrapFlow({ origin: panelOrigin, registry: auth.registry,
+    node_id: 'node-1', upstream, signing_key: auth.upstreamKeys.privateKey, now: () => new Date(identityClock),
+    fetcher: async (url, init) => {
+      const observation = { url: String(url), method: init?.method, cookie: init?.headers?.cookie ?? null,
+        authorization: init?.headers?.authorization ?? null, redirect: init?.redirect, cache: init?.cache,
+        credentials: init?.credentials };
+      bootstrapIdentityObservations.push(observation);
+      if (observation.url !== `${panelOrigin}/api/session` || observation.method !== 'GET' ||
+          observation.cookie !== 'session=fixture-da-session; key=fixture-da-key' ||
+          observation.authorization !== null || observation.redirect !== 'error' || observation.cache !== 'no-store' ||
+          observation.credentials !== 'omit') {
+        return new Response('{"error":"fixture-session-boundary-rejected"}', { status: 503,
+          headers: { 'content-type': 'application/json' } });
+      }
+      return new Response(JSON.stringify({ effectiveRole: 'user', effectiveUsername: 'host-human-17', realUsername: 'fixture-user' }),
+        { status: 200, headers: { 'content-type': 'application/json' } });
+    } });
+  const hostBridge = new DirectAdminSessionBridge({ origin: panelOrigin, audience: 'titan-directadmin:node-1',
+    node_id: 'node-1', sessions: hostedSessions });
   const credentialVerifier = {
     async verify(authorization, options = {}) {
       options.signal?.throwIfAborted();
@@ -348,8 +425,9 @@ try {
     readiness: async () => ({ authentication: true, authority: true, provider: true, evidence: true }),
     directAdmin: {
       publicOrigin: panelOrigin,
-      createGateway(owners) {
-        const gateway = createDirectAdminGateway(auth.bridge, owners);
+      bootstrapNonceFlow: bootstrapFlow,
+      createGateway(owners, nonceFlow) {
+        const gateway = createDirectAdminGateway(hostBridge, owners, nonceFlow);
         return async request => {
           hostedObservations.push({ method: request.method, path: new URL(request.url).pathname });
           return gateway(request);
@@ -359,7 +437,9 @@ try {
   };
   host = await createWorkforceServer({ storagePath: dbPath, dependencies: hostDeps });
   const hostAddress = await listen(host.server, '127.0.0.1');
-  const workforceOrigin = `http://127.0.0.1:${hostAddress.port}`;
+  workforceOrigin = `http://127.0.0.1:${hostAddress.port}`;
+  rawPrivatePortConfig = join(scratch, 'workforce-private-port');
+  await writeFile(rawPrivatePortConfig, `${hostAddress.port}\n`, { mode: 0o400 });
   const pnpmRoot = join(repo, 'node_modules/.pnpm');
   const playwrightDir = (await (await import('node:fs/promises')).readdir(pnpmRoot))
     .find(name => name.startsWith('playwright@') && existsSync(join(pnpmRoot, name, 'node_modules/playwright/index.mjs')));
@@ -377,11 +457,26 @@ try {
   page.on('pageerror', error => pageErrors.push(safeError(error)));
   await page.goto(panelOrigin);
   await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
+  const initialSessionToken = panel.fixtureSessionToken;
+  const initialCsrf = panel.fixtureCsrf;
+  assert.match(initialSessionToken ?? '', /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/,
+    `the extracted User RAW scripts obtained a canonical host-issued session; panel=${JSON.stringify(panelObservations)} relay=${JSON.stringify(relayObservations)} hosted=${JSON.stringify(hostedObservations)}`);
+  assert.match(initialCsrf ?? '', /^[A-Za-z0-9_-]{43,128}$/);
+  const packagedLogin = panelObservations.filter(entry => typeof entry.pathname === 'string' &&
+    entry.pathname.startsWith('/CMD_PLUGINS/titan_workforce/'));
+  assert.deepEqual(packagedLogin.map(entry => [entry.pathname.endsWith('bootstrap-nonce.raw') ? 'nonce' : 'bootstrap', entry.status]),
+    [['nonce', 200], ['bootstrap', 200]], 'the browser used the extracted User RAW scripts against the private Workforce routes');
+  assert.deepEqual(bootstrapIdentityObservations.map(entry => entry.cookie), [
+    'session=fixture-da-session; key=fixture-da-key', 'session=fixture-da-session; key=fixture-da-key',
+  ], 'only the two DirectAdmin cookies reach the authenticated /api/session projection');
+  assert.ok(bootstrapIdentityObservations.every(entry => entry.authorization === null && entry.redirect === 'error' &&
+    entry.cache === 'no-store' && entry.credentials === 'omit'));
   assert.equal(relayObservations.length, 1, `real relay received the initial context request; panel=${JSON.stringify(panelObservations)} page=${JSON.stringify(pageErrors)}`);
   assert.equal(relayObservations[0].status, 503, 'the extracted relay production default fails closed without configuration');
   assert.equal(relayObservations[0].code, 'cookie_boundary_unverified',
     'the current production loader reports the unverified-cookie boundary explicitly');
-  assert.equal(hostedObservations.length, 0, 'missing relay config refuses before calling the hosted owner');
+  assert.deepEqual(hostedObservations.map(entry => entry.path), ['/v1/directadmin/bootstrap'],
+    'missing relay config refuses before calling any authenticated Workforce owner');
   assert.equal(await page.getByRole('navigation').count(), 0, 'missing config exposes no company views');
   assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0, 'missing config exposes no controls');
 
@@ -420,8 +515,8 @@ try {
       { name: '__Host-titan-da-session', value: auth.token, url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
     ]);
     const csrfPage = await csrfContext.newPage();
-    await csrfPage.goto(panelOrigin);
-    await csrfPage.getByText('Current hosted projection', { exact: true }).waitFor();
+    csrfPage.setDefaultTimeout(5000);
+    await csrfPage.goto(`${panelOrigin}/test/session`);
     wrongCsrf = await csrfPage.evaluate(async () => {
       const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
       const fetcher = relay.createDirectAdminRelayFetch();
@@ -447,56 +542,41 @@ try {
     try { return (await db.query('SELECT COUNT(*) AS total FROM workforce_events')).rows[0].total; }
     finally { await db.close(); }
   })();
-  const denial = await page.evaluate(async sdkDataUrl => {
-    const [SDK, relay] = await Promise.all([import(sdkDataUrl), import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs')]);
-    const flags = '?headers_to_env=yes&pipe_post=yes';
-    const nonceResponse = await fetch('/CMD_PLUGINS/titan_workforce/bootstrap-nonce.raw' + flags, {
-      method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error', referrerPolicy: 'same-origin', headers: { Accept: 'application/json' } });
-    let nonce = (await nonceResponse.json()).csrf_nonce;
-    const relayFetch = relay.createDirectAdminRelayFetch();
-    const session = new SDK.DirectAdminCockpitSession(() => nonce, async (input, init = {}) => {
-      if (input === '/v1/directadmin/bootstrap') {
-        const csrf_nonce = nonce; nonce = null;
-        return fetch('/CMD_PLUGINS/titan_workforce/bootstrap.raw' + flags, { method: 'POST', credentials: 'same-origin',
-          cache: 'no-store', redirect: 'error', referrerPolicy: 'same-origin', signal: init.signal,
-          headers: { Accept: 'application/json', 'X-Titan-DA-Bootstrap-CSRF': csrf_nonce } });
-      }
-      return relayFetch(input, init);
-    });
-    try {
-      const context = await session.connect();
-      try {
-        const receipt = await session.intent('titan_workforce', { company_id: context.company_id, actor_id: context.actor_id,
-          capability_id: 'work.pause', operation_id: 'fixture-operation-denied', correlation_id: 'fixture-correlation-denied',
-          input: { action: 'pause', work_id: 'fixture-company-a-work', reason: 'test-only denied proposal' } });
-        return { accepted: true, receipt: Boolean(receipt) };
-      } catch (error) { return { accepted: false, error: String(error?.message ?? '') }; }
-    } finally { session.dispose(); }
-  }, `data:text/javascript;base64,${Buffer.from(await readFile(join(browserPackage, 'images/sdk.mjs'))).toString('base64')}`);
-  assert.equal(denial.accepted, false, 'canonical context reaches the unsupported action owner and is denied');
-  assert.equal(denial.error, 'directadmin-http-403',
-    `the current #1049 gateway maps the typed #811 unsupported-action denial; denial=${JSON.stringify(denial)} relay=${JSON.stringify(relayObservations.slice(-5))} hosted=${JSON.stringify(hostedObservations.slice(-5))}`);
-  assert.equal((await context.cookies(panelOrigin)).some(cookie => cookie.name === '__Host-titan-da-session' && cookie.value === panel.fixtureSessionToken), true,
-    'typed governed-intent 403 leaves the still-valid DirectAdmin session cookie intact');
-  assert.equal(hostedObservations.some(entry => entry.path === '/v1/directadmin/titan_workforce/intents'), true,
-    'the canonical revision assertion passes through #812 to the host owner');
-  assert.ok(!denial.error.includes('fixture-operation-denied'), 'the UI receives no intent/owner detail');
   const directHeaders = {
     host: new URL(panelOrigin).host,
     origin: panelOrigin,
     referer: `${panelOrigin}/`,
     'sec-fetch-site': 'same-origin',
-    'x-titan-csrf': panel.fixtureCsrf,
-    cookie: `__Host-titan-da-session=${panel.fixtureSessionToken}`,
+    'x-titan-csrf': initialCsrf,
+    cookie: `__Host-titan-da-session=${initialSessionToken}`,
     accept: 'application/json',
   };
   const hostedContextResponse = await nodeHttpFetch(`${workforceOrigin}/v1/directadmin/context`, { headers: directHeaders });
   assert.equal(hostedContextResponse.status, 200, `separate diagnostic reaches the same #811/#1049 host: ${JSON.stringify(await hostedContextResponse.clone().json())}`);
   const hostedContext = await hostedContextResponse.json();
+  const sdkContract = await import(pathToFileURL(hostSdkModulePath).href);
+  const contextRevision = await sdkContract.directAdminContextRevisionAssertion(hostedContext.context_revision);
+  const denial = await page.evaluate(async ({ csrf, intent }) => {
+    const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
+    const fetcher = relay.createDirectAdminRelayFetch();
+    const response = await fetcher('/v1/directadmin/titan_workforce/intents', { method: 'POST', headers: {
+      Accept: 'application/json', 'X-Titan-CSRF': csrf, 'Content-Type': 'application/json',
+    }, body: JSON.stringify(intent) });
+    return { status: response.status, body: await response.json() };
+  }, { csrf: initialCsrf, intent: { company_id: hostedContext.company_id, actor_id: hostedContext.actor_id,
+    context_revision: contextRevision, capability_id: 'work.pause', operation_id: 'fixture-operation-denied',
+    correlation_id: 'fixture-correlation-denied', input: { action: 'pause', work_id: 'fixture-company-a-work',
+      reason: 'test-only denied proposal' } } });
+  assert.equal(denial.status, 403, 'canonical owner denies the read-only Workforce action through the extracted relay');
+  assert.deepEqual(denial.body, { error: 'directadmin-workforce-action-unsupported', read_only: true });
+  assert.equal((await context.cookies(panelOrigin)).some(cookie => cookie.name === '__Host-titan-da-session' &&
+    cookie.value === initialSessionToken), true, 'typed intent denial preserves the current session cookie');
+  assert.ok(hostedObservations.some(entry => entry.path === '/v1/directadmin/titan_workforce/intents'),
+    'the canonical revision assertion reaches the #811 owner');
   const hostedDenialResponse = await nodeHttpFetch(`${workforceOrigin}/v1/directadmin/titan_workforce/intents`, {
     method: 'POST', headers: { ...directHeaders, 'content-type': 'application/json' },
     body: JSON.stringify({ company_id: hostedContext.company_id, actor_id: hostedContext.actor_id,
-      context_revision: hostedContext.context_revision, capability_id: 'work.pause', operation_id: 'fixture-operation-denied',
+      context_revision: contextRevision, capability_id: 'work.pause', operation_id: 'fixture-operation-denied',
       correlation_id: 'fixture-correlation-denied', input: { action: 'pause', work_id: 'fixture-company-a-work', reason: 'test-only denied proposal' } }),
   });
   assert.equal(hostedDenialResponse.status, 403, 'the current #1049 gateway safely maps the #811 typed lifecycle denial');
@@ -509,48 +589,107 @@ try {
     assert.equal((await afterDb.query('SELECT COUNT(*) AS total FROM workforce_events')).rows[0].total, beforeEvents, 'denied intent changed no workforce rows/events');
   } finally { await afterDb.close(); }
 
-  const companySwitch = await page.evaluate(async sdkDataUrl => {
-    const [SDK, relay] = await Promise.all([import(sdkDataUrl), import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs')]);
-    const flags = '?headers_to_env=yes&pipe_post=yes';
-    const nonceResponse = await fetch('/CMD_PLUGINS/titan_workforce/bootstrap-nonce.raw' + flags, {
-      method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error', referrerPolicy: 'same-origin', headers: { Accept: 'application/json' } });
-    let nonce = (await nonceResponse.json()).csrf_nonce;
-    const relayFetch = relay.createDirectAdminRelayFetch();
-    const session = new SDK.DirectAdminCockpitSession(() => nonce, async (input, init = {}) => {
-      if (input === '/v1/directadmin/bootstrap') {
-        const csrf_nonce = nonce; nonce = null;
-        return fetch('/CMD_PLUGINS/titan_workforce/bootstrap.raw' + flags, { method: 'POST', credentials: 'same-origin',
-          cache: 'no-store', redirect: 'error', referrerPolicy: 'same-origin', signal: init.signal,
-          headers: { Accept: 'application/json', 'X-Titan-DA-Bootstrap-CSRF': csrf_nonce } });
-      }
-      return relayFetch(input, init);
-    });
-    try { await session.connect(); await session.switchCompany('company-b'); return (await session.connect()).company_id; }
-    finally { session.dispose(); }
-  }, `data:text/javascript;base64,${Buffer.from(await readFile(join(browserPackage, 'images/sdk.mjs'))).toString('base64')}`);
-  assert.equal(companySwitch, 'company-b', 'canonical session bridge switches the current company through the RAW route');
-  await page.getByText('Context changed. Reconnect to load permitted Workforce.', { exact: true }).waitFor();
-  assert.equal(await page.getByText('fixture-company-a-worker', { exact: true }).count(), 0, 'other tab erases company A before refresh');
-  await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+  companyBRevision = await auth.registry.putMembership(
+    { actor_id: 'actor-1', company_id: 'company-b', role: 'member', status: 'active' }, companyBRevision);
+  const companySwitch = await page.evaluate(async ({ csrf, company_id }) => {
+    const relay = await import('/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs');
+    const fetcher = relay.createDirectAdminRelayFetch();
+    const response = await fetcher('/v1/directadmin/company', { method: 'POST', headers: {
+      Accept: 'application/json', 'X-Titan-CSRF': csrf, 'Content-Type': 'application/json',
+    }, body: JSON.stringify({ company_id }) });
+    return { status: response.status, body: await response.json() };
+  }, { csrf: initialCsrf, company_id: 'company-b' });
+  assert.deepEqual(companySwitch, { status: 200, body: { status: 'context-changed' } },
+    'the extracted browser relay reaches the canonical #1049/#302 company switch');
+  const switchedCookie = await titanBrowserCookie(context, panelOrigin);
+  assert.ok(switchedCookie && switchedCookie.value !== initialSessionToken, 'company switch rotates the HttpOnly session cookie');
+
+  const switchedHeaders = { ...directHeaders, cookie: `__Host-titan-da-session=${switchedCookie.value}` };
+  const switchedContextResponse = await nodeHttpFetch(`${workforceOrigin}/v1/directadmin/context`, { headers: switchedHeaders });
+  assert.equal(switchedContextResponse.status, 200);
+  const switchedContext = await switchedContextResponse.json();
+  assert.equal(switchedContext.company_id, 'company-b', 'the canonical session registry, not the page fixture, supplies current company');
+  assert.deepEqual(switchedContext.company_ids, ['company-b']);
+  assert.equal(switchedContext.authority, 'not-carried');
+  const switchedProjectionResponse = await nodeHttpFetch(`${workforceOrigin}/v1/directadmin/titan_workforce/projection`, {
+    headers: switchedHeaders,
+  });
+  assert.equal(switchedProjectionResponse.status, 200);
+  const switchedProjection = (await switchedProjectionResponse.json()).projection;
+  assert.equal(switchedProjection.company_id, 'company-b');
+  assert.deepEqual(switchedProjection.data.discovery.workers.map(worker => worker.worker_id), ['fixture-company-b-worker']);
+  assert.deepEqual(switchedProjection.data.status.work.map(work => work.work_id), ['fixture-company-b-work']);
+
+  // The current panel page consumes the host's context-changed notification;
+  // no company ID is carried by the event, and reconnect reads the new context.
+  await page.evaluate(() => window.dispatchEvent(new Event('titan-context-changed')));
   await page.getByText('company-b', { exact: true }).waitFor();
-  await page.getByText('Current hosted projection', { exact: true }).waitFor();
   await page.getByRole('button', { name: 'Roster', exact: true }).click();
   await page.getByText('fixture-company-b-worker', { exact: true }).waitFor();
-  assert.equal(await page.getByText('fixture-company-a-worker', { exact: true }).count(), 0, 'company B projection has no company A worker');
+  assert.equal(await page.getByText('fixture-company-a-worker', { exact: true }).count(), 0,
+    'company B replaces the prior company A roster in the packaged cockpit');
+  await page.getByRole('button', { name: 'Cleaning work queue', exact: true }).click();
+  await page.getByText('fixture-company-b-work', { exact: true }).waitFor();
 
-  auth.setClock(auth.now + 301_000);
+  // There is intentionally no browser-selected company ingress. With A and B
+  // both active, a new document's unique-context nonce request fails closed.
+  const reloadContext = await browser.newContext({ ignoreHTTPSErrors: true });
+  let reloadPage;
+  try {
+    await reloadContext.addCookies([
+      { name: 'session', value: 'fixture-da-session', url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
+      { name: 'key', value: 'fixture-da-key', url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
+      { name: '__Host-titan-da-session', value: switchedCookie.value, url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
+    ]);
+    reloadPage = await reloadContext.newPage();
+    await reloadPage.goto(panelOrigin);
+    await reloadPage.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
+    assert.equal(await reloadPage.getByRole('navigation').count(), 0, 'ambiguous company context renders no stale view');
+    assert.equal((await titanBrowserCookie(reloadContext, panelOrigin))?.value, switchedCookie.value,
+      'a failed ambiguous nonce request does not replace or clear the still-canonical company B session');
+  } finally { await reloadContext.close(); }
+
+  // Once the canonical registry revokes A, B becomes the sole current binding.
+  // The packaged reload now obtains B from #302 and renders only B's hosted rows.
+  await auth.registry.putMembership({ actor_id: 'actor-1', company_id: 'company-a', role: 'member', status: 'revoked' }, 1);
+  await page.reload();
+  await page.getByText('company-b', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Roster', exact: true }).click();
+  await page.getByText('fixture-company-b-worker', { exact: true }).waitFor();
+  assert.equal(await page.getByText('fixture-company-a-worker', { exact: true }).count(), 0,
+    'a fresh packaged login remains company B scoped after canonical membership change');
+
+  const beforeExpiryCookie = await titanBrowserCookie(context, panelOrigin);
+  identityClock = auth.now + 301_000;
+  auth.setClock(identityClock);
   await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
-  await page.waitForTimeout(500);
-  const expiryState = await page.locator('#titan-workforce').innerText();
-  const expiryTail = relayObservations.slice(-3).map(({ status, code, route }) => ({ status, code, route }));
-  console.log(`PASS upstream expiry handled and company-b projection cleared; relay status=${expiryTail.at(-1)?.status}`);
-  assert.match(expiryState, /Access or company context changed|Hosted Workforce is unavailable|Context changed\. Reconnect to load permitted Workforce/,
-    `expired context enters a handled failure state; relay tail=${JSON.stringify(expiryTail)}`);
-  assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0, 'expired upstream session clears current projection');
+  let renewedCookie = null;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const current = await titanBrowserCookie(context, panelOrigin);
+    if (current && current.value !== beforeExpiryCookie?.value) { renewedCookie = current; break; }
+    await page.waitForTimeout(100);
+  }
+  assert.ok(renewedCookie, 'expired session reauthenticates through the real packaged RAW pair for the unique company B');
+  assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0,
+    'expiry clears the previous company projection before refresh');
+  await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+  await page.getByText('fixture-company-b-worker', { exact: true }).waitFor();
+  assert.equal(await page.getByText('fixture-company-a-worker', { exact: true }).count(), 0);
+
+  companyBRevision = await auth.registry.putMembership(
+    { actor_id: 'actor-1', company_id: 'company-b', role: 'member', status: 'revoked' }, companyBRevision);
+  await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+  await page.getByText(/Access or company context changed\. Reconnect to revalidate\.|Context changed\. Reconnect to load permitted Workforce\./).waitFor();
+  assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 0,
+    'company B membership revocation clears the current Workforce projection');
+  assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0,
+    'revocation leaves no stale governed controls');
+  const expiryTail = relayObservations.slice(-5).map(({ status, code, route }) => ({ status, code, route }));
+  console.log(`PASS canonical company B switch, unique-binding reload and expiry renewal; final membership revocation denied; relay tail=${JSON.stringify(expiryTail)}`);
   assert.deepEqual(pageErrors, [], 'security denial and expiry remain handled states');
 
   console.log('PASS extracted Workforce 0.1.6 + Server Node 0.3.0 relay module + current #811 hosted source; production default denied, fixture config-loader injected in-process only; no CGI config or Apache proof');
-  console.log(`PASS scenarios: production default unavailable (HTTP 503 ${relayObservations[0].code}), read-only company-a projection/evidence, empty controls, CSRF denial (${wrongCsrf.status}), hosted governed-action denial without DB/event effects (${denial.error}), company switch to company-b, upstream expiry and client data clearing; relay requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
+  console.log(`PASS scenarios: production default unavailable (HTTP 503 ${relayObservations[0].code}), canonical A RAW login/roster/evidence, no-control view, CSRF denial (${wrongCsrf.status}), governed-action denial (${denial.body.error}) without DB/event effects, real A→B switch and isolated B owner projection, fail-closed ambiguous reload, unique-B reconnect/expiry renewal, final membership revocation cleanup; relay requests=${relayObservations.length}, hosted routes=${hostedObservations.length}`);
 } finally {
   await browser?.close().catch(() => {});
   await host?.close().catch(() => {});
