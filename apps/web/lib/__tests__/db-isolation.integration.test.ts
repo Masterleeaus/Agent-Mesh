@@ -348,6 +348,17 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       [accountA, userAdminA],
     );
     expect(revoked.rows).toEqual([{ status: "revoked" }]);
+    await withTenantTransaction(session, async (client) => {
+      const staff = await client.query<{ id: string; role: string }>(
+        `SELECT u.id, bm.role
+           FROM users u
+           JOIN business_memberships bm
+             ON bm.user_id = u.id AND bm.account_id = $1 AND bm.status = 'active'
+          WHERE u.account_id = $1`,
+        [accountA],
+      );
+      expect(staff.rows.some((member) => member.id === userAdminA)).toBe(false);
+    });
   });
 
   it("allows same-account owner CRUD and rejects forged account and parent references", async () => {

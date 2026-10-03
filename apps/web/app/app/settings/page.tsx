@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { query, queryOne } from "@/lib/db";
 import { withDbSession } from "@/lib/db";
+import { withTenantTransaction } from "@/lib/db/portable";
 import { loadSquareSettings } from "@/lib/integrations/square-payments";
 import { isEncryptionConfigured } from "@/lib/crypto";
 import { PageContainer, PageHeader, SurfaceState } from "@/components/ui";
@@ -70,10 +71,18 @@ export default async function SettingsPage() {
         )
       : null,
     isAdmin
-      ? query<UserRow>(
-          `SELECT id, full_name, email, phone, role, created_at FROM users WHERE account_id = $1 ORDER BY role, full_name`,
-          [session.accountId]
-        )
+      ? withTenantTransaction(session, async (client, accountId) => {
+          const { rows } = await client.query<UserRow>(
+            `SELECT u.id, u.full_name, u.email, u.phone, bm.role, u.created_at
+               FROM users u
+               JOIN business_memberships bm
+                 ON bm.user_id = u.id AND bm.account_id = $1 AND bm.status = 'active'
+              WHERE u.account_id = $1
+              ORDER BY bm.role, u.full_name`,
+            [accountId],
+          );
+          return rows;
+        })
       : [],
     queryOne<UserRow>(
       `SELECT id, full_name, email, phone, role FROM users WHERE id = $1`,

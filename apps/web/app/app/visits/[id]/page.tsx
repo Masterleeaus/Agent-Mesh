@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { redirect, notFound } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { withDbSession, queryForSession, queryOneForSession } from "@/lib/db";
+import { withTenantTransaction } from "@/lib/db/portable";
 import {
   canTransitionVisit,
   canAssignVisit,
@@ -197,11 +198,18 @@ export default async function VisitDetailPage({
   const canDeleteMedia = session.role !== "tech";
 
   const assignableUsers = canAssign
-    ? await queryForSession<{ id: string; full_name: string; role: string; [key: string]: unknown }>(
-        session,
-        `SELECT id, full_name, role FROM users WHERE account_id = $1 ORDER BY full_name ASC`,
-        [session.accountId]
-      )
+    ? await withTenantTransaction(session, async (client, accountId) => {
+        const { rows } = await client.query<{ id: string; full_name: string; role: string; [key: string]: unknown }>(
+          `SELECT u.id, u.full_name, bm.role
+             FROM users u
+             JOIN business_memberships bm
+               ON bm.user_id = u.id AND bm.account_id = $1 AND bm.status = 'active'
+            WHERE u.account_id = $1
+            ORDER BY u.full_name ASC`,
+          [accountId],
+        );
+        return rows;
+      })
     : [];
 
   const isRepairFlow = visit.job_type !== null && visit.job_type !== "maintenance";

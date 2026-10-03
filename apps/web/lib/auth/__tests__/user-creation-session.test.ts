@@ -19,6 +19,7 @@ vi.mock("@/lib/db/dialect", () => ({ getDatabaseDialect: () => "postgres" }));
 vi.mock("@/lib/db", () => ({
   query: async (sql: string, params: unknown[]) => state.query!(sql, params).rows,
   queryOne: async (sql: string, params: unknown[]) => state.query!(sql, params).rows[0] ?? null,
+  getDatabaseDialect: () => "postgres",
   getPool: () => ({ connect: async () => ({
     query: async (sql: string, params?: unknown[]) => state.query!(sql, params),
     release: () => {},
@@ -33,7 +34,7 @@ vi.mock("@/lib/db/portable", () => ({
   ) => {
     state.query!("BEGIN");
     try {
-      const result = await fn({ query: async (sql, params) => state.query!(sql, params) }, session.accountId);
+      const result = await fn({ dialect: "sqlite", query: async (sql, params) => state.query!(sql, params) }, session.accountId);
       state.query!("COMMIT");
       return result;
     } catch (error) {
@@ -70,7 +71,7 @@ beforeEach(async () => {
   state.query = (sql, params = []) => {
     // PostgreSQL transaction context has no SQLite equivalent. Do not replace
     // membership/session SQL: execute those exact production statements.
-    if (sql.includes("set_config(") || sql.includes("pg_advisory_xact_lock(")) return { rows: [], rowCount: 0 };
+    if (sql.includes("set_config(")) return { rows: [], rowCount: 0 };
     if (state.rejectMembership && /INSERT INTO business_memberships/i.test(sql)) throw new Error("simulated membership persistence failure");
     if (state.rejectRoleUpdate && /UPDATE business_memberships/i.test(sql)) throw new Error("simulated membership role update failure");
     const bound = rewriteSqliteParams(sql, params);
@@ -163,14 +164,18 @@ describe("user role changes keep selected membership coherent", () => {
     db.prepare("INSERT INTO business_memberships (user_id,account_id,role,status) VALUES (?, 'company-b','owner','active')").run(created.id);
     expect((await updateUser(patchRequest(created.id, "tech"))).status).toBe(200);
     expect(db.prepare("SELECT role,status FROM business_memberships WHERE user_id=? AND account_id='company-b'").get(created.id)).toEqual({ role: "owner", status: "active" });
+    expect(db.prepare("SELECT role FROM users WHERE id=? AND account_id='company-a'").get(created.id)).toEqual({ role: "tech" });
   });
   it("clears the legacy primary-company role when removing that company membership", async () => {
     const created = (await (await createUser(request("admin2@example.test", "admin"))).json()).data;
+    db.prepare("INSERT INTO business_memberships (user_id,account_id,role,status) VALUES (?, 'company-b','owner','active')").run(created.id);
     const response = await deleteUser(new NextRequest(`https://example.test/api/v1/users/${created.id}`, { method: "DELETE" }));
     expect(response.status).toBe(200);
     expect(db.prepare("SELECT role FROM users WHERE id=?").get(created.id)).toEqual({ role: "tech" });
     expect(db.prepare("SELECT role,status FROM business_memberships WHERE user_id=? AND account_id='company-a'").get(created.id))
       .toEqual({ role: "admin", status: "revoked" });
+    expect(db.prepare("SELECT role,status FROM business_memberships WHERE user_id=? AND account_id='company-b'").get(created.id))
+      .toEqual({ role: "owner", status: "active" });
   });
   it("cannot update a user belonging to another default company", async () => {
     db.exec("INSERT INTO users (id,account_id,role) VALUES ('user-b','company-b','admin'); INSERT INTO business_memberships (user_id,account_id,role,status) VALUES ('user-b','company-b','admin','active');");
