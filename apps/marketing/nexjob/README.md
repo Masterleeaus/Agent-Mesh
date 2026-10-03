@@ -1,6 +1,8 @@
-# Titan Zero Marketing Hub and Industry Sites
+# Titan Zero Cleaning Marketing Site
 
-This shared static marketing app renders the Titan Zero product hub on `titanzero.io` and industry-specific pages on hosts derived from the canonical 20-profile catalogue. The former NexJob / Field Services master is the source base; industry contexts share its fonts, colors, components, and build. This app is a marketing surface, never a runtime or backend dependency.
+This shared static marketing app renders the Titan Zero Cleaning SaaS hub on `titanzero.io` and its Cleaning-specific context on `cleaning.titanzero.io`. Cleaning is the only vertical exposed for the initial launch. The full canonical vertical catalogue remains in source for future releases but is not routed or marketed here. This app is a marketing surface, never a runtime or backend dependency.
+
+Titan Zero's managed-service offer remains an internal `titanzero.io/fully-managed` page. `titanzero.pro` is planned for a separate Cleaning franchise site and is not rendered by this app.
 
 ## Local development
 
@@ -17,14 +19,16 @@ VITE_APP_ACCESS_AVAILABLE=false VITE_APP_URL=https://app.titanzero.io npm run ch
 
 ## Host behavior
 
-- The hostname selects a product hub, reserved app/PWA host, industry page, or local preview through `src/config/siteContext.js`. This app does not render `.pro` hosts or managed-service pages.
-- Industry profiles and canonical URLs come from `src/data/verticalCatalogue.js`; do not fork content or application state per host.
-- Legacy `/industries/:slug` paths redirect to the matching industry host in `.htaccess`. Both `handyman` and `property-maintenance` remain aliases for their single combined profile.
-- Keep managed-service sales routes and links out of the main navigation. Preserve the existing contextual links from the Personal Services hub, the legacy industry page and the unconfigured-host fallback to `https://titanzero.pro/`; the separate host/content owner remains issue #1238. Do not render `.pro` host context or copy managed-service sales pages into this app.
-- Product login links target the one canonical app contract, `https://app.titanzero.io/login`. They are disabled in the current review build until the app workflow is confirmed. There is no public signup route in this build.
-- Industry page structure borrows from the Tradepilot layout donor while using this app's existing visual tokens. It does not reuse donor claims, screenshots, forms, or external integration references.
-- Typography retains the existing Inter family from `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap`, with system sans-serif fallback. No self-hosted Inter font asset/license was found in the repository, so the existing Google Fonts request is documented; this change adds no tracking.
+- The hostname selects the Cleaning product hub, reserved app/PWA host, Cleaning-specific host, or local preview through `src/config/siteContext.js`.
+- Public launch routing uses the canonical Cleaning profile from `src/data/verticalCatalogue.js`. Other profiles stay in the internal catalogue and are not public industry sites in this launch.
+- Legacy `/industries/cleaning` paths point to the Cleaning host. Other legacy industry paths no longer redirect to an industry host.
+- The managed-service page stays on `titanzero.io/fully-managed`; do not route it through `titanzero.pro`.
+- `titanzero.pro` is reserved for the separately planned Cleaning franchise site. The current marketing app does not serve that host or make claims about its availability.
+- Product login links target the canonical app host. They remain disabled in the review build until the app workflow is confirmed. There is no public signup route in this build.
+- Cleaning catalogue and blueprint source is substantial, but the Cleaning runtime remains in development. Source and tests do not certify a production company installation or published release.
+- “Works Everywhere” surfaces (mobile app, PWA, Chrome, WordPress, ChatGPT, WhatsApp, Telegram and Facebook Messenger) show their evidence-based release states. No planned extension, plugin or channel is presented as published or live.
+- Typography retains the existing Inter family from Google Fonts with system sans-serif fallback. No self-hosted Inter font asset/license was found in the repository.
 
-## Release state
+## Review and release state
 
-The current build is a `noindex` review preview. It does not certify industry runtime packs, product availability, per-vertical installations, auth, or backend workflows. Do not enable indexing until a host-specific sitemap/robots strategy, DNS/TLS, server routing and the final deployment plan are confirmed by the parent.
+The current build is a `noindex` review preview. Do not enable indexing, change DNS, or publish until the Cleaning runtime, host routing, TLS, app access, channel integrations, package releases and deployment plan have been verified by their owners.
