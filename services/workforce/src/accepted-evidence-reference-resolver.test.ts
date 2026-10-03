@@ -87,11 +87,17 @@ function createNativeOperationContextStore(withDisposition = true) {
   };
 }
 
-async function fixture() {
+async function fixture(workOrders?: { read?(input: unknown): Promise<unknown>; complete?(input: unknown): Promise<unknown> }) {
   const storage = createTestSqliteStorage();
   const runtime = await createFieldServiceRuntime({ storage, workOrders: {
-    async complete() { throw new Error("unexpected-completion-in-reference-test"); },
-    async read() { throw new Error("unexpected-read-in-reference-test"); },
+    async complete(input: unknown) {
+      if (workOrders?.complete) return workOrders.complete(input);
+      throw new Error("unexpected-completion-in-reference-test");
+    },
+    async read(input: unknown) {
+      if (workOrders?.read) return workOrders.read(input);
+      throw new Error("unexpected-read-in-reference-test");
+    },
   } });
   return { storage, runtime };
 }
@@ -218,6 +224,34 @@ test("transaction producer persists native verified task context that the resolv
     const references = await runtime.resolveAcceptedEvidenceReferences(target);
     assert.deepEqual(references.map((reference: any) => reference.evidence_id), [producerEvent.evidence_id]);
   } finally { await storage.close(); companyStorage.close(); }
+});
+
+test("Zero project projection consumes accepted references only for its current verified company task", async () => {
+  const evidenceContext = { company_id: target.company_id, work_order_id: target.work_order_id,
+    visit_id: target.visit_id, task_id: target.task_id, disposition: target.disposition };
+  const { storage, runtime } = await fixture({
+    async read() { return { status: "completed", completed_at: at, evidence_context: evidenceContext }; },
+  });
+  try {
+    await insertRecord(storage, target);
+    (runtime.zeroDispatcher as any).reconcilePersistedWork = async () => ({
+      company_id: target.company_id, work_id: target.work_id, state: "COMPLETED",
+      origin: { actor_id: "actor-a", conversation_id: "conversation-a", surface: "zero" }, evidence_refs: [],
+    });
+    (runtime.runStore as any).findByWork = async () => ({ run_id: "run-a",
+      messages: [{ role: "user", content: `complete work order ${target.work_order_id}` }] });
+
+    const view = await runtime.project({ company_id: target.company_id, actor_id: "actor-a", work_id: target.work_id });
+    assert.equal(view.outcome, "verified");
+    assert.deepEqual(view.accepted_evidence_references.map((reference: any) => reference.evidence_id), ["evidence-a"]);
+    assert.deepEqual(view.accepted_evidence_references[0], {
+      schema: "titan.accepted-evidence-reference/v1", evidence_id: "evidence-a", company_id: target.company_id,
+      work_id: target.work_id, visit_id: target.visit_id, work_order_id: target.work_order_id,
+      task_id: target.task_id, disposition: target.disposition, execution_id: "execution-a",
+      decision_id: "decision-a", authority_decision_id: "decision-a", verification_id: "verification-evidence-a",
+      run_id: "run-a", correlation_id: "correlation-evidence-a", accepted_at: at,
+    });
+  } finally { await storage.close(); }
 });
 
 test("native context derivation denies wrong company and schemas without persisted disposition", async () => {

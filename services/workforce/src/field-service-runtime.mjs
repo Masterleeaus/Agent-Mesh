@@ -351,7 +351,16 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     });
     const accepted_projections = [...new Set(accepted_evidence.map(e => e.work_id))].map(acceptedWorkId => rebuildJobProjection(accepted_evidence, { company_id, job_id: acceptedWorkId }));
     const verified = accepted_projections.some(projection => projection.status === 'VERIFIED' && accepted_evidence.some(e => e.evidence_id === projection.provenance.terminal_evidence_id && e.verification?.verified === true && e.verification.work_order_id === id));
-    return { work, run, business, evidence, accepted_evidence, accepted_projections, outcome: verified && business?.status === 'completed' ? 'verified' : run?.state === 'FAILED' ? 'failed' : work.state.startsWith('WAITING') ? 'waiting' : 'unverified' };
+    const outcome = verified && business?.status === 'completed' ? 'verified' : run?.state === 'FAILED' ? 'failed' : work.state.startsWith('WAITING') ? 'waiting' : 'unverified';
+    const context = business?.evidence_context;
+    const accepted_evidence_references = outcome === 'verified'
+      && context?.company_id === company_id && context?.work_order_id === id
+      ? await resolveAcceptedEvidenceReferences({ company_id, work_id,
+        visit_id: context.visit_id, work_order_id: context.work_order_id,
+        task_id: context.task_id, disposition: context.disposition })
+      : [];
+    return { work, run, business, evidence, accepted_evidence, accepted_projections,
+      accepted_evidence_references, outcome };
   }
   async function resolveAcceptedEvidenceReferences(criteria) {
     return storage.transaction(tx => resolveAcceptedEvidenceReferencesInTransaction(tx, criteria));
