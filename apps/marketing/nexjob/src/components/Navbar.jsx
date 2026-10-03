@@ -4,13 +4,22 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import { appRoutes, APP_ACCESS_AVAILABLE, APP_SIGNUP_AVAILABLE } from '../config'
 import { getCurrentSiteContext, getSiteNavigation } from '../config/siteContext'
 
+function actionDisabled(item) {
+  if (!item.action) return false
+  if (item.disabled || !item.href) return true
+  if (item.href === appRoutes.login) return !APP_ACCESS_AVAILABLE
+  if (item.href === appRoutes.signup) return !APP_SIGNUP_AVAILABLE
+  return false
+}
+
 function SiteLink({ item, closeMenu = () => {} }) {
   const href = item.href || ''
   const active = href.startsWith('/') && window.location.pathname === href
   const children = item.children || []
+  const disabled = actionDisabled(item)
   const className = `block whitespace-nowrap px-3 py-2 rounded-lg text-sm transition-colors ${active ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`
-  const parent = item.action && (item.disabled || !href || !APP_ACCESS_AVAILABLE)
-    ? <button type="button" disabled aria-disabled="true" aria-label={`${item.label} unavailable`} title="Unavailable in this review preview" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
+  const parent = item.action && disabled
+    ? <button type="button" disabled aria-disabled="true" aria-label={`${item.label} unavailable`} title="Unavailable in this review build" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
     : item.external || href.startsWith('https://')
       ? <a href={href || '#'} onClick={closeMenu} className={className}>{item.label}</a>
       : <Link to={href || '/'} onClick={closeMenu} className={className}>{item.label}{children.length > 0 && <ChevronDown size={14} aria-hidden="true" className="ml-1 inline-block" />}</Link>
@@ -36,7 +45,7 @@ function ConfiguredNavbar({ context }) {
   const accountActions = context.kind === 'hub'
     ? [
         { label: 'Sign in', href: appRoutes.login, external: true, action: true },
-        { label: 'Get started', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE },
+        { label: 'Sign up', href: appRoutes.signup, external: true, action: true },
       ]
     : [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
 
