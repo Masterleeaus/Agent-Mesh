@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { NextRequest } from "next/server";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createIdentitySessionRegistry,
   type IdentitySessionRegistry,
@@ -18,6 +18,8 @@ import { companyNativeVisitChecklistManifest } from "../../../../../packages/sto
 import { CURRENT_WEB_SESSION_COOKIE_NAME } from "../../auth/current-session";
 import { _resetWebSessionRuntimeForTests, getWebSessionRuntime } from "../../auth/web-session-runtime";
 import { withVerifiedWebNativeCompanyStore } from "../../company-storage/request-runtime";
+import { initializeCleaningProfileForLogin } from "../../company-storage/cleaning-profile-login";
+import { expiredSessionLoginRedirectForPath, resolvePostLoginHref } from "../../auth/post-login-destination";
 import { GET as getChecklist } from "@/app/api/v1/visits/[id]/checklist/route";
 import { PATCH as patchChecklist } from "@/app/api/v1/visits/[id]/checklist/[itemId]/route";
 
@@ -77,6 +79,18 @@ async function createReadyCompanyStore(company: (typeof companies)[number]): Pro
     await storage.query("INSERT INTO work_order_tasks(id,company_id,work_order_id,label,note) VALUES($1,$2,$3,$4,$5)", [id.task, company.companyId, id.workOrder, `${company.companyId} checklist task`, `work-order-${company.companyId}`]);
     await storage.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [id.visit, company.companyId, id.job, company.actorId, "2026-10-03T10:00:00.000Z", "2026-10-03T11:00:00.000Z", id.workOrder]);
     await storage.query("INSERT INTO visit_tasks(company_id,visit_id,work_order_id,task_id,item_key,section,disposition,note) VALUES($1,$2,$3,$4,$5,$6,NULL,$7)", [company.companyId, id.visit, id.workOrder, id.task, "cleaning_surface_wipe", "Kitchen", `original-${company.companyId}`]);
+
+    if (company === companies[0]) {
+      await storage.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({
+        retained_setting: "keep-company-a",
+        vertical_profile: {
+          schema: "titan.company.vertical-profile.v1",
+          company_id: company.companyId,
+          revision: 4,
+          profile: { pack_id: "existing-company-pack", pack_version: "2.0.0", module_id: "existing.vertical", module_version: "2.0.0" },
+        },
+      }), company.companyId]);
+    }
 
     if (company === companies[0]) {
       await storage.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [id.isolatedVisit, company.companyId, id.job, company.actorId, "2026-10-03T12:00:00.000Z", "2026-10-03T13:00:00.000Z", id.workOrder]);
@@ -139,9 +153,60 @@ afterEach(async () => {
     if (previous === undefined) delete process.env[name];
     else process.env[name] = previous;
   }
+  vi.useRealTimers();
 });
 
 describe("native visit checklist routes", () => {
+  it("expires, returns through re-login, preserves company A profile, and opens fresh-v3 company B checklist", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const runtime = await getWebSessionRuntime();
+    const initial = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
+    const initialProfile = await initializeCleaningProfileForLogin({ issued: initial });
+    expect(initialProfile).toMatchObject({
+      status: "retained",
+      revision: 4,
+      profile: { pack_id: "existing-company-pack", module_id: "existing.vertical" },
+    });
+
+    const protectedPath = `/app/visits/${commonIds.visit}`;
+    const expiryHref = expiredSessionLoginRedirectForPath(protectedPath);
+    const expiryUrl = new URL(expiryHref, origin);
+    expect(expiryUrl.pathname).toBe("/login");
+    expect(expiryUrl.searchParams.get("reason")).toBe("session-expired");
+    expect(resolvePostLoginHref("owner", { next: expiryUrl.searchParams.get("next") })).toBe(protectedPath);
+
+    // Expire the signed five-minute session in this disposable test clock; the
+    // request must reject it before a subsequent fresh password-backed issue.
+    vi.setSystemTime(new Date(Date.parse(initial.context.expires_at) + 1_000));
+    expect(Date.parse(initial.context.expires_at) - Date.now()).toBeLessThan(0);
+    const expiredChecklist = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, initial.credential));
+    expect(expiredChecklist.status).toBe(401);
+
+    const reLogin = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
+    const retainedAfterReLogin = await initializeCleaningProfileForLogin({ issued: reLogin });
+    expect(retainedAfterReLogin).toMatchObject({ status: "retained", revision: 4, profile: { module_id: "existing.vertical" } });
+    const companyASettings = await withVerifiedWebNativeCompanyStore({
+      currentSession: reLogin,
+      revalidateSession: () => runtime.resolveCredential(reLogin.credential),
+      requiredSchemaVersions: companyNativeVisitChecklistManifest.schema_version,
+      operation: async storage => (await storage.query<{ settings: string }>(
+        "SELECT settings FROM companies WHERE id=$1", [companies[0].companyId],
+      )).rows[0]?.settings,
+    });
+    expect(JSON.parse(companyASettings!)).toMatchObject({
+      retained_setting: "keep-company-a",
+      vertical_profile: { company_id: companies[0].companyId, revision: 4, profile: { module_id: "existing.vertical" } },
+    });
+
+    const companyBLogin = await runtime.issueForAuthenticatedWebUser(companies[1].userId, companies[1].accountId);
+    const companyBProfile = await initializeCleaningProfileForLogin({ issued: companyBLogin });
+    expect(companyBProfile).toMatchObject({ status: "selected", revision: 1, profile: { module_id: "titan.workforce.cleaning" } });
+
+    const checklist = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, companyBLogin.credential));
+    expect(checklist.status).toBe(200);
+    expect((await checklist.json()).visit).toMatchObject({ company_id: companies[1].companyId, work_order_id: commonIds.workOrder });
+  });
+
   it("uses the verified current session and each READY physical company store for list and update", async () => {
     const runtime = await getWebSessionRuntime();
     const a = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
