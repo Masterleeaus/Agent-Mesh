@@ -451,7 +451,12 @@ The browser integration builds and extracts the real package, serves its User
 page and invokes the extracted `user/bootstrap-nonce.raw` and
 `user/bootstrap.raw` through the packaged adapter. It covers initial bootstrap,
 late-response invalidation, retry, company-context change, page lifecycle,
-reload, logout, expiry, read-only controls and receipt clearing. Assertions now
+reload, logout, expiry, read-only controls and receipt correlation restoration.
+On `pagehide`, the controller drops rendered company and receipt data while
+retaining only the opaque tab-scoped receipt pointer. A resumed or reloaded page
+must fetch a new host context, match its company and actor, then ask the shared
+receipt reader again. Normal logout, expiry, revocation and company/actor changes
+still clear the pointer. Assertions now
 require each tested renewal to forward the previous host cookie, issue a unique
 replacement, and update the browser cookie jar. The nonce route is required to
 strip that browser-managed Titan cookie before private forwarding. The company
@@ -576,3 +581,50 @@ fails closed because no trusted selected-company binding is provided to the
 nonce route. Real selection requires a canonical #302/#1049 host contract; this
 plugin does not invent one. #1050 remains open for the rest of its acceptance
 criteria and approved live-host commissioning.
+
+### Governed receipt consumer contract — 2026-10-03
+
+The #811 owner has a real governed reassignment intent: its positive owner
+tests run through current authority, the ExecutionGateway, observed
+company-scoped reread, durable idempotency and accepted evidence. The open
+draft #1440 implements and tests the read-only accepted-receipt projection, but
+its PR description confirms that the browser HTTP route is not mounted yet.
+Current main's DirectAdmin gateway returns only `202 REQUESTED` plus the receipt
+ID, and the company-scoped projection exposes only evidence references. It does
+not expose receipt verification details. The shared #1049 SDK also has no
+receipt read method on current main.
+
+The Workforce consumer accepts receipt detail only from the shared SDK method
+`session.receipt('titan_workforce', receipt_id)` with the `{context, receipt}`
+envelope. It validates the agreed typed receipt schema, company, actor, opaque
+session/context revisions, receipt and operation correlation, and rechecks the
+current session before and after the read. For the #1398/#1440 contract, the
+consumer requires `state: VERIFIED`, `verification_status: verified`, the fixed
+company-scoped reread method and exactly the receipt ID as evidence; only then
+does it map that owner shape into the cockpit's verified display model. An older
+SDK or host leaves the result at `REQUESTED`; work evidence references alone do
+not promote it. A generic host denial without a receipt is reported as unverified
+even after a canonical projection refresh, because #811 has demonstrated a
+post-commit 403 while execution evidence remains uncertain.
+
+The cockpit provides a receipt refresh action and a tab-scoped
+`sessionStorage` bookmark containing only company/actor IDs and receipt,
+operation, correlation and work IDs. Owner IDs retain the #811 printable-string
+bound; only the `receipt_id` used in the fixed SDK route uses the narrower
+route-safe character set. Reconnect rereads the host receipt under
+the newly authenticated context; it does not persist receipt payloads, evidence,
+credentials, or authority. Pagehide clears in-memory data but retains this
+pointer for a later same-tab reconnect/reload; a fresh host context must match
+its company and actor before the receipt is read. Other session invalidation,
+logout, expiry, revocation and company/actor changes clear the bookmark.
+Receipt polling or read failure preserves only
+the original `REQUESTED` acknowledgement and never replays the governed action.
+
+The #811 owner has adopted the exact missing host route and bounded response
+proposal recorded at [issue #811](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/issues/811#issuecomment-5969454043);
+its endpoint implementation remains an assigned upstream task. The typed
+`session.receipt()` SDK read is coordinated with the active shared-SDK owner on
+[PR #1398](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/pull/1398#issuecomment-5969455352)
+and is not on current main. Consumer-side detail/envelope tests use typed
+fixtures only; they do not claim the current host can return receipt details or
+certify a verified UI result end to end.

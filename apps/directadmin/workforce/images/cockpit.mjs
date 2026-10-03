@@ -57,6 +57,16 @@ function evidence(parent, refs) {
   if (!list.children.length) parent.append(node('p', 'No evidence references supplied.'));
   else parent.append(list);
 }
+function receiptLookupNotice(status) {
+  const messages = {
+    loading: 'Checking the current company-scoped receipt details…',
+    pending: 'The hosted owner has not returned receipt details yet. The request acknowledgement is not a verified outcome.',
+    unsupported: 'This host or shared SDK does not publish receipt details. The request acknowledgement is not a verified outcome.',
+    unavailable: 'Receipt details could not be loaded. The request acknowledgement is not proof of a verified outcome.',
+  };
+  if (messages[status]) return node('p', messages[status], { class: 'notice', role: 'status' });
+  return null;
+}
 function render(state) {
   root.replaceChildren();
   if (!state.context) { selectedAgent = null; selectedTeam = null; selectedControl = null; }
@@ -182,7 +192,14 @@ function render(state) {
     }
   } else if (tab === 'Evidence') {
     if (state.receipt) {
-      fields(view, { 'Receipt state': receiptState(state.receipt), 'Receipt ID': state.receipt.receipt_id, 'Operation ID': state.receipt.operation_id, 'Correlation ID': state.receipt.correlation_id, 'Work ID': state.receipt.work_id, 'Run ID': state.receipt.run_id, 'Decision ID': state.receipt.decision_id });
+      fields(view, { 'Receipt state': receiptState(state.receipt), 'Receipt ID': state.receipt.receipt_id,
+        'Operation ID': state.receipt.operation_id, 'Correlation ID': state.receipt.correlation_id,
+        'Work ID': state.receipt.work_id, 'Run ID': state.receipt.run_id, 'Decision ID': state.receipt.decision_id,
+        'Verification method': state.receipt.verification?.method });
+      view.append(button('Refresh receipt details', () => { void controller.refreshReceipt(); },
+        state.phase !== 'ready' || state.receiptLookupStatus === 'loading'));
+      const notice = receiptLookupNotice(state.receiptLookupStatus);
+      if (notice) view.append(notice);
       evidence(view, state.receipt.evidence_refs);
     } else view.append(node('p', 'Submit a permitted governed request to inspect its receipt.'));
     for (const item of work.filter(item => item.evidence_refs?.length)) { const row = node('details'); row.append(node('summary', item.work_id)); evidence(row, item.evidence_refs); view.append(row); }
@@ -394,6 +411,7 @@ async function start() {
     workforceFetch,
   );
   controller = new WorkforceController(new WorkforceApi(session), render);
+  let preserveReceiptBookmarkOnInvalidation = false;
   session.subscribe(() => {
     // The SDK also invalidates on its local expires_at timer, without an HTTP
     // response to prepare a new nonce. Keep any one already prefetched for a
@@ -403,9 +421,18 @@ async function start() {
     // Let a reconnect after invalidation issue its own nonce instead of
     // joining a pre-invalidation request that can no longer be consumed.
     nonceRequest = null;
-    controller.invalidate();
+    const preserveReceiptBookmark = preserveReceiptBookmarkOnInvalidation;
+    preserveReceiptBookmarkOnInvalidation = false;
+    controller.invalidate({ preserveReceiptBookmark });
   });
-  window.addEventListener('pagehide', () => session.invalidate());
+  window.addEventListener('pagehide', () => {
+    // Keep only the opaque receipt pointer in tab-scoped storage. The full
+    // company view and SDK session are still cleared before the page hides;
+    // reconnect must validate a fresh company context before re-reading it.
+    preserveReceiptBookmarkOnInvalidation = controller.hasReceiptBookmark();
+    session.invalidate();
+    preserveReceiptBookmarkOnInvalidation = false;
+  });
   reconnect = async () => {
     const requestGeneration = invalidationGeneration;
     const mustBootstrap = needsBootstrapNonce;
@@ -422,7 +449,11 @@ async function start() {
     // which is useful for a company switch but stale after another tab logs
     // out. When this flow has a RAW nonce ready, clear the local SDK token so
     // connect() consumes that nonce and re-establishes the session.
-    if (mustBootstrap && pendingNonce) session.invalidate(false, false);
+    if (mustBootstrap && pendingNonce) {
+      preserveReceiptBookmarkOnInvalidation = controller.hasReceiptBookmark();
+      session.invalidate(false, false);
+      preserveReceiptBookmarkOnInvalidation = false;
+    }
     await controller.connect();
     // A valid existing SDK session can reconnect without consuming the nonce
     // prefetched after an external invalidation. It is single-use server state;

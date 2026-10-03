@@ -116,7 +116,7 @@ test('executable cockpit renders safely, submits bounded controls, and clears on
     assert.equal(await page.locator('option[value="shell"]').count(), 0);
     await page.getByLabel('Reason', { exact: true }).fill('Fixture pause request');
     await page.getByRole('button', { name: 'Submit governed request' }).click();
-    await page.getByText('Requested', { exact: true }).waitFor();
+    await page.getByText('Request accepted — verified outcome not yet available', { exact: true }).waitFor();
     assert.equal(await page.evaluate(() => globalThis.fixtureCalls), 1);
     await page.evaluate(() => { globalThis.fixtureDenied = true; });
     await page.getByLabel('Reason', { exact: true }).fill('Fixture denied request');
@@ -284,7 +284,7 @@ test('existing cockpit consumes the typed READY reassignment contract and displa
     await targetSelect.selectOption('cleaner-target');
     await page.getByLabel('Reason', { exact: true }).fill('Balance the ready cleaning work');
     await page.getByRole('button', { name: 'Submit governed request' }).click();
-    await page.getByText('Requested', { exact: true }).waitFor();
+    await page.getByText('Request accepted — verified outcome not yet available', { exact: true }).waitFor();
     const sent = await page.evaluate(() => globalThis.fixtureIntent);
     assert.equal(sent.plugin, 'titan_workforce');
     assert.equal(sent.intent.capability_id, 'titan.workforce.reassign');
@@ -294,6 +294,11 @@ test('existing cockpit consumes the typed READY reassignment contract and displa
     });
     await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
     await page.getByText('fixture-reassignment-receipt', { exact: true }).waitFor();
+    await page.getByText('This host or shared SDK does not publish receipt details. The request acknowledgement is not a verified outcome.', { exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Refresh receipt details', exact: true }).click();
+    await page.getByText('This host or shared SDK does not publish receipt details. The request acknowledgement is not a verified outcome.', { exact: true }).waitFor();
+    assert.equal(await page.getByText('Request accepted — verified outcome not yet available', { exact: true }).count(), 1,
+      'refreshing an unsupported host preserves the correlated REQUESTED acknowledgement');
     await page.locator('details > summary').filter({ hasText: 'regular-clean-ready-work' }).click();
     await page.getByText('fixture-reassignment-evidence', { exact: true }).waitFor();
     assert.equal(await page.getByText('Verified outcome with evidence', { exact: true }).count(), 0,

@@ -52,6 +52,7 @@ export function boundedText(value) {
 export function receiptState(receipt) {
   if (verifiedOutcome(receipt)) return 'Verified outcome with evidence';
   if (receipt?.state === 'VERIFIED') return 'Verification unproven — evidence or observed verification missing';
+  if (receipt?.state === 'REQUESTED') return 'Request accepted — verified outcome not yet available';
   return workState(receipt?.state);
 }
 

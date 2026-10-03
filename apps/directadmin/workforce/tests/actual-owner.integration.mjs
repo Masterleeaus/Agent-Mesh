@@ -470,7 +470,7 @@ test('actual #1050 consumer and shared SDK traverse #1049 gateway into #1253 SQL
   });
   await h.controller.submit({ action: 'reassign', work_id: 'work-a', target_worker_id: 'worker-other', reason: 'Should be denied after access revocation' });
   const denialResponse = h.intentResponses.at(-1);
-  await t.test('typed owner authority denial is HTTP 403, sanitized, and distinct from an unknown outcome', async () => {
+  await t.test('typed owner authority denial is HTTP 403, sanitized, and displayed as unverified without a receipt', async () => {
     assert.equal(denialResponse?.status, 403);
     assert.ok(denialResponse.body.length < 1024);
     assert.doesNotMatch(denialResponse.body, /SQLite|SELECT|authority_state|management-proof/i);
@@ -478,7 +478,7 @@ test('actual #1050 consumer and shared SDK traverse #1049 gateway into #1253 SQL
     assert.equal(h.controller.state.context.company_id, 'company-a');
     assert.equal(h.controller.state.status.work[0].assignee, 'worker-target');
     assert.equal(h.controller.state.receipt, null);
-    assert.match(h.controller.state.error, /host denied that request/i);
+    assert.match(h.controller.state.error, /denial without a receipt.*outcome is unverified/i);
     assert.deepEqual(h.controller.state.discovery.controls, [], 'a refreshed projection hides the revoked control');
   });
   assert.equal((await h.workforceStore.get('company-a', 'work-a')).assignee, 'worker-target');
@@ -634,8 +634,8 @@ test('actual #1050 consumer and shared SDK traverse #1049 gateway into #1253 SQL
     assert.equal(controllerReport?.phase, 'ready');
     assert.equal(controllerReport?.assignee, 'worker-target');
     assert.equal(controllerReport?.receipt, null);
-    assert.match(controllerReport?.message ?? '', /host denied that request/i,
-      'packaged UI currently tells the operator this committed operation was denied');
+    assert.match(controllerReport?.message ?? '', /denial without a receipt.*outcome is unverified/i,
+      'a 403 after the commit is not presented as proof the operation was denied');
     assert.equal(replayError, 503, 'the owner requires recovery and does not execute the same operation twice');
     assert.equal(evidenceCountAfterReplay, evidenceCountBeforeReplay, 'same-operation replay adds no event or evidence');
     assert.equal(eventCountAfterReplay, eventCount, 'same-operation replay emits no second reassignment event');

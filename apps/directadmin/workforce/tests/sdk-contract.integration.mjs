@@ -190,7 +190,7 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
   assert.equal(controller.state.phase, 'ready');
   assert.equal(controller.state.context.company_id, companyId);
   assert.equal(controller.state.receipt, null);
-  assert.match(controller.state.error, /host denied that request/i);
+  assert.match(controller.state.error, /denial without a receipt.*outcome is unverified/i);
   assert.equal(ownerIntents.length, 1, 'mismatched child context is denied before entering the owner effect');
   assert.equal(work.assignee, 'fixture-worker-target');
   assert.deepEqual(work.evidence_refs, ['fixture-accepted-reassignment-evidence']);
@@ -199,15 +199,17 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
   assert.equal(controller.state.phase, 'ready', controller.state.error);
 
   // A concurrent assignee change makes the expected-assignee CAS stale. The
-  // owner denies before effect; its typed denial remains distinct from an
-  // unavailable/unknown outcome through the current shared SDK.
+  // owner denies before effect, but the generic HTTP denial cannot establish
+  // that this operation caused the visible WorkItem change, so the consumer
+  // calls the outcome unverified until richer canonical history is available.
   raceNextIntent = true;
   await controller.submit({ action: 'reassign', work_id: 'fixture-ready-work',
     target_worker_id: 'fixture-worker-old', reason: 'Fixture stale compare-and-set' });
   assert.equal(controller.state.phase, 'ready');
   assert.equal(controller.state.context.company_id, companyId);
   assert.equal(controller.state.receipt, null);
-  assert.match(controller.state.error, /host denied that request/i);
+  assert.match(controller.state.error, /denial without a receipt.*outcome is unverified/i);
+  assert.doesNotMatch(controller.state.error, /host denied that request/i);
   assert.equal(work.assignee, 'fixture-concurrent-worker', 'stale owner rejection causes no reassignment effect');
   assert.deepEqual(work.evidence_refs, ['fixture-accepted-reassignment-evidence']);
 
@@ -599,7 +601,7 @@ test('packaged cleaning cockpit uses executable role RAW bootstrap through recon
       await targetPage.getByLabel('Reason', { exact: true }).fill(reason);
       const receiptId = `browser-fixture-receipt-${acceptedIntents.length + 1}`;
       await targetPage.getByRole('button', { name: 'Submit governed request' }).click();
-      await targetPage.getByText('Requested', { exact: true }).waitFor();
+      await targetPage.getByText('Request accepted — verified outcome not yet available', { exact: true }).waitFor();
       await targetPage.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
       await targetPage.getByText(receiptId, { exact: true }).waitFor();
       return receiptId;
@@ -722,13 +724,13 @@ test('packaged cleaning cockpit uses executable role RAW bootstrap through recon
     assert.equal(acceptedIntents[0].input.reason, 'Browser cancellation acceptance fixture');
     assert.match(await page.locator('#titan-workforce').innerText(), /Submitting governed request/);
     pendingIntent.release.resolve();
-    await page.getByText('Requested', { exact: true }).waitFor();
+    await page.getByText('Request accepted — verified outcome not yet available', { exact: true }).waitFor();
     assert.equal(await page.getByText('Verified outcome with evidence', { exact: true }).count(), 0);
-    assert.doesNotMatch(await page.locator('#titan-workforce').innerText(), /\bVERIFIED\b|Verified outcome/i,
+    assert.doesNotMatch(await page.locator('#titan-workforce').innerText(), /\bVERIFIED\b|Verified outcome with evidence/,
       'the hosted transport acknowledgement remains REQUESTED and never becomes a verified outcome');
     await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
     await page.getByText('browser-fixture-receipt-1', { exact: true }).waitFor();
-    assert.equal(await page.getByText('Requested', { exact: true }).count(), 1);
+    assert.equal(await page.getByText('Request accepted — verified outcome not yet available', { exact: true }).count(), 1);
     assert.equal(await page.getByText('Verified outcome with evidence', { exact: true }).count(), 0);
     pendingIntent = null;
 
@@ -738,7 +740,11 @@ test('packaged cleaning cockpit uses executable role RAW bootstrap through recon
     await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
     await page.getByLabel('Reason', { exact: true }).fill('Unsupported action denial fixture');
     await page.getByRole('button', { name: 'Submit governed request' }).click();
-    await page.getByText('The host denied that request. Current company data was refreshed; review it before retrying.', { exact: true }).waitFor();
+    try {
+      await page.getByText('The host returned a denial without a receipt. Current company data was refreshed; outcome is unverified. Inspect canonical history before retrying.', { exact: true }).waitFor({ timeout: 5000 });
+    } catch (error) {
+      throw new Error(`${error.message}; UI=${JSON.stringify(await page.locator('#titan-workforce').innerText())}; requests=${JSON.stringify(requests.slice(-8).map(item => ({ method: item.method, path: item.path, status: item.status, code: item.code })))}`);
+    }
     assert.equal(acceptedIntents.length, 1, 'unsupported action denial creates no accepted fixture intent');
     assert.equal(await page.getByText('company-a', { exact: true }).count(), 1, 'fresh current company context remains usable after a no-effect 403');
     assert.ok(requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/context').length > contextReadsBeforeDenial,
@@ -776,26 +782,31 @@ test('packaged cleaning cockpit uses executable role RAW bootstrap through recon
 
     const switchReceipt = await submitCancel(page, 'company-b', 'Company switch receipt fixture');
     assert.equal(switchReceipt, 'browser-fixture-receipt-2');
-    // The actual packaged pagehide listener must clear the receipt before a BFCache restore reconnects.
+    // The actual packaged pagehide listener clears rendered state while keeping
+    // only the opaque pointer for a fresh-context receipt reread.
     await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true })));
     await page.getByText('Context changed. Reconnect to load permitted Workforce.').waitFor();
     assert.equal(await page.getByText(switchReceipt, { exact: true }).count(), 0, 'pagehide clears a pending-view receipt');
     assert.equal(await page.getByText('company-b', { exact: true }).count(), 0);
     await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
     await page.getByText('company-b', { exact: true }).waitFor();
-    assert.equal(await page.getByText(switchReceipt, { exact: true }).count(), 0, 'BFCache reconnect loads no prior request receipt');
+    await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
+    await page.getByText(switchReceipt, { exact: true }).waitFor();
+    await page.getByText('Request accepted — verified outcome not yet available').waitFor();
 
     const reloadReceipt = await submitCancel(page, 'company-b', 'Reload receipt fixture');
     const cyclesBeforeReload = { nonce: nonceRequests.length, bootstrap: bootstrapRequests.length };
     await page.reload();
     await page.getByText('company-b', { exact: true }).waitFor();
-    assert.equal(await page.getByText(reloadReceipt, { exact: true }).count(), 0, 'full reload starts with no in-memory receipt');
+    assert.equal(await page.getByText(reloadReceipt, { exact: true }).count(), 0,
+      'full reload clears the old DOM before revalidating and restoring the receipt pointer');
     assert.equal(nonceRequests.length, cyclesBeforeReload.nonce + 1, 'a fresh document obtains a new one-time nonce');
     assert.equal(bootstrapRequests.length, cyclesBeforeReload.bootstrap + 1, 'a fresh document renews through bootstrap.raw');
     assert.equal(nonceRequests.at(-1).cookie.includes(sessionCookieName), true,
       'reload nonce request carries the browser-managed HttpOnly Titan cookie for host-side filtering');
     await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
-    await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
+    await page.getByText(reloadReceipt, { exact: true }).waitFor();
+    await page.getByText('Request accepted — verified outcome not yet available').waitFor();
 
     const navigationReceipt = `browser-fixture-receipt-${acceptedIntents.length + 1}`;
     await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
@@ -892,10 +903,13 @@ test('packaged cleaning cockpit uses executable role RAW bootstrap through recon
       'local expiry recovery leaves Titan cookie delivery to the browser');
     contextLifetimeMs = 15 * 60_000;
     controlCapabilitiesAvailable = false;
-    const readOnlyContext = await browser.newContext({ ignoreHTTPSErrors: true });
-    await addDirectAdminCookies(readOnlyContext);
     const readOnlyBootstrapSession = await browserSessionCookie();
     assert.ok(readOnlyBootstrapSession);
+    // Release the long-running lifecycle context before the independent
+    // read-only context so Chromium does not retain two active pages.
+    await context.close();
+    const readOnlyContext = await browser.newContext({ ignoreHTTPSErrors: true });
+    await addDirectAdminCookies(readOnlyContext);
     await readOnlyContext.addCookies([{
       name: sessionCookieName,
       value: readOnlyBootstrapSession.slice(sessionCookieName.length + 1),
@@ -955,7 +969,6 @@ test('packaged cleaning cockpit uses executable role RAW bootstrap through recon
       if (item.method === 'POST') assert.equal(item.headers.origin, origin, 'mutations remain same-origin');
     }
     assert.deepEqual(errors, []);
-    await context.close();
   } finally {
     await browser?.close();
     await new Promise(resolve => server?.close(resolve));
