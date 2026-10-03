@@ -162,10 +162,8 @@ export async function POST(request: NextRequest) {
     });
     issuedForCleanup = issued;
 
-    const webRuntime = await getWebSessionRuntime();
     const profile = await initializeCleaningProfileForLogin({
       issued,
-      resolveCurrentSession: credential => webRuntime.resolveCredential(credential),
     });
     if (profile.status === "unavailable") {
       throw new CleaningProfileStoreSetupRequiredError(["canonical Cleaning workforce bundle is unavailable"]);

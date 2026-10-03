@@ -12,7 +12,10 @@ import {
   type StorageClient,
 } from "../../../../packages/storage/src/index";
 import { initializeFreshCompanyNativeStore } from "../../../../packages/storage/src/company-native-store-initializer";
-import { companyNativeWorkOrdersVisitsManifest } from "../../../../packages/storage/src/company-native-schema-manifest";
+import {
+  companyNativeVisitChecklistManifest,
+  companyNativeWorkOrdersVisitsManifest,
+} from "../../../../packages/storage/src/company-native-schema-manifest";
 import { createWebSessionRuntime, type WebLoginIdentityBinding } from "../auth/web-session-runtime";
 import { initializeCleaningProfileForLogin } from "./cleaning-profile-login";
 
@@ -112,13 +115,26 @@ describe("authenticated cleaning first-run profile", () => {
     const placements = new Map<string, CompanyPlacementRecord>();
     for (const company_id of [companyA, companyB]) {
       const placement_id = `placement-${company_id}`;
-      const schema_version = companyNativeWorkOrdersVisitsManifest.schema_version;
+      const schema_version = company_id === companyA
+        ? companyNativeWorkOrdersVisitsManifest.schema_version
+        : companyNativeVisitChecklistManifest.schema_version;
       const placement: CompanyPlacementRecord = {
         company_id, placement_id, placement_revision: 1, provider: "sqlite", schema_version, status: "READY",
       };
       const path = join(directory, `${placement_id}.sqlite`);
       const storage = nodeSqliteStorage(path);
       await initializeFreshCompanyNativeStore({ storage, placement, company_profile: { name: company_id } });
+      if (company_id === companyA) {
+        await storage.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({
+          retained_setting: "keep",
+          vertical_profile: {
+            schema: "titan.company.vertical-profile.v1",
+            company_id,
+            revision: 4,
+            profile: { pack_id: "existing-company-pack", pack_version: "2.0.0", module_id: "existing.vertical", module_version: "2.0.0" },
+          },
+        }), company_id]);
+      }
       await storage.close();
       placements.set(company_id, placement);
       paths.set(placement_id, path);
@@ -145,22 +161,28 @@ describe("authenticated cleaning first-run profile", () => {
 
     const firstLogin = await runtime.issueForAuthenticatedWebUser(legacyUser, "legacy-account-a");
     const first = await initialize(firstLogin);
-    expect(first).toMatchObject({ status: "selected", revision: 1, profile: { module_id: "titan.workforce.cleaning" } });
+    const savedProfile = { pack_id: "existing-company-pack", pack_version: "2.0.0", module_id: "existing.vertical", module_version: "2.0.0" };
+    expect(first).toMatchObject({ status: "retained", revision: 4, profile: savedProfile });
 
     const reloadLogin = await runtime.issueForAuthenticatedWebUser(legacyUser, "legacy-account-a");
     const reloaded = await initialize(reloadLogin);
-    expect(reloaded).toMatchObject({ status: "retained", revision: 1, profile: first.profile });
+    expect(reloaded).toMatchObject({ status: "retained", revision: 4, profile: savedProfile });
 
     const switched = await runtime.switchCompanyCredential(reloadLogin.credential, companyB);
     expect(switched.context.company_id).toBe(companyB);
     const switchedProfile = await initialize(switched);
-    expect(switchedProfile).toMatchObject({ status: "selected", revision: 1, profile: first.profile });
+    expect(switchedProfile).toMatchObject({ status: "selected", revision: 1, profile: { module_id: "titan.workforce.cleaning" } });
 
     for (const company_id of [companyA, companyB]) {
       const storage = nodeSqliteStorage(paths.get(`placement-${company_id}`)!);
       try {
         const settings = (await storage.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [company_id])).rows[0]!.settings;
-        expect(JSON.parse(settings)).toMatchObject({ vertical_profile: { company_id, revision: 1, profile: first.profile } });
+        const parsed = JSON.parse(settings);
+        if (company_id === companyA) {
+          expect(parsed).toMatchObject({ retained_setting: "keep", vertical_profile: { company_id, revision: 4, profile: savedProfile } });
+        } else {
+          expect(parsed).toMatchObject({ vertical_profile: { company_id, revision: 1, profile: { module_id: "titan.workforce.cleaning" } } });
+        }
       } finally { await storage.close(); }
     }
   });
