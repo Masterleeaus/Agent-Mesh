@@ -1,5 +1,6 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { createServer } from "node:net";
+import { request as httpsRequest } from "node:https";
 import { mkdtemp, mkdir, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -171,9 +172,16 @@ async function waitForServer(baseUrl: string, timeoutMs: number): Promise<void> 
       throw new Error(`next-dev-exited:${nextServer.exitCode}`);
     }
     try {
-      const response = await fetch(`${baseUrl}/login`);
-      if (response.ok) return;
-      lastError = `http-${response.status}`;
+      const status = await new Promise<number>((resolveRequest, reject) => {
+        const request = httpsRequest(`${baseUrl}/login`, { rejectUnauthorized: false }, response => {
+          response.resume();
+          resolveRequest(response.statusCode ?? 0);
+        });
+        request.once("error", reject);
+        request.end();
+      });
+      if (status >= 200 && status < 400) return;
+      lastError = `http-${status}`;
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
     }
@@ -206,7 +214,7 @@ describe("Cleaning first-run browser journey", () => {
     repoRoot = resolve(webRoot, "../..");
     fixtureDirectory = await mkdtemp(join(tmpdir(), "titan-cleaning-browser-"));
     const port = await unusedPort();
-    const baseUrl = `http://localhost:${port}`;
+    const baseUrl = `https://localhost:${port}`;
     origin = baseUrl;
     issuer = `titan:web-login:${origin}`;
     const appDatabase = join(fixtureDirectory, "legacy-app.sqlite");
@@ -242,7 +250,7 @@ describe("Cleaning first-run browser journey", () => {
     };
     nextServer = spawn(process.execPath, [
       resolve(webRoot, "node_modules/next/dist/bin/next"),
-      "dev", "--hostname", "0.0.0.0", "--port", String(port),
+      "dev", "--experimental-https", "--hostname", "0.0.0.0", "--port", String(port),
     ], { cwd: webRoot, env: runtimeEnvironment, stdio: ["ignore", "pipe", "pipe"] });
     let serverOutput = "";
     nextServer.stdout?.on("data", chunk => { serverOutput = `${serverOutput}${chunk}`.slice(-8_000); });
@@ -254,7 +262,7 @@ describe("Cleaning first-run browser journey", () => {
     }
 
     browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
-    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
     // Existing non-Cleaning profile stays selected through the real password route.
     const existingLogin = await context.request.post(`${baseUrl}/api/v1/auth/login`, {
