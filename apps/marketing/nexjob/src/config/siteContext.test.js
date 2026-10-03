@@ -93,9 +93,22 @@ test('launch pages keep managed service internal and show accurate release state
   const cleaningSource = readFileSync(new URL('../pages/CatalogueIndustryHome.jsx', import.meta.url), 'utf8')
   assert.match(appSource, /path="\/fully-managed"/)
   assert.doesNotMatch(appSource, /titanzero\.pro|import IndustryHome|ManagedSiteHome/)
-  assert.match(hubSource, /14 cleaning service variants/)
+  assert.match(hubSource, /Fourteen cleaning service types are modelled in the current catalogue/)
+  assert.match(hubSource, /not part of the current 14 service variants/)
   assert.match(hubSource, /managed-service offer remains part of Titan Zero/)
   assert.doesNotMatch(hubSource, /Personal Services|titanzero\.pro|Other industries/)
+  const catalogueSource = readFileSync(new URL('../data/verticalCatalogue.js', import.meta.url), 'utf8')
+  for (const service of [
+    'Regular residential clean', 'One-off clean', 'Deep clean', 'End-of-lease / bond clean',
+    'Airbnb / short-stay turnover', 'Commercial site cleaning', 'Office cleaning',
+    'Move-in / move-out clean', 'Carpet cleaning', 'Upholstery cleaning',
+    'Window cleaning and washing', 'Pressure cleaning and washing', 'Post-construction clean',
+    'Custom cleaning service',
+  ]) assert.ok(catalogueSource.includes(service), `missing Cleaning service listing: ${service}`)
+  for (const proposed of [
+    'Construction-site cleaning', 'Medical equipment cleaning',
+    'Rubbish and junk removal', 'Home organising and reset',
+  ]) assert.ok(hubSource.includes(proposed), `missing proposed Cleaning scope: ${proposed}`)
   assert.match(workSource, /Facebook Messenger/)
   assert.match(workSource, /planned integrations/)
   assert.doesNotMatch(cleaningSource, /Other industries|titanzero\.pro/)
