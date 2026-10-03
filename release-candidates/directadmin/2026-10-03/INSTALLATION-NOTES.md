@@ -1,12 +1,12 @@
 # Installation notes — DirectAdmin installer candidates (2026-10-03)
 
-These are proprietary candidate packages, not live-certified production releases. Each available archive has a companion `LICENSE.txt` and generated `THIRD_PARTY_NOTICES.txt`; those files are outside the TAR so the tested archive hashes stay unchanged.
+These are proprietary candidate packages, not live-certified production releases. Each of the three published archives has a companion `LICENSE.txt` and generated `THIRD_PARTY_NOTICES.txt`; those files are outside the TAR so the tested archive hashes stay unchanged.
 
 ## Archive hashes
 
 - Titan Server Node 0.3.0 — `titan-server-node.tar.gz`; `580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d`.
 - Titan Workforce 0.1.6 — `titan_workforce.tar.gz`; `100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26`.
-- Developer Portal 1.3.10 — owner will append `titan_dev_access.tar.gz` plus companion files at `developer-portal/`; expected SHA `90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27`.
+- Developer Portal 1.3.10 — published at `developer-portal/titan_dev_access.tar.gz` with companion records; SHA `90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27`.
 
 ## Prerequisites and order
 

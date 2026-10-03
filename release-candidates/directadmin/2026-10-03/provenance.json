@@ -5,7 +5,7 @@
   "branch": "release/directadmin-candidates-20261003",
   "base_commit": "512f623e065242b3d6066b493130148989a37ab7",
   "issue_ref": "Refs #1157",
-  "status": "repository_candidate_artifacts_published_pending_review",
+  "status": "all_three_candidate_archives_published_pending_separate_artifact_review",
   "distribution": {
     "repository_license_decision": "OWNER_DECISION_REQUIRED",
     "this_scope_decision": "PROPRIETARY_ALL_RIGHTS_RESERVED",
@@ -65,8 +65,12 @@
       "archive_bytes_unchanged": true,
       "workflow_run_id": 37077046801,
       "workflow_artifact_zip_sha256": "715a65fe02801244fdb0fbf13675e0e9d1b569b55d472c15072b6ba0ced7a8d0",
-      "independent_source_review": "cleared for exact source head in PR comment 5963160873",
-      "operational_status": "candidate; not live-certified; no DirectAdmin Manager lifecycle or production SSH certification"
+      "independent_source_review": "cleared for exact source commit 10f5ee96626663abea770132de6397063b5b688c; see PR #1391 comment 5963160873",
+      "operational_status": "candidate; not live-certified; no DirectAdmin Manager lifecycle or production SSH certification",
+      "publication_status": "archive_and_companion_records_published_and_hash_verified",
+      "packaged_source_transport_review": "pending separate read-only review; see PR #1438 comment 5969727346",
+      "product_owner_verification": "pending; see PR #1438 comment 5969727346",
+      "build_time_review_snapshot": "The embedded workflow provenance records independent review as pending at build time; it is preserved as historical build evidence and does not represent the later source-review clearance."
     }
   ],
   "portfolio_dependencies": {
