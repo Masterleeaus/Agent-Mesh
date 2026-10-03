@@ -435,7 +435,7 @@ protected identity provisioning, trusted DirectAdmin bootstrap, the latest
 conversation transport, real-host installation and the remaining #1050 mission
 criteria remain outstanding. Keep #1050 open.
 
-## Latest-main browser bootstrap continuation — main 99271ea4 (2026-10-03)
+## Historical browser-bootstrap continuation — main 99271ea4 (2026-10-03)
 
 This is a continuation of the existing #1050 claim and `agent/issue-1050`
 history. The branch normally merged current main `99271ea4` in merge
@@ -479,12 +479,41 @@ Chromium, and disposable identity/company fixtures:
   install/update/uninstall preflight passed. The candidate currently excludes
   #1395 RAW handler files and is not ready to install.
 
-The extracted RAW tests use a synthetic cookie jar/upstream; they do not launch
+At that earlier 99271ea4 checkpoint, the extracted RAW tests used a synthetic
+cookie jar/upstream; they did not launch
 #1395's scripts, a DirectAdmin CGI process, Apache, or a live host. PR #1395
-remains draft with SQLite-backed host tests blocked by missing
+was draft and its SQLite-backed host tests were blocked by missing
 `better_sqlite3.node`. #812 production forwarding remains disabled pending a
 verified real cookie boundary. Protected identity provisioning and upstream
 credentials are not commissioned; #811 currently exposes no control without a
 current grant, so this run proves denial and read-only projection, not a
 positive governed action. The broader conversation and Workforce mission
 criteria remain open.
+
+## Coordinated packaged-browser continuation — main ee3e61da / #1395 head 914c0e1b (2026-10-03)
+
+The existing #1050 continuation normally merged the exact current #1395 branch
+head, including its workflow-only follow-up; no RAW/package owner files were
+overwritten. Main then advanced to `ee3e61da` with marketing-only changes. The
+current 26-file v0.1.6 artifact and checksum are recorded in
+`WORKFORCE-PACKAGE-VERIFICATION.md`.
+
+The new Chromium scenario runs the extracted package's User RAW scripts and
+adapter through initial authentication, invalidation races, retry, a controlled
+company-context event, reload, logout, expiry and read-only presentation. It
+requires current-session forwarding and replacement-cookie rotation on renewals,
+checks the browser cookie jar and verifies that private nonce forwarding removes
+the Titan cookie. It does not execute the Admin/Reseller browser routes, test the
+DirectAdmin shebang/OS CGI environment, or prove #302/#811 identity and authority
+with production services. Company A/B, hosted endpoints and intent receipts are
+controlled fixtures.
+
+Node v22.23.3 verification on this continuation: consumer/browser/package
+**60/60**, portfolio/package/RAW contracts **20/20**, packaged RAW-to-#302/#1049
+session chain **3/3**. The current #1395 head's hosted package, source-index,
+SQLite composition/build, Workforce, canonical-environment, mission-evidence
+and slice checks pass; conditional/unrelated jobs are skipped. #1395 and #1405
+remain draft. No production deployment, credentials or security configuration
+changes were made. Live protected provisioning, verified upstream credentials,
+commissioned cookie isolation, and a real DirectAdmin install/reload journey
+remain unproved. #1050 stays open.

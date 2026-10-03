@@ -2,12 +2,10 @@
 
 This checklist verifies a **packaging candidate** in a local workspace or disposable staging directory. The archive is **not live-install-ready** and this checklist does not authorize copying it into DirectAdmin, enabling the plugin, creating credentials or changing a host.
 
-The v0.1.4, v0.1.5 and earlier v0.1.6 records below are historical candidates.
-The latest consumer candidate is v0.1.6 on canonical `agent/issue-1050`, after
-normal merge `91ffb77a` of main `99271ea4`; its latest build, tests and hash are
-recorded at the end. This 19-file package does not yet contain the #1300 RAW
-handlers from draft PR #1395. None of these staged checks certifies a live
-DirectAdmin/Apache install.
+The v0.1.4, v0.1.5 and earlier 19-file v0.1.6 records below are historical
+candidates. The latest coordinated v0.1.6 candidate and its 26-file archive
+evidence are recorded in the final section. None of these staged checks
+certifies a live DirectAdmin/Apache install.
 
 ## Build the SDK and package
 
@@ -42,9 +40,9 @@ sha256sum /tmp/1050-package-candidate/titan_workforce.tar.gz
 cat /tmp/1050-package-candidate/titan_workforce.tar.gz.sha256
 ```
 
-The builder rejects symlinks, requires canonical browser session and package-validator exports, includes an explicit 19-file allowlist, writes normalized ownership/time/modes, extracts and compares the result, invokes the shared SDK package validator and runs the install preflight in a temporary staging copy.
+The builder rejects symlinks, requires canonical browser session and package-validator exports, includes an explicit allowlist (26 files after the #1395 RAW integration), writes normalized ownership/time/modes, extracts and compares the result, invokes the shared SDK package validator and runs the install preflight in a temporary staging copy.
 
-## Verify the final archive independently
+## Historical 19-file candidate — independent archive check
 
 ```sh
 set -eu
@@ -379,7 +377,7 @@ TITAN_COCKPIT_SDK_MODULE=/tmp/1050-sdk-main-9fd.mjs \
   apps/directadmin/workforce/tests/hosted-sdk.integration.mjs
 ```
 
-## Latest consumer candidate — main 99271ea4 (2026-10-03)
+## Historical consumer candidate — main 99271ea4 (2026-10-03)
 
 The consumer source is on the existing `agent/issue-1050` continuation after
 merge `91ffb77a`. The #1049 SDK source in main `99271ea4` is unchanged in this
@@ -419,9 +417,64 @@ node apps/directadmin/workforce/tools/package.mjs \
   --output-dir /tmp/1050-package-v0.1.6-main-99271ea4
 ```
 
-The consumer expects the role RAW routes but the candidate archive does not
-contain them until #1395's route/package contract is published and integrated.
+For this historical 99271ea4 candidate, the consumer expected the role RAW
+routes but that archive did not contain them; #1395's contract was integrated
+later in the coordinated continuation below.
 Do not install the archive on DirectAdmin. #812's production relay remains
 disabled with `503 cookie_boundary_unverified`; live DirectAdmin/Apache cookie
 isolation, #1395's blocked native database suites, protected identity
 provisioning, and positive hosted controls remain outstanding.
+
+## Coordinated packaged RAW and cockpit continuation — current main ee3e61da (2026-10-03)
+
+This remains on the existing `agent/issue-1050` branch and open draft PR #1405.
+The branch includes normal merges of exact current #1395 head
+`914c0e1b0ec19277ea7f965b0ef31f6426f6646b` and current main `ee3e61da`; the
+#1395 source-owned RAW/package files were preserved. Main's advance from
+`d2d76ce6` touched marketing paths only; the DirectAdmin SDK source used below
+is unchanged. No deployment, production credential, or security-setting change
+was made.
+
+Two builds of the current v0.1.6 candidate were byte-identical. The archive is
+available at
+`/workspace/.tmp-1050-workforce/package-v0.1.6-integrated-a/titan_workforce.tar.gz`,
+contains 26 files, and has SHA256
+`100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26`. Its
+sidecar matched. Independent extraction confirmed `plugin.conf` version 0.1.6,
+the three role pages, all six executable RAW scripts at mode 0755, the shared
+RAW adapter and successful staged install/update/uninstall preflight. The
+portfolio's strict manifest/archive-version test now pins 0.1.6 and compares the
+version embedded in the actual archive; it no longer incorrectly expects
+0.1.5.
+
+The browser integration builds and extracts the real package, serves its User
+page and invokes the extracted `user/bootstrap-nonce.raw` and
+`user/bootstrap.raw` through the packaged adapter. It covers initial bootstrap,
+late-response invalidation, retry, company-context change, page lifecycle,
+reload, logout, expiry, read-only controls and receipt clearing. Assertions now
+require each tested renewal to forward the previous host cookie, issue a unique
+replacement, and update the browser cookie jar. The nonce route is required to
+strip that browser-managed Titan cookie before private forwarding. The company
+switch itself is a controlled identity/context fixture event; it does not prove
+the real #302 selected-company assertion or #811 hosted authorization flow. The
+child process runs the extracted script with Node, so it does not certify the
+DirectAdmin OS shebang/CGI invocation.
+
+Verification on Node v22.23.3, Chromium and the current-main SDK bundle
+(`7c08d37f6ea274760f8e52092b2e86a07a93ae175fe4a6216df9156d1fc39681`):
+
+- Workforce unit/browser/package and packaged cockpit consumer suite: **60/60**.
+- Portfolio/package/role RAW exact archive contracts: **20/20**.
+- Packaged RAW to the #302 assertion fixture and #1049 session bridge: **3/3**.
+- #1395 hosted CI on exact head `914c0e1b`: package, source-index,
+  sqlite-compose-and-build, workforce, canonical-environment, mission evidence
+  and slice checks passed; unrelated/conditional jobs were skipped.
+
+The browser host, selected company and governed action responses are controlled
+fixtures, not production data. This run proves packaged consumer protocol and
+lifecycle behavior, not real identity binding, owner authorization, protected
+provisioning, or a production positive control. #812's production relay remains
+disabled pending verified cookie isolation on an authorized disposable host;
+upstream credentials/protected provisioning and a real DirectAdmin install are
+still uncommissioned. #1395 and #1405 remain drafts, and #1050 stays open for
+its remaining acceptance criteria.

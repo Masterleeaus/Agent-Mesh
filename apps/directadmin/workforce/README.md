@@ -36,17 +36,17 @@ POST stdin, PHP superglobals, query parameters, or host environment variables as
 identity/CSRF inputs. The browser SDK makes same-origin API requests; the direct
 DirectAdmin POST/environment bridge is not assumed to work. Installed Dev Access
 1.1.3 has a reported CSRF failure and #1048 is repairing and verifying that bridge.
-The #1300 host adapter draft #1395 (head `701d7e4f`) owns the role RAW
-entrypoints and package/install allowlist. Its cookie-jar regression now covers
-two nonce/bootstrap cycles: the nonce handler accepts one well-formed Titan
-HttpOnly cookie, strips it before private forwarding, and bootstrap retains it
-for renewal. The #1395 draft remains blocked on SQLite-backed native reruns
-because `better_sqlite3.node` is unavailable. A read-only security review found
-no boundary issue in that source; its simulated cookie jar does not prove
-browser enforcement or live DirectAdmin/Apache cookie isolation.
-This consumer candidate calls that route contract but does not package the RAW
-handlers yet. Keep it blocked on #1395 publication and package integration; do
-not claim host reload integration from fixture tests.
+The #1300 host adapter draft PR #1395 owns the role RAW entrypoints and
+package/install allowlist. Its current head `914c0e1b` is integrated on this
+continuation branch by a normal merge; its source-owned files remain unchanged.
+The 26-file v0.1.6 candidate packages all three role nonce/bootstrap handlers and
+their shared adapter. The browser test extracts that package, invokes the User
+RAW scripts, and verifies nonce-cookie stripping plus prior-session forwarding
+and cookie rotation on reconnect/company change. The host endpoint remains a
+controlled loopback fixture: it does not prove the #302/#811 production identity
+chain, protected upstream provisioning, OS CGI/shebang execution, or live
+DirectAdmin/Apache cookie isolation. PR #1395 remains draft and its hosted CI
+checks are evidence for source regressions, not publication or commissioning.
 DirectAdmin documents role entrypoints as executable scripts receiving request data
 through process environment; `pipe_post=yes` sets `POST=stdin=true` and delivers the
 POST body on stdin. The Workforce test now launches the packaged role executable as
