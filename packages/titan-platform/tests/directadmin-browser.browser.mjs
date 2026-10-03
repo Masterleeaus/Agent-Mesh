@@ -265,11 +265,13 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
     if (plugin === 'titan_web') brandProjectionCalls++;
     const result = await original(plugin, current);
     if (plugin === 'titan_web') return { ...result, source: '<img src=x onerror="window.injected=true">',
-      data: { ...result.data, publication_id: '<script>window.injected=true</script>' } };
+      data: { ...result.data, publications: result.data.publications.map((publication, index) => index === 0
+        ? { ...publication, publication_id: '<script>window.injected=true</script>' } : publication) } };
     return result;
   };
   await page.locator('#brand button').click();
-  try { await page.waitForFunction(() => document.querySelector('#brand pre').textContent.includes('<img')); }
+  try { await page.waitForFunction(() => document.querySelector('#brand pre').textContent.includes('<img') &&
+    document.querySelector('#brand [role="status"]').textContent.includes('<script>')); }
   catch {
     const brandView = await page.locator('#brand').evaluate(root => ({
       state: root.dataset.state,
@@ -278,6 +280,7 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
     }));
     throw new Error(`Brand projection did not expose the text-rendering input: ownerCalls=${brandProjectionCalls}; view=${JSON.stringify(brandView)}; responses=${JSON.stringify(observed.map(record => ({ method: record.method, path: record.path, status: record.responseStatus })))}; page=${errors.join('; ')}; console=${consoleErrors.join('; ')}; failed=${failedRequests.join('; ')}; server=${serverErrors.join('; ')}`);
   }
+  assert.match(await page.locator('#brand [role="status"]').innerText(), /<script>window\.injected=true<\/script>/);
   assert.equal(await page.locator('#brand img, #brand script').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
 
