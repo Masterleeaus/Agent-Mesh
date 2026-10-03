@@ -260,7 +260,7 @@ describe("Cleaning first-run browser journey", () => {
     const existingLogin = await context.request.post(`${baseUrl}/api/v1/auth/login`, {
       data: { email: userA.email, password: userA.password },
     });
-    expect(existingLogin.status()).toBe(200);
+    expect(existingLogin.status(), JSON.stringify(await existingLogin.json())).toBe(200);
     const existingCookie = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(existingCookie).toMatchObject({ secure: true, httpOnly: true, sameSite: "Lax", path: "/" });
     const aPlacementId = placementIds.get(companyA);
