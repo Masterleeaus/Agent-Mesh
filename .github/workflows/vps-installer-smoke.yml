@@ -38,8 +38,10 @@ jobs:
           set -euo pipefail
           bash -n scripts/vps/install-vps.sh
           bash -n scripts/vps/install-sqlite-vps.sh
+          bash -n scripts/vps/remove-workforce-service.sh
           bash -n scripts/vps/backup-vps.sh
           bash -n scripts/vps/update-vps.sh
+          node --test scripts/vps/remove-workforce-service.test.mjs
           cp infra/vps.env.example .env.vps
           sed -i 's/GENERATED_BY_INSTALLER/ci-smoke-placeholder-not-a-real-secret-00000000000000000000000000000000/g' .env.vps
           mkdir -p "$RUNNER_TEMP/titan-data/sqlite" "$RUNNER_TEMP/titan-data/uploads" \
@@ -220,6 +222,70 @@ jobs:
           print('workforce-smoke-authentication-denied: PASS')
           PY
           [[ "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3010/health)" == "200" ]]
+          smoke_compose=(docker compose --env-file .env.vps -f infra/compose.vps.yml \
+            -f "$RUNNER_TEMP/workforce-smoke.compose.yml")
+          original_workforce_ids="$("${smoke_compose[@]}" ps --all --quiet workforce)"
+          [[ -n "$original_workforce_ids" && "$original_workforce_ids" != *$'\n'* ]]
+          original_web_ids="$("${smoke_compose[@]}" ps --status running --quiet web)"
+          original_redis_ids="$("${smoke_compose[@]}" ps --status running --quiet redis)"
+          [[ -n "$original_web_ids" && "$original_web_ids" != *$'\n'* ]]
+          [[ -n "$original_redis_ids" && "$original_redis_ids" != *$'\n'* ]]
+          workforce_container_id="$(docker inspect --format '{{.Id}}' "$original_workforce_ids")"
+          workforce_init_host_pid="$(docker inspect --format '{{.State.Pid}}' "$original_workforce_ids")"
+          [[ "$workforce_init_host_pid" =~ ^[1-9][0-9]*$ ]]
+          restart_count_before="$(docker inspect --format '{{.RestartCount}}' "$original_workforce_ids")"
+          [[ "$restart_count_before" =~ ^[0-9]+$ ]]
+          # Docker applies restart policy after a container has been up for at least 10 seconds.
+          sleep 12
+          [[ "$(docker inspect --format '{{.State.Running}} {{.State.Pid}}' "$original_workforce_ids")" \
+            == "true $workforce_init_host_pid" ]]
+          # Use a pidfd and verify cgroup ownership so a stale/reused host PID cannot hit another process.
+          sudo python3 - "$workforce_init_host_pid" "$workforce_container_id" <<'PY'
+          import os, pathlib, signal, sys
+          process_id = int(sys.argv[1])
+          expected_container_id = sys.argv[2]
+          process_fd = os.pidfd_open(process_id)
+          try:
+              process_cgroup = pathlib.Path(f'/proc/{process_id}/cgroup').read_text(encoding='utf-8')
+              if expected_container_id not in process_cgroup:
+                  raise SystemExit('refusing to signal a PID outside the Workforce container cgroup')
+              signal.pidfd_send_signal(process_fd, signal.SIGKILL)
+          finally:
+              os.close(process_fd)
+          PY
+          recovered=0
+          for attempt in $(seq 1 30); do
+            running_workforce_ids="$("${smoke_compose[@]}" ps --status running --quiet workforce)"
+            restart_count_after="$(docker inspect --format '{{.RestartCount}}' "$original_workforce_ids")"
+            health_after_restart=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              http://127.0.0.1:3010/health || true)
+            if ((restart_count_after > restart_count_before)) \
+              && [[ "$running_workforce_ids" == "$original_workforce_ids" && "$health_after_restart" == "200" ]]; then
+              recovered=1
+              break
+            fi
+            sleep 2
+          done
+          [[ "$recovered" == 1 ]] || {
+            printf 'container=%s host-pid=%s restarts-before=%s restarts-after=%s running-ids=%s health=%s\n' \
+              "$original_workforce_ids" "$workforce_init_host_pid" "$restart_count_before" \
+              "$restart_count_after" "$running_workforce_ids" "$health_after_restart" >&2
+            docker inspect --format '{{.State.Status}} exit={{.State.ExitCode}} restarts={{.RestartCount}} error={{.State.Error}}' \
+              "$original_workforce_ids" >&2
+            "${smoke_compose[@]}" logs --tail=150 workforce >&2
+            echo 'Workforce did not recover after a killed process' >&2
+            exit 1
+          }
+          all_workforce_ids="$("${smoke_compose[@]}" ps --all --quiet workforce)"
+          [[ "$all_workforce_ids" == "$original_workforce_ids" ]]
+          web_ids_after_restart="$("${smoke_compose[@]}" ps --status running --quiet web)"
+          redis_ids_after_restart="$("${smoke_compose[@]}" ps --status running --quiet redis)"
+          [[ "$web_ids_after_restart" == "$original_web_ids" ]]
+          [[ "$redis_ids_after_restart" == "$original_redis_ids" ]]
+          restart_readiness_status=$(curl --silent --show-error --output "$RUNNER_TEMP/workforce-ready-after-restart.json" \
+            --write-out '%{http_code}' http://127.0.0.1:3010/ready)
+          [[ "$restart_readiness_status" == "503" ]]
+          echo 'workforce-crash-restart-single-container: PASS'
           python3 - "$RUNNER_TEMP/titan-data/runtime/workforce.db" \
             "$RUNNER_TEMP/titan-data/runtime/workforce-identity.db" <<'PY'
           import sqlite3, sys
@@ -239,6 +305,29 @@ jobs:
               identity.close()
           print('workforce-disposable-stores-integrity-and-empty-identity: PASS')
           PY
+          removal_install_root="$RUNNER_TEMP/workforce-removal-install-root"
+          mkdir -p "$removal_install_root/current/infra" "$removal_install_root/shared/env"
+          cp infra/compose.vps.yml "$removal_install_root/current/infra/compose.vps.yml"
+          cp .env.vps "$removal_install_root/shared/env/.env"
+          bash scripts/vps/remove-workforce-service.sh --install-root "$removal_install_root"
+          workforce_ids_after_removal="$("${smoke_compose[@]}" ps --all --quiet workforce)"
+          [[ -z "$workforce_ids_after_removal" ]]
+          bash scripts/vps/remove-workforce-service.sh --install-root "$removal_install_root"
+          workforce_ids_after_repeat="$("${smoke_compose[@]}" ps --all --quiet workforce)"
+          [[ -z "$workforce_ids_after_repeat" ]]
+          running_worker_ids="$("${smoke_compose[@]}" ps --status running --quiet worker)"
+          [[ -z "$running_worker_ids" ]]
+          web_ids_after_removal="$("${smoke_compose[@]}" ps --status running --quiet web)"
+          redis_ids_after_removal="$("${smoke_compose[@]}" ps --status running --quiet redis)"
+          [[ "$web_ids_after_removal" == "$original_web_ids" ]]
+          [[ "$redis_ids_after_removal" == "$original_redis_ids" ]]
+          test -f "$RUNNER_TEMP/titan-data/runtime/workforce.db"
+          test -f "$RUNNER_TEMP/titan-data/runtime/workforce-identity.db"
+          test -d "$WORKFORCE_COMPANY_STORE_HOST_ROOT"
+          workforce_image_tag="$(sed -n 's/^APP_TAG=//p' .env.vps | head -n 1)"
+          test -n "$workforce_image_tag"
+          docker image inspect "titan-zero-workforce:$workforce_image_tag" >/dev/null
+          echo 'workforce-only-removal-idempotency-and-retention: PASS'
       - name: Stop smoke services
         if: always()
         shell: bash
@@ -270,7 +359,7 @@ jobs:
           tar --create --gzip --file "$artifact_root/config.tar.gz" \
             infra/compose.vps.yml infra/vps.env.example \
             scripts/vps/install-sqlite-vps.sh scripts/vps/update-vps.sh \
-            scripts/vps/backup-vps.sh scripts/sqlite-migrate.mjs
+            scripts/vps/backup-vps.sh scripts/vps/remove-workforce-service.sh scripts/sqlite-migrate.mjs
           tar --create --gzip --file "$artifact_root/migrations.tar.gz" db/sqlite
 
           node --input-type=module - "$artifact_root" "$bundle_root" <<'NODE'
@@ -321,6 +410,9 @@ jobs:
               { id: 'workforce-uncommissioned-readiness', result: 'degraded-as-expected', http_status: 503 },
               { id: 'workforce-authentication-denial', result: 'passed', http_status: 401 },
               { id: 'workforce-disposable-store-integrity', result: 'passed' },
+              { id: 'workforce-crash-restart-single-container', result: 'passed' },
+              { id: 'workforce-only-removal-idempotency', result: 'passed' },
+              { id: 'workforce-shared-state-and-image-retention', result: 'passed' },
             ],
             not_performed: [
               'live_host_install', 'directadmin_install', 'production_web_readiness', 'worker_service_startup',

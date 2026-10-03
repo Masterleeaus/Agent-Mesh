@@ -63,7 +63,9 @@ web image without masking its installed modules with a source bind mount, then
 starts services and checks `/api/health` and Workforce `/health` separately from
 `/ready`. It keeps immutable release directories and updates
 `/opt/titan-zero/current`. Rerun with a new exact ZIP to upgrade after backing
-up. The legacy in-place updater is disabled.
+up. The legacy in-place updater is disabled. See the [Workforce service
+lifecycle guide](WORKFORCE-SERVICE-LIFECYCLE.md) for the idempotent
+Workforce-only removal procedure and retained-state guarantees.
 
 Inspect the actual services (no `titan-zero-status` helper is installed):
 

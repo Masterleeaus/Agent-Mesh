@@ -1,6 +1,6 @@
 const required=(value,name)=>{const text=String(value??"").trim();if(!text)throw new Error(`execution-evidence-${name}-required`);return text;};
 
-const FACTUAL_STATES=new Set(["REQUESTED","AUTHORIZED","EXECUTING","PROVIDER_ACKNOWLEDGED","VERIFYING","VERIFIED","FAILED"]);
+const FACTUAL_STATES=new Set(["REQUESTED","AUTHORIZED","EXECUTING","PROVIDER_ACKNOWLEDGED","VERIFYING","VERIFIED","FAILED","UNCERTAIN"]);
 
 export function executionEvidenceToBusinessEvidence(evidence,{projection_version="execution-reality.v1",accepted_at=evidence?.finished_at}={}){
  const state=required(evidence?.state,"state");
@@ -21,10 +21,10 @@ export function executionEvidenceToBusinessEvidence(evidence,{projection_version
   acceptance_state:"accepted",
   source_type:"execution-gateway",
   source_id:required(evidence?.provider,"provider"),
-  actor_id:null,
+  actor_id:evidence?.actor_id??null,
   agent_id:evidence?.agent_id??null,
-  correlation_id:String(evidence?.work_id??evidence?.run_id??execution_id),
-  causation_id:evidence?.decision_id??null,
+  correlation_id:String(evidence?.correlation_id??evidence?.work_id??evidence?.run_id??execution_id),
+  causation_id:evidence?.causation_id??evidence?.decision_id??null,
   decision_id:evidence?.decision_id??null,
   authority_decision_id:evidence?.authority_decision_id??null,
   execution_id,

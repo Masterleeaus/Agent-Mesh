@@ -18,6 +18,7 @@ interface Props {
   isMembershipVisit?: boolean;
   membershipPhase?: string;
   membershipSnapshotSentAt?: string | null;
+  onVisualAssurance?: () => Promise<boolean>;
 }
 
 // What the tech sees: plain-English action buttons sized for a phone screen.
@@ -42,6 +43,7 @@ export function VisitTransitionForm({
   isMembershipVisit = false,
   membershipPhase,
   membershipSnapshotSentAt = null,
+  onVisualAssurance,
 }: Props) {
   const router = useRouter();
   const toast = useToast();
@@ -135,7 +137,7 @@ export function VisitTransitionForm({
           {loading ? "Updating…" : action.label}
         </Button>
       </div>
-      <CloseoutWizard visitId={visitId} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} />
+      <CloseoutWizard visitId={visitId} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} onVisualAssurance={onVisualAssurance} />
       </>
     );
   }
@@ -167,7 +169,7 @@ export function VisitTransitionForm({
         >
           Cancel Visit
         </Button>
-        <CloseoutWizard visitId={visitId} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} />
+        <CloseoutWizard visitId={visitId} open={closeoutOpen} onClose={() => setCloseoutOpen(false)} onVisualAssurance={onVisualAssurance} />
       </div>
     );
   }

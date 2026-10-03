@@ -74,6 +74,7 @@
     "src/counterfactual-branch.ts",
     "src/maps-intelligence/runtime.ts",
     "src/signal/runtime.ts",
-    "src/nexus-orchestration.ts"
+    "src/nexus-orchestration.ts",
+    "src/visual-evidence/runtime.ts"
   ]
 }

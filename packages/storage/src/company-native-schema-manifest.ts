@@ -57,3 +57,63 @@ export const companyNativeWorkOrdersManifest: CompanyNativeSchemaManifest = Obje
     }),
   ]),
 });
+
+/** Additive COMPANY_NATIVE_FSM profile that gives every visit its own set of
+ * links to existing work_order_tasks rows. Version 1 above remains immutable
+ * for old attestations and backups. */
+export const companyNativeWorkOrdersVisitsManifest: CompanyNativeSchemaManifest = Object.freeze({
+  format: "titan-company-native-fsm-manifest/v1",
+  owner: "COMPANY_NATIVE_FSM",
+  profile_id: "native-work-orders-visits-v2",
+  schema_version: "company-native-work-orders-visits-v2",
+  schema_scope: Object.freeze([
+    "companies",
+    "clients",
+    "properties",
+    "jobs",
+    "visits",
+    "work_orders",
+    "work_order_tasks",
+    "visit_tasks",
+  ]),
+  source_provenance: Object.freeze([
+    ...companyNativeWorkOrdersManifest.source_provenance,
+    Object.freeze({
+      path: "db/sqlite/company-native/0002_visit_tasks.sql",
+      sha256: "def828afc351554735fdc38615d6b67ad1d90c6195ca0b714ed4194b2db5906c",
+      included_objects: Object.freeze([
+        "visit_tasks",
+        "work_order_tasks_company_task_work_order",
+        "visits_company_visit_work_order",
+        "visit_tasks_company_task_lookup",
+      ]),
+      excluded_objects: Object.freeze(["checklist_items", "accepted_evidence", "company_registry"]),
+      adaptations: Object.freeze([
+        "visit checklist instances link to existing work_order_tasks rows through the canonical visit_tasks relation",
+        "composite company and work-order foreign keys prevent a visit from linking another company or work order task",
+        "no checklist, evidence, identity, authority, or placement tables are copied into the company profile",
+      ]),
+    }),
+  ]),
+  // Filled from the deterministic fresh SQLite initialization fixture; excludes
+  // the marker and its applied-migration ledger to avoid a self-referential hash.
+  schema_fingerprint_sha256: "8480925ebd63b859dd9061895585fed2a7fa44d221d3433a4f0244a9f64b0b6a",
+  migrations: Object.freeze([
+    ...companyNativeWorkOrdersManifest.migrations,
+    Object.freeze({
+      sequence: 2,
+      migration_id: "company-native-fsm/0002-visit-tasks",
+      path: "db/sqlite/company-native/0002_visit_tasks.sql",
+      sha256: "def828afc351554735fdc38615d6b67ad1d90c6195ca0b714ed4194b2db5906c",
+    }),
+  ]),
+});
+
+const manifestsByVersion = new Map<string, CompanyNativeSchemaManifest>([
+  [companyNativeWorkOrdersManifest.schema_version, companyNativeWorkOrdersManifest],
+  [companyNativeWorkOrdersVisitsManifest.schema_version, companyNativeWorkOrdersVisitsManifest],
+]);
+
+export function getCompanyNativeSchemaManifest(schemaVersion: string): CompanyNativeSchemaManifest | null {
+  return manifestsByVersion.get(schemaVersion) ?? null;
+}

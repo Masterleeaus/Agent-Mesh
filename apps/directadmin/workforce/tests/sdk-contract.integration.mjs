@@ -109,19 +109,40 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
       });
     },
   };
-  const gateway = SDK.createDirectAdminGateway({ authenticate: async request => {
-    assert.equal(request.headers.get('origin'), 'https://panel.example.test');
-    assert.equal(request.headers.get('sec-fetch-site'), 'same-origin');
-    assert.equal(request.headers.get('x-titan-csrf'), csrf);
-    assert.equal(request.headers.get('cookie'), '__Host-titan-da-session=fixture-session');
-    const childContext = mismatchNextChildCompany
-      ? { ...workforceChildContext, company_id: 'company-b', company_ids: ['company-b'] }
-      : workforceChildContext;
-    return { context: bridgeContext, revalidate: async () => bridgeContext,
-      withWorkforceZeroSession: async consume => consume('fixture-derived-workforce-credential', childContext),
-      switchCompany: async () => { throw new Error('company switching is outside this contract fixture'); },
-      logout: async () => {} };
-  } }, owners);
+  const bridge = {
+    bootstrapBrowserSession: async (request, resolveInput) => {
+      assert.equal(request.method, 'POST');
+      assert.equal(new URL(request.url).origin, 'https://panel.example.test');
+      assert.equal(request.headers.get('origin'), 'https://panel.example.test');
+      assert.equal(request.headers.get('sec-fetch-site'), 'same-origin');
+      assert.equal(request.headers.get('x-titan-da-bootstrap-csrf'), bootstrapNonce);
+      assert.equal(request.headers.has('authorization'), false);
+      assert.equal(await request.text(), '');
+      const input = await resolveInput({ origin: 'https://panel.example.test', cookie: null,
+        authorization: null, csrf_nonce: bootstrapNonce });
+      return { csrf_token: input.csrf_token, set_cookie: '__Host-titan-da-session=fixture-session; Path=/; Secure; HttpOnly; SameSite=Strict' };
+    },
+    authenticate: async request => {
+      assert.equal(request.headers.get('origin'), 'https://panel.example.test');
+      assert.equal(request.headers.get('sec-fetch-site'), 'same-origin');
+      assert.equal(request.headers.get('x-titan-csrf'), csrf);
+      assert.equal(request.headers.get('cookie'), '__Host-titan-da-session=fixture-session');
+      const childContext = mismatchNextChildCompany
+        ? { ...workforceChildContext, company_id: 'company-b', company_ids: ['company-b'] }
+        : workforceChildContext;
+      return { context: bridgeContext, revalidate: async () => bridgeContext,
+        withWorkforceZeroSession: async consume => consume('fixture-derived-workforce-credential', childContext),
+        switchCompany: async () => { throw new Error('company switching is outside this contract fixture'); },
+        logout: async () => {} };
+    },
+  };
+  const gateway = SDK.createDirectAdminGateway(bridge, owners, {
+    provide: async proof => {
+      assert.deepEqual(proof, { origin: 'https://panel.example.test', cookie: null,
+        authorization: null, csrf_nonce: bootstrapNonce });
+      return { csrf_token: csrf };
+    },
+  });
   const fetcher = async (path, init = {}) => {
     if (new URL(path, 'https://panel.example.test').pathname === '/v1/directadmin/bootstrap') {
       const headers = new Headers(init.headers);
@@ -140,7 +161,8 @@ test('canonical SDK/gateway reassign integration consumes child context, CAS, ev
       headers: { origin: 'https://panel.example.test', 'sec-fetch-site': 'same-origin',
         cookie: '__Host-titan-da-session=fixture-session',
         'content-type': init.headers?.['Content-Type'] ?? '',
-        'x-titan-csrf': init.headers?.['X-Titan-CSRF'] ?? '' } }));
+        'x-titan-csrf': init.headers?.['X-Titan-CSRF'] ?? '',
+        'x-titan-da-bootstrap-csrf': init.headers?.['X-Titan-DA-Bootstrap-CSRF'] ?? '' } }));
   };
   const session = new SDK.DirectAdminCockpitSession(() => bootstrapNonce, fetcher, undefined);
   t.after(() => session.dispose());
@@ -305,6 +327,14 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
         response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' });
         response.end(fixtureRelayClient); return;
       }
+      if (url.pathname === '/v1/directadmin/bootstrap' && request.method === 'POST') {
+        if (request.headers['x-titan-da-bootstrap-csrf'] !== csrf ||
+            request.headers['sec-fetch-site'] !== 'same-origin' ||
+            request.headers.origin !== `http://127.0.0.1:${server.address().port}`) {
+          json(response, 403, { error: 'fixture-bootstrap-rejected' }); return;
+        }
+        json(response, 200, { csrf_token: csrf }); return;
+      }
       requests.push({ method: request.method, path: url.pathname, headers: request.headers, body });
       const protectedRequest = ['/v1/directadmin/context', '/v1/directadmin/titan_workforce/projection',
         '/v1/directadmin/titan_workforce/intents', '/v1/directadmin/logout'].includes(url.pathname);
@@ -399,6 +429,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const network = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => network.push(`${request.method()} ${request.url()}`));
+    page.on('response', response => network.push(`RESPONSE ${response.status()} ${response.url()}`));
     page.on('requestfailed', request => network.push(`FAILED ${request.url()} ${request.failure()?.errorText ?? ''}`));
     const submitCancel = async (targetPage, companyId, reason) => {
       await targetPage.getByRole('button', { name: 'Controls', exact: true }).click();

@@ -19,7 +19,10 @@
       "legal_approval_ref": null,
       "dependency_license_status": "incomplete",
       "dependency_lockfiles": [
-        {"path": "pnpm-lock.yaml", "sha256": "b478846d49ed94f92106120c764498603ec34a70c6cb2c89415618f2e8254dac"}
+        {
+          "path": "pnpm-lock.yaml",
+          "sha256": "0a10da0aaaf6c8d3df420326b9b1238debc1436e025670448623ab1093c76ad8"
+        }
       ],
       "notice_files": [],
       "reason": "No owner-approved repository license or complete dependency provenance/notices exist."
@@ -29,16 +32,25 @@
       "kind": "browser-extension",
       "source_root": "apps/browser",
       "source_revision": "15d8b1be1584ce07259762527f9abfe040c9d504",
-      "source_manifest": {"path": "apps/browser/SOURCE-MANIFEST.json", "sha256": "ea917646959d717f192e0cf1b37ca98d4807460501c76988030cbeb2f596cdd4"},
+      "source_manifest": {
+        "path": "apps/browser/SOURCE-MANIFEST.json",
+        "sha256": "ea917646959d717f192e0cf1b37ca98d4807460501c76988030cbeb2f596cdd4"
+      },
       "distribution_state": "blocked",
       "first_party_spdx": "NOASSERTION",
       "first_party_license_file": null,
       "legal_approval_ref": null,
       "dependency_license_status": "incomplete",
       "dependency_lockfiles": [
-        {"path": "pnpm-lock.yaml", "sha256": "b478846d49ed94f92106120c764498603ec34a70c6cb2c89415618f2e8254dac"}
+        {
+          "path": "pnpm-lock.yaml",
+          "sha256": "0a10da0aaaf6c8d3df420326b9b1238debc1436e025670448623ab1093c76ad8"
+        }
       ],
-      "component_ids": ["openbrowser-v0.5.0-adaptations", "external-browser-ai-import-2026-09-21"],
+      "component_ids": [
+        "openbrowser-v0.5.0-adaptations",
+        "external-browser-ai-import-2026-09-21"
+      ],
       "notice_files": [],
       "reason": "Titan first-party rights and all bundled dependency/donor redistribution rights are not approved for this artifact."
     },
@@ -71,9 +83,18 @@
       "modification_status": "adapted",
       "notice_file": "apps/browser/docs/third-party/OPENBROWSER-DONOR-NOTICE.md",
       "local_evidence": [
-        {"path": "apps/browser/src/intelligence/prompt-template-runtime.js", "sha256": "625997e56bc1d154516bf1d19b260797f9a62fce7c04de6164684c51226d47c9"},
-        {"path": "apps/browser/src/intelligence/export-utilities.js", "sha256": "885bd1d2756702dfa331e61adc5a489fdac3fd349a6748d5558477835a5bc4b1"},
-        {"path": "apps/browser/docs/third-party/OPENBROWSER-DONOR-NOTICE.md", "sha256": "0805803446d03c7acc11e1930d6e701d68168c771d802e9ae785fc0594bc30b9"}
+        {
+          "path": "apps/browser/src/intelligence/prompt-template-runtime.js",
+          "sha256": "625997e56bc1d154516bf1d19b260797f9a62fce7c04de6164684c51226d47c9"
+        },
+        {
+          "path": "apps/browser/src/intelligence/export-utilities.js",
+          "sha256": "885bd1d2756702dfa331e61adc5a489fdac3fd349a6748d5558477835a5bc4b1"
+        },
+        {
+          "path": "apps/browser/docs/third-party/OPENBROWSER-DONOR-NOTICE.md",
+          "sha256": "0805803446d03c7acc11e1930d6e701d68168c771d802e9ae785fc0594bc30b9"
+        }
       ],
       "reason": "The local notice records MIT terms and the stated version, but no upstream URL or upstream source hash was found; exact source correspondence and artifact inclusion need review."
     },
@@ -88,7 +109,10 @@
       "modification_status": "unmodified staged import; per-subsystem license status unknown",
       "notice_file": null,
       "local_evidence": [
-        {"path": "apps/browser/imports/browser-ai-subsystems-2026-09-21/provenance/IMPORT-MANIFEST.json", "sha256": "38944f3c71467accb93667156cb0e94080320ea497e0ba3709c1c7a49e76dd7a"}
+        {
+          "path": "apps/browser/imports/browser-ai-subsystems-2026-09-21/provenance/IMPORT-MANIFEST.json",
+          "sha256": "38944f3c71467accb93667156cb0e94080320ea497e0ba3709c1c7a49e76dd7a"
+        }
       ],
       "reason": "The import manifest identifies the source archive and its hash but does not establish redistribution rights for every staged subsystem."
     }

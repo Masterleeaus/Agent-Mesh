@@ -1,7 +1,24 @@
 import SectionLabel from '../components/SectionLabel'
 import CTASection from '../components/CTASection'
-const capabilities=['customer service','reception','bookings','quoting','scheduling','operations','finance','accounts','purchasing','inventory','HR','recruitment','marketing','communications','research','business analysis','reporting','compliance','environmental operations','industry-specific work']
-export default function Workforce(){return <><section className="pt-32 pb-16 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>AI Workforce</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Your Zero does the digital work.<br/><span className="text-nx-purple-light">The wider team works behind it.</span></h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Each account holder works through their own Zero. Zero can operate appropriate digital systems and coordinate specialist intelligence, models, software and people without requiring the person to manage that technical layer themselves.</p></div></section>
-<section className="px-6 pb-24"><div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4">{capabilities.map(x=><div key={x} className="bg-nx-surface border border-nx-border rounded-xl p-5 font-medium capitalize">{x}</div>)}</div></section>
-<section className="py-20 px-6 border-y border-nx-border"><div className="max-w-5xl mx-auto"><h2 className="text-4xl font-extrabold mb-5">Invisible complexity.</h2><p className="text-lg text-nx-muted leading-relaxed mb-5">If a task requires specialist capability, Zero can coordinate it. Work can move between capabilities while preserving the relevant business context, permissions and operating boundaries.</p><p className="text-lg text-nx-muted leading-relaxed">The goal isn't to give any account holder a screen full of agents to micromanage. An owner, staff member or customer works with their own Zero while the wider workforce sits behind it. Titan coordinates the appropriate capabilities according to that person's role, business relationship and authority.</p></div></section>
-<CTASection title="You work with your Zero. Zero works with the team." subtitle="For some roles Zero may eventually perform most routine online and digital work; for physical roles it can handle the digital layer while guiding and assisting the person in the real-world job."/></>}
+
+const capabilities = [
+  'Cleaning enquiry intake',
+  'Service scope and quote preparation',
+  'Recurring booking coordination',
+  'Crew skills and assignment context',
+  'Property access and preferences',
+  'Room and site checklists',
+  'Completion evidence and exceptions',
+  'Quality review and rework context',
+  'Invoice readiness handoff',
+  'Customer follow-up and rebooking context',
+]
+
+export default function Workforce() {
+  return <>
+    <section className="pt-32 pb-16 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Cleaning AI workforce · in development</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Your people work with Zero.<br/><span className="text-nx-purple-light">Specialist capabilities support the cleaning operation.</span></h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">The Cleaning vertical source models how Zero could coordinate the digital parts of a service journey. The catalogue and blueprint cover the areas below, while production execution still depends on released shared workflows, company setup and the correct human authority.</p></div></section>
+    <section className="px-6 pb-24"><div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8">{capabilities.map((x, i)=><div key={x} className="border-t border-nx-border py-5"><p className="text-xs text-nx-purple-light font-bold mb-2">{String(i + 1).padStart(2, '0')}</p><h2 className="font-semibold">{x}</h2></div>)}</div></section>
+    <section className="py-20 px-6 border-y border-nx-border"><div className="max-w-5xl mx-auto"><h2 className="text-4xl font-extrabold mb-5">Useful proposals. Human authority stays explicit.</h2><p className="text-lg text-nx-muted leading-relaxed mb-5">The Cleaning reference blueprint keeps shared owners responsible for leads, quotes, bookings, scheduling, workforce assignment, jobs, evidence, quality, invoicing, payment reconciliation and rebooking context. It is proposal-only: it does not grant authority or execute those business actions.</p><p className="text-lg text-nx-muted leading-relaxed">Owners and staff are intended to use the business through the work surfaces and channels that are actually released. Channel connections are shown on the Works Everywhere page with their current status.</p></div></section>
+    <CTASection title="A workforce built around cleaning work." subtitle="The cleaning catalogue and workflow blueprint are substantial, but a customer installation and production release are still in development."/>
+  </>
+}

@@ -84,6 +84,12 @@ It preserves human versus digital identity and never promotes model/provider
 identity or DirectAdmin role to execution authority. A provider acknowledgement
 or completed agent run is not a verified business outcome.
 
+The Teams view groups only workers returned for the current `company_id`, using
+their canonical `team_id` fields; unassigned workers remain visible. The hosted
+projection does not provide a named team registry or skill catalog, so those
+facets are labelled unavailable instead of being synthesized. Projected active
+status and capabilities are descriptive inputs, not execution authority.
+
 Unsupported host facets are labelled unavailable, including detailed trust,
 autonomy, knowledge, capacity/value, Mission and staffing projections. No sample
 roster or fabricated metrics appear in production. Company changes/revocation
@@ -167,9 +173,8 @@ The existing `apps/web/app/workforce/page.tsx` is a marketing page, not a cockpi
 runtime donor. Browser Codee Workforce tooling is development infrastructure,
 not a production registry. Neither is copied into this package. The earlier
 agent/team projection contract was accepted through #1145, and the #1143
-consumer/package slice is merged to main. This bounded v0.1.5 consumer/package
-continuation is tracked on the canonical `agent/issue-1050` branch; #1050 remains
-open for its wider acceptance.
+consumer/package slice is merged to main. The company-scoped roster/team consumer
+slice continues in #1279 under #1050; #1050 remains open for its wider acceptance.
 
 ## Remaining mission acceptance
 

@@ -338,7 +338,7 @@ describe("company storage resolver contract", () => {
       placement_revision: 3,
       provider: "sqlite",
       schema_version: "native-fsm/1",
-    }, undefined);
+    }, expect.objectContaining({ assertCurrent: expect.any(Function) }));
     expect(f.events).not.toContain("registry:attacker-account");
   });
 

@@ -4,6 +4,7 @@ import type { StorageClient } from "../../../packages/storage/src/index.js";
 import type { WorkItem, WorkforceStore, WorkforceWorker, WorkforceWorkerStore } from "./index.js";
 import type { SqliteWorkforceStore } from "./sqlite-store.js";
 import type { WorkforceZeroBridgeContext, WithWorkforceZeroSession } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
+import { projectDirectAdminWorkforceSkills, type CanonicalWorkforceSkillSource } from "./directadmin-workforce-skills.js";
 // @ts-expect-error Canonical authority owner is JavaScript.
 import { AuthorityContextResolver, RuntimeAuthorityGateway, SqliteAuthorityStore, SqliteWorkerAccessStore, WorkerAccessResolver, CapabilityRequirementResolver, assertAuthorityDecisionAllowsExecution } from "../../../packages/runtime/authority/index.mjs";
 // @ts-expect-error Execution and accepted-evidence owners are JavaScript.
@@ -70,6 +71,9 @@ export type DirectAdminWorkforceRuntime = Readonly<{
   workforceStore: WorkforceStore & WorkforceWorkerStore & Pick<SqliteWorkforceStore,
     "findHumanByIdentityRef" | "reassignReady" | "appendAcceptedEvidenceRef">;
   runStore: { findByWork(company_id: string, work_id: string): Promise<unknown> };
+  /** Optional server-owned access to the existing canonical skill projection.
+   * Missing wiring is published as an explicit unavailable status. */
+  skillCapabilitySource?: CanonicalWorkforceSkillSource;
 }>;
 
 export class DirectAdminWorkforceActionDenied extends Error {
@@ -495,6 +499,12 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
         resolveHumanManager(runtime.workforceStore, context),
       ]);
       const projectedWorkers = workers.map(worker => projectWorker(company_id, worker));
+      const skills = await projectDirectAdminWorkforceSkills({
+        company_id,
+        context_revision: context.context_revision,
+        worker_ids: projectedWorkers.map(worker => worker.worker_id),
+        source: runtime.skillCapabilitySource,
+      });
       const projectedWork = await Promise.all(work.map(async item => {
         const run = await runtime.runStore.findByWork(company_id, item.work_id) as { company_id?: unknown; run_id?: unknown } | null;
         if (run && (run.company_id !== company_id || !id(run.run_id))) throw new Error("directadmin-workforce-run-invalid");
@@ -511,7 +521,7 @@ export function createDirectAdminWorkforceOwners(runtime: DirectAdminWorkforceRu
         data: Object.freeze({
           schema: "titan.workforce-cockpit.v1",
           company_id,
-          discovery: Object.freeze({ company_id, workers: Object.freeze(projectedWorkers), controls: Object.freeze(expose ? [Object.freeze({
+          discovery: Object.freeze({ company_id, workers: Object.freeze(projectedWorkers), skills, controls: Object.freeze(expose ? [Object.freeze({
             capability_id: REASSIGN_CAPABILITY, action: "reassign", requires_fresh_approval: true, grants_authority: false,
           })] : []) }),
           status: Object.freeze({ company_id, work: Object.freeze(projectedWork) }),

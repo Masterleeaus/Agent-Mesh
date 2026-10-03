@@ -38,7 +38,7 @@ jobs:
           python3 .github/scripts/tests/test_slice_ci_contract.py
 
   mobile:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -104,7 +104,7 @@ jobs:
             exit 1
           fi
   validate:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}
+    if: "${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- titan-subproduct-gate: run -->')) }}"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout canonical repository
