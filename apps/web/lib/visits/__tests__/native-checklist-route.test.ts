@@ -22,6 +22,14 @@ import { initializeCleaningProfileForLogin } from "../../company-storage/cleanin
 import { expiredSessionLoginRedirectForPath, resolvePostLoginHref } from "../../auth/post-login-destination";
 import { GET as getChecklist } from "@/app/api/v1/visits/[id]/checklist/route";
 import { PATCH as patchChecklist } from "@/app/api/v1/visits/[id]/checklist/[itemId]/route";
+// @ts-expect-error Workforce producer hooks are JavaScript production modules.
+import { assertReplayTaskLineage, verifiedTaskLineageFromProducerEvent } from "../../../../../services/workforce/src/field-service-runtime.mjs";
+// @ts-expect-error Workforce accepted-reference resolver is a JavaScript production module.
+import { resolveAcceptedEvidenceReferencesInTransaction } from "../../../../../services/workforce/src/accepted-evidence-reference-resolver.mjs";
+// @ts-expect-error Workforce native work-order adapter is a JavaScript production module.
+import { createNativeWorkOrders } from "../../../../../services/workforce/src/native-work-orders.mjs";
+// @ts-expect-error Canonical accepted evidence ledger is a JavaScript production module.
+import { AcceptedEvidenceLedger } from "../../../../../packages/tools/accepted-evidence-ledger.mjs";
 
 const origin = "https://field.example.test";
 const loginIssuer = `titan:web-login:${origin}`;
@@ -44,6 +52,7 @@ let directory: string;
 let storeRoot: string;
 let fileRoot: string;
 let identityStorage: StorageClient;
+let evidenceStorage: StorageClient | undefined;
 let identityRegistry: IdentitySessionRegistry;
 let oldEnvironment: Record<string, string | undefined>;
 const envNames = [
@@ -146,6 +155,8 @@ beforeEach(async () => {
 afterEach(async () => {
   await getWebSessionRuntime().then(runtime => runtime.close()).catch(() => undefined);
   _resetWebSessionRuntimeForTests();
+  await evidenceStorage?.close();
+  evidenceStorage = undefined;
   await identityStorage?.close();
   await rm(directory, { recursive: true, force: true });
   for (const name of envNames) {
@@ -157,6 +168,91 @@ afterEach(async () => {
 });
 
 describe("native visit checklist routes", () => {
+  it("carries a real v3 checklist task through verified production, accepted reference resolution, and replay checks", async () => {
+    const runtime = await getWebSessionRuntime();
+    const session = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
+    const patched = await patchChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist/${commonIds.task}`, session.credential, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ disposition: "fix_now", note: "verified against the completed visit" }),
+    }));
+    expect(patched.status).toBe(200);
+
+    const nativeWorkOrders = createNativeWorkOrders();
+    const observed = await withVerifiedWebNativeCompanyStore({
+      currentSession: session,
+      revalidateSession: () => runtime.resolveCredential(session.credential),
+      requiredSchemaVersions: [companyNativeVisitChecklistManifest.schema_version],
+      operation: async storage => {
+        await storage.query("UPDATE work_orders SET assigned_user_id=$1 WHERE company_id=$2 AND id=$3",
+          [companies[0].actorId, companies[0].companyId, commonIds.workOrder]);
+        await storage.query("UPDATE work_order_tasks SET completed=1,status='done',completed_at=CURRENT_TIMESTAMP WHERE company_id=$1 AND id=$2",
+          [companies[0].companyId, commonIds.task]);
+        await storage.query("UPDATE visits SET status='completed',completed_at=CURRENT_TIMESTAMP WHERE company_id=$1 AND id=$2",
+          [companies[0].companyId, commonIds.visit]);
+        return nativeWorkOrders.read({ company_id: companies[0].companyId, actor_id: companies[0].actorId,
+          work_order_id: commonIds.workOrder, companyStorage: storage });
+      },
+    });
+    expect(observed?.evidence_context).toEqual({ company_id: companies[0].companyId,
+      work_order_id: commonIds.workOrder, visit_id: commonIds.visit, task_id: commonIds.task, disposition: "fix_now" });
+
+    const workId = "work-v3-checklist";
+    const decisionId = "decision-v3-checklist";
+    const verification = { verified: true, verification_id: "verification-v3-checklist",
+      method: "independent-company-store-reread", evidence_context: observed?.evidence_context };
+    const producerEvent: any = {
+      evidence_id: "evidence-v3-checklist", company_id: companies[0].companyId,
+      execution_id: "execution-v3-checklist", decision_id: decisionId, authority_decision_id: decisionId,
+      work_id: workId, run_id: "run-v3-checklist", correlation_id: "correlation-v3-checklist",
+      state: "VERIFIED", final_outcome: "verified",
+      request_summary: { capability: "crm.work_order.complete", input: { company_id: companies[0].companyId,
+        work_id: workId, work_order_id: commonIds.workOrder } },
+      observed_result: { status: "completed", evidence_context: observed?.evidence_context },
+      verification,
+    };
+    const lineage = verifiedTaskLineageFromProducerEvent(producerEvent);
+    expect(lineage).toEqual(observed?.evidence_context);
+    expect(verifiedTaskLineageFromProducerEvent({ ...producerEvent, verification: {
+      ...verification, evidence_context: { ...observed?.evidence_context, company_id: companies[1].companyId },
+    } })).toBeNull();
+    expect(() => assertReplayTaskLineage({ accepted_evidence: { request_summary: {
+      canonical_operation_context: lineage,
+    } } }, { evidence_context: { ...lineage, task_id: "forged-task" } }))
+      .toThrow("zero-replay-task-context-no-longer-verified");
+
+    const persisted = {
+      ...producerEvent,
+      request_summary: { ...producerEvent.request_summary, canonical_operation_context: lineage },
+      observed_result: { ...producerEvent.observed_result, ...lineage },
+      verification: { ...producerEvent.verification, ...lineage },
+    };
+    const ledger = new AcceptedEvidenceLedger({ now: () => "2026-10-03T09:00:00.000Z" });
+    const accepted_evidence = ledger.append(persisted);
+    const provenance = { company_id: companies[0].companyId, work_id: workId, run_id: producerEvent.run_id,
+      decision_id: decisionId, correlation_id: producerEvent.correlation_id,
+      execution_idempotency_key: "idempotency-v3-checklist", source_evidence_refs: ["source-proof-v3"], ...lineage };
+    evidenceStorage = createSqliteStorage(join(directory, "accepted-evidence.sqlite"));
+    await evidenceStorage.query(`CREATE TABLE evidence(id TEXT PRIMARY KEY,company_id TEXT,subject_type TEXT,
+      subject_id TEXT,evidence_type TEXT,provenance TEXT,payload TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP)`);
+    await evidenceStorage.query("INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,'work',$3,'gateway_execution',$4,$5)",
+      [producerEvent.evidence_id, companies[0].companyId, workId, JSON.stringify(provenance),
+        JSON.stringify({ ...persisted, provenance, accepted_evidence })]);
+    const criteria = { company_id: companies[0].companyId, work_id: workId, visit_id: commonIds.visit,
+      work_order_id: commonIds.workOrder, task_id: commonIds.task, disposition: "fix_now" };
+    const references = await evidenceStorage.transaction(tx => resolveAcceptedEvidenceReferencesInTransaction(tx, criteria));
+    expect(references).toMatchObject([{ evidence_id: producerEvent.evidence_id, ...criteria,
+      verification_id: verification.verification_id }]);
+    expect(await evidenceStorage.transaction(tx => resolveAcceptedEvidenceReferencesInTransaction(tx,
+      { ...criteria, company_id: companies[1].companyId }))).toEqual([]);
+
+    const checklist = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, session.credential));
+    expect(checklist.status).toBe(200);
+    expect((await checklist.json()).data).toContainEqual(expect.objectContaining({
+      id: commonIds.task, company_id: companies[0].companyId, disposition: references[0].disposition,
+    }));
+  });
+
   it("expires, returns through re-login, preserves company A profile, and opens fresh-v3 company B checklist", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     const runtime = await getWebSessionRuntime();
