@@ -301,7 +301,7 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
-    await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("does not activate catalogue services");
+    await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("company-provided prices are configured separately");
 
     const bCookie = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(bCookie).toBeTruthy();
