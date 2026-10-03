@@ -276,8 +276,8 @@ describe("Cleaning first-run browser journey", () => {
       TITAN_WEB_SESSION_SIGNING_SECRET: randomBytes(32).toString("base64url"),
       TITAN_WEB_IDENTITY_BINDINGS_JSON: JSON.stringify([
         { legacy_user_id: userA.id, legacy_account_id: userA.account, company_id: companyA, actor_id: actorId, device_id: deviceId },
-        { legacy_user_id: userB.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
-        { legacy_user_id: userC.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userA.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userA.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
       ]),
       TITAN_COMPANY_DATA_ROOT: storeRoot,
       E2E_DISABLE_LOGIN_RATE_LIMIT: "1",
@@ -321,6 +321,10 @@ describe("Cleaning first-run browser journey", () => {
       expect(settings).toMatchObject({ retained_setting: "leave-me-alone", vertical_profile: { revision: 6, profile: { module_id: "saved.vertical" } } });
     } finally { await aStore.close(); }
     expect((await context.request.get(`${baseUrl}/api/v1/visits/${ids.visit}/checklist`)).status()).toBe(503);
+
+    // Company choices are memberships attached to one stable external identity.
+    await switchCompany(page, companyB);
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
 
     await context.clearCookies();
     await page.addInitScript(() => {
