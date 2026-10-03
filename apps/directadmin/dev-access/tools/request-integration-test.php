@@ -357,6 +357,7 @@ $canary='SYNTHETIC_PORTAL_SECRET_CANARY_'.bin2hex(random_bytes(8));
 integration_expect(file_put_contents($inspectionHome.'/README.md',"repo-safe-marker\nordinary repository fixture\n")!==false,'ordinary repository inspection fixture must be written');
 integration_expect(mkdir($inspectionHome.'/.ssh',0700),'synthetic private-key directory must be created');
 integration_expect(file_put_contents($inspectionHome.'/.ssh/id_rsa',"-----BEGIN RSA PRIVATE KEY-----\n".$canary."\n-----END RSA PRIVATE KEY-----\n")!==false,'synthetic private-key canary fixture must be written');
+integration_expect(link($inspectionHome.'/.ssh/id_rsa',$inspectionHome.'/hardlinked-key'),'synthetic private-key hardlink fixture must be created');
 integration_expect(mkdir($inspectionHome.'/.git',0700),'synthetic Git metadata directory must be created');
 integration_expect(file_put_contents($inspectionHome.'/.git/config',"[remote \\\"origin\\\"]\n url = https://fixture.invalid/$canary\n")!==false,'synthetic Git config canary fixture must be written');
 integration_expect(file_put_contents($inspectionHome.'/.env',"FIXTURE_SECRET=$canary\n")!==false,'synthetic environment config canary fixture must be written');
@@ -375,14 +376,14 @@ $terminalPost=static function(string $command,?string $cwdOverride=null,array $e
  [$result]=integration_run_role($root,'admin',$environment);
  return $result;
 };
-$ordinaryInspection=$terminalPost('cat README.md');
-integration_expect(strpos($ordinaryInspection,'Exit code: 0')!==false&&strpos($ordinaryInspection,'repo-safe-marker')!==false,'actual admin role must retain ordinary HOME-contained repository file inspection');
-$ordinaryGrep=$terminalPost('grep -F repo-safe-marker README.md');
-integration_expect(strpos($ordinaryGrep,'Exit code: 0')!==false&&strpos($ordinaryGrep,'repo-safe-marker')!==false,'actual admin role must retain bounded grep for an ordinary repository file');
-$ordinaryHead=$terminalPost('head -n 1 README.md');
-integration_expect(strpos($ordinaryHead,'Exit code: 0')!==false&&strpos($ordinaryHead,'repo-safe-marker')!==false,'actual admin role must retain bounded head for an ordinary repository file');
-$ordinaryTail=$terminalPost('tail -n 2 README.md');
-integration_expect(strpos($ordinaryTail,'Exit code: 0')!==false&&strpos($ordinaryTail,'ordinary repository fixture')!==false,'actual admin role must retain bounded tail for an ordinary repository file');
+foreach([
+ 'cat on an ordinary repository file'=>'cat README.md',
+ 'grep on an ordinary repository file'=>'grep -F repo-safe-marker README.md',
+ 'head on an ordinary repository file'=>'head -n 1 README.md',
+ 'tail on an ordinary repository file'=>'tail -n 2 README.md'
+] as $case=>$command){
+ integration_expect_terminal_blocked($terminalPost($command),$case.' must not reopen a checked pathname in a child process',$canary);
+}
 $inspectionLink=$inspectionHome.'/repo-link';
 integration_expect(symlink($inspectionHome,$inspectionLink),'in-HOME cwd symlink fixture must be created');
 $linkedCwd=$terminalPost('cat README.md',$inspectionLink);
@@ -408,6 +409,7 @@ $secretReadAttempts=[
  'package-manager auth config path'=>'head -n 1 .npmrc',
  'in-HOME symlink to private-key fixture'=>'grep -v BEGIN in-home-key-link',
  'outside-HOME symlink to canary fixture'=>'cat outside-key-link',
+ 'in-HOME hardlink to a synthetic private-key fixture'=>'cat hardlinked-key',
  'private-key file passed to PHP lint'=>'php -l .ssh/id_rsa',
  'recursive listing of a private-key directory'=>'ls -la .ssh',
  'package test script execution'=>'npm test',
@@ -417,6 +419,19 @@ $secretReadAttempts=[
 foreach($secretReadAttempts as $case=>$command){
  integration_expect_terminal_blocked($terminalPost($command),$case,$canary);
 }
+
+$stdinSecretBody=http_build_query([
+ 'csrf'=>$token,
+ 'cwd'=>$inspectionHome,
+ 'command'=>'grep -v BEGIN .ssh/id_rsa',
+ 'run'=>'1'
+]);
+$stdinSecretEnvironment=$common+[
+ 'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'pipe_post=yes',
+ 'POST'=>'stdin=true','CONTENT_LENGTH'=>(string)strlen($stdinSecretBody)
+];
+[$stdinSecretHtml]=integration_run_role($root,'admin',$stdinSecretEnvironment,$stdinSecretBody);
+integration_expect_terminal_blocked($stdinSecretHtml,'stdin-transport private-key read attempt',$canary);
 
 $nulTerminatedBody=$body."\0";
 $nulWithoutLengthEnvironment=$common+[
