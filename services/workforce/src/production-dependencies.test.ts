@@ -256,7 +256,7 @@ test("production dependency factory composes the canonical gateway from owner po
     assert.ok(address && typeof address !== "string");
     const baseUrl = `http://127.0.0.1:${address.port}`;
     const nonce = "N".repeat(43);
-    const directAdminCookie = "session=disposable-browser-session";
+    const directAdminCookie = "session=disposable-browser-session; key=disposable-browser-key";
 
     const bootstrap = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap`, {
       method: "POST",
@@ -265,7 +265,7 @@ test("production dependency factory composes the canonical gateway from owner po
         origin: "https://panel.test.invalid",
         "sec-fetch-site": "same-origin",
         "x-titan-da-bootstrap-csrf": nonce,
-        cookie: `${directAdminCookie}; analytics=private-cookie`,
+        cookie: directAdminCookie,
         authorization: "Bearer caller-controlled-token",
       },
       body: "",
@@ -273,8 +273,47 @@ test("production dependency factory composes the canonical gateway from owner po
     assert.equal(bootstrap.status, 503, `the mount cannot fabricate a successful bootstrap without the owner provider: ${bootstrap.body}`);
     assert.deepEqual(JSON.parse(bootstrap.body), { error: "directadmin-bootstrap-unavailable", read_only: true });
     assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
-      origin: "https://panel.test.invalid", nonce, authorization: null, cookie: null,
-    }, "the host constructs the shared SDK gateway, pins its origin, forwards only the exact nonce, and strips cookies and Authorization");
+      origin: "https://panel.test.invalid", nonce, authorization: null, cookie: directAdminCookie,
+    }, "the host constructs the shared SDK gateway, pins its origin, forwards only the exact nonce and filtered DirectAdmin proof, and strips Authorization");
+
+    const bootstrapWithForeignCookie = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap`, {
+      method: "POST",
+      headers: {
+        host: "panel.test.invalid",
+        origin: "https://panel.test.invalid",
+        "sec-fetch-site": "same-origin",
+        "x-titan-da-bootstrap-csrf": nonce,
+        cookie: `${directAdminCookie}; analytics=private-cookie`,
+      },
+      body: "",
+    });
+    assert.equal(bootstrapWithForeignCookie.status, 400);
+    assert.deepEqual(JSON.parse(bootstrapWithForeignCookie.body), { error: "directadmin-bootstrap-cookie-invalid", read_only: true });
+    assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
+      origin: "https://panel.test.invalid", nonce, authorization: null, cookie: directAdminCookie,
+    }, "foreign cookies are rejected before reaching the trusted bootstrap provider");
+
+    for (const invalidCookie of [
+      "session=disposable-browser-session",
+      'session=disposable-browser-session; key="malformed"',
+    ]) {
+      const invalidBootstrapCookie = await requestHttp(`${baseUrl}/v1/directadmin/bootstrap`, {
+        method: "POST",
+        headers: {
+          host: "panel.test.invalid",
+          origin: "https://panel.test.invalid",
+          "sec-fetch-site": "same-origin",
+          "x-titan-da-bootstrap-csrf": nonce,
+          cookie: invalidCookie,
+        },
+        body: "",
+      });
+      assert.equal(invalidBootstrapCookie.status, 400);
+      assert.deepEqual(JSON.parse(invalidBootstrapCookie.body), { error: "directadmin-bootstrap-cookie-invalid", read_only: true });
+    }
+    assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
+      origin: "https://panel.test.invalid", nonce, authorization: null, cookie: directAdminCookie,
+    }, "incomplete and malformed DA proof never reaches the trusted bootstrap provider");
 
     const context = await requestHttp(`${baseUrl}/v1/directadmin/context`, {
       headers: {
@@ -300,7 +339,7 @@ test("production dependency factory composes the canonical gateway from owner po
     assert.equal(bootstrapWithQuery.status, 400);
     assert.deepEqual(JSON.parse(bootstrapWithQuery.body), { error: "invalid-route" });
     assert.deepEqual(JSON.parse(readFileSync(observationPath, "utf8")), {
-      origin: "https://panel.test.invalid", nonce, authorization: null, cookie: null,
+      origin: "https://panel.test.invalid", nonce, authorization: null, cookie: directAdminCookie,
     }, "query-bearing bootstrap near misses are rejected before the trusted provider runs");
   } finally {
     if (host) await host.close();

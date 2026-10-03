@@ -17,6 +17,7 @@ import { DirectAdminSessionBridge } from "../../../packages/titan-platform/src/d
 import { createDirectAdminGateway, type DirectAdminBootstrapAssertionProvider,
   type DirectAdminGatewayOwners } from "../../../packages/titan-platform/src/directadmin-gateway.js";
 import { createWorkforceSessionCredentialVerifier } from "./session-credential-verifier.js";
+import type { DirectAdminBootstrapNonceFlow } from "./directadmin-bootstrap-nonce-route.js";
 import type { HostedWorkforceDependencies } from "./hosted-runtime.js";
 // @ts-expect-error The native FSM owner is TypeScript and runs through the configured tsx loader.
 import { createNativeWorkOrders } from "./native-work-orders.mjs";
@@ -42,8 +43,8 @@ function absolutePath(environment: WorkforceEnvironment, name: string): string {
 }
 
 /**
- * Load only the operator-owned #302 session service and trusted #1049
- * bootstrap provider. Workforce constructs the canonical #1049 bridge and
+ * Load only the operator-owned #302 session service and trusted #302/#1049
+ * bootstrap flow. Workforce constructs the canonical #1049 bridge and
  * gateway itself; the operator module cannot substitute a request handler.
  * No module means the route remains disabled; a configured invalid module
  * fails startup. The provider must own authenticated DirectAdmin proof and an
@@ -72,11 +73,14 @@ async function loadDirectAdminDependencies(environment: WorkforceEnvironment, no
   const candidate = value as Record<string, unknown>;
   const sessions = candidate.sessions;
   const bootstrapProvider = candidate.bootstrapProvider;
+  const bootstrapNonceFlow = candidate.bootstrapNonceFlow;
   if (typeof candidate.publicOrigin !== "string" || !sessions || typeof sessions !== "object" || Array.isArray(sessions) ||
       !["issue", "authenticate", "switchCompany", "revoke", "exchangeWorkforceZero"]
         .every(method => typeof (sessions as Record<string, unknown>)[method] === "function") ||
       !bootstrapProvider || typeof bootstrapProvider !== "object" || Array.isArray(bootstrapProvider) ||
-      typeof (bootstrapProvider as Record<string, unknown>).provide !== "function") {
+      typeof (bootstrapProvider as Record<string, unknown>).provide !== "function" ||
+      (bootstrapNonceFlow !== undefined && (bootstrapNonceFlow !== bootstrapProvider ||
+        typeof (bootstrapNonceFlow as Record<string, unknown>).issueNonceForUniqueCurrentContext !== "function"))) {
     throw new Error("workforce-directadmin-dependencies-invalid");
   }
   let bridge: DirectAdminSessionBridge;
@@ -93,6 +97,7 @@ async function loadDirectAdminDependencies(environment: WorkforceEnvironment, no
     publicOrigin: candidate.publicOrigin,
     createGateway: (owners: Parameters<DirectAdminDependencies["createGateway"]>[0]) =>
       createDirectAdminGateway(bridge, owners as DirectAdminGatewayOwners, provider),
+    ...(bootstrapNonceFlow === undefined ? {} : { bootstrapNonceFlow: bootstrapNonceFlow as DirectAdminBootstrapNonceFlow }),
   });
 }
 

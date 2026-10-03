@@ -10,6 +10,7 @@ import { boundedAdapterCall } from "../../../packages/tools/execution-gateway.mj
 import type { ConversationAuth, ConversationRequest, ConversationSurface } from "./conversation-api.js";
 import type { WorkforceZeroBridgeContext } from "../../../packages/titan-platform/src/directadmin-session-bridge.js";
 import type { DirectAdminGatewayFactory } from "./directadmin-workforce-owners.js";
+import type { DirectAdminBootstrapNonceFlow } from "./directadmin-bootstrap-nonce-route.js";
 import { AUTHENTICATED_SESSION_PROOF_TYPE, type AuthenticatedWorkIdentity } from "./index.js";
 import { createCompanyScopedWorkOrders, type HostedCompanyWorkOrderOperations } from "./company-scoped-work-orders.js";
 
@@ -37,6 +38,9 @@ export type HostedWorkforceDependencies = {
   directAdmin?: {
     publicOrigin: string;
     createGateway: DirectAdminGatewayFactory;
+    /** Same canonical #302 flow as bootstrapProvider; absence leaves nonce
+     * issuance mounted fail-closed while existing-session routes remain usable. */
+    bootstrapNonceFlow?: DirectAdminBootstrapNonceFlow;
   };
   close?(options?: { signal: AbortSignal }): Promise<void>;
 };
