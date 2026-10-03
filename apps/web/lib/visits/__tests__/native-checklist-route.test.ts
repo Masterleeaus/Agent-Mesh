@@ -11,12 +11,13 @@ import {
 import {
   createSqliteStorage,
   initializeSqliteCompanyPlacementRegistry,
+  provisionSqliteCompanyPlacement,
   type StorageClient,
 } from "../../../../../packages/storage/src/index";
-import { initializeFreshCompanyNativeStore } from "../../../../../packages/storage/src/company-native-store-initializer";
 import { companyNativeVisitChecklistManifest } from "../../../../../packages/storage/src/company-native-schema-manifest";
 import { CURRENT_WEB_SESSION_COOKIE_NAME } from "../../auth/current-session";
 import { _resetWebSessionRuntimeForTests, getWebSessionRuntime } from "../../auth/web-session-runtime";
+import { withVerifiedWebNativeCompanyStore } from "../../company-storage/request-runtime";
 import { GET as getChecklist } from "@/app/api/v1/visits/[id]/checklist/route";
 import { PATCH as patchChecklist } from "@/app/api/v1/visits/[id]/checklist/[itemId]/route";
 
@@ -39,6 +40,7 @@ const commonIds = {
 
 let directory: string;
 let storeRoot: string;
+let fileRoot: string;
 let identityStorage: StorageClient;
 let identityRegistry: IdentitySessionRegistry;
 let oldEnvironment: Record<string, string | undefined>;
@@ -57,21 +59,16 @@ function request(path: string, credential: string, init?: RequestInit): NextRequ
   });
 }
 
-async function createReadyCompanyStore(company: (typeof companies)[number], placementId: string): Promise<void> {
-  const schemaVersion = companyNativeVisitChecklistManifest.schema_version;
-  await identityStorage.query(
-    `INSERT INTO titan_company_storage_placements
-      (company_id, placement_id, placement_revision, provider, schema_version, status)
-     VALUES ($1,$2,1,'sqlite',$3,'READY')`,
-    [company.companyId, placementId, schemaVersion],
-  );
+async function createReadyCompanyStore(company: (typeof companies)[number]): Promise<void> {
+  const placement = await provisionSqliteCompanyPlacement({
+    registry: { storage: identityStorage, storage_role: "GLOBAL_REGISTRY", companyStoreRoot: storeRoot, companyFileStoreRoot: fileRoot },
+    company_id: company.companyId,
+    company_name: company.companyId,
+    schema_version: companyNativeVisitChecklistManifest.schema_version,
+  });
+  const placementId = placement.placement_id;
   const storage = createSqliteStorage(join(storeRoot, `${placementId}.sqlite`));
   try {
-    await initializeFreshCompanyNativeStore({
-      storage,
-      placement: { company_id: company.companyId, placement_id: placementId, placement_revision: 1, provider: "sqlite", schema_version: schemaVersion },
-      company_profile: { name: company.companyId },
-    });
     const id = commonIds;
     await storage.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", [id.client, company.companyId, `${company.companyId} client`]);
     await storage.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", [id.property, company.companyId, id.client, `${company.companyId} address`]);
@@ -96,7 +93,9 @@ beforeEach(async () => {
   oldEnvironment = Object.fromEntries(envNames.map(name => [name, process.env[name]]));
   directory = await mkdtemp(join(tmpdir(), "titan-native-checklist-route-"));
   storeRoot = join(directory, "companies");
+  fileRoot = join(directory, "company-files");
   await mkdir(storeRoot, { mode: 0o700 });
+  await mkdir(fileRoot, { mode: 0o700 });
   const registryPath = join(directory, "global-registry.sqlite");
   const bindings = companies.map(company => ({
     legacy_user_id: company.userId,
@@ -126,8 +125,8 @@ beforeEach(async () => {
     await identityRegistry.putDevice({ device_id: company.deviceId, actor_id: company.actorId, status: "active" }, null);
     await identityRegistry.putExternalBinding({ binding_id: `web-login-${company.companyId}`, provider: loginIssuer, subject: company.userId, actor_id: company.actorId, company_id: company.companyId, status: "active" }, null);
   }
-  await createReadyCompanyStore(companies[0], "placement-company-a");
-  await createReadyCompanyStore(companies[1], "placement-company-b");
+  await createReadyCompanyStore(companies[0]);
+  await createReadyCompanyStore(companies[1]);
 });
 
 afterEach(async () => {
@@ -147,6 +146,16 @@ describe("native visit checklist routes", () => {
     const runtime = await getWebSessionRuntime();
     const a = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
     const b = await runtime.issueForAuthenticatedWebUser(companies[1].userId, companies[1].accountId);
+
+    const justIssuedCompany = await withVerifiedWebNativeCompanyStore({
+      currentSession: a,
+      revalidateSession: () => runtime.resolveCredential(a.credential),
+      requiredSchemaVersions: [companyNativeVisitChecklistManifest.schema_version],
+      operation: async storage => (await storage.query<{ id: string }>(
+        "SELECT id FROM companies WHERE id=$1", [companies[0].companyId],
+      )).rows[0]?.id,
+    });
+    expect(justIssuedCompany).toBe(companies[0].companyId);
 
     const aResponse = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, a.credential));
     expect(aResponse.status).toBe(200);
