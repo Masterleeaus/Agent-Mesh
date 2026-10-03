@@ -1,6 +1,8 @@
 # Cleaning First-Release Scope
 
-This supplement sets Cleaning as the first-release product focus and `apps/web` public presentation. The authenticated first-run profile selector and setup-route/database round-trip remain separate acceptance work tracked by #1385 and #1380. This scope does not remove other verticals, replace native FSM ownership, or change the canonical Titan surface model.
+This supplement sets Cleaning as the first-release product focus and `apps/web` public presentation. The module owner now has a company-placement-backed profile persistence path; authenticated route/bootstrap composition and the cleaning setup-route/database round-trip remain open under #1385 and #1380. This scope does not remove other verticals, replace native FSM ownership, or change the canonical Titan surface model.
+
+The current profile selection is persisted as `companies.settings.vertical_profile` inside the company-native database selected by the placement resolver. It contains only the selected bundle/module IDs, versions, and a revision; the canonical module definitions remain in their existing bundle source. The writer requires a verified authenticated scope and company-store lease, while explicit changes additionally require host authorization and an availability check from the canonical pack owner. The app has not yet composed this writer into a production authenticated route; that depends on the #302 ingress and #1382 company-store caller contracts. No route-level or browser end-to-end completion is claimed.
 
 ## Intended default cleaning profile
 
