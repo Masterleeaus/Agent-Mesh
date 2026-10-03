@@ -16,6 +16,9 @@ import Apps from './pages/Apps'
 import PlatformHubHome from './pages/PlatformHubHome'
 import WorksEverywhere from './pages/WorksEverywhere'
 import { ChromeExtensions, WordPressPlugins } from './pages/ProductFamilyPages'
+import ReceptionSystem from './pages/ReceptionSystem'
+import MarketingSystem from './pages/MarketingSystem'
+import LeadGeneration from './pages/LeadGeneration'
 import PlatformPricing from './pages/PlatformPricing'
 import Resources from './pages/Resources'
 import { getCurrentSiteContext, getLegacyIndustryRedirect, getVerticalSiteForLegacyPath } from './config/siteContext'
@@ -83,6 +86,9 @@ export default function App() {
         <Route path="/works-everywhere" element={<WorksEverywhere />} />
         <Route path="/chrome-extensions" element={<ChromeExtensions />} />
         <Route path="/wordpress-plugins" element={<WordPressPlugins />} />
+        <Route path="/reception" element={<ReceptionSystem />} />
+        <Route path="/marketing" element={<MarketingSystem />} />
+        <Route path="/lead-generation" element={<LeadGeneration />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/industries" element={<Navigate to="/industries/cleaning" replace />} />
         <Route path="/industries/:industry" element={<IndustryPath context={siteContext} />} />

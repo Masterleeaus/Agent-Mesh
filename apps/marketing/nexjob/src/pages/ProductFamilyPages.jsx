@@ -111,6 +111,36 @@ function ProductFamilyLanding({ platform }) {
         </div>
       </section>
 
+      <section id="product-tiers" className="px-6 py-20 border-y border-nx-border bg-nx-surface/40">
+        <div className="max-w-6xl mx-auto">
+          <SectionLabel>Assist, Plus or Pro</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-5">Choose how much of the work AI can handle.</h2>
+          <p className="text-nx-muted leading-relaxed max-w-4xl mb-9">Every plugin and extension starts with AI Assist. Plus and Pro add increasing levels of monitoring and task execution for that product. A product licence covers its WordPress plugin and Chrome extension together, so your team pays once for Bookings, Invoicing, Job Management, Quotes or CRM.</p>
+          <div className="grid md:grid-cols-3 gap-4">
+            <article className="border border-nx-border rounded-2xl bg-nx-bg p-6">
+              <p className="text-xs font-bold text-nx-purple-light mb-3">INCLUDED</p>
+              <h3 className="text-xl font-bold mb-2">Assist</h3>
+              <p className="text-sm text-nx-muted leading-relaxed">AI drafts, extracts details, summarises records and suggests next steps. A person remains the primary operator.</p>
+              <p className="mt-5 font-semibold">Included with your Cleaning plan</p>
+            </article>
+            <article className="border border-nx-border rounded-2xl bg-nx-bg p-6">
+              <p className="text-xs font-bold text-nx-purple-light mb-3">SEMI-AUTONOMOUS</p>
+              <h3 className="text-xl font-bold mb-2">Plus</h3>
+              <p className="text-sm text-nx-muted leading-relaxed">AI keeps an eye on the selected workflow, surfaces work that needs attention, prepares the next steps and coordinates tasks through your approval and policy rules.</p>
+              <p className="mt-5 font-semibold">A$19 per product / month</p>
+            </article>
+            <article className="border border-nx-purple/60 rounded-2xl bg-nx-bg p-6">
+              <p className="text-xs font-bold text-nx-purple-light mb-3">AUTONOMOUS + PREDICTIVE</p>
+              <h3 className="text-xl font-bold mb-2">Pro</h3>
+              <p className="text-sm text-nx-muted leading-relaxed">AI can run the tasks your business has explicitly allowed, monitor outcomes and flag likely issues such as stalled quotes, payment delays or schedule conflicts. Restricted or high-impact actions stay approval-gated.</p>
+              <p className="mt-5 font-semibold">A$49 per product / month</p>
+            </article>
+          </div>
+          <p className="mt-6 text-sm text-nx-muted leading-relaxed">Use all five products for A$59/month on Plus or A$149/month on Pro. Your plan keeps its existing team and deployment entitlements; product tier changes the enabled workflow, never a person’s business authority.</p>
+          <Link to="/pricing#product-tiers" className="mt-4 inline-flex text-sm font-semibold text-nx-purple-light hover:text-white">Compare product and add-on pricing →</Link>
+        </div>
+      </section>
+
       <section id="ai-assist" className="px-6 py-20 border-y border-nx-border bg-nx-surface/40">
         <div className="max-w-6xl mx-auto">
           <SectionLabel>AI Assist</SectionLabel>
@@ -142,6 +172,9 @@ function ProductFamilyLanding({ platform }) {
           <div className="mt-8 flex flex-wrap gap-5">
             <Link to={otherPath} className="text-sm font-semibold text-nx-purple-light hover:text-white">{otherLabel} →</Link>
             <Link to="/works-everywhere" className="text-sm font-semibold text-nx-purple-light hover:text-white">See every way to work →</Link>
+            <Link to="/reception" className="text-sm font-semibold text-nx-purple-light hover:text-white">Cleaning reception →</Link>
+            <Link to="/marketing" className="text-sm font-semibold text-nx-purple-light hover:text-white">Marketing system →</Link>
+            <Link to="/lead-generation" className="text-sm font-semibold text-nx-purple-light hover:text-white">Lead generation →</Link>
             <Link to="/fully-managed" className="text-sm font-semibold text-nx-purple-light hover:text-white">Managed service →</Link>
           </div>
         </div>
