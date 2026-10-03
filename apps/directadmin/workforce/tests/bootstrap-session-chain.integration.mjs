@@ -254,6 +254,70 @@ test('all packaged role RAW routes bind one canonical company and reject stale o
   assert.equal(issueInputs.length, DIRECTADMIN_ROLES.length, 'only three fresh current contexts reach session issuance');
 });
 
+test('Admin, Reseller, and User packaged RAW renewal rotates one canonical browser session', async t => {
+  const f = await fixture(t);
+  await security.initializeDirectAdminBootstrapNonceStore({ storage: f.storage, storage_role: 'GLOBAL_REGISTRY' });
+  // Start from one canonical company so the first login is unambiguous. This
+  // uses the #302 registry fixture, not a plugin-selected company value.
+  await f.registry.putMembership({ actor_id: 'actor-1', company_id: 'company-b', role: 'member', status: 'revoked' }, 1);
+
+  const { sessions: canonicalSessions } = bootstrapTrust(f);
+  const issueInputs = [];
+  const sessions = { ...canonicalSessions, issue: async (assertion, expected) => {
+    issueInputs.push(expected);
+    return canonicalSessions.issue(assertion, expected);
+  } };
+  const apiCalls = [];
+  handler = gatewayFor(f, sessions, flowFor(f, () => hostSessionInfo('user'), apiCalls));
+
+  const cookies = new Map([['session', 'synthetic-session'], ['key', 'synthetic-key']]);
+  const cookieHeader = () => [...cookies].map(([name, value]) => `${name}=${value}`).join('; ');
+  let previous = null;
+  for (const role of DIRECTADMIN_ROLES) {
+    const requestCookie = cookieHeader();
+    const previousCredential = cookies.get('__Host-titan-da-session');
+    const previousSession = previousCredential
+      ? await canonicalSessions.authenticate(previousCredential, { company_id: 'company-a', device_id: 'device-1' })
+      : null;
+    const nonce = await runRaw('nonce', { role, cookie: requestCookie });
+    assert.equal(nonce.status, 200, `${role} renewal nonce resolves only the canonical unique context`);
+    assert.deepEqual(Object.keys(nonce.body), ['csrf_nonce']);
+    assert.equal(nonce.headers.has('set-cookie'), false, 'nonce issuance never rotates or clears the session');
+
+    const redeemed = await runRaw('bootstrap', { role, cookie: requestCookie, nonce: nonce.body.csrf_nonce });
+    assert.equal(redeemed.status, 200, `${role} renewal redeems its nonce through the canonical bridge`);
+    const setCookie = redeemed.headers.get('set-cookie')?.[0] ?? '';
+    assert.match(setCookie, /^__Host-titan-da-session=[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+; Path=\/; Secure; HttpOnly; SameSite=Strict; Max-Age=[1-9]\d*$/);
+    const nextCredential = setCookie.split(';', 1)[0].slice('__Host-titan-da-session='.length);
+    assert.notEqual(nextCredential, previousCredential, `${role} renewal rotates the opaque browser credential`);
+    cookies.set('__Host-titan-da-session', nextCredential);
+    const current = await canonicalSessions.authenticate(nextCredential, { company_id: 'company-a', device_id: 'device-1' });
+    assert.deepEqual({ company_id: current.context.company_id, device_id: current.context.device_id },
+      { company_id: 'company-a', device_id: 'device-1' });
+
+    if (previousSession) {
+      const revokedRow = await f.storage.query('SELECT revoked FROM titan_security_sessions WHERE session_id=$1',
+        [previousSession.context.session_id]);
+      assert.equal(revokedRow.rows[0]?.revoked, 1, `${role} renewal revokes the superseded canonical session`);
+      await assert.rejects(canonicalSessions.authenticate(previousCredential, { company_id: 'company-a', device_id: 'device-1' }),
+        /authentication-denied/, `${role} renewal cannot reuse the superseded credential`);
+    }
+    previous = nextCredential;
+  }
+
+  assert.equal(issueInputs.length, DIRECTADMIN_ROLES.length);
+  assert.ok(issueInputs.every(value => value.company_id === 'company-a' && value.device_id === 'device-1'));
+  assert.equal(apiCalls.length, DIRECTADMIN_ROLES.length * 2, 'each packaged nonce and redeem call reauthenticates DirectAdmin');
+  for (const call of apiCalls) {
+    assert.equal(call.url, `${ORIGIN}/api/session`);
+    assert.equal(call.cookie, DA_COOKIE, 'the Titan HttpOnly cookie never reaches DirectAdmin /api/session');
+    assert.equal(call.authorization, null);
+    assert.equal(call.redirect, 'error');
+    assert.equal(call.cache, 'no-store');
+    assert.equal(call.credentials, 'omit');
+  }
+});
+
 test('nonce is bound to the authenticated DA operator and signed assertion tuple mismatches fail before cookie issuance', async t => {
   const f = await fixture(t);
   await security.initializeDirectAdminBootstrapNonceStore({ storage: f.storage, storage_role: 'GLOBAL_REGISTRY' });
