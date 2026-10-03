@@ -22,6 +22,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   const accountA = randomUUID();
   const accountB = randomUUID();
   const userA = randomUUID();
+  const userAdminA = randomUUID();
   const userATech = randomUUID();
   const userBOwner = randomUUID();
   const extraMemberA = randomUUID();
@@ -38,6 +39,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   const email = `rls-${randomUUID()}@test.invalid`;
   const duplicateEmail = `rls-duplicate-${randomUUID()}@test.invalid`;
   const session = { accountId: accountA, userId: userA, role: "owner" as const };
+  const adminSession = { accountId: accountA, userId: userAdminA, role: "admin" as const };
 
   beforeAll(async () => {
     await admin.query("INSERT INTO accounts (id, name) VALUES ($1, 'RLS A'), ($2, 'RLS B')", [accountA, accountB]);
@@ -48,8 +50,9 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
               ($5, $2, $6, 'Duplicate A', $4, 'tech'),
               ($7, $8, $6, 'Duplicate B', $4, 'owner'),
               ($9, $2, $10, 'Extra A', $4, 'tech'),
-              ($11, $2, $12, 'Unassigned A', $4, 'tech')`,
-      [userA, accountA, email, passwordHash, userATech, duplicateEmail, userBOwner, accountB, extraMemberA, `extra-${randomUUID()}@test.invalid`, unassignedUserA, `unassigned-${randomUUID()}@test.invalid`],
+              ($11, $2, $12, 'Unassigned A', $4, 'tech'),
+              ($13, $2, $14, 'RLS admin', $4, 'admin')`,
+      [userA, accountA, email, passwordHash, userATech, duplicateEmail, userBOwner, accountB, extraMemberA, `extra-${randomUUID()}@test.invalid`, unassignedUserA, `unassigned-${randomUUID()}@test.invalid`, userAdminA, `admin-${randomUUID()}@test.invalid`],
     );
     // A principal may retain a membership in more than one company.
     // Do not add an account_id=user.account_id membership invariant.
@@ -59,8 +62,10 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
               ($1, $4, 'tech', 'active'),
               ($1, $5, 'tech', 'active'),
               ($2, $6, 'owner', 'active'),
-              ($2, $3, 'tech', 'active')`,
-      [accountA, accountB, userA, userATech, extraMemberA, userBOwner],
+              ($2, $3, 'tech', 'active'),
+              ($1, $7, 'admin', 'active'),
+              ($2, $7, 'tech', 'active')`,
+      [accountA, accountB, userA, userATech, extraMemberA, userBOwner, userAdminA],
     );
     await admin.query(
       "INSERT INTO clients (id, account_id, name) VALUES ($1, $2, 'Other account client')",
@@ -73,14 +78,15 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
     );
     await admin.query(
       `INSERT INTO technician_skills (account_id, user_id, skill_id, proficiency)
-       VALUES ($1, $2, $3, 3), ($4, $5, $6, 4), ($4, $7, $6, 2)`,
-      [accountA, userATech, skillA, accountB, userBOwner, skillB, userA],
+       VALUES ($1, $2, $3, 3), ($4, $5, $6, 4), ($4, $7, $6, 2), ($4, $8, $6, 2)`,
+      [accountA, userATech, skillA, accountB, userBOwner, skillB, userA, userAdminA],
     );
     await admin.query(
       `INSERT INTO technician_availability (id, account_id, user_id, weekday, start_time, end_time)
        VALUES ($1, $2, $3, 1, '08:00', '16:00'),
-              ($4, $5, $6, 2, '09:00', '17:00')`,
-      [availabilityA, accountA, userATech, availabilityB, accountB, userA],
+              ($4, $5, $6, 2, '09:00', '17:00'),
+              ($7, $5, $8, 3, '08:00', '16:00')`,
+      [availabilityA, accountA, userATech, availabilityB, accountB, userA, randomUUID(), userAdminA],
     );
     await admin.query(
       `INSERT INTO field_job_templates (id, account_id, name)
@@ -237,7 +243,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       const memberships = await client.query<{ user_id: string }>(
         `SELECT user_id FROM business_memberships ORDER BY user_id`,
       );
-      expect(memberships.rows.map((row) => row.user_id).sort()).toEqual([userA, userATech, extraMemberA].sort());
+      expect(memberships.rows.map((row) => row.user_id).sort()).toEqual([userA, userATech, extraMemberA, userAdminA].sort());
 
       const skillMap = await loadTechnicianSkills(client, accountId);
       expect(skillMap.get(userATech)?.map((skill) => skill.skillId)).toEqual([skillA]);
@@ -261,6 +267,86 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       );
       expect(rows).toEqual([{ user_id: userA }]);
     });
+  });
+
+  it("clears tenant transaction context after commit and rollback before pool reuse", async () => {
+    await withTenantTransaction(session, async (client) => {
+      expect((await client.query(
+        `SELECT app_account_id() AS account_id, app_user_id() AS user_id, app_role() AS role`,
+      )).rows[0]).toEqual({ account_id: accountA, user_id: userA, role: "owner" });
+    });
+    expect((await getPool().query(
+      `SELECT app_account_id() AS account_id, app_user_id() AS user_id, app_role() AS role`,
+    )).rows[0]).toEqual({ account_id: null, user_id: null, role: null });
+
+    await expect(withTenantTransaction({ ...session, role: "tech" }, (client) => client.query(
+      `INSERT INTO workforce_skills (id, account_id, name) VALUES ($1, $2, 'Rolled-back tech write')`,
+      [randomUUID(), accountA],
+    ))).rejects.toMatchObject({ code: "42501" });
+    expect((await getPool().query(
+      `SELECT app_account_id() AS account_id, app_user_id() AS user_id, app_role() AS role`,
+    )).rows[0]).toEqual({ account_id: null, user_id: null, role: null });
+
+    await withTenantTransaction({ ...session, accountId: accountB, role: "tech" }, async (client) => {
+      expect((await client.query(`SELECT app_account_id() AS account_id`)).rows[0].account_id).toBe(accountB);
+      expect((await client.query(`SELECT user_id FROM business_memberships WHERE user_id = $1`, [userA])).rows)
+        .toEqual([{ user_id: userA }]);
+    });
+    expect((await getPool().query(
+      `SELECT app_account_id() AS account_id, app_user_id() AS user_id, app_role() AS role`,
+    )).rows[0]).toEqual({ account_id: null, user_id: null, role: null });
+  });
+
+  it("prevents admins from assigning owner/admin membership roles", async () => {
+    for (const role of ["owner", "admin"] as const) {
+      await expect(withTenantTransaction(adminSession, (client) => client.query(
+        `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, $3, 'active')`,
+        [accountA, unassignedUserA, role],
+      ))).rejects.toMatchObject({ code: "42501" });
+    }
+    await withTenantTransaction(adminSession, (client) => client.query(
+      `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'tech', 'active')`,
+      [accountA, unassignedUserA],
+    ));
+    await expect(withTenantTransaction(adminSession, (client) => client.query(
+      `UPDATE business_memberships SET role = 'owner' WHERE account_id = $1 AND user_id = $2`,
+      [accountA, extraMemberA],
+    ))).rejects.toMatchObject({ code: "42501" });
+    await expect(withTenantTransaction(adminSession, (client) => client.query(
+      `UPDATE business_memberships SET role = 'admin' WHERE account_id = $1 AND user_id = $2`,
+      [accountA, extraMemberA],
+    ))).rejects.toMatchObject({ code: "42501" });
+    await withTenantTransaction(adminSession, async (client) => {
+      expect((await client.query(
+        `UPDATE business_memberships SET role = 'owner' WHERE account_id = $1 AND user_id = $2`,
+        [accountA, userAdminA],
+      )).rowCount).toBe(0);
+    });
+    await withTenantTransaction(session, (client) => client.query(
+      `DELETE FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
+      [accountA, unassignedUserA],
+    ));
+  });
+
+  it("revokes one company membership without removing another company's access or Workforce data", async () => {
+    await withTenantTransaction(session, (client) => client.query(
+      `UPDATE business_memberships SET status = 'revoked', updated_at = now()
+        WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+      [accountA, userAdminA],
+    ));
+    const remaining = await admin.query(
+      `SELECT m.status,
+              (SELECT count(*) FROM technician_skills WHERE account_id = $1 AND user_id = $2) AS skills,
+              (SELECT count(*) FROM technician_availability WHERE account_id = $1 AND user_id = $2) AS availability
+         FROM business_memberships m WHERE m.account_id = $1 AND m.user_id = $2`,
+      [accountB, userAdminA],
+    );
+    expect(remaining.rows).toEqual([{ status: "active", skills: "1", availability: "1" }]);
+    const revoked = await admin.query(
+      `SELECT status FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
+      [accountA, userAdminA],
+    );
+    expect(revoked.rows).toEqual([{ status: "revoked" }]);
   });
 
   it("allows same-account owner CRUD and rejects forged account and parent references", async () => {

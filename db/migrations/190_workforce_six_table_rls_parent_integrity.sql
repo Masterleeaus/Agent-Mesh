@@ -32,10 +32,28 @@ ALTER TABLE business_memberships FORCE ROW LEVEL SECURITY;
 CREATE POLICY business_memberships_select_account ON business_memberships
   FOR SELECT USING (account_id = app_account_id());
 CREATE POLICY business_memberships_insert_manager ON business_memberships
-  FOR INSERT WITH CHECK (account_id = app_account_id() AND is_owner_or_admin());
+  FOR INSERT WITH CHECK (
+    account_id = app_account_id()
+    AND (
+      app_role() = 'owner'
+      OR (app_role() = 'admin' AND role = 'tech')
+    )
+  );
 CREATE POLICY business_memberships_update_manager ON business_memberships
-  FOR UPDATE USING (account_id = app_account_id() AND is_owner_or_admin())
-  WITH CHECK (account_id = app_account_id() AND is_owner_or_admin());
+  FOR UPDATE USING (
+    account_id = app_account_id()
+    AND (
+      app_role() = 'owner'
+      OR (app_role() = 'admin' AND role = 'tech')
+    )
+  )
+  WITH CHECK (
+    account_id = app_account_id()
+    AND (
+      app_role() = 'owner'
+      OR (app_role() = 'admin' AND role = 'tech')
+    )
+  );
 CREATE POLICY business_memberships_delete_owner ON business_memberships
   FOR DELETE USING (account_id = app_account_id() AND app_role() = 'owner');
 

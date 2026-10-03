@@ -30,7 +30,11 @@ export const GET = withAuth(async (request: NextRequest, session: AuthSession) =
   }
   const row = await withTenantTransaction(session, async (client, accountId) => {
     const { rows } = await client.query(
-      `SELECT id, full_name, email, phone, role, created_at FROM users WHERE id = $1 AND account_id = $2`,
+      `SELECT u.id, u.full_name, u.email, u.phone, bm.role, u.created_at
+         FROM users u
+         JOIN business_memberships bm
+           ON bm.user_id = u.id AND bm.account_id = $2 AND bm.status = 'active'
+        WHERE u.id = $1 AND u.account_id = $2`,
       [id, accountId],
     );
     return rows[0] ?? null;
@@ -89,7 +93,11 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
   try {
     return await withTenantTransaction(session, async (client, accountId) => {
       const before = await client.query(
-        `SELECT id, full_name, email, phone, role FROM users WHERE id = $1 AND account_id = $2`,
+        `SELECT u.id, u.full_name, u.email, u.phone, bm.role
+           FROM users u
+           JOIN business_memberships bm
+             ON bm.user_id = u.id AND bm.account_id = $2 AND bm.status = 'active'
+          WHERE u.id = $1 AND u.account_id = $2`,
         [id, accountId],
       );
       if (!before.rowCount) {
@@ -98,7 +106,8 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
 
       if (role !== undefined && role !== "owner" && isSelf) {
         const { rows: ownerRows } = await client.query<{ cnt: number }>(
-          `SELECT COUNT(*)::int AS cnt FROM users WHERE account_id = $1 AND role = 'owner'`,
+          `SELECT COUNT(*)::int AS cnt FROM business_memberships
+            WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
           [accountId],
         );
         if ((ownerRows[0]?.cnt ?? 0) <= 1) {
@@ -116,22 +125,24 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
       if (full_name !== undefined) { setClauses.push(`full_name = $${idx++}`); params.push(full_name); }
       if (email !== undefined) { setClauses.push(`email = $${idx++}`); params.push(email.toLowerCase().trim()); }
       if (phone !== undefined) { setClauses.push(`phone = $${idx++}`); params.push(phone || null); }
-      if (role !== undefined) { setClauses.push(`role = $${idx++}`); params.push(role); }
       params.push(id);
 
       const { rows } = await client.query(
-        `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} AND account_id = $${idx + 1} RETURNING id, full_name, email, phone, role`,
+        `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} AND account_id = $${idx + 1} RETURNING id, full_name, email, phone`,
         [...params, accountId],
       );
 
       if (role !== undefined) {
-        // Membership is the session role source. Synchronize only this company;
-        // never recreate a missing membership or reactivate an inactive one.
-        await client.query(
-          `UPDATE business_memberships SET role = $1 WHERE user_id = $2 AND account_id = $3`,
+        // Roles belong to the selected company membership, not the global principal.
+        const membershipUpdate = await client.query(
+          `UPDATE business_memberships SET role = $1, updated_at = now()
+            WHERE user_id = $2 AND account_id = $3 AND status = 'active'`,
           [role, id, accountId],
         );
+        if (membershipUpdate.rowCount !== 1) throw new Error("Active membership disappeared during role update");
       }
+
+      const updated = { ...rows[0], role: role ?? (before.rows[0] as { role: string }).role };
 
       await appendAuditLog(client, {
         account_id: accountId,
@@ -141,9 +152,9 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         actor_id: session.userId,
         trace_id: session.traceId,
         old_value: before.rows[0] as Record<string, unknown>,
-        new_value: rows[0] as Record<string, unknown>,
+        new_value: updated,
       });
-      return NextResponse.json({ data: rows[0] });
+      return NextResponse.json({ data: updated });
     });
   } catch (error) {
     logger.error("PATCH /api/v1/users/[id] error", error, { traceId: session.traceId });
@@ -173,17 +184,22 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
   try {
     return await withTenantTransaction(session, async (client, accountId) => {
       const before = await client.query(
-        `SELECT id, full_name, email, role FROM users WHERE id = $1 AND account_id = $2`,
+        `SELECT u.id, u.full_name, u.email, bm.role, bm.status, bm.id AS membership_id
+           FROM users u
+           JOIN business_memberships bm
+             ON bm.user_id = u.id AND bm.account_id = $2
+          WHERE u.id = $1 AND u.account_id = $2 AND bm.status <> 'revoked'`,
         [id, accountId],
       );
       if (!before.rowCount) {
         return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
       }
 
-      const target = before.rows[0] as { role: string; full_name: string; email: string };
-      if (target.role === "owner") {
+      const target = before.rows[0] as { role: string; status: string; membership_id: string };
+      if (target.role === "owner" && target.status === "active") {
         const { rows } = await client.query<{ cnt: number }>(
-          `SELECT COUNT(*)::int AS cnt FROM users WHERE account_id = $1 AND role = 'owner'`,
+          `SELECT COUNT(*)::int AS cnt FROM business_memberships
+            WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
           [accountId],
         );
         if ((rows[0]?.cnt ?? 0) <= 1) {
@@ -194,28 +210,25 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
         }
       }
 
-      await client.query(`DELETE FROM users WHERE id = $1 AND account_id = $2`, [id, accountId]);
+      await client.query(
+        `UPDATE business_memberships SET status = 'revoked', updated_at = now()
+          WHERE account_id = $1 AND user_id = $2 AND status <> 'revoked'`,
+        [accountId, id],
+      );
 
       await appendAuditLog(client, {
         account_id: accountId,
-        entity_type: "user",
-        entity_id: id,
+        entity_type: "business_membership",
+        entity_id: target.membership_id,
         action: "delete",
         actor_id: session.userId,
         trace_id: session.traceId,
         old_value: before.rows[0] as Record<string, unknown>,
         new_value: null,
       });
-      return NextResponse.json({ deleted: true });
+      return NextResponse.json({ deleted: true, membership_revoked: true });
     });
   } catch (error: unknown) {
-    // FK constraint — user has jobs/visits that reference them
-    if (typeof error === "object" && error !== null && "code" in error && (error as { code: string }).code === "23503") {
-      return NextResponse.json(
-        { error: { code: "CONSTRAINT", message: "This user has associated jobs or visits and cannot be removed", traceId: session.traceId } },
-        { status: 422 }
-      );
-    }
     logger.error("DELETE /api/v1/users/[id] error", error, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to remove user", traceId: session.traceId } },

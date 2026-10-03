@@ -20,10 +20,12 @@ const createUserBody = z.object({
 export const GET = withRole(["owner", "admin"], async (_request: NextRequest, session: AuthSession) => {
   const rows = await withTenantTransaction(session, async (client, accountId) => {
     const { rows } = await client.query(
-      `SELECT id, full_name, email, phone, role, created_at
-       FROM users
-       WHERE account_id = $1
-       ORDER BY role, full_name`,
+      `SELECT u.id, u.full_name, u.email, u.phone, bm.role, u.created_at
+         FROM users u
+         JOIN business_memberships bm
+           ON bm.user_id = u.id AND bm.account_id = $1 AND bm.status = 'active'
+        WHERE u.account_id = $1
+        ORDER BY bm.role, u.full_name`,
       [accountId],
     );
     return rows;

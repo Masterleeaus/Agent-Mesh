@@ -1438,7 +1438,7 @@
       "migration_id": "db/migrations/190_workforce_six_table_rls_parent_integrity.sql",
       "filename": "190_workforce_six_table_rls_parent_integrity.sql",
       "prefix": "190",
-      "sha256": "b27246bff10863a891a62fef1dbfa3f27c7d48ad91a18e79c93ecdd132afb82a"
+      "sha256": "3c21989f384323f3dedf3597e1ac482944186952f25412e218bd09850bfe9f9b"
     }
   ],
   "prefix_collisions": [
