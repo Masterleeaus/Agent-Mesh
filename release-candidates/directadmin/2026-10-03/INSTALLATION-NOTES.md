@@ -1,5 +1,7 @@
 # Installation notes — DirectAdmin installer candidates (2026-10-03)
 
+> **DO NOT INSTALL OR RUN Developer Portal 1.3.10.** The archive is kept for audit only; an independent review found a potential private-key disclosure path in its pinned source. No actual key was read. A replacement requires the source fix, passing role-executable negative regression, independent review of the exact replacement package, and product-owner verification. See [`developer-portal/DO-NOT-INSTALL.txt`](developer-portal/DO-NOT-INSTALL.txt).
+
 These are proprietary candidate packages, not live-certified production releases. Each of the three published archives has a companion `LICENSE.txt` and generated `THIRD_PARTY_NOTICES.txt`; those files are outside the TAR so the tested archive hashes stay unchanged.
 
 ## Archive hashes

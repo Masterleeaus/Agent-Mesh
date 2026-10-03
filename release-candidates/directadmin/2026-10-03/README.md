@@ -1,5 +1,7 @@
 # DirectAdmin installer candidates — 2026-10-03
 
+> **DO NOT INSTALL OR RUN Developer Portal 1.3.10.** Its archive is retained for audit only after a potential private-key disclosure path was found in its pinned source. No actual key was read. The warning and exact historical hash are in [`developer-portal/DO-NOT-INSTALL.txt`](developer-portal/DO-NOT-INSTALL.txt). Publish a replacement only after the source fix, role-executable negative regression, and independent review clear; retain the 1.3.10 archive and hash for audit.
+
 This artifact-only bundle is published under **proprietary, all-rights-reserved** terms. It does not license the source repository, grant open-source reuse, or grant rights to Titan/Titan Zero names or marks. See each artifact's `LICENSE.txt` and generated `THIRD_PARTY_NOTICES.txt` before use. These are companion files outside the TARs so the validated archive bytes remain unchanged.
 
 This branch contains all three exact Titan Server Node, Titan Workforce, and Developer Portal candidate archives. Each archive has companion license, component-notice, third-party-notice, checksum, source-manifest, and provenance records outside the TAR, preserving its verified hash. The repository-wide license decision remains unresolved.
@@ -8,7 +10,7 @@ This branch contains all three exact Titan Server Node, Titan Workforce, and Dev
 |---|---:|---|---|
 | Titan Server Node | 0.3.0 | [`titan-server-node.tar.gz`](server-node/titan-server-node.tar.gz) | `580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d` |
 | Titan Workforce | 0.1.6 | [`titan_workforce.tar.gz`](workforce/titan_workforce.tar.gz) | `100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26` |
-| Developer Portal | 1.3.10 | [`titan_dev_access.tar.gz`](developer-portal/titan_dev_access.tar.gz) | `90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27` |
+| Developer Portal **DO NOT INSTALL** | 1.3.10 | [`titan_dev_access.tar.gz`](developer-portal/titan_dev_access.tar.gz) | `90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27` |
 
 Verify checksums and retain companion license/notices. Install Server Node before Workforce; Portal is independent. Server Node and Workforce require Node.js 22+; Server Node additionally requires systemd and `flock`. Portal requires PHP 7.4+.
 
