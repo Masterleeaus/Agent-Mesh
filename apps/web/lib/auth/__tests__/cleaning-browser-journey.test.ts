@@ -8,7 +8,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { randomBytes } from "node:crypto";
 import Database from "better-sqlite3";
 import { hash } from "bcryptjs";
-import { chromium, type Browser } from "@playwright/test";
+import { chromium, expect as expectPage, type Browser } from "@playwright/test";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   createIdentitySessionRegistry,
@@ -274,8 +274,8 @@ describe("Cleaning first-run browser journey", () => {
     const aPlacementId = placementIds.get(companyA);
     if (!aPlacementId) throw new Error("company-a-placement-missing");
     await page.goto(`${baseUrl}/app`);
-    await expect(page.getByText("Here's your game plan for today.")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Cleaning workspace" })).toHaveCount(0);
+    await expectPage(page.getByText("Here's your game plan for today.")).toBeVisible();
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toHaveCount(0);
     const aStore = createSqliteStorage(join(storeRoot, `${aPlacementId}.sqlite`));
     try {
       const settings = JSON.parse((await aStore.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyA])).rows[0]!.settings);
@@ -301,8 +301,8 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByLabel("Password").fill(userB.password);
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
-    await expect(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
-    await expect(page.getByTestId("cleaning-service-config-boundary")).toContainText("does not activate catalogue services");
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("does not activate catalogue services");
 
     const bCookie = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(bCookie).toBeTruthy();
@@ -312,12 +312,12 @@ describe("Cleaning first-run browser journey", () => {
     await page.waitForURL(url => url.pathname === "/login" && url.searchParams.get("reason") === "session-expired", { timeout: 15_000 });
     const loginUrl = new URL(page.url());
     expect(loginUrl.searchParams.get("next")).toBe("/app");
-    await expect(page.getByRole("status")).toContainText("Your secure sign-in expired");
+    await expectPage(page.getByRole("status")).toContainText("Your secure sign-in expired");
     await page.getByLabel("Email").fill(userB.email);
     await page.getByLabel("Password").fill(userB.password);
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
-    await expect(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
 
     const checklistResponse = await context.request.get(`${baseUrl}/api/v1/visits/${ids.visit}/checklist`);
     expect(checklistResponse.status()).toBe(200);
