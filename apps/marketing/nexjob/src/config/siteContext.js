@@ -36,8 +36,8 @@ const verticalByLegacyPath = new Map(
 const worksEverywhereNavigation = Object.freeze([
   { label: 'Mobile app', href: '/works-everywhere#mobile-app' },
   { label: 'PWA', href: '/works-everywhere#pwa' },
-  { label: 'Chrome extension', href: '/works-everywhere#chrome' },
-  { label: 'WordPress plugin', href: '/works-everywhere#wordpress' },
+  { label: 'Chrome extensions', href: '/chrome-extensions' },
+  { label: 'WordPress plugins', href: '/wordpress-plugins' },
   { label: 'ChatGPT integration', href: '/works-everywhere#chatgpt' },
   { label: 'WhatsApp', href: '/works-everywhere#whatsapp' },
   { label: 'Telegram', href: '/works-everywhere#telegram' },
