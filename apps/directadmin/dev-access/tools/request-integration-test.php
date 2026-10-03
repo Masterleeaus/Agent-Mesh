@@ -365,13 +365,13 @@ $outsideCanaryPath=$fixture.'/outside-home-secret';
 integration_expect(file_put_contents($outsideCanaryPath,"OUTSIDE_HOME_$canary\n")!==false,'outside-HOME synthetic canary fixture must be written');
 integration_expect(symlink($inspectionHome.'/.ssh/id_rsa',$inspectionHome.'/in-home-key-link'),'in-HOME key symlink fixture must be created');
 integration_expect(symlink($outsideCanaryPath,$inspectionHome.'/outside-key-link'),'outside-HOME key symlink fixture must be created');
-$terminalPost=static function(string $command)use($common,$route,$token,$inspectionHome,$root):string{
- $fields=['csrf'=>$token,'cwd'=>$inspectionHome,'command'=>$command,'run'=>'1'];
+$terminalPost=static function(string $command,?string $cwdOverride=null,array $environmentOverrides=[])use($common,$route,$token,$inspectionHome,$root):string{
+ $fields=['csrf'=>$token,'cwd'=>$cwdOverride??$inspectionHome,'command'=>$command,'run'=>'1'];
  $postBody=http_build_query($fields);
- $environment=$common+[
+ $environment=array_replace($common,[
   'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
   'POST'=>$postBody,'CONTENT_LENGTH'=>(string)strlen($postBody)
- ];
+ ],$environmentOverrides);
  [$result]=integration_run_role($root,'admin',$environment);
  return $result;
 };
@@ -381,6 +381,20 @@ $ordinaryGrep=$terminalPost('grep -F repo-safe-marker README.md');
 integration_expect(strpos($ordinaryGrep,'Exit code: 0')!==false&&strpos($ordinaryGrep,'repo-safe-marker')!==false,'actual admin role must retain bounded grep for an ordinary repository file');
 $ordinaryHead=$terminalPost('head -n 1 README.md');
 integration_expect(strpos($ordinaryHead,'Exit code: 0')!==false&&strpos($ordinaryHead,'repo-safe-marker')!==false,'actual admin role must retain bounded head for an ordinary repository file');
+$ordinaryTail=$terminalPost('tail -n 2 README.md');
+integration_expect(strpos($ordinaryTail,'Exit code: 0')!==false&&strpos($ordinaryTail,'ordinary repository fixture')!==false,'actual admin role must retain bounded tail for an ordinary repository file');
+$inspectionLink=$inspectionHome.'/repo-link';
+integration_expect(symlink($inspectionHome,$inspectionLink),'in-HOME cwd symlink fixture must be created');
+$linkedCwd=$terminalPost('cat README.md',$inspectionLink);
+integration_expect_terminal_blocked($linkedCwd,'in-HOME symlink working-directory path',$canary);
+$untrustedToolDirectory=$fixture.'/untrusted-bin';
+integration_expect(mkdir($untrustedToolDirectory,0700),'untrusted PATH fixture directory must be created');
+integration_expect(file_put_contents($untrustedToolDirectory.'/timeout',"#!/bin/sh\nshift\nexec \"\$@\"\n")!==false,'synthetic timeout PATH canary must be written');
+integration_expect(file_put_contents($untrustedToolDirectory.'/cat',"#!/bin/sh\nprintf '%s\\n' 'UNTRUSTED_PATH_CANARY'\n")!==false,'synthetic cat PATH canary must be written');
+chmod($untrustedToolDirectory.'/timeout',0700);chmod($untrustedToolDirectory.'/cat',0700);
+$untrustedPathResult=$terminalPost('cat README.md',$inspectionHome,['PATH'=>$untrustedToolDirectory]);
+integration_expect(strpos($untrustedPathResult,'Exit code: 0')!==false&&strpos($untrustedPathResult,'repo-safe-marker')!==false,'terminal execution must use a fixed trusted PATH despite DirectAdmin process environment');
+integration_expect(strpos($untrustedPathResult,'UNTRUSTED_PATH_CANARY')===false,'untrusted PATH executable output must never reach the terminal');
 $secretReadAttempts=[
  'cat relative SSH key path'=>'cat .ssh/id_rsa',
  'grep filtering a private-key PEM marker'=>'grep -v BEGIN .ssh/id_rsa',
@@ -392,8 +406,13 @@ $secretReadAttempts=[
  'Git config path'=>'cat .git/config',
  'environment config path'=>'grep -n SYNTHETIC .env',
  'package-manager auth config path'=>'head -n 1 .npmrc',
- 'in-HOME symlink to private-key fixture'=>'cat in-home-key-link',
- 'outside-HOME symlink to canary fixture'=>'cat outside-key-link'
+ 'in-HOME symlink to private-key fixture'=>'grep -v BEGIN in-home-key-link',
+ 'outside-HOME symlink to canary fixture'=>'cat outside-key-link',
+ 'private-key file passed to PHP lint'=>'php -l .ssh/id_rsa',
+ 'recursive listing of a private-key directory'=>'ls -la .ssh',
+ 'package test script execution'=>'npm test',
+ 'Node test script execution'=>'node --test',
+ 'Composer script execution'=>'composer test'
 ];
 foreach($secretReadAttempts as $case=>$command){
  integration_expect_terminal_blocked($terminalPost($command),$case,$canary);

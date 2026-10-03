@@ -545,6 +545,160 @@ function safe_cwd($requested){
  if(!$cwd || !is_dir($cwd) || !path_within($cwd,$home)) return $home;
  return $cwd;
 }
+function directadmin_terminal_sensitive_component($component){
+ if(!is_string($component)||$component==='') return false;
+ $name=strtolower($component);
+ if(in_array($name,[
+  '.ssh','.aws','.azure','.config','.docker','.gnupg','.kube','.npm','.composer','.pki','.terraform','.vault','.titan-dev-access',
+  '.git','.hg','.svn','.env','.netrc','.npmrc','.pypirc','.gitconfig','.git-credentials','.my.cnf','.pgpass','.bash_history','.zsh_history',
+  'auth.json','credentials.json','authorized_keys','authorized_keys2','.bashrc','.profile','.bash_profile','.zshrc','.zprofile','.zshenv'
+ ],true)) return true;
+ if(strncmp($name,'.env.',5)===0) return true;
+ if(substr($name,-4)==='.env') return true;
+ if(preg_match('/^id_(?:rsa|dsa|ecdsa|ed25519)(?:$|[._-])/D',$name)===1) return true;
+ if(preg_match('/^(?:authorized_keys|authorized_keys2)(?:$|[._-])/D',$name)===1) return true;
+ if(preg_match('/(?:^|[._-])(?:secrets?|tokens?|credentials?|passwords?|passwd|private[-_]?key)(?:[._-]|$)/D',$name)===1) return true;
+ return preg_match('/\.(?:pem|key|p12|pfx|ppk|p8|jks|keystore)$/D',$name)===1;
+}
+function directadmin_terminal_path_components_safe($path,$home,$base,$expectedType,$allowAbsolute=false){
+ if(!is_string($path)||$path===''||strlen($path)>4096||strpos($path,"\0")!==false||strpos($path,'\\')!==false) return null;
+ if(preg_match('/[\x00-\x20\x7f*?\[\]{}$`"\']/', $path)===1) return null;
+ $home=realpath($home);$base=realpath($base);
+ if($home===false||$base===false||!is_dir($home)||!is_dir($base)||!path_within($base,$home)||directadmin_terminal_sensitive_component(basename($base))) return null;
+ $absolute=strpos($path,'/')===0;
+ if($absolute){
+  if(!$allowAbsolute||!path_within($path,$home)) return null;
+  $relative=$path===$home?'':substr($path,strlen($home)+1);
+  $current=$home;
+ }else{
+  if($path[0]==='~'||$path[0]==='-') return null;
+  $relative=$path;
+  $current=$base;
+ }
+ $segments=$relative===''?[]:explode('/',$relative);
+ foreach($segments as $index=>$segment){
+  if($segment===''||$segment==='..') return null;
+  if($segment==='.') continue;
+  if(directadmin_terminal_sensitive_component($segment)) return null;
+  $current.='/'.$segment;
+  $stat=@lstat($current);
+  if(!is_array($stat)) return null;
+  $type=$stat['mode']&0170000;
+  if($type===0120000) return null;
+  $last=$index===count($segments)-1;
+  if(!$last&&$type!==0040000) return null;
+  if($last){
+   $matches=$expectedType==='file'?$type===0100000:($expectedType==='directory'?$type===0040000:in_array($type,[0040000,0100000],true));
+   if(!$matches) return null;
+   if($type===0100000&&(!isset($stat['nlink'])||(int)$stat['nlink']!==1)) return null;
+  }
+ }
+ $resolved=realpath($current);
+ if($resolved===false||$resolved!==$current||!path_within($resolved,$home)||directadmin_terminal_path_sensitive($resolved)) return null;
+ $finalStat=@lstat($resolved);
+ if(!is_array($finalStat)) return null;
+ $finalType=$finalStat['mode']&0170000;
+ if($expectedType==='file'&&$finalType!==0100000) return null;
+ if($expectedType==='directory'&&$finalType!==0040000) return null;
+ if($expectedType==='either'&&!in_array($finalType,[0040000,0100000],true)) return null;
+ if($finalType===0100000&&(!isset($finalStat['nlink'])||(int)$finalStat['nlink']!==1)) return null;
+ return $resolved;
+}
+function directadmin_terminal_path_sensitive($path){
+ if(!is_string($path)||$path==='') return true;
+ foreach(explode('/',str_replace('\\','/',$path)) as $component){
+  if(directadmin_terminal_sensitive_component($component)) return true;
+ }
+ return false;
+}
+function directadmin_terminal_cwd($requested){
+ $home=realpath(home_dir());
+ if($home===false) return null;
+ $requested=is_string($requested)?trim($requested):'';
+ if($requested==='') $requested=$home;
+ elseif(strpos($requested,'/')!==0) $requested=$home.'/'.$requested;
+ return directadmin_terminal_path_components_safe($requested,$home,$home,'directory',true);
+}
+function directadmin_terminal_checked_arguments($parts,$cwd){
+ if(!is_array($parts)||!isset($parts[0])||!is_string($parts[0])) return null;
+ $bin=strtolower($parts[0]);$arguments=array_slice($parts,1);$out=[$parts[0]];
+ $resolveOperands=static function(array $operands,string $expected,string $base):?array{
+  if(!$operands||count($operands)>16) return null;
+  $resolved=[];
+  foreach($operands as $operand){
+   if(!is_string($operand)) return null;
+   $path=directadmin_terminal_path_components_safe($operand,home_dir(),$base,$expected,false);
+   if($path===null) return null;
+   $resolved[]=$path;
+  }
+  return $resolved;
+ };
+ if($bin==='cat'||$bin==='stat'){
+  $paths=$resolveOperands($arguments,$bin==='cat'?'file':'either',$cwd);
+  return $paths===null?null:array_merge($out,$paths);
+ }
+ if($bin==='head'||$bin==='tail'){
+  $offset=0;
+  if(isset($arguments[0])&&$arguments[0]==='-n'){
+   if(!isset($arguments[1])||preg_match('/^[1-9][0-9]{0,2}$/D',$arguments[1])!==1||(int)$arguments[1]>200) return null;
+   $out[]='-n';$out[]=$arguments[1];$offset=2;
+  }elseif(isset($arguments[0])&&strpos($arguments[0],'-')===0){
+   if(preg_match('/^-n([1-9][0-9]{0,2})$/D',$arguments[0],$matches)!==1||(int)$matches[1]>200) return null;
+   $out[]='-n'.$matches[1];$offset=1;
+  }
+  $paths=$resolveOperands(array_slice($arguments,$offset),'file',$cwd);
+  return $paths===null?null:array_merge($out,$paths);
+ }
+ if($bin==='grep'){
+  $offset=0;
+  while(isset($arguments[$offset])&&is_string($arguments[$offset])&&$arguments[$offset]!==''&&$arguments[$offset][0]==='-'){
+   if(preg_match('/^-[Finvwxc]+$/D',$arguments[$offset])!==1) return null;
+   $out[]=$arguments[$offset++];
+  }
+  if(!isset($arguments[$offset])||$arguments[$offset]===''||$arguments[$offset][0]==='-'||strlen($arguments[$offset])>2048) return null;
+  $pattern=$arguments[$offset++];
+  $paths=$resolveOperands(array_slice($arguments,$offset),'file',$cwd);
+  return $paths===null?null:array_merge($out,[$pattern],$paths);
+ }
+ if($bin==='ls'){
+  $offset=0;
+  while(isset($arguments[$offset])&&is_string($arguments[$offset])&&$arguments[$offset]!==''&&$arguments[$offset][0]==='-'){
+   if(preg_match('/^-[alh]+$/D',$arguments[$offset])!==1) return null;
+   $out[]=$arguments[$offset++];
+  }
+  if($offset===count($arguments)) return $out;
+  $paths=$resolveOperands(array_slice($arguments,$offset),'either',$cwd);
+  return $paths===null?null:array_merge($out,$paths);
+ }
+ if($bin==='du'){
+  $offset=0;
+  while(isset($arguments[$offset])&&is_string($arguments[$offset])&&$arguments[$offset]!==''&&$arguments[$offset][0]==='-'){
+   if(preg_match('/^-[sh]+$/D',$arguments[$offset])!==1) return null;
+   $out[]=$arguments[$offset++];
+  }
+  if($offset===count($arguments)) return $out;
+  $paths=$resolveOperands(array_slice($arguments,$offset),'either',$cwd);
+  return $paths===null?null:array_merge($out,$paths);
+ }
+ if($bin==='php'){
+  if(count($arguments)!==2||$arguments[0]!=='-l') return null;
+  $paths=$resolveOperands([$arguments[1]],'file',$cwd);
+  return $paths===null?null:array_merge($out,['-l'],$paths);
+ }
+ if($bin==='php'){
+  return in_array($arguments,[['--version'],['-v'],['--modules'],['-m']],true)?array_merge($out,$arguments):null;
+ }
+ if($bin==='node'){
+  return in_array($arguments,[['--version'],['-v']],true)?array_merge($out,$arguments):null;
+ }
+ if($bin==='df'){
+  if($arguments===[]||$arguments===['-h']) return array_merge($out,$arguments);
+  return null;
+ }
+ if(in_array($bin,['pwd','whoami','id','uname','date'],true)) return $arguments===[]?$out:null;
+ if($bin==='du'&&$arguments===[]) return $out;
+ return $parts;
+}
 function directadmin_git_metadata_path_safe($path,$home,$expectDirectory){
  $stat=@lstat($path);
  if($stat===false) return true;
@@ -712,7 +866,7 @@ function directadmin_git_command_args($context,$arguments){
 }
 function directadmin_git_environment(){
  return [
-  'PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin',
+  'PATH'=>'/usr/local/bin:/usr/bin:/bin',
   'HOME'=>home_dir(),
   'GIT_CONFIG_NOSYSTEM'=>'1',
   'GIT_CONFIG_GLOBAL'=>'/dev/null',
@@ -832,45 +986,30 @@ function command_policy($cmd){
   if(in_array($sub,$mutating,true)) return ['WRITE','Git mutation or remote inspection is blocked here; use the governed repository workflow.',false];
   return ['UNKNOWN','Git command is outside the exact read-only subcommand and argument allowlist.',false];
  }
- if(in_array($bin,['npm','pnpm'],true)){
-  $sub=strtolower($parts[1]??'');
-  if($sub==='test') return ['BUILD/TEST','Package test command.',true];
-  if($sub==='run'){
-   $script=strtolower($parts[2]??'');
-   if(!preg_match('/^(test|build|lint|typecheck|check|verify)(:|$)/',$script)) return ['WRITE','Only test/build/lint/typecheck/check/verify scripts are allowed.',false];
-   return ['BUILD/TEST','Approved package verification script.',true];
-  }
-  if(in_array($sub,['why','list','ls','outdated','audit'],true)) return ['VERIFY','Read-only package diagnostic.',true];
-  return ['WRITE','Package mutation/install/exec commands are blocked here.',false];
- }
- if($bin==='composer'){
-  $sub=strtolower($parts[1]??'');
-  if(in_array($sub,['show','why','validate','audit'],true)) return ['VERIFY','Read-only Composer diagnostic.',true];
-  if(in_array($sub,['test','check','lint'],true)) return ['BUILD/TEST','Approved Composer verification script.',true];
-  return ['WRITE','Composer mutation/install commands are blocked here.',false];
- }
+ if(in_array($bin,['npm','pnpm','composer'],true)) return ['UNKNOWN','Package-manager commands can execute project code or load configuration and are blocked in the account terminal.',false];
  if($bin==='php'){
   $sub=strtolower($parts[1]??'');
-  if(in_array($sub,['-v','--version','-m','--modules','-i','--info'],true)) return ['VERIFY','PHP runtime diagnostic.',true];
-  if($sub==='-l' && isset($parts[2])) return ['VERIFY','PHP syntax verification.',true];
+  if(in_array($sub,['-v','--version','-m','--modules'],true)&&count($parts)===2) return ['VERIFY','PHP runtime diagnostic.',true];
+  if($sub==='-l' && count($parts)===3) return ['VERIFY','PHP syntax verification.',true];
   return ['UNKNOWN','Arbitrary PHP execution is blocked; only runtime info and syntax lint are allowed.',false];
  }
  if($bin==='node'){
   $sub=strtolower($parts[1]??'');
-  if(in_array($sub,['-v','--version'],true)) return ['VERIFY','Node runtime diagnostic.',true];
-  if($sub==='--test') return ['BUILD/TEST','Node test runner.',true];
-  return ['UNKNOWN','Arbitrary Node execution is blocked; use approved package scripts or node --test.',false];
+  if(in_array($sub,['-v','--version'],true)&&count($parts)===2) return ['VERIFY','Node runtime diagnostic.',true];
+  return ['UNKNOWN','Node script execution is blocked because account code can read HOME files.',false];
  }
  return ['READ','Allowed read-only command.',true];
 }
 function run_cmd($cmd,$cwd){
  [$class,$reason,$allowed]=command_policy($cmd);
  if(!$allowed) return ["Blocked by Developer Portal policy [".$class."]: ".$reason,126,$class];
- $cwd=safe_cwd($cwd);
+ $cwd=directadmin_terminal_cwd($cwd);
+ if($cwd===null) return ['Blocked by Developer Portal policy [READ]: Working directory must be a non-symlink, non-sensitive directory inside the account HOME.',126,'READ'];
  $parts=preg_split('/\s+/',trim((string)$cmd));
  if(!$parts||!isset($parts[0])) return ['Unable to start command.',127,$class];
- $programParts=$parts;
- $environment=['PATH'=>getenv('PATH')?:'/usr/local/bin:/usr/bin:/bin','HOME'=>home_dir()];
+ $programParts=directadmin_terminal_checked_arguments($parts,$cwd);
+ if($programParts===null) return ['Blocked by Developer Portal policy [READ]: File paths, options or arguments are outside the bounded terminal policy.',126,'READ'];
+ $environment=['PATH'=>'/usr/local/bin:/usr/bin:/bin','HOME'=>home_dir()];
  if(strtolower($parts[0])==='git'){
   $context=directadmin_git_repository_context($cwd);
   if($context===null) return ['Blocked by Developer Portal policy [READ]: Git worktree and metadata must resolve inside the account HOME.',126,'READ'];
@@ -1090,7 +1229,7 @@ function diagnostics_report($diag,$keys,$readiness=[]){
   'uid='.(function_exists('posix_geteuid')?posix_geteuid():'unknown'),
   'home='.home_dir(),
   'cwd_policy=HOME_AND_DESCENDANTS_ONLY',
-  'terminal_policy=READ_VERIFY_BUILD_TEST_ALLOWLIST',
+  'terminal_policy=READ_VERIFY_ALLOWLIST',
   'terminal_timeout_seconds=30',
   'terminal_output_limit_bytes=524288',
   'ssh_key_count='.count($keys)
@@ -1120,13 +1259,13 @@ function render(){
  }
  $role=$_SERVER['TDA_ROLE']??'user';
  $canMutate=directadmin_role_can_mutate($role);
- $msg='';$output='';$rc=null;$commandClass=null;$cwd=safe_cwd(post_string('cwd',''));
+ $msg='';$output='';$rc=null;$commandClass=null;$requestedCwd=post_string('cwd','');$cwd=safe_cwd($requestedCwd);
  if(($_SERVER['REQUEST_METHOD']??'GET')==='POST'){
   if(!$canMutate){$msg='Request rejected: this DirectAdmin role is read-only in Developer Portal.';}
   elseif(!check_csrf()){$msg='Request rejected: invalid CSRF token. Open Diagnostics below and use Copy Full Diagnostics.';}
   elseif(isset($_POST['add_key'])){$msg=add_key(post_string('public_key',''));}
   elseif(isset($_POST['remove_key'])){$idx=filter_var(post_string('remove_key',''),FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);$msg=remove_key($idx===false?-1:$idx,post_string('expected_fingerprint',''));}
-  elseif(isset($_POST['run'])){[$output,$rc,$commandClass]=run_cmd(post_string('command',''),$cwd);}
+  elseif(isset($_POST['run'])){[$output,$rc,$commandClass]=run_cmd(post_string('command',''),$requestedCwd);}
  }
  $uid=function_exists('posix_geteuid')?posix_geteuid():-1; $user=env_user();$home=home_dir();$diag=diagnostics();
  $keyStorageAvailable=true;$keys=[];

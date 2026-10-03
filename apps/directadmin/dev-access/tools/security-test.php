@@ -287,7 +287,11 @@ expect_true($allowed===false && $class==='UNKNOWN','shell chaining must fail clo
 expect_true($allowed===false && $class==='UNKNOWN','absolute-path reads must fail closed');
 
 [$class,, $allowed]=command_policy('npm exec rm -rf .');
-expect_true($allowed===false && $class==='WRITE','package exec mutation path must fail closed');
+expect_true($allowed===false && $class==='UNKNOWN','package exec must fail closed because package-manager commands can run account code');
+foreach(['npm test','pnpm run verify','composer test','npm --version','node --test'] as $scriptCommand){
+ [$scriptClass,, $scriptAllowed]=command_policy($scriptCommand);
+ expect_true($scriptAllowed===false&&$scriptClass==='UNKNOWN',$scriptCommand.' must not execute project code with access to account HOME');
+}
 
 [$class,, $allowed]=command_policy('php -r phpinfo();');
 expect_true($allowed===false && $class==='UNKNOWN','arbitrary PHP execution must fail closed');
