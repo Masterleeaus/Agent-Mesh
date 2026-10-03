@@ -21,6 +21,7 @@ function unavailable(error: unknown): boolean {
     || isWebAuthSetupRequiredError(error)
     || (error instanceof Error && (error.message === "identity-registry-unavailable"
       || error.message === "native-company-schema-version-unsupported"
+      || error.message === "company-placement-registry-schema-unavailable"
       || error.message.startsWith("native-company-runtime-config-required:")));
 }
 
