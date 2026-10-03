@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { identityType, teamMemberships, workState, verifiedOutcome } from '../images/presentation.mjs';
 const source = (await readFile(new URL('../images/controller.mjs', import.meta.url), 'utf8')).replace("'workforce-presentation'", JSON.stringify(new URL('../images/presentation.mjs', import.meta.url).href));
 const { WorkforceController } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-const context = () => ({ company_id: 'company-a', actor_id: 'actor-a', session_revision: '1' });
+const context = () => ({ company_id: 'company-a', actor_id: 'actor-a', session_revision: '1', context_revision: 'context-a' });
 function fixture() {
   const calls = [];
   return { calls, context: async () => context(), discover: async () => ({ company_id: 'company-a', workers: [] }), status: async () => ({ company_id: 'company-a', work: [] }), metadata: async () => ({ source: 'fixture-owner', freshness: null, evidence_refs: [] }), control: async (ctx, action) => { calls.push(action); return { company_id: ctx.company_id, state: 'PROVIDER_ACKNOWLEDGED' }; } };
@@ -263,4 +263,93 @@ test('team view is only a company roster projection and keeps human and AI ident
   ]);
   assert.deepEqual(teamMemberships([]), []);
   assert.equal(workers.length, 3, 'projection grouping does not edit or duplicate the canonical roster');
+});
+test('evidence-backed cleaning skills stay company/context scoped and clear on invalidation', async () => {
+  const api = fixture();
+  const worker = { company_id: 'company-a', worker_id: 'cleaner-a', kind: 'human', active: true, team_id: 'crew-a', capabilities: ['general_cleaning'] };
+  api.discover = async () => ({ company_id: 'company-a', workers: [worker], controls: [] });
+  const skill = { worker_id: 'cleaner-a', capability_id: 'general_cleaning', proficiency: 4, proficiency_level: 'PROFICIENT',
+    verification_state: 'VERIFIED', proof_state: 'verified', evidence_refs: ['cleaning-proof-a'], meets_registry_requirement: true,
+    capability_presence_confers_authority: false, verification_confers_authority: false,
+    performance_confers_authority: false, grants_authority: false };
+  const projection = { schema: 'titan.workforce.evidence-backed-skill-proof.v1', company_id: 'company-a',
+    workers: [{ worker_id: 'cleaner-a', skills: [skill], summary: { skill_count: 1, verified: 1, evidenced: 0,
+      unverified: 0, expired_or_revoked: 0, requirement_gaps: 0 },
+    worker_identity_confers_authority: false, grants_authority: false }], skill_proofs: [skill],
+    summary: { worker_count: 1, skill_proof_count: 1, verified_skill_proofs: 1, evidenced_skill_proofs: 0,
+      unverified_skill_proofs: 0, invalid_skill_proofs: 0, requirement_gaps: 0, workers_with_contextual_performance: 0 },
+    read_only: true, derived: true, performance_is_context_only: true, grants_authority: false,
+    execution_permitted: false, automatic_execution: false, assignment_decision: false, routing_decision: false, entitlement_decision: false };
+  api.skills = async () => ({ schema: 'titan.directadmin.workforce-skills.v1', status: 'available',
+    company_id: 'company-a', context_revision: 'context-a', read_only: true, capability_presence_confers_authority: false,
+    verification_confers_authority: false, assignment_decision: false, routing_decision: false, entitlement_decision: false,
+    execution_permitted: false, grants_authority: false,
+    source: 'canonical-workforce-skill-capability-registry', freshness: null, source_revision: null,
+    evidence_refs: ['cleaning-proof-a'],
+    projection });
+  const model = new WorkforceController(api);
+  await model.connect();
+  assert.equal(model.state.phase, 'ready');
+  assert.equal(model.state.skills.evidence_refs[0], 'cleaning-proof-a');
+  assert.equal(model.state.discovery.workers[0].worker_id, 'cleaner-a');
+  model.invalidate();
+  assert.equal(model.state.skills, null, 'session revocation clears skill proof/evidence with the roster');
+  assert.equal(model.state.discovery, null);
+});
+test('malformed nested skill proofs and display summaries fail closed before rendering', async () => {
+  const skill = { worker_id: 'cleaner-a', capability_id: 'general_cleaning', proficiency: 4, proficiency_level: 'PROFICIENT',
+    verification_state: 'VERIFIED', proof_state: 'verified', evidence_refs: ['cleaning-proof-a'], meets_registry_requirement: true,
+    capability_presence_confers_authority: false, verification_confers_authority: false,
+    performance_confers_authority: false, grants_authority: false };
+  const goodProjection = () => ({ schema: 'titan.workforce.evidence-backed-skill-proof.v1', company_id: 'company-a',
+    workers: [{ worker_id: 'cleaner-a', skills: [structuredClone(skill)], summary: { skill_count: 1, verified: 1,
+      evidenced: 0, unverified: 0, expired_or_revoked: 0, requirement_gaps: 0 },
+    worker_identity_confers_authority: false, grants_authority: false }], skill_proofs: [structuredClone(skill)],
+    summary: { worker_count: 1, skill_proof_count: 1, verified_skill_proofs: 1, evidenced_skill_proofs: 0,
+      unverified_skill_proofs: 0, invalid_skill_proofs: 0, requirement_gaps: 0, workers_with_contextual_performance: 0 },
+    read_only: true, derived: true, performance_is_context_only: true, grants_authority: false,
+    execution_permitted: false, automatic_execution: false, assignment_decision: false, routing_decision: false, entitlement_decision: false });
+  const mutations = [
+    projection => { delete projection.summary; },
+    projection => { projection.summary.verified_skill_proofs = 9; },
+    projection => { projection.workers[0].skills[0] = null; },
+    projection => { projection.workers[0].skills[0].worker_id = 'outside-roster'; },
+    projection => { projection.workers[0].skills[0].grants_authority = true; },
+    projection => { projection.workers[0].skills[0].evidence_refs = 'not-an-array'; },
+    projection => { projection.workers[0].skills[0].proof_state = 'revoked'; },
+    projection => { projection.skill_proofs[0].capability_presence_confers_authority = true; },
+  ];
+  for (const mutate of mutations) {
+    const api = fixture();
+    api.discover = async () => ({ company_id: 'company-a', workers: [
+      { company_id: 'company-a', worker_id: 'cleaner-a', kind: 'human', active: true, capabilities: ['general_cleaning'] },
+    ], controls: [] });
+    const projection = goodProjection(); mutate(projection);
+    api.skills = async () => ({ schema: 'titan.directadmin.workforce-skills.v1', company_id: 'company-a',
+      context_revision: 'context-a', read_only: true, capability_presence_confers_authority: false,
+      verification_confers_authority: false, assignment_decision: false, routing_decision: false, entitlement_decision: false,
+      execution_permitted: false, grants_authority: false, status: 'available',
+      source: 'canonical-workforce-skill-capability-registry', freshness: null, source_revision: null,
+      evidence_refs: ['cleaning-proof-a'], projection });
+    const model = new WorkforceController(api); await model.connect();
+    assert.equal(model.state.phase, 'unavailable');
+    assert.equal(model.state.context, null);
+    assert.equal(model.state.skills, null);
+    assert.equal(model.state.discovery, null);
+    assert.equal(api.calls.length, 0);
+  }
+});
+test('cross-company and stale skill proof projections are denied and cleared', async () => {
+  for (const invalidSkills of [
+    { schema: 'titan.directadmin.workforce-skills.v1', company_id: 'company-b', context_revision: 'context-a', read_only: true, grants_authority: false, status: 'unavailable', source: null, evidence_refs: [] },
+    { schema: 'titan.directadmin.workforce-skills.v1', company_id: 'company-a', context_revision: 'stale-context', read_only: true, grants_authority: false, status: 'unavailable', source: null, evidence_refs: [] },
+  ]) {
+    const api = fixture(); api.skills = async () => invalidSkills;
+    const model = new WorkforceController(api); await model.connect();
+    assert.equal(model.state.phase, 'denied');
+    assert.equal(model.state.context, null);
+    assert.equal(model.state.discovery, null);
+    assert.equal(model.state.skills, null);
+    assert.doesNotMatch(JSON.stringify(model.state), /company-b|stale-context/);
+  }
 });
