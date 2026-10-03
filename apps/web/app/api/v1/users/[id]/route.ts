@@ -9,6 +9,7 @@ import { lockOwnerMembershipChanges } from "@/lib/db/owner-membership-lock";
 import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 import { logger } from "@/lib/logger";
 import { getPathId } from "@/lib/route-utils";
+import { getWebSessionRuntime, WebMembershipReconciliationError } from "@/lib/auth/web-session-runtime";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,14 @@ const patchUserBody = z
     role: z.enum(["owner", "admin", "tech"]).optional(),
   })
   .refine((v) => Object.keys(v).length > 0, { message: "At least one field is required" });
+
+async function membershipRuntime() {
+  try {
+    return await getWebSessionRuntime();
+  } catch {
+    throw new WebMembershipReconciliationError();
+  }
+}
 
 // Any authenticated user can view/edit — permissions enforced inside handler.
 export const GET = withAuth(async (request: NextRequest, session: AuthSession) => {
@@ -92,8 +101,9 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
     }
   }
 
+  let roleToFinishAfterCommit: string | null = null;
   try {
-    return await withTenantTransaction(session, async (client, accountId) => {
+    const response = await withTenantTransaction(session, async (client, accountId) => {
       if (role !== undefined) {
         await lockOwnerMembershipChanges(client, accountId);
         const actorMembership = await client.query<{ role: string }>(
@@ -122,6 +132,11 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
             [accountId, id],
           );
           if (dormant.rows[0]) {
+            const dormantStatus = dormant.rows[0].status as "revoked" | "suspended";
+            const runtime = await membershipRuntime();
+            const needsRoleFinish = await runtime.restrictMembershipForLegacyChangeRequest(
+              request, id, dormant.rows[0].role, dormantStatus, role, dormantStatus,
+            );
             const updated = await client.query<{ id: string; role: string; status: string }>(
               `UPDATE business_memberships SET role = $1, updated_at = now()
                 WHERE account_id = $2 AND user_id = $3 AND status = $4
@@ -129,6 +144,7 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
               [role, accountId, id, dormant.rows[0].status],
             );
             if (updated.rows[0]) {
+              if (needsRoleFinish) roleToFinishAfterCommit = role;
               await appendAuditLog(client, {
                 account_id: accountId,
                 entity_type: "business_membership",
@@ -199,6 +215,14 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         } }, { status: 403 });
       }
 
+      if (role !== undefined) {
+        const runtime = await membershipRuntime();
+        const needsRoleFinish = await runtime.restrictMembershipForLegacyChangeRequest(
+          request, id, previousRole, before.status, role, "active",
+        );
+        if (needsRoleFinish) roleToFinishAfterCommit = role;
+      }
+
       if (profileFieldsRequested || (role !== undefined && primaryProfile.rows[0])) {
         const dialect = client.dialect ?? getDatabaseDialect();
         const profile = {
@@ -267,7 +291,19 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
       });
       return NextResponse.json({ data: updated });
     });
+    if (roleToFinishAfterCommit !== null) {
+      const runtime = await membershipRuntime();
+      await runtime.finishMembershipRoleChangeRequest(request, id, roleToFinishAfterCommit);
+    }
+    return response;
   } catch (error) {
+    if (error instanceof WebMembershipReconciliationError) {
+      return NextResponse.json({ error: {
+        code: "AUTHORITY_RECONCILIATION_UNAVAILABLE",
+        message: "Membership authority update is temporarily unavailable; retry the requested change",
+        traceId: session.traceId,
+      } }, { status: 503, headers: { "Retry-After": "1" } });
+    }
     logger.error("PATCH /api/v1/users/[id] error", error, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to update user", traceId: session.traceId } },
@@ -332,6 +368,11 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
         }
       }
 
+      const runtime = await membershipRuntime();
+      await runtime.restrictMembershipForLegacyChangeRequest(
+        request, id, target.role, target.status, target.role, "revoked",
+      );
+
       // Keep account_id-scoped legacy consumers from seeing a removed owner.
       // This is constrained to the user's primary account; other memberships
       // and their role authority are untouched.
@@ -377,6 +418,13 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
       return NextResponse.json({ deleted: true, membership_revoked: true });
     });
   } catch (error: unknown) {
+    if (error instanceof WebMembershipReconciliationError) {
+      return NextResponse.json({ error: {
+        code: "AUTHORITY_RECONCILIATION_UNAVAILABLE",
+        message: "Membership authority update is temporarily unavailable; retry the requested change",
+        traceId: session.traceId,
+      } }, { status: 503, headers: { "Retry-After": "1" } });
+    }
     logger.error("DELETE /api/v1/users/[id] error", error, { traceId: session.traceId });
     return NextResponse.json(
       { error: { code: "INTERNAL_ERROR", message: "Failed to remove user", traceId: session.traceId } },

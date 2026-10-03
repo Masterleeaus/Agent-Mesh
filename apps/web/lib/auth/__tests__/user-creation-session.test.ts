@@ -127,7 +127,7 @@ beforeEach(async () => {
   );
   CREATE TABLE business_memberships (
     id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))), user_id TEXT, account_id TEXT, role TEXT,
-    status TEXT DEFAULT 'active', UNIQUE(user_id,account_id)
+    status TEXT DEFAULT 'active', updated_at TEXT, UNIQUE(user_id,account_id)
   );
   INSERT INTO users (id,account_id,email,full_name,role) VALUES ('owner-1','company-a','owner@example.test','Owner','owner');
   INSERT INTO business_memberships (user_id,account_id,role,status) VALUES ('owner-1','company-a','owner','active');`);
