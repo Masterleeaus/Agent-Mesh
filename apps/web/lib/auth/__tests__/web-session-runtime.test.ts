@@ -295,9 +295,10 @@ describe("configured web authentication runtime", () => {
       role: "admin", status: "active", revision: 1,
     });
 
-    await runtime.restrictMembershipForLegacyChangeRequest(
+    const demotionNeedsFinish = await runtime.restrictMembershipForLegacyChangeRequest(
       ownerRequest, targetLegacyUserId, "admin", "active", "tech", "active",
     );
+    expect(demotionNeedsFinish).toBe(false);
     expect(await runtime.resolveCredential(targetA.credential)).toBeNull();
     expect(await runtime.resolveCredential(targetB.credential)).toMatchObject({
       session: { userId: targetLegacyUserId, accountId: accountB, role: "owner" },
@@ -352,9 +353,10 @@ describe("configured web authentication runtime", () => {
       headers: { cookie: CURRENT_WEB_SESSION_COOKIE_NAME + "=" + owner.credential },
     });
 
-    await runtime.restrictMembershipForLegacyChangeRequest(
+    const promotionNeedsFinish = await runtime.restrictMembershipForLegacyChangeRequest(
       ownerRequest, targetLegacyUserId, "tech", "active", "admin", "active",
     );
+    expect(promotionNeedsFinish).toBe(true);
     expect(await runtime.resolveCredential(target.credential)).toBeNull();
     expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
       role: "tech", status: "active", revision: 2,

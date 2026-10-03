@@ -294,7 +294,8 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
     switchCompanyCredential,
     // Apply a restrictive floor before PostgreSQL membership changes commit.
     // This invalidates existing credentials even when the canonical role was
-    // already at that floor. Unbound legacy rows are never identity backfills.
+    // already at that floor. Return true only if a higher role still needs a
+    // post-commit CAS. Unbound legacy rows are never identity backfills.
     async restrictMembershipForLegacyChangeRequest(
       request: Pick<Request, "headers">,
       targetLegacyUserId: string,
@@ -323,7 +324,7 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
           role: restrictiveRole,
           status: restrictiveStatus,
         }, target.membership.revision);
-        return true;
+        return restrictiveRole !== desiredRole;
       } catch {
         throw new WebMembershipReconciliationError();
       }
