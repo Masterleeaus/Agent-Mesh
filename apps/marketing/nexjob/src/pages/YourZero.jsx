@@ -1,14 +1,60 @@
+import { Link } from 'react-router-dom'
+import PageMeta from '../components/PageMeta'
 import SectionLabel from '../components/SectionLabel'
-import CTASection from '../components/CTASection'
 
-const understands=['who you are in this account',"what you're responsible for",'how you like things done','what matters to you','the business context you are allowed to use','the people you work with','the systems you use','your processes','your priorities','your decisions','what has worked before',"what hasn't",'what needs your attention right now']
-const learns=['the decisions you make','the corrections you give it','the outcomes of previous work','changes in your role and context','the systems you use','the knowledge you provide','the results your work actually achieves']
+const responsibilities = [
+  ['Coordinate the workforce', 'Connect the six cleaning specialist roles with owners, managers, cleaners and customer care around the work each person owns.'],
+  ['Connect the system', 'Keep enquiries, CRM, service setup, quotes, bookings, visits, evidence, invoices and follow-up joined as one operating workflow.'],
+  ['Manage the tools', 'Bring the mobile app, PWA, WordPress plugins, Chrome extensions and messaging channels into a consistent company workspace.'],
+  ['Govern business actions', 'Apply company roles, permissions, approval steps, customer consent, service boundaries and evidence requirements to the actions the workforce prepares.'],
+]
 
-export default function YourZero(){return <><section className="pt-32 pb-20 px-6 text-center"><div className="max-w-5xl mx-auto"><SectionLabel>Meet Your Zero</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">Your business. <span className="text-nx-purple-light">Your Zero.</span> Your team.</h1><p className="text-xl text-nx-muted max-w-3xl mx-auto">Titan Zero gives each account holder their own digital working intelligence — their Zero. It learns how they work, handles appropriate digital work, assists them in the physical world and coordinates specialist intelligence around their role.</p><p className="mt-6 font-bold">One + Zero + Team.</p></div></section>
-<section className="py-20 px-6 border-y border-nx-border"><div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12"><div><h2 className="text-4xl font-extrabold mb-5">Imagine having a digital counterpart that increasingly understands you at work.</h2><p className="text-nx-muted leading-relaxed">The person using the account is <strong className="text-nx-text">One</strong>. That may be an owner, manager, staff member, field worker or customer. Zero is that person's digital working intelligence — their working shadow, assistant and, where appropriate, digital operator. Behind Zero can be specialist capabilities, systems and people relevant to that person's role.</p></div><div className="grid sm:grid-cols-2 gap-3">{understands.map(x=><div key={x} className="bg-nx-surface border border-nx-border rounded-xl p-4 text-sm">{x}</div>)}</div></div></section>
-<section className="py-20 px-6"><div className="max-w-6xl mx-auto"><SectionLabel>More than a chatbot</SectionLabel><h2 className="text-4xl font-extrabold mb-5">The goal is for Zero to progressively take over the digital work you should not need to operate yourself.</h2><div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">{[['Before you start working','Identify what needs attention and prepare the digital workspace around you.'],["While you're working",'Find information, operate digital systems, prepare decisions and complete appropriate online work.'],['In physical work','Guide jobs with context, procedures, visual assistance, evidence and next actions.'],['For you','Handle appropriate digital work end to end where you have chosen to delegate authority.']].map(([t,d])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-6"><h3 className="font-bold mb-2">{t}</h3><p className="text-sm text-nx-muted">{d}</p></div>)}</div></div></section>
-<section className="py-20 px-6 border-y border-nx-border"><div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12"><div><SectionLabel>Continuous understanding</SectionLabel><h2 className="text-4xl font-extrabold mb-4">Your Zero gets better by working with you.</h2><p className="text-nx-muted leading-relaxed mb-5">Titan Zero isn't designed around one giant setup questionnaire that becomes outdated. Your role, responsibilities, relationships, systems, priorities and working context change, so Zero keeps learning.</p><p className="text-nx-muted leading-relaxed">Over time, Zero should need less explanation because it develops more context. That accumulated understanding belongs to the relationship between One and their Zero, within the business context and permissions available to that account.</p></div><div className="space-y-3">{learns.map(x=><div key={x} className="bg-nx-surface border border-nx-border rounded-xl p-4 text-sm">{x}</div>)}</div></div></section>
-<section className="py-20 px-6"><div className="max-w-6xl mx-auto"><SectionLabel>Different people. Different Zero.</SectionLabel><h2 className="text-4xl font-extrabold mb-8">Zero changes with the person using it.</h2><div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-20">{[['Owner or manager','A digital operating counterpart that can investigate the business, coordinate intelligence, prepare decisions and handle delegated digital operations.'],['Office staff','A digital working shadow that can take on routine computer work, communications, information retrieval, forms, system updates and administration.'],['Field staff','A digital partner that can handle online work while guiding physical jobs with context, procedures, visual help, evidence capture and next actions.'],['Customer','A personal service companion that helps the customer book, change, understand and manage their relationship with the business without learning its internal systems.']].map(([t,d])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-6"><h3 className="font-bold mb-3">{t}</h3><p className="text-sm text-nx-muted leading-relaxed">{d}</p></div>)}</div></div></section>
-<section className="py-20 px-6"><div className="max-w-5xl mx-auto"><SectionLabel>Experience</SectionLabel><h2 className="text-4xl font-extrabold mb-5">It learns outcomes, not just habits.</h2><p className="text-lg text-nx-muted mb-8">If you normally solve a problem one way but it consistently produces poor results, Zero shouldn't simply learn that as the right way to work. Titan can compare what we knew, what we decided, what we did, what we expected and what actually happened.</p><div className="bg-nx-surface border border-nx-border rounded-2xl p-8 text-center font-bold text-lg">What we knew → what we decided → what we did → what we expected → what actually happened.</div><h3 className="text-2xl font-bold mt-10 mb-3">Correct Zero and it learns.</h3><p className="text-nx-muted">When Zero gets something wrong, your correction can become evidence that improves its understanding. If circumstances later change, Titan can reassess what it previously learned rather than assuming every old rule remains true forever.</p></div></section>
-<section className="py-20 px-6 border-y border-nx-border"><div className="max-w-5xl mx-auto text-center"><SectionLabel>Human authority</SectionLabel><h2 className="text-4xl font-extrabold mb-5">Zero can become more capable without silently becoming more powerful.</h2><p className="text-lg text-nx-muted mb-7">Learning is not authority. Confidence is not authority. Prediction is not authority. Being right before is not authority. Titan separates how intelligent Zero becomes from what Zero is allowed to do.</p><p className="text-2xl font-bold">You remain One.</p></div></section>
-<CTASection title="You are One. This is your Zero." subtitle="Your Zero is personal to your account and role. Different person. Different Zero. Same connected business."/></>}
+const operatingPrinciples = [
+  ['One business record', 'Connected tools use the Cleaning company’s canonical customer and job context instead of creating competing business histories.'],
+  ['AI assists the work', 'AI can interpret, summarise, draft and recommend. Configured business rules determine pricing, availability, permissions and transaction state.'],
+  ['People remain accountable', 'Owners and authorised team members approve sensitive decisions and handle exceptions according to their role.'],
+]
+
+export default function YourZero() {
+  return <>
+    <PageMeta title="What Is Titan Zero?" description="Titan Zero manages the AI workforce, Cleaning business system, connected tools, permissions and approvals around a cleaning operation." />
+    <main>
+      <section className="pt-32 pb-20 px-6 text-center">
+        <div className="max-w-5xl mx-auto">
+          <SectionLabel>What is Titan Zero?</SectionLabel>
+          <h1 className="text-4xl sm:text-6xl font-extrabold mb-5">The management layer behind the cleaning workforce.</h1>
+          <p className="text-lg text-nx-muted max-w-3xl mx-auto leading-relaxed">Titan Zero coordinates the people, AI specialists, business workflows and connected tools that keep a cleaning company running. It gives the workforce the company context and operating rules it needs, then keeps proposals, approvals, work and evidence connected.</p>
+        </div>
+      </section>
+
+      <section className="px-6 py-20 border-y border-nx-border bg-nx-surface/30">
+        <div className="max-w-6xl mx-auto">
+          <SectionLabel>One coordinated operation</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-8">The workforce works inside the business system.</h2>
+          <div className="grid md:grid-cols-2 gap-5">{responsibilities.map(([title, description], index) => <article key={title} className="bg-nx-bg border border-nx-border rounded-2xl p-7"><p className="text-xs font-bold text-nx-purple-light mb-3">0{index + 1}</p><h3 className="text-xl font-bold mb-3">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section className="px-6 py-20">
+        <div className="max-w-6xl mx-auto">
+          <SectionLabel>How it operates</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-8">Useful intelligence, bounded authority.</h2>
+          <div className="grid md:grid-cols-3 gap-5">{operatingPrinciples.map(([title, description]) => <article key={title} className="border-t border-nx-border pt-5"><h3 className="font-bold mb-2">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}</div>
+          <div className="mt-10 rounded-2xl border border-nx-border bg-nx-surface p-7 sm:p-9">
+            <p className="text-xs uppercase tracking-wide font-bold text-nx-purple-light mb-4">The cleaning work lifecycle</p>
+            <p className="text-lg sm:text-xl font-semibold leading-relaxed">Enquiry → scope → quote → booking → assignment → clean → evidence → invoice → payment → customer care → repeat service</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-20 border-y border-nx-border">
+        <div className="max-w-5xl mx-auto text-center">
+          <SectionLabel>For cleaning businesses</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-5">A system your team can work with.</h2>
+          <p className="text-nx-muted leading-relaxed mb-8">Use Titan Zero through the Cleaning SaaS, connected WordPress plugins, Chrome extensions, mobile app, PWA and communication channels. Choose self-serve or get implementation and ongoing help through the managed service.</p>
+          <div className="flex justify-center flex-wrap gap-5"><Link to="/" className="text-sm font-semibold text-nx-purple-light">Explore the Cleaning system →</Link><Link to="/ai-workforce" className="text-sm font-semibold text-nx-purple-light">Meet the workforce →</Link><Link to="/works-everywhere" className="text-sm font-semibold text-nx-purple-light">See every surface →</Link><Link to="/fully-managed" className="text-sm font-semibold text-nx-purple-light">Managed service →</Link></div>
+        </div>
+      </section>
+    </main>
+  </>
+}

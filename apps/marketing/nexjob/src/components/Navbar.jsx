@@ -4,13 +4,22 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import { appRoutes, APP_ACCESS_AVAILABLE, APP_SIGNUP_AVAILABLE } from '../config'
 import { getCurrentSiteContext, getSiteNavigation } from '../config/siteContext'
 
+function actionDisabled(item) {
+  if (!item.action) return false
+  if (item.disabled || !item.href) return true
+  if (item.href === appRoutes.login) return !APP_ACCESS_AVAILABLE
+  if (item.href === appRoutes.signup) return !APP_SIGNUP_AVAILABLE
+  return false
+}
+
 function SiteLink({ item, closeMenu = () => {} }) {
   const href = item.href || ''
   const active = href.startsWith('/') && window.location.pathname === href
   const children = item.children || []
+  const disabled = actionDisabled(item)
   const className = `block whitespace-nowrap px-3 py-2 rounded-lg text-sm transition-colors ${active ? 'text-nx-text bg-white/5' : 'text-nx-muted hover:text-nx-text hover:bg-white/5'}`
-  const parent = item.action && (item.disabled || !href || !APP_ACCESS_AVAILABLE)
-    ? <button type="button" disabled aria-disabled="true" aria-label={`${item.label} unavailable`} title="Unavailable in this review preview" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
+  const parent = item.action && disabled
+    ? <button type="button" disabled aria-disabled="true" aria-label={`${item.label} unavailable`} title="Unavailable in this review build" className={`${className} opacity-60 cursor-not-allowed`}>{item.label}</button>
     : item.external || href.startsWith('https://')
       ? <a href={href || '#'} onClick={closeMenu} className={className}>{item.label}</a>
       : <Link to={href || '/'} onClick={closeMenu} className={className}>{item.label}{children.length > 0 && <ChevronDown size={14} aria-hidden="true" className="ml-1 inline-block" />}</Link>
@@ -33,12 +42,10 @@ function ConfiguredNavbar({ context }) {
   const mobileToggleRef = useRef(null)
   const nav = getSiteNavigation(context)
   const brand = context.kind === 'industry' ? 'Titan Zero Cleaning' : 'Titan Zero'
-  const accountActions = context.kind === 'hub'
-    ? [
-        { label: 'Sign in', href: appRoutes.login, external: true, action: true },
-        { label: 'Get started', href: appRoutes.signup, external: true, action: true, disabled: !APP_SIGNUP_AVAILABLE },
-      ]
-    : [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
+  const accountActions = [
+    { label: 'Sign in', href: appRoutes.login, external: true, action: true },
+    { label: 'Sign up', href: appRoutes.signup, external: true, action: true },
+  ]
 
   useEffect(() => {
     if (!mobileOpen) return undefined
@@ -70,7 +77,7 @@ function ConfiguredNavbar({ context }) {
       <div className="mt-3 border-t border-nx-border pt-3">
         {accountActions.map((item) => <SiteLink key={item.label} item={item} closeMenu={() => setMobileOpen(false)} />)}
       </div>
-      {context.kind !== 'hub' && <a href="https://titanzero.io/" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-nx-muted">Titan Zero platform</a>}
+      {context.kind !== 'hub' && <Link to="/titan-zero" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-nx-muted">What is Titan Zero?</Link>}
     </div>}
   </nav>
 }
