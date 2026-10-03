@@ -22,7 +22,7 @@ import {
   type StorageClient,
 } from "../../../../../packages/storage/src/index";
 import {
-  companyNativeVisitChecklistManifest,
+  companyNativeCleaningJobsManifest,
   companyNativeWorkOrdersVisitsManifest,
 } from "../../../../../packages/storage/src/company-native-schema-manifest";
 
@@ -116,7 +116,7 @@ async function provisionCompanies(input: {
     await identity.putExternalBinding({
       binding_id: `browser-login-${company.id}`,
       provider: issuer,
-      subject: company.user.id,
+      subject: userA.id,
       actor_id: actorId,
       company_id: company.id,
       status: "active",
@@ -124,7 +124,6 @@ async function provisionCompanies(input: {
   }
 
   for (const companyId of [companyA, companyB, companyC]) {
-    const isNewCleaningCompany = companyId === companyB;
     const placement = await provisionSqliteCompanyPlacement({
       registry: {
         storage: registryStorage,
@@ -134,8 +133,8 @@ async function provisionCompanies(input: {
       },
       company_id: companyId,
       company_name: companyId,
-      schema_version: isNewCleaningCompany
-        ? companyNativeVisitChecklistManifest.schema_version
+      schema_version: companyId === companyB || companyId === companyC
+        ? companyNativeCleaningJobsManifest.schema_version
         : companyNativeWorkOrdersVisitsManifest.schema_version,
     });
     placementIds.set(companyId, placement.placement_id);
@@ -252,8 +251,8 @@ describe("Cleaning first-run browser journey", () => {
       TITAN_WEB_SESSION_SIGNING_SECRET: randomBytes(32).toString("base64url"),
       TITAN_WEB_IDENTITY_BINDINGS_JSON: JSON.stringify([
         { legacy_user_id: userA.id, legacy_account_id: userA.account, company_id: companyA, actor_id: actorId, device_id: deviceId },
-        { legacy_user_id: userB.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
-        { legacy_user_id: userC.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userA.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userA.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
       ]),
       TITAN_COMPANY_DATA_ROOT: storeRoot,
       E2E_DISABLE_LOGIN_RATE_LIMIT: "1",
@@ -298,6 +297,11 @@ describe("Cleaning first-run browser journey", () => {
     } finally { await aStore.close(); }
     expect((await context.request.get(`${baseUrl}/api/v1/visits/${ids.visit}/checklist`)).status()).toBe(503);
 
+    // Company choices are memberships attached to one stable external identity.
+    expect(await page.getByLabel("Company").count()).toBe(1);
+    await page.getByLabel("Company").selectOption(companyB);
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+
     await context.clearCookies();
     await page.addInitScript(() => {
       const nativeSetTimeout = window.setTimeout.bind(window);
@@ -313,10 +317,11 @@ describe("Cleaning first-run browser journey", () => {
       }) as typeof window.setTimeout;
     });
     await page.goto(`${baseUrl}/login`);
-    await page.getByLabel("Email").fill(userB.email);
-    await page.getByLabel("Password").fill(userB.password);
+    await page.getByLabel("Email").fill(userA.email);
+    await page.getByLabel("Password").fill(userA.password);
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    await page.getByLabel("Company").selectOption(companyB);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     const setupApiResponse = await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`);
     if (!setupApiResponse.ok()) throw new Error(`Cleaning setup GET ${setupApiResponse.status()}: ${await setupApiResponse.text()}\n${serverOutput}`);
@@ -334,10 +339,11 @@ describe("Cleaning first-run browser journey", () => {
     const loginUrl = new URL(page.url());
     expect(loginUrl.searchParams.get("next")).toBe("/app");
     await expectPage(page.getByRole("status")).toContainText("Your secure sign-in expired");
-    await page.getByLabel("Email").fill(userB.email);
-    await page.getByLabel("Password").fill(userB.password);
+    await page.getByLabel("Email").fill(userA.email);
+    await page.getByLabel("Password").fill(userA.password);
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    await page.getByLabel("Company").selectOption(companyB);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
 
     // Configure through the actual company-scoped browser form after the
@@ -387,18 +393,33 @@ describe("Cleaning first-run browser journey", () => {
       } });
     } finally { await bStore.close(); }
 
+    const bJobResponse = await context.request.post(`${baseUrl}/api/v1/cleaning/jobs`, { headers: { origin }, data: {
+      service_id: "domestic_recurring", client_id: ids.client, property_id: ids.property,
+      title: "Weekly home clean", scheduled_start: "2026-10-05T09:00:00.000Z", scheduled_end: "2026-10-05T11:00:00.000Z",
+    } });
+    expect(bJobResponse.status()).toBe(201);
+    const bJobResult = (await bJobResponse.json()).data;
+    expect(bJobResult).toMatchObject({ company_id: companyB, service_id: "domestic_recurring", service_setup_revision: 1,
+      pricing_snapshot: { mode: "hourly", fixed_price: null, hourly_rate: 42.5, currency: "AUD" },
+      recurrence_snapshot: { enabled: true, default_frequency: "weekly", supported_frequencies: ["weekly"] } });
+    const bRoundTripStore = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
+    const bNativeJob = (await bRoundTripStore.query<{ company_id: string; service_id: string; service_setup_revision: number;
+      service_pricing_snapshot: string; service_recurrence_snapshot: string }>(
+      "SELECT company_id,service_id,service_setup_revision,service_pricing_snapshot,service_recurrence_snapshot FROM jobs WHERE id=$1",
+      [bJobResult.job_id],
+    )).rows[0];
+    expect(bNativeJob).toMatchObject({ company_id: companyB, service_id: "domestic_recurring", service_setup_revision: 1 });
+    expect(JSON.parse(bNativeJob!.service_pricing_snapshot)).toMatchObject({ mode: "hourly", hourly_rate: 42.5, currency: "AUD" });
+    expect(JSON.parse(bNativeJob!.service_recurrence_snapshot)).toMatchObject({ enabled: true, default_frequency: "weekly" });
+    expect((await bRoundTripStore.query<{ company_id: string; job_id: string }>("SELECT company_id,job_id FROM visits WHERE id=$1", [bJobResult.visit_id])).rows[0])
+      .toEqual({ company_id: companyB, job_id: bJobResult.job_id });
+    await bRoundTripStore.close();
+
     // A different authenticated company with a non-Cleaning profile cannot
     // read or mutate the saved Cleaning configuration.
-    await context.clearCookies();
-    await page.goto(`${baseUrl}/login`);
-    await page.getByLabel("Email").fill(userA.email);
-    await page.getByLabel("Password").fill(userA.password);
-    await page.getByRole("button", { name: "Sign In" }).click();
-    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    await page.getByLabel("Company").selectOption(companyA);
+    await expectPage(page.getByLabel("Company")).toHaveValue(companyA);
     expect((await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(409);
-    if (await page.getByLabel("Company").count() === 0) {
-      throw new Error(`Company switcher is absent from authenticated app: ${await page.locator("body").innerText()}\n${serverOutput}`);
-    }
     const bStoreAfterA = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
     try {
       const settings = JSON.parse((await bStoreAfterA.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyB])).rows[0]!.settings);
@@ -448,6 +469,27 @@ describe("Cleaning first-run browser journey", () => {
           recurrence: { enabled: true, supported_frequencies: ["monthly"], default_frequency: "monthly" },
         } } });
     } finally { await cStore.close(); }
+
+    const cJobResponse = await context.request.post(`${baseUrl}/api/v1/cleaning/jobs`, { headers: { origin }, data: {
+      service_id: "deep_clean", client_id: ids.client, property_id: ids.property,
+      title: "Deep clean", scheduled_start: "2026-10-06T09:00:00.000Z", scheduled_end: "2026-10-06T13:00:00.000Z",
+    } });
+    expect(cJobResponse.status()).toBe(201);
+    const cJobResult = (await cJobResponse.json()).data;
+    expect(cJobResult).toMatchObject({ company_id: companyC, service_id: "deep_clean", service_setup_revision: 1,
+      pricing_snapshot: { mode: "fixed", fixed_price: 275, hourly_rate: null, currency: "AUD" },
+      recurrence_snapshot: { enabled: true, default_frequency: "monthly", supported_frequencies: ["monthly"] } });
+    const cRoundTripStore = createSqliteStorage(join(storeRoot, `${cPlacementId}.sqlite`));
+    const cNative = await cRoundTripStore.query<{ company_id: string; service_id: string; service_setup_revision: number;
+      service_pricing_snapshot: string; service_recurrence_snapshot: string }>(
+      "SELECT company_id,service_id,service_setup_revision,service_pricing_snapshot,service_recurrence_snapshot FROM jobs WHERE id=$1",
+      [cJobResult.job_id],
+    );
+    expect(cNative.rows[0]).toMatchObject({ company_id: companyC, service_id: "deep_clean", service_setup_revision: 1 });
+    expect(JSON.parse(cNative.rows[0]!.service_pricing_snapshot)).toMatchObject({ mode: "fixed", fixed_price: 275, currency: "AUD" });
+    expect((await cRoundTripStore.query<{ company_id: string; job_id: string }>("SELECT company_id,job_id FROM visits WHERE id=$1", [cJobResult.visit_id])).rows[0])
+      .toEqual({ company_id: companyC, job_id: cJobResult.job_id });
+    await cRoundTripStore.close();
 
     const beforeSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(beforeSecondSwitch).toBeTruthy();

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
   companyNativeVisitChecklistManifest,
+  companyNativeCleaningJobsManifest,
   companyNativeWorkOrdersManifest,
   companyNativeWorkOrdersVisitsManifest,
 } from "../../../../../../../packages/storage/src/company-native-schema-manifest";
@@ -39,6 +40,7 @@ const schemaVersions = Object.freeze([
   companyNativeWorkOrdersManifest.schema_version,
   companyNativeWorkOrdersVisitsManifest.schema_version,
   companyNativeVisitChecklistManifest.schema_version,
+  companyNativeCleaningJobsManifest.schema_version,
 ]);
 
 function failure(status: number, code: string, message: string, traceId: string) {

@@ -1,6 +1,7 @@
 import type { CurrentWebSession } from "../auth/current-session";
 import { getWebSessionRuntime } from "../auth/web-session-runtime";
 import {
+  companyNativeCleaningJobsManifest,
   companyNativeVisitChecklistManifest,
   companyNativeWorkOrdersManifest,
   companyNativeWorkOrdersVisitsManifest,
@@ -60,6 +61,7 @@ export async function initializeCleaningProfileForLogin(options: CleaningProfile
         companyNativeWorkOrdersManifest.schema_version,
         companyNativeWorkOrdersVisitsManifest.schema_version,
         companyNativeVisitChecklistManifest.schema_version,
+        companyNativeCleaningJobsManifest.schema_version,
       ]),
       operation: storage => ensureCleaningFirstRunProfile({ scope: options.issued.scope, storage }),
       environment: options.environment,

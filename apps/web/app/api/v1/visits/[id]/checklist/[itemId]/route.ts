@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateChecklistItemSchema } from "@titan-zero/domain";
 import { CompanyStorageResolutionError } from "../../../../../../../../../packages/storage/src/company-storage-resolver";
-import { companyNativeVisitChecklistManifest } from "../../../../../../../../../packages/storage/src/company-native-schema-manifest";
+import { companyNativeCleaningJobsManifest, companyNativeVisitChecklistManifest } from "../../../../../../../../../packages/storage/src/company-native-schema-manifest";
 import { isWebAuthSetupRequiredError } from "../../../../../../../lib/auth/web-session-runtime";
 import { withWebNativeCompanyStore } from "../../../../../../../lib/company-storage/request-runtime";
 import { logger } from "../../../../../../../lib/logger";
@@ -46,7 +46,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
   try {
     const result = await withWebNativeCompanyStore({
       request,
-      requiredSchemaVersion: companyNativeVisitChecklistManifest.schema_version,
+      requiredSchemaVersion: [companyNativeVisitChecklistManifest.schema_version, companyNativeCleaningJobsManifest.schema_version],
       operation: (client, session) => updateNativeVisitChecklistItem(client, session, ids.visitId, ids.itemId, parsed.data),
     });
     if (!result.authenticated) {

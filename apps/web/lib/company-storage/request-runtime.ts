@@ -107,7 +107,7 @@ export async function withVerifiedWebNativeCompanyStore<T>(input: {
  */
 export async function withWebNativeCompanyStore<T>(input: {
   request: Pick<Request, "headers">;
-  requiredSchemaVersion: string;
+  requiredSchemaVersion: string | readonly string[];
   operation(client: StorageClient, currentSession: CurrentWebSession): Promise<T>;
 }): Promise<{ authenticated: false } | { authenticated: true; value: T; currentSession: CurrentWebSession }> {
   const sessionRuntime = await getWebSessionRuntime();
