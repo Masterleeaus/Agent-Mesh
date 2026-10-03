@@ -38,7 +38,13 @@ jobs:
           pnpm --filter @titan-zero/storage typecheck
           pnpm --filter @titan-zero/storage test
       - name: Focused company-storage web consumer test
-        run: pnpm --filter @titan-zero/web exec vitest run lib/company-storage/consumer.test.ts
+        run: >-
+          pnpm --filter @titan-zero/web exec vitest run
+          lib/company-storage/consumer.test.ts
+          lib/company-storage/cleaning-profile-login.test.ts
+          lib/company-storage/vertical-pack-profile.test.ts
+          lib/visits/__tests__/native-checklist-route.test.ts
+          lib/auth/__tests__/post-login-destination.unit.test.ts
 
   directadmin-workforce:
     name: DirectAdmin Workforce Consumer
