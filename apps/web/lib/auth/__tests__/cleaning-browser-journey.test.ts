@@ -76,6 +76,9 @@ async function prepareLegacyDatabase(databasePath: string): Promise<void> {
       db.prepare("INSERT INTO schema_migrations(filename) VALUES(?)").run(filename);
     })();
   }
+  const addCompany = db.prepare("INSERT INTO companies(id,name) VALUES(?,?)");
+  addCompany.run(companyA, "Existing Profile Company");
+  addCompany.run(companyB, "New Cleaning Company");
   const addUser = db.prepare(`INSERT INTO users(id,company_id,email,full_name,password_hash,role)
     VALUES(?,?,?,?,?, 'owner')`);
   addUser.run(userA.id, companyA, userA.email, "Existing Profile Owner", await hash(userA.password, 4));
