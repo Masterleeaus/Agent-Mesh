@@ -140,7 +140,7 @@ export class WorkforceApi {
     }
     this.#snapshot = null;
     // The SDK gateway returns ingress acknowledgement only. Never forward an invented VERIFIED result.
-    if (receipt?.status !== 'REQUESTED' || receipt.correlation_id !== correlation_id || typeof receipt.receipt_id !== 'string' || !receipt.receipt_id) throw new Error('workforce-receipt-invalid');
+    if (receipt?.status !== 'REQUESTED' || receipt.correlation_id !== correlation_id || !boundedReceiptId(receipt.receipt_id)) throw new Error('workforce-receipt-invalid');
     return { company_id: context.company_id, state: 'REQUESTED', receipt_id: receipt.receipt_id,
       operation_id, correlation_id, work_id: action.work_id, evidence_refs: [] };
   }

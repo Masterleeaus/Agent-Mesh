@@ -151,7 +151,13 @@ test('unassigned READY work binds expected_assignee_id to null', async () => {
   assert.equal(intent[2].input.expected_assignee_id, null);
 });
 test('gateway response cannot promote request acknowledgement to verified or mismatch correlation', async () => {
-  for (const response of [{ status: 'VERIFIED', receipt_id: 'r', correlation_id: 'fixture-id' }, { status: 'REQUESTED', receipt_id: 'r', correlation_id: 'other' }]) {
+  for (const response of [
+    { status: 'VERIFIED', receipt_id: 'r', correlation_id: 'fixture-id' },
+    { status: 'REQUESTED', receipt_id: 'r', correlation_id: 'other' },
+    { status: 'REQUESTED', receipt_id: '../unsafe', correlation_id: 'fixture-id' },
+    { status: 'REQUESTED', receipt_id: 'header.payload.signature', correlation_id: 'fixture-id' },
+    { status: 'REQUESTED', receipt_id: `r${'x'.repeat(200)}`, correlation_id: 'fixture-id' },
+  ]) {
     const session = fixture(); session.intent = async () => response; const api = new WorkforceApi(session, () => 'fixture-id');
     await assert.rejects(api.control(context, { action: 'pause', work_id: 'w', reason: 'test' }), /receipt-invalid/);
   }
