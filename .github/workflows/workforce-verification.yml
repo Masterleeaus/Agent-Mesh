@@ -34,6 +34,8 @@ jobs:
       - name: "Run #1300 cleaning-company session-chain cases (3)"
         id: session_chain_3
         run: pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test ../../apps/directadmin/workforce/tests/bootstrap-session-chain.integration.mjs
+      - name: "Run #1300 packaged RAW transport and entrypoint cases"
+        run: node --test apps/directadmin/workforce/tests/bootstrap-raw.test.mjs
       - name: Run six Workforce production dependency cases
         if: "${{ always() && !cancelled() && steps.session_chain_3.outcome != 'skipped' }}"
         run: pnpm --filter @titan-zero/workforce exec tsx --tsconfig ../../apps/web/tsconfig.json --test src/production-dependencies.test.ts
