@@ -145,17 +145,34 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
       // Rebuild through the canonical ledger inside the append transaction. The
       // existing evidence table remains the durable owner; no parallel ledger.
       const history = await tx.query("SELECT payload FROM evidence WHERE company_id=$1 AND subject_type='work' AND subject_id=$2 AND evidence_type='gateway_execution' ORDER BY rowid", [company_id, work_id]);
-      const taskLineage = evidence.state === 'VERIFIED' ? verifiedTaskLineageFromProducerEvent(evidence) : null;
+      // The ExecutionGateway's immutable terminal evidence_id is the canonical
+      // persisted reference for this independent verification when the provider
+      // has no separate verification record ID. Never derive an ID from execution
+      // input or a caller-supplied label.
+      const verificationId = evidence.state === 'VERIFIED' && evidence.verification?.verified === true
+        ? (evidence.verification.verification_id === undefined
+          ? evidence.evidence_id
+          : typeof evidence.verification.verification_id === 'string' && evidence.verification.verification_id.trim()
+            ? evidence.verification.verification_id.trim()
+            : null)
+        : null;
+      if (evidence.state === 'VERIFIED' && evidence.verification?.verified === true && !verificationId) {
+        throw new Error('zero-verification-reference-invalid');
+      }
+      const verifiedEvidence = verificationId && evidence.verification?.verification_id !== verificationId
+        ? { ...evidence, verification: { ...evidence.verification, verification_id: verificationId } }
+        : evidence;
+      const taskLineage = verifiedEvidence.state === 'VERIFIED' ? verifiedTaskLineageFromProducerEvent(verifiedEvidence) : null;
       // The work order and actor originate from the current authority decision;
       // visit/task/disposition only come from equal execution and independent
       // reread contexts returned by the native company-store owner.
       const persistedEvidence = taskLineage ? {
-        ...evidence,
-        request_summary: { ...evidence.request_summary,
+        ...verifiedEvidence,
+        request_summary: { ...verifiedEvidence.request_summary,
           canonical_operation_context: taskLineage },
-        observed_result: { ...evidence.observed_result, ...taskLineage },
-        verification: { ...evidence.verification, ...taskLineage },
-      } : evidence;
+        observed_result: { ...verifiedEvidence.observed_result, ...taskLineage },
+        verification: { ...verifiedEvidence.verification, ...taskLineage },
+      } : verifiedEvidence;
       const ledger = new AcceptedEvidenceLedger();
       for (const row of history.rows) {
         const prior = JSON.parse(row.payload);
