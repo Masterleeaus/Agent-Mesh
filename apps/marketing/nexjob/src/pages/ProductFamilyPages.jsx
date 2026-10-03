@@ -8,30 +8,35 @@ const productAreas = [
     name: 'Bookings',
     wordpress: 'Collect cleaning service requests, property and room details, access needs, preferred times and recurring preferences. Booking availability and staff/resource selection remain governed by configured business rules.',
     chrome: 'Turn an approved page or conversation into a draft cleaning request. Review property, service, access and timing details, then pass the request to the canonical booking workflow for availability checks and any required approval.',
+    ai: 'Interprets enquiries, extracts service, property and timing details, flags missing information, and drafts customer responses. Availability and booking decisions stay rule-based and authorised.',
   },
   {
     id: 'invoicing',
     name: 'Invoicing',
     wordpress: 'Prepare invoices, receipts, credits and refunds, and track payment status and reconciliation. Present configured payment choices such as PayID, bank transfer, cash and optional card or gateway methods.',
     chrome: 'Review the current approved invoice or payment context and prepare a follow-up or reconciliation task. Financial changes must use the canonical invoice/payment capability and its required authority checks.',
+    ai: 'Extracts details from approved records, drafts payment reminders, and explains invoice status. It does not invent totals or mark a payment as received.',
   },
   {
     id: 'job-management',
     name: 'Job Management',
     wordpress: 'Manage work orders, assignments, status, tasks and checklists, time and materials, photos and evidence, and customer-facing job updates.',
     chrome: 'Capture approved job context from supported business pages, find the related work item, and prepare a follow-up or status action. The shared job system remains the source of business records.',
+    ai: 'Summarises job notes, drafts checklist or customer-update text, and highlights exceptions. It cannot create evidence or grant authority to mark work complete.',
   },
   {
     id: 'quotes',
     name: 'Quotes',
     wordpress: 'Prepare service scopes, line items and transparent options; track revisions, customer acceptance or rejection, signatures and related documents. Service tiers and payment-term choices remain separate settings.',
     chrome: 'Extract relevant details from an approved enquiry page and draft a quote for review. The quote remains a proposal until the authorised person or configured workflow accepts it.',
+    ai: 'Clarifies scope and drafts quote descriptions or options. Pricing calculations and quote acceptance remain governed by business rules and authority.',
   },
   {
     id: 'crm',
     name: 'CRM',
     wordpress: 'Keep CRM-lite customer, company and contact records, locations and assets, notes, history, custom fields and repeat-work context together with the service workflow.',
     chrome: 'Capture approved customer, contact and location details from a supported page, check the existing business context, and prepare a CRM update or follow-up for review.',
+    ai: 'Extracts contact details from approved context, summarises relationship history, and drafts follow-ups. Identity matching and record changes remain controlled by the CRM workflow.',
   },
 ]
 
@@ -93,7 +98,7 @@ function ProductFamilyLanding({ platform }) {
             <div className="flex items-center justify-between gap-3 mb-5"><span className="text-xs font-bold text-nx-purple-light">PRODUCT AREA {String(index + 1).padStart(2, '0')}</span><span className="rounded-full border border-nx-border px-3 py-1 text-[11px] text-nx-muted">Planned</span></div>
             <h2 className="text-2xl font-bold mb-3">Titan Zero {product.name}</h2>
             <p className="text-sm text-nx-muted leading-relaxed mb-5">{isWordPress ? product.wordpress : product.chrome}</p>
-            <p className="border-t border-nx-border pt-4 text-xs text-nx-muted"><strong className="text-nx-text">AI Assist:</strong> helps interpret, prepare or summarise this work; business rules and authority controls remain in charge.</p>
+            <p className="border-t border-nx-border pt-4 text-xs text-nx-muted"><strong className="text-nx-text">AI Assist:</strong> {product.ai}</p>
           </article>)}
         </div>
       </section>
