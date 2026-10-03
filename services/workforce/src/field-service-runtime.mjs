@@ -8,6 +8,7 @@ import { SqliteAuthorityStore, AuthorityContextResolver, WorkerAccessResolver, S
 import { ExecutionGateway, boundedAdapterCall, executionRequestFingerprint } from '../../../packages/tools/execution-gateway.mjs';
 import { GovernedExecutionRecovery, SqliteExecutionLifecycleStore } from '../../../packages/tools/governed-execution-recovery.mjs';
 import { AcceptedEvidenceLedger, rebuildJobProjection } from '../../../packages/tools/accepted-evidence-ledger.mjs';
+import { resolveAcceptedEvidenceReferencesInTransaction } from './accepted-evidence-reference-resolver.mjs';
 
 const CAPABILITY = 'crm.work_order.complete';
 const command = text => /^complete work order ([a-zA-Z0-9_-]+)$/i.exec(String(text).trim())?.[1] ?? null;
@@ -311,5 +312,9 @@ export async function createFieldServiceRuntime({ storage, workOrders, revalidat
     const verified = accepted_projections.some(projection => projection.status === 'VERIFIED' && accepted_evidence.some(e => e.evidence_id === projection.provenance.terminal_evidence_id && e.verification?.verified === true && e.verification.work_order_id === id));
     return { work, run, business, evidence, accepted_evidence, accepted_projections, outcome: verified && business?.status === 'completed' ? 'verified' : run?.state === 'FAILED' ? 'failed' : work.state.startsWith('WAITING') ? 'waiting' : 'unverified' };
   }
-  return Object.freeze({ ...bootstrap, project, lifecycleStore, recover: input => bootstrap.zeroDispatcher.recoverInterrupted(input) });
+  async function resolveAcceptedEvidenceReferences(criteria) {
+    return storage.transaction(tx => resolveAcceptedEvidenceReferencesInTransaction(tx, criteria));
+  }
+  return Object.freeze({ ...bootstrap, project, resolveAcceptedEvidenceReferences, lifecycleStore,
+    recover: input => bootstrap.zeroDispatcher.recoverInterrupted(input) });
 }
