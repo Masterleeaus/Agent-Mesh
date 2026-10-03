@@ -7,6 +7,8 @@ import { provisionSqliteCompanyPlacement } from "./company-placement-provisioner
 import { createCompanyPlacementBackup, restoreCompanyPlacementBackup, validateCompanyPlacementBackup } from "./company-placement-backup.js";
 import { createSqliteStorage } from "./sqlite-client.js";
 import { createSqliteCompanyStoreOpener } from "./company-store-opener.js";
+import { companyNativeWorkOrdersManifest } from "./company-native-schema-manifest.js";
+import { computeCompanyNativeSchemaManifestDigest, fingerprintCompanyNativeSchema } from "./company-native-schema-attestation.js";
 
 const paths: string[] = [];
 const closers: Array<() => Promise<void>> = [];
@@ -25,6 +27,58 @@ afterEach(async () => {
 });
 
 describe("company placement backup and restore", () => {
+  it("validates and restores an existing v1 native backup without upgrading its schema", async () => {
+    const f = await fixture();
+    const placement = {
+      company_id: "backup-v1", placement_id: "backup-v1-db", placement_revision: 1,
+      provider: "sqlite" as const, schema_version: companyNativeWorkOrdersManifest.schema_version,
+    };
+    const filePlacementId = "backup-v1-files";
+    await mkdir(join(f.registry.companyFileStoreRoot, filePlacementId), { mode: 0o700 });
+    const dbPath = join(f.registry.companyStoreRoot, `${placement.placement_id}.sqlite`);
+    const company = createSqliteStorage(dbPath);
+    await company.query(`CREATE TABLE titan_company_native_schema_migrations (
+      sequence INTEGER PRIMARY KEY, migration_id TEXT NOT NULL UNIQUE, sha256 TEXT NOT NULL)`);
+    await company.query(`CREATE TABLE titan_company_native_schema_attestation (
+      singleton_id TEXT PRIMARY KEY CHECK(singleton_id='COMPANY_NATIVE_FSM'), company_id TEXT NOT NULL,
+      placement_id TEXT NOT NULL, placement_revision INTEGER NOT NULL CHECK(placement_revision > 0),
+      schema_version TEXT NOT NULL, manifest_sha256 TEXT NOT NULL, schema_fingerprint_sha256 TEXT NOT NULL)`);
+    const migration = companyNativeWorkOrdersManifest.migrations[0]!;
+    const sql = await readFile(new URL(`../../../${migration.path}`, import.meta.url), "utf8");
+    for (const statement of sql.split(";").map(value => value.trim()).filter(Boolean)) await company.query(statement);
+    await company.query("INSERT INTO companies(id,name) VALUES($1,$2)", [placement.company_id, "V1 Company"]);
+    const fingerprint = await fingerprintCompanyNativeSchema(company);
+    const digest = computeCompanyNativeSchemaManifestDigest(companyNativeWorkOrdersManifest);
+    await company.query("INSERT INTO titan_company_native_schema_migrations(sequence,migration_id,sha256) VALUES($1,$2,$3)",
+      [migration.sequence, migration.migration_id, migration.sha256]);
+    await company.query(`INSERT INTO titan_company_native_schema_attestation
+      (singleton_id,company_id,placement_id,placement_revision,schema_version,manifest_sha256,schema_fingerprint_sha256)
+      VALUES('COMPANY_NATIVE_FSM',$1,$2,$3,$4,$5,$6)`,
+    [placement.company_id, placement.placement_id, placement.placement_revision, placement.schema_version, digest, fingerprint]);
+    await company.close();
+    await f.storage.query(`INSERT INTO titan_company_storage_placements
+      (company_id,placement_id,placement_revision,provider,schema_version,status) VALUES($1,$2,$3,$4,$5,'READY')`,
+    [placement.company_id, placement.placement_id, placement.placement_revision, placement.provider, placement.schema_version]);
+    await f.storage.query(`INSERT INTO titan_company_file_placements
+      (company_id,file_placement_id,file_placement_revision,provider,schema_version,status)
+      VALUES($1,$2,1,'localfs','localfs/1','READY')`, [placement.company_id, filePlacementId]);
+
+    const input = { ...f.registry, backupRoot: f.backupRoot, company_id: placement.company_id };
+    const backup = await createCompanyPlacementBackup(input);
+    expect(backup.manifest.schema_version).toBe(companyNativeWorkOrdersManifest.schema_version);
+    expect(await validateCompanyPlacementBackup({ ...input, bundle_id: backup.bundle_id }))
+      .toMatchObject({ schema_version: companyNativeWorkOrdersManifest.schema_version });
+    await restoreCompanyPlacementBackup({ ...input, bundle_id: backup.bundle_id });
+    const restored = createSqliteStorage(dbPath);
+    try {
+      expect((await restored.query<{ name: string }>("SELECT name FROM companies WHERE id=$1", [placement.company_id])).rows)
+        .toEqual([{ name: "V1 Company" }]);
+      expect((await restored.query<{ migration_id: string }>(
+        "SELECT migration_id FROM titan_company_native_schema_migrations ORDER BY sequence",
+      )).rows).toEqual([{ migration_id: "company-native-fsm/0001-work-orders" }]);
+    } finally { await restored.close(); }
+  });
+
   it("restores checksummed DB and files only to the same current company placement", async () => {
     const f = await fixture();
     const placement = await provisionSqliteCompanyPlacement({ registry: f.registry, company_id: "backup-co-a", company_name: "Company A" });
