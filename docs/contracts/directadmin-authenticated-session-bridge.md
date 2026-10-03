@@ -53,9 +53,14 @@ A disposable composed HTTP probe used the #812 browser helper and actual `.raw` 
 
 - GET `/v1/directadmin/context`
 - GET `/v1/directadmin/{titan_zero,titan_workforce,titan_operations,titan_web}/projection`
+- GET `/v1/directadmin/titan_workforce/receipts/{receipt_id}`
 - POST `/v1/directadmin/{titan_zero,titan_workforce,titan_operations,titan_web}/intents`
 - POST `/v1/directadmin/company` with `{ "company_id": "..." }`
 - POST `/v1/directadmin/logout`
+
+The receipt route is a read-only Workforce consumer. It accepts one bounded receipt ID path segment, with no query string or request body, and uses the same authenticated cookie, in-memory CSRF token, Origin and Fetch Metadata checks as other SDK routes. The bridge revalidates the current canonical session before and after the owner read and passes only the selected company/actor context. The owner must look up accepted evidence using that context; unknown and out-of-scope IDs return the same sanitized not-found response. The SDK validates the receipt schema, requested ID, selected company, verification marker and evidence reference before returning it to a plugin. A `REQUESTED` submission response is never promoted by this read path; only the canonical Workforce accepted-evidence owner can report `VERIFIED`.
+
+The #811 receipt projection exists in its current draft, but its HTTP route is not yet mounted. The #812/#1050 fixed relay selector also still needs this exact GET path before a deployed browser can reach the SDK consumer. This SDK contract does not edit or certify those host/Workforce seams.
 
 The Fetch gateway is not a listener, CLI or deployment. The launched #811/#812 host owns transport deadlines, rate limits and actual projection/intent owners. A successful SDK response reports `REQUESTED` only; the SDK does not authorize or execute business effects.
 

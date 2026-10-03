@@ -81,11 +81,20 @@ test('canonical #302 bootstrap authenticates DirectAdmin, issues selected-compan
 
   const bridge = new bridgeApi.DirectAdminSessionBridge({ origin: ORIGIN, audience: AUDIENCE, node_id: NODE_ID, sessions });
   const projectedCompanies = [];
+  const receiptReads = [];
   const gateway = gatewayApi.createDirectAdminGateway(bridge, {
     projection: async (plugin, context) => {
       projectedCompanies.push({ plugin, company_id: context.company_id });
       return { company_id: context.company_id, source: `canonical-${plugin}`, freshness: new Date().toISOString(),
         evidence_refs: [], data: { schema: 'titan.directadmin.integration-projection/v1', company_id: context.company_id } };
+    },
+    receipt: async (plugin, receipt_id, context) => {
+      receiptReads.push({ plugin, receipt_id, actor_id: context.actor_id, company_id: context.company_id,
+        company_ids: [...context.company_ids] });
+      return Object.freeze({ schema: 'titan.directadmin.workforce-receipt.v1', company_id: context.company_id,
+        receipt_id, operation_id: 'operation-receipt-1', correlation_id: 'correlation-receipt-1', work_id: 'work-1',
+        state: 'VERIFIED', verification_status: 'verified',
+        verification_method: 'company-scoped-workforce-reread-and-reassignment-event', evidence_refs: [receipt_id] });
     },
     requestIntent: async () => { throw new Error('intent-not-used-in-read-only-integration'); },
   }, flow);
@@ -138,6 +147,11 @@ test('canonical #302 bootstrap authenticates DirectAdmin, issues selected-compan
     .map(plugin => session.projection(plugin)));
   assert.deepEqual(projections.map(value => value.company_id), ['company-selected', 'company-selected', 'company-selected']);
   assert.deepEqual(projectedCompanies.map(value => value.company_id), ['company-selected', 'company-selected', 'company-selected']);
+  const selectedReceipt = await session.receipt('titan_workforce', 'accepted-evidence-selected');
+  assert.equal(selectedReceipt.company_id, 'company-selected');
+  assert.equal(selectedReceipt.state, 'VERIFIED');
+  assert.deepEqual(receiptReads, [{ plugin: 'titan_workforce', receipt_id: 'accepted-evidence-selected',
+    actor_id: 'actor-canonical-1', company_id: 'company-selected', company_ids: ['company-selected'] }]);
 
   // A real company switch changes the canonical session revision and purges every consumer.
   await session.switchCompany('company-other');
@@ -149,6 +163,10 @@ test('canonical #302 bootstrap authenticates DirectAdmin, issues selected-compan
   const switchedProjection = await session.projection('titan_zero');
   assert.equal(switchedProjection.company_id, 'company-other');
   assert.deepEqual(projectedCompanies.at(-1), { plugin: 'titan_zero', company_id: 'company-other' });
+  const switchedReceipt = await session.receipt('titan_workforce', 'accepted-evidence-other');
+  assert.equal(switchedReceipt.company_id, 'company-other');
+  assert.deepEqual(receiptReads.at(-1), { plugin: 'titan_workforce', receipt_id: 'accepted-evidence-other',
+    actor_id: 'actor-canonical-1', company_id: 'company-other', company_ids: ['company-other'] });
 
   // Reusing the consumed page nonce cannot mint a second Titan identity.
   const replay = await gateway(new Request(`${ORIGIN}/v1/directadmin/bootstrap`, { method: 'POST',
