@@ -286,6 +286,31 @@ expect_true($allowed===false && $class==='UNKNOWN','shell chaining must fail clo
 [$class,, $allowed]=command_policy('cat /etc/passwd');
 expect_true($allowed===false && $class==='UNKNOWN','absolute-path reads must fail closed');
 
+foreach([
+ 'cat README.md',
+ 'grep -F marker README.md',
+ 'head -n 1 README.md',
+ 'tail -n 1 README.md',
+ 'ls -la',
+ 'du -sh',
+ 'stat README.md',
+ 'php -l README.php',
+ 'date -f .ssh/id_rsa',
+ 'df -h README.md',
+ 'pwd README.md',
+ 'id .ssh/id_rsa'
+] as $pathSelectingCommand){
+ [$pathClass,, $pathAllowed]=command_policy($pathSelectingCommand);
+ expect_true($pathAllowed===false&&$pathClass==='UNKNOWN',$pathSelectingCommand.' must not select or reopen a user pathname from a child process');
+}
+
+[$class,, $allowed]=command_policy('pwd');
+expect_true($allowed===true&&$class==='READ','pathless working-directory inspection must remain available');
+[$class,, $allowed]=command_policy('df -h');
+expect_true($allowed===true&&$class==='VERIFY','pathless disk-space diagnostics must remain available');
+[$class,, $allowed]=command_policy('php --version');
+expect_true($allowed===true&&$class==='VERIFY','PHP runtime diagnostics must remain available without a source path');
+
 [$class,, $allowed]=command_policy('npm exec rm -rf .');
 expect_true($allowed===false && $class==='UNKNOWN','package exec must fail closed because package-manager commands can run account code');
 foreach(['npm test','pnpm run verify','composer test','npm --version','node --test'] as $scriptCommand){
