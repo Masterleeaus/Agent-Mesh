@@ -141,6 +141,11 @@ function integration_expect_successful_pwd(string $html,string $home):void{
  integration_expect(preg_match('~<div class="term">([^<]*)</div>~',$html,$matches)===1,'successful command output must render in the terminal');
  integration_expect(trim(htmlspecialchars_decode($matches[1],ENT_QUOTES))===$home,'pwd output must be limited to the selected account HOME');
 }
+function integration_expect_terminal_blocked(string $html,string $case,string $canary):void{
+ integration_expect(strpos($html,'Exit code: 126')!==false,$case.' must be rejected before command execution');
+ integration_expect(strpos($html,'Blocked by Developer Portal policy')!==false,$case.' must report the fixed terminal policy denial');
+ integration_expect(strpos($html,$canary)===false,$case.' must never render the synthetic secret canary');
+}
 function integration_init_git_repo(string $path,string $home):void{
  integration_expect(mkdir($path,0700,true),'isolated Git repository directory must be created');
  $descriptors=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
@@ -345,6 +350,54 @@ $stdinEnvironment=$common+[
 ];
 [$html]=integration_run_role($root,'admin',$stdinEnvironment,$body);
 integration_expect_successful_pwd($html,$homeA);
+
+$inspectionHome=$homeA.'/repo-inspection';
+integration_expect(mkdir($inspectionHome,0700,true),'ordinary repository inspection HOME must be created');
+$canary='SYNTHETIC_PORTAL_SECRET_CANARY_'.bin2hex(random_bytes(8));
+integration_expect(file_put_contents($inspectionHome.'/README.md',"repo-safe-marker\nordinary repository fixture\n")!==false,'ordinary repository inspection fixture must be written');
+integration_expect(mkdir($inspectionHome.'/.ssh',0700),'synthetic private-key directory must be created');
+integration_expect(file_put_contents($inspectionHome.'/.ssh/id_rsa',"-----BEGIN RSA PRIVATE KEY-----\n".$canary."\n-----END RSA PRIVATE KEY-----\n")!==false,'synthetic private-key canary fixture must be written');
+integration_expect(mkdir($inspectionHome.'/.git',0700),'synthetic Git metadata directory must be created');
+integration_expect(file_put_contents($inspectionHome.'/.git/config',"[remote \\\"origin\\\"]\n url = https://fixture.invalid/$canary\n")!==false,'synthetic Git config canary fixture must be written');
+integration_expect(file_put_contents($inspectionHome.'/.env',"FIXTURE_SECRET=$canary\n")!==false,'synthetic environment config canary fixture must be written');
+integration_expect(file_put_contents($inspectionHome.'/.npmrc',"//registry.fixture.invalid/:_authToken=$canary\n")!==false,'synthetic package config canary fixture must be written');
+$outsideCanaryPath=$fixture.'/outside-home-secret';
+integration_expect(file_put_contents($outsideCanaryPath,"OUTSIDE_HOME_$canary\n")!==false,'outside-HOME synthetic canary fixture must be written');
+integration_expect(symlink($inspectionHome.'/.ssh/id_rsa',$inspectionHome.'/in-home-key-link'),'in-HOME key symlink fixture must be created');
+integration_expect(symlink($outsideCanaryPath,$inspectionHome.'/outside-key-link'),'outside-HOME key symlink fixture must be created');
+$terminalPost=static function(string $command)use($common,$route,$token,$inspectionHome,$root):string{
+ $fields=['csrf'=>$token,'cwd'=>$inspectionHome,'command'=>$command,'run'=>'1'];
+ $postBody=http_build_query($fields);
+ $environment=$common+[
+  'REQUEST_METHOD'=>'POST','SCRIPT_NAME'=>$route,'QUERY_STRING'=>'',
+  'POST'=>$postBody,'CONTENT_LENGTH'=>(string)strlen($postBody)
+ ];
+ [$result]=integration_run_role($root,'admin',$environment);
+ return $result;
+};
+$ordinaryInspection=$terminalPost('cat README.md');
+integration_expect(strpos($ordinaryInspection,'Exit code: 0')!==false&&strpos($ordinaryInspection,'repo-safe-marker')!==false,'actual admin role must retain ordinary HOME-contained repository file inspection');
+$ordinaryGrep=$terminalPost('grep -F repo-safe-marker README.md');
+integration_expect(strpos($ordinaryGrep,'Exit code: 0')!==false&&strpos($ordinaryGrep,'repo-safe-marker')!==false,'actual admin role must retain bounded grep for an ordinary repository file');
+$ordinaryHead=$terminalPost('head -n 1 README.md');
+integration_expect(strpos($ordinaryHead,'Exit code: 0')!==false&&strpos($ordinaryHead,'repo-safe-marker')!==false,'actual admin role must retain bounded head for an ordinary repository file');
+$secretReadAttempts=[
+ 'cat relative SSH key path'=>'cat .ssh/id_rsa',
+ 'grep filtering a private-key PEM marker'=>'grep -v BEGIN .ssh/id_rsa',
+ 'head on a private-key file'=>'head -n 2 .ssh/id_rsa',
+ 'tail skipping a private-key marker'=>'tail -n +2 .ssh/id_rsa',
+ 'grep pattern-file option on a private-key file'=>'grep -f .ssh/id_rsa README.md',
+ 'dot-prefixed private-key path'=>'cat ./.ssh/id_rsa',
+ 'parent-segment path trick'=>'cat nested/../.ssh/id_rsa',
+ 'Git config path'=>'cat .git/config',
+ 'environment config path'=>'grep -n SYNTHETIC .env',
+ 'package-manager auth config path'=>'head -n 1 .npmrc',
+ 'in-HOME symlink to private-key fixture'=>'cat in-home-key-link',
+ 'outside-HOME symlink to canary fixture'=>'cat outside-key-link'
+];
+foreach($secretReadAttempts as $case=>$command){
+ integration_expect_terminal_blocked($terminalPost($command),$case,$canary);
+}
 
 $nulTerminatedBody=$body."\0";
 $nulWithoutLengthEnvironment=$common+[
