@@ -619,84 +619,39 @@ function directadmin_terminal_cwd($requested){
  elseif(strpos($requested,'/')!==0) $requested=$home.'/'.$requested;
  return directadmin_terminal_path_components_safe($requested,$home,$home,'directory',true);
 }
+function directadmin_terminal_restore_cwd($restore){
+ if(is_string($restore)&&$restore!==''&&@chdir($restore)) return true;
+ $home=realpath(home_dir());
+ return $home!==false&&@chdir($home);
+}
+/**
+ * Pin the validated directory as this request's cwd before starting a child.
+ * proc_open's string cwd would resolve the pathname again after validation.
+ */
+function directadmin_terminal_enter_verified_cwd($path){
+ if(!is_string($path)||$path===''||strlen($path)>4096) return null;
+ $home=realpath(home_dir());
+ if($home===false||!path_within($path,$home)||directadmin_terminal_path_sensitive($path)||realpath($path)!==$path) return null;
+ $before=@lstat($path);
+ if(!is_array($before)||(($before['mode']&0170000)!==0040000)) return null;
+ $restore=getcwd();
+ if(!is_string($restore)||$restore===''||!@chdir($path)) return null;
+ $actual=getcwd();
+ $opened=@stat('.');
+ $named=@lstat($path);
+ $matches=$actual===$path&&is_array($opened)&&is_array($named)
+  &&(($opened['mode']&0170000)===0040000)&&(($named['mode']&0170000)===0040000)
+  &&(string)$opened['dev']===(string)$before['dev']&&(string)$opened['ino']===(string)$before['ino']
+  &&(string)$named['dev']===(string)$before['dev']&&(string)$named['ino']===(string)$before['ino']
+  &&path_within($actual,$home);
+ if(!$matches){directadmin_terminal_restore_cwd($restore);return null;}
+ return $restore;
+}
 function directadmin_terminal_checked_arguments($parts,$cwd){
  if(!is_array($parts)||!isset($parts[0])||!is_string($parts[0])) return null;
- $bin=strtolower($parts[0]);$arguments=array_slice($parts,1);$out=[$parts[0]];
- $resolveOperands=static function(array $operands,string $expected,string $base):?array{
-  if(!$operands||count($operands)>16) return null;
-  $resolved=[];
-  foreach($operands as $operand){
-   if(!is_string($operand)) return null;
-   $path=directadmin_terminal_path_components_safe($operand,home_dir(),$base,$expected,false);
-   if($path===null) return null;
-   $resolved[]=$path;
-  }
-  return $resolved;
- };
- if($bin==='cat'||$bin==='stat'){
-  $paths=$resolveOperands($arguments,$bin==='cat'?'file':'either',$cwd);
-  return $paths===null?null:array_merge($out,$paths);
- }
- if($bin==='head'||$bin==='tail'){
-  $offset=0;
-  if(isset($arguments[0])&&$arguments[0]==='-n'){
-   if(!isset($arguments[1])||preg_match('/^[1-9][0-9]{0,2}$/D',$arguments[1])!==1||(int)$arguments[1]>200) return null;
-   $out[]='-n';$out[]=$arguments[1];$offset=2;
-  }elseif(isset($arguments[0])&&strpos($arguments[0],'-')===0){
-   if(preg_match('/^-n([1-9][0-9]{0,2})$/D',$arguments[0],$matches)!==1||(int)$matches[1]>200) return null;
-   $out[]='-n'.$matches[1];$offset=1;
-  }
-  $paths=$resolveOperands(array_slice($arguments,$offset),'file',$cwd);
-  return $paths===null?null:array_merge($out,$paths);
- }
- if($bin==='grep'){
-  $offset=0;
-  while(isset($arguments[$offset])&&is_string($arguments[$offset])&&$arguments[$offset]!==''&&$arguments[$offset][0]==='-'){
-   if(preg_match('/^-[Finvwxc]+$/D',$arguments[$offset])!==1) return null;
-   $out[]=$arguments[$offset++];
-  }
-  if(!isset($arguments[$offset])||$arguments[$offset]===''||$arguments[$offset][0]==='-'||strlen($arguments[$offset])>2048) return null;
-  $pattern=$arguments[$offset++];
-  $paths=$resolveOperands(array_slice($arguments,$offset),'file',$cwd);
-  return $paths===null?null:array_merge($out,[$pattern],$paths);
- }
- if($bin==='ls'){
-  $offset=0;
-  while(isset($arguments[$offset])&&is_string($arguments[$offset])&&$arguments[$offset]!==''&&$arguments[$offset][0]==='-'){
-   if(preg_match('/^-[alh]+$/D',$arguments[$offset])!==1) return null;
-   $out[]=$arguments[$offset++];
-  }
-  if($offset===count($arguments)) return $out;
-  $paths=$resolveOperands(array_slice($arguments,$offset),'either',$cwd);
-  return $paths===null?null:array_merge($out,$paths);
- }
- if($bin==='du'){
-  $offset=0;
-  while(isset($arguments[$offset])&&is_string($arguments[$offset])&&$arguments[$offset]!==''&&$arguments[$offset][0]==='-'){
-   if(preg_match('/^-[sh]+$/D',$arguments[$offset])!==1) return null;
-   $out[]=$arguments[$offset++];
-  }
-  if($offset===count($arguments)) return $out;
-  $paths=$resolveOperands(array_slice($arguments,$offset),'either',$cwd);
-  return $paths===null?null:array_merge($out,$paths);
- }
- if($bin==='php'){
-  if(count($arguments)!==2||$arguments[0]!=='-l') return null;
-  $paths=$resolveOperands([$arguments[1]],'file',$cwd);
-  return $paths===null?null:array_merge($out,['-l'],$paths);
- }
- if($bin==='php'){
-  return in_array($arguments,[['--version'],['-v'],['--modules'],['-m']],true)?array_merge($out,$arguments):null;
- }
- if($bin==='node'){
-  return in_array($arguments,[['--version'],['-v']],true)?array_merge($out,$arguments):null;
- }
- if($bin==='df'){
-  if($arguments===[]||$arguments===['-h']) return array_merge($out,$arguments);
-  return null;
- }
- if(in_array($bin,['pwd','whoami','id','uname','date'],true)) return $arguments===[]?$out:null;
- if($bin==='du'&&$arguments===[]) return $out;
+ [$class,$reason,$allowed]=command_policy(implode(' ',$parts));
+ if(!$allowed)return null;
+ $parts[0]=strtolower($parts[0]);
  return $parts;
 }
 function directadmin_git_metadata_path_safe($path,$home,$expectDirectory){
@@ -880,18 +835,22 @@ function directadmin_git_environment(){
 function directadmin_git_probe($context,$arguments){
  $argv=array_merge(['/usr/bin/env','timeout','5s'],directadmin_git_command_args($context,$arguments));
  $spec=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
- $proc=@proc_open($argv,$spec,$pipes,$context['root'],directadmin_git_environment());
- if(!is_resource($proc)) return ['status'=>'unknown','output'=>null,'reason'=>'spawn_failed'];
- fclose($pipes[0]);
- $out=stream_get_contents($pipes[1],8193);
- $err=stream_get_contents($pipes[2],8193);
- fclose($pipes[1]); fclose($pipes[2]);
- $rc=proc_close($proc);
- if(!is_string($out)||!is_string($err)) return ['status'=>'unknown','output'=>null,'reason'=>'output_read_failed'];
- if(strlen($out)>8192||strlen($err)>8192) return ['status'=>'unknown','output'=>null,'reason'=>'output_oversized'];
- if(in_array($rc,[124,137,143],true)) return ['status'=>'unknown','output'=>null,'reason'=>'timeout'];
- if($rc!==0) return ['status'=>'unknown','output'=>null,'reason'=>'command_failed'];
- return ['status'=>'success','output'=>trim($out),'reason'=>null];
+ $restore=directadmin_terminal_enter_verified_cwd($context['root']??null);
+ if($restore===null) return ['status'=>'unknown','output'=>null,'reason'=>'cwd_changed'];
+ try{
+  $proc=@proc_open($argv,$spec,$pipes,null,directadmin_git_environment(),['bypass_shell'=>true]);
+  if(!is_resource($proc)) return ['status'=>'unknown','output'=>null,'reason'=>'spawn_failed'];
+  fclose($pipes[0]);
+  $out=stream_get_contents($pipes[1],8193);
+  $err=stream_get_contents($pipes[2],8193);
+  fclose($pipes[1]); fclose($pipes[2]);
+  $rc=proc_close($proc);
+  if(!is_string($out)||!is_string($err)) return ['status'=>'unknown','output'=>null,'reason'=>'output_read_failed'];
+  if(strlen($out)>8192||strlen($err)>8192) return ['status'=>'unknown','output'=>null,'reason'=>'output_oversized'];
+  if(in_array($rc,[124,137,143],true)) return ['status'=>'unknown','output'=>null,'reason'=>'timeout'];
+  if($rc!==0) return ['status'=>'unknown','output'=>null,'reason'=>'command_failed'];
+  return ['status'=>'success','output'=>trim($out),'reason'=>null];
+ }finally{directadmin_terminal_restore_cwd($restore);}
 }
 function directadmin_git_probe_output($probe){
  if(!is_array($probe)||($probe['status']??null)!=='success'||!array_key_exists('output',$probe)||!is_string($probe['output'])) return null;
@@ -962,13 +921,15 @@ function command_policy($cmd){
  if(strpos($cmd,'$(')!==false || strpos($cmd,'${')!==false) return ['UNKNOWN','Shell expansion is not allowed.',false];
  $parts=preg_split('/\\s+/',$cmd);
  $bin=strtolower($parts[0]??'');
- $readonly=['pwd','whoami','id','uname','date','df','du','ls','stat','cat','head','tail','grep','git','php','node','npm','pnpm','composer'];
+ $arguments=array_slice($parts,1);
+ $fileReaders=['cat','head','tail','grep','ls','du','stat'];
+ if(in_array($bin,$fileReaders,true)) return ['UNKNOWN','Direct file and directory inspection is disabled because request-time path checks cannot prevent concurrent pathname replacement.',false];
+ $readonly=['pwd','whoami','id','uname','date','df','git','php','node','npm','pnpm','composer'];
  if(!in_array($bin,$readonly,true)) return ['UNKNOWN','Command is not in the Developer Portal allowlist.',false];
- foreach(array_slice($parts,1) as $arg){
+ foreach($arguments as $arg){
   if(strpos($arg,'../')!==false || $arg==='..' || (strlen($arg)>0 && $arg[0]==='/')) return ['UNKNOWN','Absolute paths and parent traversal are not allowed in terminal arguments.',false];
  }
  if($bin==='git'){
-  $arguments=array_slice($parts,1);
   $allowed=[
    ['status'],
    ['status','--short'],
@@ -988,17 +949,19 @@ function command_policy($cmd){
  }
  if(in_array($bin,['npm','pnpm','composer'],true)) return ['UNKNOWN','Package-manager commands can execute project code or load configuration and are blocked in the account terminal.',false];
  if($bin==='php'){
-  $sub=strtolower($parts[1]??'');
-  if(in_array($sub,['-v','--version','-m','--modules'],true)&&count($parts)===2) return ['VERIFY','PHP runtime diagnostic.',true];
-  if($sub==='-l' && count($parts)===3) return ['VERIFY','PHP syntax verification.',true];
-  return ['UNKNOWN','Arbitrary PHP execution is blocked; only runtime info and syntax lint are allowed.',false];
+  if(in_array($arguments,[['-v'],['--version'],['-m'],['--modules']],true)) return ['VERIFY','PHP runtime diagnostic.',true];
+  return ['UNKNOWN','PHP accepts only version and module diagnostics; file linting and arbitrary PHP execution are blocked.',false];
  }
  if($bin==='node'){
-  $sub=strtolower($parts[1]??'');
-  if(in_array($sub,['-v','--version'],true)&&count($parts)===2) return ['VERIFY','Node runtime diagnostic.',true];
+  if(in_array($arguments,[['-v'],['--version']],true)) return ['VERIFY','Node runtime diagnostic.',true];
   return ['UNKNOWN','Node script execution is blocked because account code can read HOME files.',false];
  }
- return ['READ','Allowed read-only command.',true];
+ if($bin==='df'){
+  if($arguments===[]||$arguments===['-h']) return ['VERIFY','Disk-space diagnostic.',true];
+  return ['UNKNOWN','Disk-space diagnostics do not accept filesystem path operands.',false];
+ }
+ if(in_array($bin,['pwd','whoami','id','uname','date'],true)&&$arguments===[]) return ['READ','Allowlisted identity or environment diagnostic.',true];
+ return ['UNKNOWN','Command arguments are outside the bounded terminal policy.',false];
 }
 function run_cmd($cmd,$cwd){
  [$class,$reason,$allowed]=command_policy($cmd);
@@ -1017,31 +980,34 @@ function run_cmd($cmd,$cwd){
   $cwd=$context['root'];
   $environment=directadmin_git_environment();
  }
- $argv=['/usr/bin/env','timeout','30s','/bin/bash','--noprofile','--norc','-c','exec "$@"','tda-command'];
- foreach($programParts as $part)$argv[]=$part;
+ $argv=array_merge(['/usr/bin/env','timeout','30s'],$programParts);
  $spec=[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']];
- $proc=@proc_open($argv,$spec,$pipes,$cwd,$environment);
- if(!is_resource($proc)) return ['Unable to start command.',127,$class];
- fclose($pipes[0]); stream_set_blocking($pipes[1],false); stream_set_blocking($pipes[2],false);
- $limit=524288; $out=''; $start=microtime(true); $truncated=false;
- while(true){
-  $chunk=(string)stream_get_contents($pipes[1]).(string)stream_get_contents($pipes[2]);
-  if($chunk!==''){
-   $room=$limit-strlen($out);
-   if($room>0)$out.=substr($chunk,0,$room);
-   if(strlen($chunk)>$room){$truncated=true;@proc_terminate($proc,9);break;}
+ $restore=directadmin_terminal_enter_verified_cwd($cwd);
+ if($restore===null) return ['Blocked by Developer Portal policy [READ]: Working directory changed during terminal setup.',126,'READ'];
+ try{
+  $proc=@proc_open($argv,$spec,$pipes,null,$environment,['bypass_shell'=>true]);
+  if(!is_resource($proc)) return ['Unable to start command.',127,$class];
+  fclose($pipes[0]); stream_set_blocking($pipes[1],false); stream_set_blocking($pipes[2],false);
+  $limit=524288; $out=''; $start=microtime(true); $truncated=false;
+  while(true){
+   $chunk=(string)stream_get_contents($pipes[1]).(string)stream_get_contents($pipes[2]);
+   if($chunk!==''){
+    $room=$limit-strlen($out);
+    if($room>0)$out.=substr($chunk,0,$room);
+    if(strlen($chunk)>$room){$truncated=true;@proc_terminate($proc,9);break;}
+   }
+   $status=proc_get_status($proc);
+   if(!$status['running']) break;
+   if(microtime(true)-$start>31){@proc_terminate($proc,9);$out.="\n[terminated: timeout]";break;}
+   usleep(20000);
   }
-  $status=proc_get_status($proc);
-  if(!$status['running']) break;
-  if(microtime(true)-$start>31){@proc_terminate($proc,9);$out.="\n[terminated: timeout]";break;}
-  usleep(20000);
- }
- $out.=(string)stream_get_contents($pipes[1]).(string)stream_get_contents($pipes[2]);
- fclose($pipes[1]); fclose($pipes[2]);
- if(strlen($out)>$limit){$out=substr($out,0,$limit);$truncated=true;}
- $rc=proc_close($proc);
- if($truncated)$out.="\n[output truncated at 512 KiB and process terminated]";
- return [redact_text($out),$rc,$class];
+  $out.=(string)stream_get_contents($pipes[1]).(string)stream_get_contents($pipes[2]);
+  fclose($pipes[1]); fclose($pipes[2]);
+  if(strlen($out)>$limit){$out=substr($out,0,$limit);$truncated=true;}
+  $rc=proc_close($proc);
+  if($truncated)$out.="\n[output truncated at 512 KiB and process terminated]";
+  return [redact_text($out),$rc,$class];
+ }finally{directadmin_terminal_restore_cwd($restore);}
 }
 function diagnostics(){
  $bins=['git','ssh','ssh-keygen','php','composer','node','npm','pnpm','curl']; $r=[];
@@ -1303,7 +1269,7 @@ html,body{background:transparent;color:var(--tda-text);font-family:Inter,system-
  }
  echo '</div>';
  if($canMutate) {
- echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Read, verify and build/test commands only. Shell chaining, redirection, package installation, Git mutation, destructive and privileged commands fail closed.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
+ echo '<div class="card"><h3>Scoped terminal</h3><p class="muted">Pathless identity, runtime, disk and exact read-only Git diagnostics only. Direct file/directory inspection, PHP lint, builds/tests, shell chaining, redirection, package installation, Git mutation, destructive and privileged commands are blocked.</p><form method="post" action="?pipe_post=yes"><input type="hidden" name="csrf" value="'.h($token).'"><label>Working directory</label><input name="cwd" value="'.h($cwd).'"><label>Command</label><textarea name="command" rows="3" placeholder="git status"></textarea><button name="run" value="1">Run</button></form>';
  if($rc!==null) echo '<p>Class: '.h($commandClass).' · Exit code: '.h($rc).'</p><div class="term">'.h($output).'</div>'; echo '</div>';
  } else {
   echo '<div class="card"><h3>Operator actions</h3><p class="muted">Terminal and SSH key mutation are available only on the DirectAdmin admin route. This role is intentionally read-only.</p></div>';
