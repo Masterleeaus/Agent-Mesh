@@ -31,8 +31,8 @@ const companyA = "browser-company-existing";
 const companyB = "browser-company-new";
 const actorId = "browser-cleaner-actor";
 const deviceId = "browser-web-device";
-const userA = { id: "browser-user-existing", email: "existing@example.test", password: "password-browser-a", account: "legacy-account-existing" };
-const userB = { id: "browser-user-new", email: "new-cleaner@example.test", password: "password-browser-b", account: "legacy-account-new" };
+const userA = { id: "browser-user-existing", email: "existing@example.test", password: "password-browser-a", account: companyA };
+const userB = { id: "browser-user-new", email: "new-cleaner@example.test", password: "password-browser-b", account: companyB };
 const ids = {
   client: "40000000-0000-4000-8000-000000000001",
   property: "40000000-0000-4000-8000-000000000002",
