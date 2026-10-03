@@ -145,6 +145,56 @@ $wrongEmbeddedType='ssh-ed25519 '.$rsaParts[1].' synthetic+fixture';
 expect_true(!valid_pubkey($wrongEmbeddedType),'declared algorithm must match the SSH blob algorithm');
 expect_true(add_key($splitEd25519)==='Invalid public key format.','malformed key must be rejected before key-directory setup');
 expect_true(!is_dir($home.'/.ssh'),'invalid public key must not create or alter the SSH directory');
+$authorizedDirectory=$home.'/.ssh';$authorizedPath=$authorizedDirectory.'/authorized_keys';
+expect_true(mkdir($authorizedDirectory,0700),'isolated authorized_keys directory must be created');
+$edMaterial=$edParts[0].' '.$edParts[1];$rsaMaterial=$rsaParts[0].' '.$rsaParts[1];
+$oddCommentLines=["Alice's \"laptop",'unmatched " comment',"comment ending in backslash\\"];
+foreach($oddCommentLines as $comment){
+ $oddLine='command="echo hello world",no-pty '.$edMaterial.' '.$comment;
+ $oddIdentity=directadmin_authorized_key_identity($oddLine);
+ expect_true(is_array($oddIdentity)&&$oddIdentity['identity']===directadmin_authorized_key_identity($syntheticEd25519)['identity'],'authorized-key identity must ignore free-form comments containing apostrophes, unmatched quotes, or trailing backslashes');
+}
+expect_true(directadmin_authorized_key_identity(" \t ")===null,'blank authorized_keys lines must not count as keys');
+$commentedEdLine='# '.$syntheticEd25519.' commented-out-key';
+expect_true(directadmin_authorized_key_identity($commentedEdLine)===null,'commented-out public-key material must not count as an active authorization');
+expect_true(file_put_contents($authorizedPath,$commentedEdLine."\n")!==false,'comment-only authorized_keys fixture must be written');
+chmod($authorizedPath,0600);
+expect_true(add_key($syntheticEd25519)==='Public key installed.','commented-out matching material must not block installing a real public key');
+expect_true(file_get_contents($authorizedPath)===$commentedEdLine."\n".$syntheticEd25519."\n",'installing a key must preserve an unrelated comment line');
+$optionedEdLine='command="echo hello world",no-pty '.$edMaterial.' '.$oddCommentLines[0];
+expect_true(file_put_contents($authorizedPath,$optionedEdLine)!==false,'isolated no-final-newline authorized_keys fixture must be written');
+chmod($authorizedPath,0600);
+$expectedEdIdentity=directadmin_authorized_key_identity($syntheticEd25519);
+$existingEdIdentity=directadmin_authorized_key_identity($optionedEdLine);
+expect_true(is_array($expectedEdIdentity)&&$existingEdIdentity['identity']===$expectedEdIdentity['identity'],'authorized-key identity must ignore options and comments while parsing quoted options safely');
+expect_true($existingEdIdentity['fingerprint']===$expectedEdIdentity['fingerprint'],'same key material with different comments must produce the same SHA-256 fingerprint');
+expect_true(add_key($syntheticEd25519.' different comment')==='Key already installed.','a key already present with another comment/options line must not be duplicated');
+expect_true(file_get_contents($authorizedPath)===$optionedEdLine,'deduplicating a restricted key must not append a second unrestricted authorization');
+expect_true(add_key($syntheticRsa)==='Public key installed.','a distinct key must be appended successfully');
+expect_true(file_get_contents($authorizedPath)===$optionedEdLine."\n".$syntheticRsa."\n",'append must add a separating LF when existing authorized_keys has no final newline');
+expect_true((fileperms($authorizedPath)&0777)===0600&&(fileowner($authorizedPath)===posix_geteuid()),'atomic key writes must preserve the DirectAdmin owner and restrictive authorized_keys mode');
+expect_true(add_key($syntheticRsa.' another comment')==='Key already installed.','same RSA key material with a changed comment must remain a duplicate');
+$duplicateEdLines=$commentedEdLine."\n".$optionedEdLine."\n".$edMaterial.' trailing-backslash\\' ."\n".$rsaMaterial."\n";
+expect_true(file_put_contents($authorizedPath,$duplicateEdLines)!==false,'duplicate-comment revocation fixture must be written');
+chmod($authorizedPath,0600);
+$beforeRevokeFingerprints=fingerprints();
+expect_true(count($beforeRevokeFingerprints)===3&&$beforeRevokeFingerprints[0][0]===0&&$beforeRevokeFingerprints[1][0]===1&&$beforeRevokeFingerprints[2][0]===2,'blank/comment lines must be excluded from displayed key row indexes');
+expect_true(remove_key(0,$expectedEdIdentity['fingerprint'])==='Key revoked.','revoking one displayed duplicate fingerprint row must report success');
+expect_true(file_get_contents($authorizedPath)===$commentedEdLine."\n".$rsaMaterial."\n",'revocation must remove every active matching key-material line and preserve comment lines and unrelated keys');
+$reorderedKeys=$commentedEdLine."\n".$rsaMaterial." rsa-row\n".$optionedEdLine."\n";
+expect_true(file_put_contents($authorizedPath,$reorderedKeys)!==false,'reordered two-client revocation fixture must be written');
+chmod($authorizedPath,0600);
+expect_true(remove_key(0,$expectedEdIdentity['fingerprint'])==='Key list changed; reload before revoking.','stale displayed key identity must not revoke a different key that moved into the old row');
+expect_true(file_get_contents($authorizedPath)===$reorderedKeys,'a stale revocation attempt must not alter authorized_keys');
+expect_true(remove_key(1,$expectedEdIdentity['fingerprint'])==='Key revoked.','a refreshed row index paired with its displayed fingerprint must revoke the selected key');
+expect_true(file_get_contents($authorizedPath)===$commentedEdLine."\n".$rsaMaterial." rsa-row\n",'fresh revocation must preserve unrelated comments and the other account key');
+expect_true(remove_key(0,'SHA256:invalid')==='Key list changed; reload before revoking.','malformed displayed fingerprints must fail closed');
+$outsideAuthorizedKeys=$root.'/outside-authorized-keys';
+expect_true(file_put_contents($outsideAuthorizedKeys,'sentinel-do-not-change')!==false,'outside symlink sentinel must be created');
+expect_true(unlink($authorizedPath)&&symlink($outsideAuthorizedKeys,$authorizedPath),'authorized_keys symlink failure fixture must be installed');
+expect_true(add_key($syntheticEd25519)==='Unable to update authorized_keys safely.','unsafe authorized_keys path must return an accurate failure instead of success');
+expect_true(file_get_contents($outsideAuthorizedKeys)==='sentinel-do-not-change','unsafe authorized_keys symlink target must remain untouched');
+expect_true(unlink($authorizedPath),'unsafe authorized_keys symlink fixture must be removed');
 $terminalFields='csrf='.str_repeat('a',64).'&add_key=1';
 $terminalLength=strlen($terminalFields);
 expect_true(directadmin_request_body_length_matches($terminalFields,$terminalLength),'exact CONTENT_LENGTH must match the unmodified form body');
@@ -186,6 +236,9 @@ expect_true((directadmin_parse_form_body($terminalFields."\r\n")['add_key']??nul
 expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\n\n");},'multiple form terminators must remain rejected');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&csrf=second');},'duplicate form fields must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf%5B%5D=valid');},'array form fields must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&remove_key=0');},'key revocation without a displayed fingerprint binding must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&expected_fingerprint=SHA256%3Ainvalid');},'a displayed fingerprint without a revoke row must fail closed');
+expect_rejected(static function(){directadmin_parse_form_body('csrf=valid&remove_key=0&expected_fingerprint%5B%5D=SHA256%3Ainvalid');},'array fingerprint bindings must fail closed');
 expect_rejected(static function(){directadmin_parse_form_body('csrf=%ZZ');},'malformed percent encoding must fail closed');
 
 expect_rejected(static function()use($terminalFields){directadmin_parse_form_body($terminalFields."\0");},'raw terminal NUL must remain rejected by the strict parser outside the stdin transport boundary');
@@ -233,8 +286,37 @@ expect_true($allowed===false && $class==='UNKNOWN','shell chaining must fail clo
 [$class,, $allowed]=command_policy('cat /etc/passwd');
 expect_true($allowed===false && $class==='UNKNOWN','absolute-path reads must fail closed');
 
+foreach([
+ 'cat README.md',
+ 'grep -F marker README.md',
+ 'head -n 1 README.md',
+ 'tail -n 1 README.md',
+ 'ls -la',
+ 'du -sh',
+ 'stat README.md',
+ 'php -l README.php',
+ 'date -f .ssh/id_rsa',
+ 'df -h README.md',
+ 'pwd README.md',
+ 'id .ssh/id_rsa'
+] as $pathSelectingCommand){
+ [$pathClass,, $pathAllowed]=command_policy($pathSelectingCommand);
+ expect_true($pathAllowed===false&&$pathClass==='UNKNOWN',$pathSelectingCommand.' must not select or reopen a user pathname from a child process');
+}
+
+[$class,, $allowed]=command_policy('pwd');
+expect_true($allowed===true&&$class==='READ','pathless working-directory inspection must remain available');
+[$class,, $allowed]=command_policy('df -h');
+expect_true($allowed===true&&$class==='VERIFY','pathless disk-space diagnostics must remain available');
+[$class,, $allowed]=command_policy('php --version');
+expect_true($allowed===true&&$class==='VERIFY','PHP runtime diagnostics must remain available without a source path');
+
 [$class,, $allowed]=command_policy('npm exec rm -rf .');
-expect_true($allowed===false && $class==='WRITE','package exec mutation path must fail closed');
+expect_true($allowed===false && $class==='UNKNOWN','package exec must fail closed because package-manager commands can run account code');
+foreach(['npm test','pnpm run verify','composer test','npm --version','node --test'] as $scriptCommand){
+ [$scriptClass,, $scriptAllowed]=command_policy($scriptCommand);
+ expect_true($scriptAllowed===false&&$scriptClass==='UNKNOWN',$scriptCommand.' must not execute project code with access to account HOME');
+}
 
 [$class,, $allowed]=command_policy('php -r phpinfo();');
 expect_true($allowed===false && $class==='UNKNOWN','arbitrary PHP execution must fail closed');
