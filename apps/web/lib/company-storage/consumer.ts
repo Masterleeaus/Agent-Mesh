@@ -1,4 +1,4 @@
-import type { CompanyStorageResolver, VerifiedCompanyScope } from "../../../../packages/storage/src/company-storage-resolver";
+import type { CompanyStorageResolver } from "../../../../packages/storage/src/company-storage-resolver";
 import type { StorageClient } from "../../../../packages/storage/src/index";
 import { getCompanyNativeSchemaManifest } from "../../../../packages/storage/src/company-native-schema-manifest";
 import { verifyCompanyNativeSchemaAttestation } from "../../../../packages/storage/src/company-native-schema-attestation";
@@ -29,8 +29,6 @@ export async function withNativeCompanyStore<T>(input: {
   resolver: CompanyStorageResolver<StorageClient>;
   /** Verified identity context returned by the #302 session ingress. */
   current_session: CurrentWebSession;
-  /** Verified scope returned by that same current-session ingress. */
-  scope: VerifiedCompanyScope;
   /** Native manifest required by this operation (for example visit_tasks v2). */
   required_schema_version: string;
   signal?: AbortSignal;
@@ -39,10 +37,11 @@ export async function withNativeCompanyStore<T>(input: {
   input.signal?.throwIfAborted();
   const companyId = input.current_session.context.company_id;
   const context = input.current_session.context;
-  if (input.scope.kind !== "authenticated") {
+  const scope = input.current_session.scope;
+  if (scope.kind !== "authenticated") {
     throw new Error("native-company-session-scope-mismatch");
   }
-  const current = input.scope.current;
+  const current = scope.current;
   if (current.company_id !== context.company_id
     || current.actor_id !== context.actor_id
     || current.session_id !== context.session_id
@@ -53,7 +52,7 @@ export async function withNativeCompanyStore<T>(input: {
     || current.authority_neutral !== context.authority_neutral) {
     throw new Error("native-company-session-scope-mismatch");
   }
-  const placement = await input.resolver.resolve(input.scope, { signal: input.signal });
+  const placement = await input.resolver.resolve(scope, { signal: input.signal });
   if (placement.company_id !== companyId) {
     throw new Error("native-company-placement-mismatch");
   }

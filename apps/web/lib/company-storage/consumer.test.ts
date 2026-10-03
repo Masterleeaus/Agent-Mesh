@@ -26,7 +26,7 @@ const scope: VerifiedCompanyScope = {
   current: {
     company_id: "company-a", actor_id: "actor-a", session_id: "session-a",
     session_revision: 2, context_revision: "membership-2", audience: "titan-web",
-    expires_at: "2026-10-03T00:00:00.000Z", authority_neutral: true,
+    expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(), authority_neutral: true,
   },
 };
 // Same identity projection returned by #302's createCurrentWebSessionIngress:
@@ -36,8 +36,9 @@ const currentSession: CurrentWebSession = Object.freeze({
   context: Object.freeze({
     company_id: "company-a", actor_id: "actor-a", device_id: "device-a", session_id: "session-a",
     session_revision: 2, context_revision: "membership-2", audience: "titan-web",
-    expires_at: "2026-10-03T00:00:00.000Z", authority_neutral: true as const,
+    expires_at: scope.current.expires_at, authority_neutral: true as const,
   }),
+  scope,
   operationCompanyIds: Object.freeze(["company-a"] as const),
 });
 
@@ -140,7 +141,7 @@ describe("native company-store consumer", () => {
         scopeRevalidator: { assertCurrent: async () => undefined },
       });
       const result = await withNativeCompanyStore({
-        resolver, current_session: currentSession, scope,
+        resolver, current_session: currentSession,
         required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version,
         operation: async client => ({
           file: (await client.query<{ file: string }>("PRAGMA database_list")).rows.find(row => row.file)?.file,
@@ -162,7 +163,7 @@ describe("native company-store consumer", () => {
     const operation = vi.fn(async (client: StorageClient) => client.dialect);
 
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope,
+      resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).resolves.toBe("sqlite");
 
@@ -179,7 +180,7 @@ describe("native company-store consumer", () => {
     const f = await setup();
     const operation = vi.fn();
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: { ...currentSession, context: { ...currentSession.context, company_id: "company-b" } }, scope,
+      resolver: f.resolver, current_session: { ...currentSession, context: { ...currentSession.context, company_id: "company-b" } },
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toThrow("native-company-session-scope-mismatch");
     expect(f.opener.open).not.toHaveBeenCalled();
@@ -193,12 +194,12 @@ describe("native company-store consumer", () => {
       kind: "public-capability",
       capability: {
         resource_type: "visit", resource_id: "visit-a", action: "read",
-        company_id: "company-a", capability_id: "capability-a", expires_at: "2026-10-03T00:00:00.000Z",
+        company_id: "company-a", capability_id: "capability-a", expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
       },
       requested: { resource_type: "visit", resource_id: "visit-a", action: "read" },
     };
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope: publicScope,
+      resolver: f.resolver, current_session: { ...currentSession, scope: publicScope },
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toThrow("native-company-session-scope-mismatch");
     expect(f.registry.findByCompanyId).not.toHaveBeenCalled();
@@ -210,7 +211,7 @@ describe("native company-store consumer", () => {
     const f = await setup({ status: "PROVISIONING" });
     const operation = vi.fn();
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope,
+      resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toMatchObject({ code: "placement-not-ready" } satisfies Partial<CompanyStorageResolutionError>);
     expect(f.opener.open).not.toHaveBeenCalled();
@@ -220,7 +221,7 @@ describe("native company-store consumer", () => {
   it("fails closed when the registry says READY but the opened database has no canonical attestation marker", async () => {
     const f = await setup({ attested: false });
     const operation = vi.fn();
-    await expect(withNativeCompanyStore({ resolver: f.resolver, current_session: currentSession, scope,
+    await expect(withNativeCompanyStore({ resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation }))
       .rejects.toMatchObject({ code: "company-native-schema-marker-missing" });
     expect(f.client.close).toHaveBeenCalledTimes(1);
@@ -232,7 +233,7 @@ describe("native company-store consumer", () => {
     const f = await setup({ schemaVersion: v1, attestedSchemaVersion: v1 });
     const operation = vi.fn();
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope,
+      resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toThrow("native-company-schema-version-unsupported");
     expect(f.client.close).toHaveBeenCalledTimes(1);
@@ -243,7 +244,7 @@ describe("native company-store consumer", () => {
     const f = await setup({ assertPhysicalPath: async () => { throw new Error("store-path-identity-mismatch"); } });
     const operation = vi.fn();
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope,
+      resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toMatchObject({ code: "company-store-binding-mismatch" });
     expect(f.client.close).toHaveBeenCalledTimes(1);
@@ -257,7 +258,7 @@ describe("native company-store consumer", () => {
       return "unverified";
     });
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope,
+      resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toMatchObject({ code: "placement-stale" });
     expect(f.client.close).toHaveBeenCalledTimes(1);
@@ -266,7 +267,7 @@ describe("native company-store consumer", () => {
   it("rejects a restored database attested to another company before the operation", async () => {
     const f = await setup({ attestedCompanyId: "company-b" });
     const operation = vi.fn();
-    await expect(withNativeCompanyStore({ resolver: f.resolver, current_session: currentSession, scope,
+    await expect(withNativeCompanyStore({ resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation }))
       .rejects.toMatchObject({ code: "company-native-schema-company-mismatch" });
     expect(f.client.close).toHaveBeenCalledTimes(1);
@@ -279,7 +280,7 @@ describe("native company-store consumer", () => {
     const operation = vi.fn(async () => "write-returned");
 
     await expect(withNativeCompanyStore({
-      resolver: f.resolver, current_session: currentSession, scope,
+      resolver: f.resolver, current_session: currentSession,
       required_schema_version: companyNativeWorkOrdersVisitsManifest.schema_version, operation,
     })).rejects.toMatchObject({
       name: "NativeCompanyStoreCloseAfterOperationError",
