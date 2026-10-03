@@ -24,8 +24,8 @@ import {
   companyNativeWorkOrdersVisitsManifest,
 } from "../../../../../packages/storage/src/company-native-schema-manifest";
 
-const origin = "https://cleaning-browser.example.test";
-const issuer = `titan:web-login:${origin}`;
+let origin: string;
+let issuer: string;
 const companyA = "browser-company-existing";
 const companyB = "browser-company-new";
 const actorId = "browser-cleaner-actor";
@@ -205,6 +205,10 @@ describe("Cleaning first-run browser journey", () => {
     webRoot = process.cwd();
     repoRoot = resolve(webRoot, "../..");
     fixtureDirectory = await mkdtemp(join(tmpdir(), "titan-cleaning-browser-"));
+    const port = await unusedPort();
+    const baseUrl = `http://localhost:${port}`;
+    origin = baseUrl;
+    issuer = `titan:web-login:${origin}`;
     const appDatabase = join(fixtureDirectory, "legacy-app.sqlite");
     const identityPath = join(fixtureDirectory, "global-registry.sqlite");
     const storeRoot = join(fixtureDirectory, "company-stores");
@@ -214,8 +218,6 @@ describe("Cleaning first-run browser journey", () => {
     await prepareLegacyDatabase(appDatabase);
     await provisionCompanies({ identityPath, storeRoot, fileRoot });
 
-    const port = await unusedPort();
-    const baseUrl = `http://localhost:${port}`;
     const runtimeEnvironment = {
       ...process.env,
       NODE_ENV: "development",
