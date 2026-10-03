@@ -13,7 +13,7 @@ const hubColumns = {
     ['Pricing', '/pricing'],
     ['Managed service', '/fully-managed'],
   ],
-  Titan Zero: [
+  'Titan Zero': [
     ['What is Titan Zero?', '/titan-zero'],
     ['Privacy & data', '/faq#privacy'],
     ['AI Assist & approvals', '/faq#ai-assist'],
