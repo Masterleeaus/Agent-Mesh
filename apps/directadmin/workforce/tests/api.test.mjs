@@ -172,7 +172,7 @@ test('receipt consumer reads a company-bound typed owner receipt and reports onl
     state: receipt.state, verification: { status: 'VERIFIED',
       method: 'company-scoped-workforce-reread-and-reassignment-event' }, evidence_refs: receipt.evidence_refs };
   const session = fixture(); let reads = 0;
-  session.receipt = async (plugin, receiptId) => { reads++; assert.equal(plugin, 'titan_workforce'); assert.equal(receiptId, 'receipt1'); return { context, receipt }; };
+  session.receipt = async (plugin, receiptId) => { reads++; assert.equal(plugin, 'titan_workforce'); assert.equal(receiptId, 'receipt1'); return receipt; };
   const api = new WorkforceApi(session);
   assert.deepEqual(await api.receipt(context, 'receipt1', { operation_id: 'operation1', correlation_id: 'correlation1', work_id: 'work1' }), displayedReceipt);
   assert.equal(reads, 1);
@@ -189,7 +189,7 @@ test('receipt route ID stays path-safe while canonical receipt fields accept bou
     verification_status: 'verified', verification_method: 'company-scoped-workforce-reread-and-reassignment-event',
     evidence_refs: [receiptId] };
   const session = fixture(); let reads = 0;
-  session.receipt = async (plugin, id) => { reads++; assert.equal(plugin, 'titan_workforce'); assert.equal(id, receiptId); return { context, receipt }; };
+  session.receipt = async (plugin, id) => { reads++; assert.equal(plugin, 'titan_workforce'); assert.equal(id, receiptId); return receipt; };
   const api = new WorkforceApi(session);
   const detail = await api.receipt(context, receiptId, { operation_id: operationId, correlation_id: correlationId, work_id: workId });
   assert.ok(workId.length > 200);
@@ -209,27 +209,24 @@ test('receipt lookup never infers verification from a reference and rejects stal
     verification_status: 'verified', verification_method: 'company-scoped-workforce-reread-and-reassignment-event',
     evidence_refs: ['receipt1'] };
   for (const value of [
-    { context, receipt: { ...good, company_id: 'company-b' } },
-    { context, receipt: { ...good, state: 'REQUESTED' } },
-    { context, receipt: { ...good, verification_status: 'unverified' } },
-    { context, receipt: { ...good, verification_method: 'provider-ack' } },
-    { context, receipt: { ...good, evidence_refs: ['unrelated-work-reference'] } },
-    { context, receipt: { ...good, correlation_id: 'other' } },
+    { ...good, company_id: 'company-b' },
+    { ...good, state: 'REQUESTED' },
+    { ...good, verification_status: 'unverified' },
+    { ...good, verification_method: 'provider-ack' },
+    { ...good, evidence_refs: ['unrelated-work-reference'] },
+    { ...good, correlation_id: 'other' },
     { receipt: good },
-    good,
-    { context: { ...context, actor_id: 'actor-b' }, receipt: good },
-    { context: { ...context, session_revision: 2 }, receipt: good },
-    { context: { ...context, context_revision: 'ctx-old' }, receipt: good },
+    { context, receipt: good }, // The SDK owns the envelope and returns only its validated typed receipt.
   ]) {
     const session = fixture(); session.receipt = async () => value;
     await assert.rejects(new WorkforceApi(session).receipt(context, 'receipt1', {
       operation_id: 'operation1', correlation_id: 'correlation1', work_id: 'work1' }), /receipt|context-changed/);
   }
-  const session = fixture(); let reads = 0; session.receipt = async () => { reads++; return { context, receipt: good }; };
+  const session = fixture(); let reads = 0; session.receipt = async () => { reads++; return good; };
   session.connect = async () => ({ ...context, context_revision: 'changed' });
   await assert.rejects(new WorkforceApi(session).receipt(context, 'receipt1'), /context-changed/);
   assert.equal(reads, 0, 'stale context stops before the receipt endpoint');
-  const switched = fixture(); let connects = 0; switched.receipt = async () => ({ context, receipt: good });
+  const switched = fixture(); let connects = 0; switched.receipt = async () => good;
   switched.connect = async () => ++connects === 1 ? context : { ...context, context_revision: 'changed-after-read' };
   await assert.rejects(new WorkforceApi(switched).receipt(context, 'receipt1'), /context-changed/);
   assert.equal(connects, 2, 'the consumer discards a receipt when context changes during the read');
@@ -240,7 +237,7 @@ test('receipt lookup never infers verification from a reference and rejects stal
   assert.equal(oldHostContextReads, 0, 'an unsupported receipt route does not make an unnecessary host request');
   const largeContext = { ...context, context_revision: `[5,"${'x'.repeat(1024)}"]` };
   const longRevisionHost = fixture(); longRevisionHost.connect = async () => largeContext;
-  longRevisionHost.receipt = async () => ({ context: largeContext, receipt: good });
+  longRevisionHost.receipt = async () => good;
   assert.deepEqual(await new WorkforceApi(longRevisionHost).receipt(largeContext, 'receipt1'), {
     schema: good.schema, company_id: good.company_id, receipt_id: good.receipt_id,
     operation_id: good.operation_id, correlation_id: good.correlation_id, work_id: good.work_id,

@@ -59,15 +59,11 @@ export class WorkforceApi {
         !boundedContextRevision(current.context_revision)) {
       throw new Error('workforce-context-changed');
     }
-    const value = await this.session.receipt('titan_workforce', receiptId);
-    const returnedContext = value?.context;
-    if (!returnedContext || typeof returnedContext !== 'object' || Array.isArray(returnedContext)) {
-      throw new Error('workforce-receipt-context-invalid');
-    }
-    if (returnedContext.company_id !== current.company_id || returnedContext.actor_id !== current.actor_id ||
-        returnedContext.session_revision !== current.session_revision ||
-        returnedContext.context_revision !== current.context_revision) throw new Error('workforce-context-changed');
-    const candidate = value.receipt;
+    // The shared SDK validates and accepts the `{context, receipt}` transport
+    // envelope internally, then returns the typed receipt itself. Revalidate
+    // our context on both sides of that read; do not require the SDK to expose
+    // or duplicate its authenticated envelope to plugin consumers.
+    const candidate = await this.session.receipt('titan_workforce', receiptId);
     const refs = candidate?.evidence_refs;
     if (!candidate || candidate.schema !== RECEIPT_SCHEMA || candidate.company_id !== context.company_id ||
         candidate.receipt_id !== receiptId || !boundedOwnerId(candidate.operation_id) || !boundedOwnerId(candidate.correlation_id) ||

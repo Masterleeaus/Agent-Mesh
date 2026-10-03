@@ -1,3 +1,5 @@
+// Provenance: adapted from the #1300 trusted RAW mount in PR #1395; this host
+// wrapper keeps its exact route and proof contract around the canonical #1049 gateway.
 import { directAdminSessionCookieHeader } from "../../../packages/titan-platform/src/security-session-credentials.js";
 
 export type DirectAdminBootstrapNonceIssue = Readonly<{

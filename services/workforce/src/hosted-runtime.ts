@@ -32,13 +32,14 @@ export type HostedWorkforceDependencies = {
   /** Actual observations of credential, authority, provider and evidence dependencies. */
   readiness(options?: { signal: AbortSignal }): Promise<{ authentication: boolean; authority: boolean; provider: boolean; evidence: boolean }>;
   /** Optional, separately commissioned #1049/#302 audience-bound session bridge.
-   * The module wraps the canonical SDK gateway factory; it must not reuse the
-   * Workforce conversation credential or carry DirectAdmin authority into Titan. */
+   * Production composition constructs the canonical SDK gateway from the
+   * operator module's session-service and bootstrap-provider ports; it must not
+   * reuse the Workforce conversation credential or carry DirectAdmin authority. */
   directAdmin?: {
     publicOrigin: string;
     createGateway: DirectAdminGatewayFactory;
-    /** Same canonical #302 flow used by createGateway's bootstrap provider.
-     * Omission leaves the first-session nonce path mounted but fail-closed. */
+    /** Same canonical #302 flow as bootstrapProvider; absence leaves nonce
+     * issuance mounted fail-closed while existing-session routes remain usable. */
     bootstrapNonceFlow?: DirectAdminBootstrapNonceFlow;
   };
   close?(options?: { signal: AbortSignal }): Promise<void>;
