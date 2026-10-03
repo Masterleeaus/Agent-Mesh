@@ -5,10 +5,11 @@ import {
   validateSession, type SessionBinding,
 } from './security-boundary.js';
 
-type IdentityStatus = 'active' | 'suspended' | 'revoked' | 'deleted';
+export type IdentityStatus = 'active' | 'suspended' | 'revoked' | 'deleted';
 type Actor = Readonly<{ actor_id: string; status: IdentityStatus }>;
 type Company = Readonly<{ company_id: string; status: IdentityStatus }>;
 type Membership = Readonly<{ actor_id: string; company_id: string; role: string; status: IdentityStatus }>;
+export type CurrentCompanyMembership = Membership & Readonly<{ revision: number }>;
 type Device = Readonly<{ device_id: string; actor_id: string; status: IdentityStatus }>;
 type ExternalBinding = Readonly<{
   binding_id: string; provider: string; subject: string;
@@ -491,6 +492,73 @@ export class IdentitySessionRegistry {
   }
   putMembership(value: Membership, expected: number | null): Promise<number> {
     return this.put('titan_security_memberships', { actor_id: value.actor_id, company_id: value.company_id, role: value.role, status: value.status }, ['actor_id', 'company_id'], [], expected);
+  }
+
+  /** Read one already-provisioned canonical company membership. This never
+   * creates or infers identity from a legacy user/profile row. */
+  async getMembership(actorId: string, companyId: string): Promise<CurrentCompanyMembership | null> {
+    requireSecurityId(actorId, 'actor_id');
+    requireSecurityId(companyId, 'company_id');
+    return this.transaction(async tx => {
+      const row = (await tx.query<RecordRow>(
+        `SELECT actor_id,company_id,role,status,revision FROM titan_security_memberships
+          WHERE actor_id=$1 AND company_id=$2`, [actorId, companyId],
+      )).rows[0];
+      if (!row) return null;
+      requireSecurityId(row.actor_id as string, 'actor_id');
+      requireSecurityId(row.company_id as string, 'company_id');
+      requireSecurityId(row.role as string, 'role');
+      if (!['active', 'suspended', 'revoked', 'deleted'].includes(row.status as string)) {
+        throw new Error('identity-status-invalid');
+      }
+      requireSecurityRevision(row.revision);
+      return Object.freeze({ actor_id: row.actor_id as string, company_id: row.company_id as string,
+        role: row.role as string, status: row.status as IdentityStatus, revision: row.revision });
+    });
+  }
+
+  /** Change an existing membership only while the supplied current session is
+   * still an owner in that same selected company. Owner authentication, target
+   * existence, and target revision CAS share one GLOBAL_REGISTRY transaction. */
+  async putMembershipAsCurrentOwner(
+    proof: VerifiedSessionIdentity,
+    expected: ExpectedSessionContext,
+    value: Membership,
+    expectedRevision: number,
+    now: string,
+  ): Promise<CurrentCompanyMembership> {
+    if (proof.source_session !== undefined) throw new Error('derived-session-membership-change-denied');
+    requireSecurityId(value.actor_id, 'actor_id');
+    requireSecurityId(value.company_id, 'company_id');
+    requireSecurityId(value.role, 'role');
+    if (!['active', 'suspended', 'revoked', 'deleted'].includes(value.status)) {
+      throw new Error('identity-status-invalid');
+    }
+    requireSecurityRevision(expectedRevision);
+    if (expected.company_id !== value.company_id) throw new Error('membership-company-mismatch');
+
+    return this.transaction(async tx => {
+      const { row, current } = await this.resolve(tx, proof, expected, now);
+      if (proof.credential_expires_at === undefined
+        || securityTimestamp(proof.credential_expires_at) > securityTimestamp(row.expires_at)) {
+        throw new Error('credential-expiry-exceeds-session');
+      }
+      if (current.company_role !== 'owner') throw new Error('membership-owner-required');
+      const old = (await tx.query<RecordRow>(
+        `SELECT actor_id,company_id,role,status,revision FROM titan_security_memberships
+          WHERE actor_id=$1 AND company_id=$2`, [value.actor_id, value.company_id],
+      )).rows[0];
+      if (!old || old.revision !== expectedRevision) throw new Error('identity-revision-conflict');
+      const revision = nextRevision(old.revision);
+      const changed = await tx.query(
+        `UPDATE titan_security_memberships SET role=$1,status=$2,revision=$3
+          WHERE actor_id=$4 AND company_id=$5 AND revision=$6`,
+        [value.role, value.status, revision, value.actor_id, value.company_id, expectedRevision],
+      );
+      if (changed.rowCount !== 1) throw new Error('identity-revision-conflict');
+      return Object.freeze({ actor_id: value.actor_id, company_id: value.company_id,
+        role: value.role, status: value.status, revision });
+    });
   }
   putDevice(value: Device, expected: number | null): Promise<number> {
     return this.put('titan_security_devices', { device_id: value.device_id, actor_id: value.actor_id, status: value.status }, ['device_id'], ['actor_id'], expected);

@@ -13,6 +13,7 @@ import {
   createConfiguredWebSessionRuntime,
   type WebLoginIdentityBinding,
 } from "../web-session-runtime";
+import { CURRENT_WEB_SESSION_COOKIE_NAME } from "../current-session";
 
 const ORIGIN = "https://field.example.test";
 const LOGIN_ISSUER = `titan:web-login:${ORIGIN}`;
@@ -25,6 +26,9 @@ const companyB = "canonical-company-29";
 const companyUnmapped = "canonical-company-35";
 const accountB = "legacy-account-29";
 const deviceId = "web-device-17";
+const targetLegacyUserId = "legacy-user-44";
+const targetActorId = "stable-actor-44";
+const targetDeviceId = "web-device-44";
 
 let directory: string;
 let seedStorage: ReturnType<typeof createSqliteStorage> | undefined;
@@ -241,6 +245,115 @@ describe("configured web authentication runtime", () => {
     await expect(runtime.switchCompanyCredential(issued.context.session_id, companyId)).rejects.toThrow();
     const stillCurrent = await runtime.resolveCredential(switched.credential);
     expect(stillCurrent?.operationCompanyIds).toEqual([companyB]);
+  });
+
+  it("invalidates the exact company cookie on role reduction and revocation while preserving another company", async () => {
+    const { environment: env } = await setup();
+    const targetBindings: WebLoginIdentityBinding[] = [companyId, companyB].map((company, index) => ({
+      legacy_user_id: targetLegacyUserId,
+      legacy_account_id: index === 0 ? legacyAccountId : accountB,
+      company_id: company,
+      actor_id: targetActorId,
+      device_id: targetDeviceId,
+    }));
+    env.TITAN_WEB_IDENTITY_BINDINGS_JSON = JSON.stringify([...bindings(), ...targetBindings]);
+    await seedRegistry!.putActor({ actor_id: targetActorId, status: "active" }, null);
+    await seedRegistry!.putMembership({ actor_id: targetActorId, company_id: companyId, role: "admin", status: "active" }, null);
+    await seedRegistry!.putMembership({ actor_id: targetActorId, company_id: companyB, role: "owner", status: "active" }, null);
+    await seedRegistry!.putDevice({ device_id: targetDeviceId, actor_id: targetActorId, status: "active" }, null);
+    for (const [index, company] of [companyId, companyB].entries()) {
+      await seedRegistry!.putExternalBinding({
+        binding_id: "target-web-login-binding-" + index,
+        provider: LOGIN_ISSUER,
+        subject: targetLegacyUserId,
+        actor_id: targetActorId,
+        company_id: company,
+        status: "active",
+      }, null);
+    }
+    runtime = await createConfiguredWebSessionRuntime(env);
+    const owner = await runtime.issueForAuthenticatedWebUser(legacyUserId, legacyAccountId);
+    const targetA = await runtime.issueForAuthenticatedWebUser(targetLegacyUserId, legacyAccountId);
+    const targetB = await runtime.issueForAuthenticatedWebUser(targetLegacyUserId, accountB);
+    const ownerRequest = new Request(ORIGIN + "/api/v1/users/" + targetLegacyUserId, {
+      headers: { cookie: CURRENT_WEB_SESSION_COOKIE_NAME + "=" + owner.credential },
+    });
+
+    await runtime.restrictMembershipForLegacyChangeRequest(
+      ownerRequest, targetLegacyUserId, "admin", "active", "tech", "active",
+    );
+    expect(await runtime.resolveCredential(targetA.credential)).toBeNull();
+    expect(await runtime.resolveCredential(targetB.credential)).toMatchObject({
+      session: { userId: targetLegacyUserId, accountId: accountB, role: "owner" },
+      operationCompanyIds: [companyB],
+    });
+    expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
+      role: "tech", status: "active", revision: 2,
+    });
+    expect(await seedRegistry!.getMembership(targetActorId, companyB)).toMatchObject({
+      role: "owner", status: "active", revision: 1,
+    });
+
+    const targetAfterDemotion = await runtime.issueForAuthenticatedWebUser(targetLegacyUserId, legacyAccountId);
+    await runtime.restrictMembershipForLegacyChangeRequest(
+      ownerRequest, targetLegacyUserId, "tech", "active", "tech", "revoked",
+    );
+    expect(await runtime.resolveCredential(targetAfterDemotion.credential)).toBeNull();
+    expect(await runtime.resolveCredential(targetB.credential)).not.toBeNull();
+    expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
+      role: "tech", status: "revoked", revision: 3,
+    });
+    expect(await seedRegistry!.getMembership(targetActorId, companyB)).toMatchObject({
+      role: "owner", status: "active", revision: 1,
+    });
+    expect(await runtime.resolveCredential(owner.credential)).not.toBeNull();
+  });
+
+  it("stages promotions at the lower role, then finishes after commit without reactivating", async () => {
+    const { environment: env } = await setup();
+    env.TITAN_WEB_IDENTITY_BINDINGS_JSON = JSON.stringify([...bindings(), {
+      legacy_user_id: targetLegacyUserId,
+      legacy_account_id: legacyAccountId,
+      company_id: companyId,
+      actor_id: targetActorId,
+      device_id: targetDeviceId,
+    }]);
+    await seedRegistry!.putActor({ actor_id: targetActorId, status: "active" }, null);
+    await seedRegistry!.putMembership({ actor_id: targetActorId, company_id: companyId, role: "tech", status: "active" }, null);
+    await seedRegistry!.putDevice({ device_id: targetDeviceId, actor_id: targetActorId, status: "active" }, null);
+    await seedRegistry!.putExternalBinding({
+      binding_id: "target-promotion-web-login",
+      provider: LOGIN_ISSUER,
+      subject: targetLegacyUserId,
+      actor_id: targetActorId,
+      company_id: companyId,
+      status: "active",
+    }, null);
+    runtime = await createConfiguredWebSessionRuntime(env);
+    const owner = await runtime.issueForAuthenticatedWebUser(legacyUserId, legacyAccountId);
+    const target = await runtime.issueForAuthenticatedWebUser(targetLegacyUserId, legacyAccountId);
+    const ownerRequest = new Request(ORIGIN + "/api/v1/users/" + targetLegacyUserId, {
+      headers: { cookie: CURRENT_WEB_SESSION_COOKIE_NAME + "=" + owner.credential },
+    });
+
+    await runtime.restrictMembershipForLegacyChangeRequest(
+      ownerRequest, targetLegacyUserId, "tech", "active", "admin", "active",
+    );
+    expect(await runtime.resolveCredential(target.credential)).toBeNull();
+    expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
+      role: "tech", status: "active", revision: 2,
+    });
+    await runtime.finishMembershipRoleChangeRequest(ownerRequest, targetLegacyUserId, "admin");
+    expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
+      role: "admin", status: "active", revision: 3,
+    });
+
+    await seedRegistry!.putMembership({ actor_id: targetActorId, company_id: companyId, role: "tech", status: "revoked" }, 3);
+    await runtime.finishMembershipRoleChangeRequest(ownerRequest, targetLegacyUserId, "owner");
+    expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
+      role: "owner", status: "revoked", revision: 5,
+    });
+    await expect(runtime.issueForAuthenticatedWebUser(targetLegacyUserId, legacyAccountId)).rejects.toThrow();
   });
 
   it("rejects registry switch choices without an approved web projection before changing the current session", async () => {

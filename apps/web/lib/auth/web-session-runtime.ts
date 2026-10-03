@@ -51,6 +51,15 @@ export class WebIdentityBindingRequiredError extends Error {
   }
 }
 
+export class WebMembershipReconciliationError extends Error {
+  readonly code = "WEB_MEMBERSHIP_RECONCILIATION_UNAVAILABLE";
+
+  constructor() {
+    super("web-membership-reconciliation-unavailable");
+    this.name = "WebMembershipReconciliationError";
+  }
+}
+
 export function isWebAuthSetupRequiredError(error: unknown): error is WebAuthSetupRequiredError {
   return error instanceof WebAuthSetupRequiredError;
 }
@@ -160,6 +169,9 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
   const usersByActorCompany = new Map(bindings.map(binding => [
     JSON.stringify([binding.actor_id, binding.company_id]), binding.legacy_user_id,
   ]));
+  const actorsByUserCompany = new Map(bindings.map(binding => [
+    JSON.stringify([binding.legacy_user_id, binding.company_id]), binding.actor_id,
+  ]));
   const loginBindings = new Map(bindings.map(binding => [
     JSON.stringify([binding.legacy_user_id, binding.legacy_account_id]), binding,
   ]));
@@ -183,6 +195,45 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
   };
   const credentialService = createSessionCredentialService({ ...verifierConfig, signing_key: sessionKey });
   const verifier = createSessionCredentialVerifier(verifierConfig);
+  function rolePrivilege(role: string): number {
+    const privilege = ({ tech: 1, admin: 2, owner: 3 } as Record<string, number>)[role];
+    if (privilege === undefined) throw new WebMembershipReconciliationError();
+    return privilege;
+  }
+  function moreRestrictiveRole(...roles: string[]): string {
+    return roles.reduce((lowest, role) => rolePrivilege(role) < rolePrivilege(lowest) ? role : lowest);
+  }
+  function moreRestrictiveStatus(...statuses: readonly string[]): "active" | "suspended" | "revoked" | "deleted" {
+    const rank: Record<string, number> = { active: 0, suspended: 1, revoked: 2, deleted: 3 };
+    let selected = "active";
+    for (const status of statuses) {
+      if (rank[status] === undefined) throw new WebMembershipReconciliationError();
+      if (rank[status] > rank[selected]) selected = status;
+    }
+    return selected as "active" | "suspended" | "revoked" | "deleted";
+  }
+  async function verifiedOwnerTarget(request: Pick<Request, "headers">, targetLegacyUserId: string) {
+    const credential = currentWebSessionCredentialFromRequest(request);
+    if (!credential) throw new WebMembershipReconciliationError();
+    try {
+      requireSecurityId(targetLegacyUserId, "user_id");
+      const authenticated = await credentialService.authenticate(credential);
+      const context = authenticated.context;
+      const expectedSubject = usersByActorCompany.get(JSON.stringify([context.actor_id, context.company_id]));
+      if (context.company_role !== "owner" || expectedSubject !== authenticated.subject
+        || !companiesToAccounts.has(context.company_id)) throw new WebMembershipReconciliationError();
+      const targetActorId = actorsByUserCompany.get(JSON.stringify([targetLegacyUserId, context.company_id]));
+      // An unbound legacy user cannot receive this web-session credential. Do
+      // not backfill or infer a canonical actor from profile/membership data.
+      if (!targetActorId) return { credential, authenticated, targetActorId: null } as const;
+      const membership = await options.registry.getMembership(targetActorId, context.company_id);
+      if (!membership) return { credential, authenticated, targetActorId: null } as const;
+      return { credential, authenticated, targetActorId, membership } as const;
+    } catch (error) {
+      if (error instanceof WebMembershipReconciliationError) throw error;
+      throw new WebMembershipReconciliationError();
+    }
+  }
   const projection = Object.freeze({
     async resolveLegacyAccountId(companyId: string): Promise<string | null> {
       return companiesToAccounts.get(companyId) ?? null;
@@ -241,6 +292,80 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
       return switchCompanyCredential(credential, targetCompanyId);
     },
     switchCompanyCredential,
+    // Apply a restrictive floor before PostgreSQL membership changes commit.
+    // This invalidates existing credentials even when the canonical role was
+    // already at that floor. Unbound legacy rows are never identity backfills.
+    async restrictMembershipForLegacyChangeRequest(
+      request: Pick<Request, "headers">,
+      targetLegacyUserId: string,
+      observedLegacyRole: string,
+      observedLegacyStatus: string,
+      desiredRole: string,
+      desiredStatus: "active" | "suspended" | "revoked" | "deleted",
+    ): Promise<boolean> {
+      const target = await verifiedOwnerTarget(request, targetLegacyUserId);
+      if (target.targetActorId === null) return false;
+      const restrictiveRole = moreRestrictiveRole(
+        target.membership.role, observedLegacyRole, desiredRole,
+      );
+      const restrictiveStatus = moreRestrictiveStatus(
+        target.membership.status, observedLegacyStatus, desiredStatus,
+      );
+      try {
+        await credentialService.putMembershipAsCurrentOwner(target.credential, {
+          company_id: target.authenticated.context.company_id,
+          device_id: target.authenticated.context.device_id,
+          actor_id: target.authenticated.context.actor_id,
+          context_revision: target.authenticated.context.context_revision,
+        }, {
+          actor_id: target.targetActorId,
+          company_id: target.authenticated.context.company_id,
+          role: restrictiveRole,
+          status: restrictiveStatus,
+        }, target.membership.revision);
+        return true;
+      } catch {
+        throw new WebMembershipReconciliationError();
+      }
+    },
+    // Finish role increases after PostgreSQL commits. The stored canonical
+    // status is preserved, so role edits cannot reactivate inactive members.
+    async finishMembershipRoleChangeRequest(
+      request: Pick<Request, "headers">,
+      targetLegacyUserId: string,
+      desiredRole: string,
+    ): Promise<boolean> {
+      const target = await verifiedOwnerTarget(request, targetLegacyUserId);
+      if (target.targetActorId === null) return false;
+      rolePrivilege(desiredRole);
+      if (target.membership.role === desiredRole) return true;
+      try {
+        await credentialService.putMembershipAsCurrentOwner(target.credential, {
+          company_id: target.authenticated.context.company_id,
+          device_id: target.authenticated.context.device_id,
+          actor_id: target.authenticated.context.actor_id,
+          context_revision: target.authenticated.context.context_revision,
+        }, {
+          actor_id: target.targetActorId,
+          company_id: target.authenticated.context.company_id,
+          role: desiredRole,
+          status: target.membership.status,
+        }, target.membership.revision);
+        return true;
+      } catch {
+        // The registry CAS may have committed before a transport error. Reread
+        // only after verifying the same owner cookie and accept only exact
+        // desired state as an idempotent retry.
+        try {
+          const retry = await verifiedOwnerTarget(request, targetLegacyUserId);
+          return retry.targetActorId === target.targetActorId
+            && retry.membership.role === desiredRole
+            && retry.membership.status === target.membership.status;
+        } catch {
+          throw new WebMembershipReconciliationError();
+        }
+      }
+    },
     async revokeCredential(credential: string): Promise<void> {
       const authenticated = await verifier.authenticate(credential);
       const context = authenticated.context;

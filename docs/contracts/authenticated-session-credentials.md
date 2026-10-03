@@ -197,8 +197,31 @@ explicit web account/user projection row for the same verified stable subject;
 a registry membership without that exact row is rejected before the switch
 mutates session state. Provisioning and user
 management routes remain behind this current verified session and
-registry-derived role. Legacy user CRUD and `business_memberships` edits do not
-automatically create or alter canonical identity/access records.
+registry-derived role. Legacy user CRUD never creates or backfills canonical
+identity/access records. The explicitly mapped owner-only membership mutation
+path is the bounded exception: it extracts the configured web-session cookie,
+verifies it, derives the owner’s selected company from the current registry
+context, resolves the target only through an approved web identity binding, and
+then updates an already-existing membership through GLOBAL_REGISTRY. The
+registry checks that the same current session is still an active owner and
+performs the target membership revision compare-and-set in one transaction.
+Caller-supplied actor, company, session, or role claims are not bearer authority.
+
+For a legacy role/status mutation, the web route first writes a restrictive
+canonical role/status floor inside its still-open PostgreSQL transaction. A
+registry failure aborts that PostgreSQL transaction. The floor is the least
+privileged role among the current canonical role, the observed legacy role,
+and the requested role; inactive canonical or legacy status is preserved.
+After the PostgreSQL commit, the route may raise the existing canonical role to
+the requested role using another owner-checked revision compare-and-set. Until
+that succeeds, access remains at the lower role and the route returns a
+sanitized retryable error. A failed PostgreSQL commit after the registry floor
+leaves the canonical membership more restrictive; retrying the requested
+change is safe. Every write is scoped to the owner’s currently selected
+company, increments the canonical membership generation (staling existing
+cookies), preserves other company memberships, and never creates a missing
+canonical identity or membership. An already inactive canonical membership is
+never reactivated by a role edit.
 
 When required configuration is absent or the registry schema is not already
 commissioned, login and authenticated routes fail with a safe
