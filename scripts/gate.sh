@@ -153,7 +153,6 @@ if [[ "${SKIP_INTEGRATION:-}" != "1" ]]; then
 
   log "starting test server"
   DATABASE_URL="$TEST_DATABASE_URL" \
-  TITAN_DEPLOYMENT_PROFILE=compatibility \
   AUTH_SECRET="$TEST_AUTH_SECRET" \
   LOCATION_INTERNAL_KEY="$TEST_INTERNAL_KEY" \
   E2E_SKIP_EMAIL_DELIVERY=1 \
@@ -182,7 +181,6 @@ if [[ "${SKIP_E2E:-}" != "1" ]]; then
   # Playwright reuses the already-running gate server. Pass the same port and
   # database settings in case Playwright needs to start its own server in CI.
   DATABASE_URL="$TEST_DATABASE_URL" \
-  TITAN_DEPLOYMENT_PROFILE=compatibility \
   AUTH_SECRET="$TEST_AUTH_SECRET" \
   LOCATION_INTERNAL_KEY="$TEST_INTERNAL_KEY" \
   E2E_SKIP_EMAIL_DELIVERY=1 \

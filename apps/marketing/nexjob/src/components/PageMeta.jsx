@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { getCanonicalUrl, getCurrentSiteContext } from '../config/siteContext'
 
 const defaultDescription =
-  'Titan Zero Field Services — managed Advanced Intelligence with personal Zeros, specialist workforce capabilities and governed business systems for field-service businesses.'
+  'Titan Zero Cleaning is a cleaning-business SaaS in development, with an internal managed-service offer and evidence-based release information.'
 
 function ensureMeta(selector, attributes) {
   let meta = document.querySelector(selector)
@@ -19,8 +19,7 @@ export default function PageMeta({ title, description = defaultDescription }) {
   const siteContext = getCurrentSiteContext()
   const siteName = siteContext.kind === 'industry'
     ? `Titan Zero ${siteContext.site.name}`
-    : siteContext.kind === 'hub' ? 'Titan Zero'
-      : 'Titan Zero Field Services'
+    : 'Titan Zero'
 
   useEffect(() => {
     const pageTitle = title ? `${title} | ${siteName}` : `${siteName} — Managed Advanced Intelligence`

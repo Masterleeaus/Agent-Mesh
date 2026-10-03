@@ -3630,8 +3630,8 @@
     },
     {
       "path": "tests/test-deployment-workforce-full-console.js",
-      "bytes": 2270,
-      "sha256": "6d947bc2c600e841c6c59dcd72747b61e2b0a53dec4e07795db9226e0eb97fdb"
+      "bytes": 2164,
+      "sha256": "02bf464f742d9504af1bd3655393cda43edabe7d59679eee29b3b933b560f584"
     },
     {
       "path": "tests/test-deployment-workforce-gateway-runtime.js",
