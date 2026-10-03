@@ -12,6 +12,7 @@ import { openExistingSqliteStorage } from "../../../../packages/storage/src/inde
 import {
   createCurrentWebSessionAdapter,
   createCurrentWebSessionIngress,
+  currentWebSessionCredentialFromRequest,
 } from "./current-session";
 
 const WEB_LOGIN_AUDIENCE = "titan-web-login";
@@ -193,6 +194,28 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
   });
   const adapter = createCurrentWebSessionAdapter(credentialService, projection);
   const ingress = createCurrentWebSessionIngress(verifier, projection);
+  async function switchCompanyCredential(credential: string, targetCompanyId: string) {
+    // Authenticate first with the fixed verifier. The caller supplies only a
+    // selected destination; source company, actor, device and generations are
+    // derived from the verified current session and checked atomically again
+    // by the canonical switch operation.
+    const authenticated = await verifier.authenticate(credential);
+    const context = authenticated.context;
+    // The registry's switch choices may include canonical memberships with
+    // no web compatibility projection. Reject those before the atomic switch
+    // so a missing legacy account/user mapping cannot strand the browser on
+    // a context for which the web surface cannot issue its response cookie.
+    const targetLegacyUserId = usersByActorCompany.get(JSON.stringify([context.actor_id, targetCompanyId]));
+    if (!companiesToAccounts.has(targetCompanyId) || targetLegacyUserId !== authenticated.subject) {
+      throw new WebIdentityBindingRequiredError();
+    }
+    return adapter.switchCompany(credential, {
+      company_id: context.company_id,
+      device_id: context.device_id,
+      actor_id: context.actor_id,
+      context_revision: context.context_revision,
+    }, targetCompanyId);
+  }
 
   return Object.freeze({
     async issueForAuthenticatedWebUser(legacyUserId: string, legacyAccountId: string) {
@@ -212,28 +235,12 @@ export function createWebSessionRuntime(options: WebSessionRuntimeOptions) {
     },
     resolveCredential: ingress.resolveCredential,
     resolveRequest: ingress.resolveRequest,
-    async switchCompanyCredential(credential: string, targetCompanyId: string) {
-      // Authenticate first with the fixed verifier. The caller supplies only a
-      // selected destination; source company, actor, device and generations are
-      // derived from the verified current session and checked atomically again
-      // by the canonical switch operation.
-      const authenticated = await verifier.authenticate(credential);
-      const context = authenticated.context;
-      // The registry's switch choices may include canonical memberships with
-      // no web compatibility projection. Reject those before the atomic switch
-      // so a missing legacy account/user mapping cannot strand the browser on
-      // a context for which the web surface cannot issue its response cookie.
-      const targetLegacyUserId = usersByActorCompany.get(JSON.stringify([context.actor_id, targetCompanyId]));
-      if (!companiesToAccounts.has(targetCompanyId) || targetLegacyUserId !== authenticated.subject) {
-        throw new WebIdentityBindingRequiredError();
-      }
-      return adapter.switchCompany(credential, {
-        company_id: context.company_id,
-        device_id: context.device_id,
-        actor_id: context.actor_id,
-        context_revision: context.context_revision,
-      }, targetCompanyId);
+    async switchCompanyRequest(request: Pick<Request, "headers">, targetCompanyId: string) {
+      const credential = currentWebSessionCredentialFromRequest(request);
+      if (!credential) throw new Error("authentication-denied");
+      return switchCompanyCredential(credential, targetCompanyId);
     },
+    switchCompanyCredential,
     async revokeCredential(credential: string): Promise<void> {
       const authenticated = await verifier.authenticate(credential);
       const context = authenticated.context;
