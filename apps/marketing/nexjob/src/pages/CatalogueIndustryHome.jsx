@@ -65,7 +65,3 @@ export default function CatalogueIndustryHome({ profile }) {
     </main>
   </>
 }
-
-export function getCatalogueIndustryProfile(id) {
-  return verticalCatalogue.find((profile) => profile.id === id) || null
-}
