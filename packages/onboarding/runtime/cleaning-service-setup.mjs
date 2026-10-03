@@ -58,7 +58,10 @@ function normalizeSelection(input, byId) {
     if (!Number.isInteger(index) || index < 0 || index >= canonical.checklist.length) throw new Error(`${job_type_id} checklist selection is outside canonical checklist`);
   }
   const sortedChecklist = [...checklist_selection].sort((a,b)=>a-b);
+  const service_id = input?.service_id == null ? null : clean(input.service_id);
+  if (input?.service_id != null && !service_id) throw new Error(`${job_type_id}.service_id must be a non-empty catalogue id`);
   return Object.freeze({
+    ...(service_id ? { service_id } : {}),
     job_type_id,
     service_label: clean(input?.service_label || canonical.label),
     enabled: input?.enabled !== false,
@@ -134,7 +137,7 @@ export function createCleaningServiceSetupAuthority({ database, cleaningBundle, 
     if (input.expected_revision != null && Number(input.expected_revision) !== priorVersion) throw new Error('cleaning setup revision mismatch');
     const updated_at = Number(clock());
     const stored = await database.putRecord(context, {
-      ...locator(), updated_at,
+      ...locator(), expected_revision:priorVersion, updated_at,
       data:{ schema:'titan.onboarding.cleaning-service-setup-record.v1', company_id:context.company_id, selections:normalized, recurrence, source_module:'titan.workforce.cleaning', source_projection:'job-types', grants_authority:false, authority_granted:false, execution_permitted:false, updated_at },
       provenance:{ source:'titan-onboarding-cleaning-service-setup', canonical_module:'titan.workforce.cleaning', copied_catalogue:false }
     });

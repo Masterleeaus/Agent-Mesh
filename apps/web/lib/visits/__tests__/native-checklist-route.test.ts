@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { NextRequest } from "next/server";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createIdentitySessionRegistry,
   type IdentitySessionRegistry,
@@ -18,9 +18,12 @@ import { companyNativeCleaningJobsManifest, companyNativeVisitChecklistManifest 
 import { CURRENT_WEB_SESSION_COOKIE_NAME } from "../../auth/current-session";
 import { _resetWebSessionRuntimeForTests, getWebSessionRuntime } from "../../auth/web-session-runtime";
 import { withVerifiedWebNativeCompanyStore } from "../../company-storage/request-runtime";
+import { initializeCleaningProfileForLogin } from "../../company-storage/cleaning-profile-login";
+import { expiredSessionLoginRedirectForPath, resolvePostLoginHref } from "../../auth/post-login-destination";
 import { GET as getChecklist } from "@/app/api/v1/visits/[id]/checklist/route";
 import { PATCH as patchChecklist } from "@/app/api/v1/visits/[id]/checklist/[itemId]/route";
 import { POST as createCleaningJob } from "@/app/api/v1/cleaning/jobs/route";
+import { GET as readCleaningServiceSetup, PUT as saveCleaningServiceSetup } from "@/app/api/v1/cleaning/service-setup/route";
 
 const origin = "https://field.example.test";
 const loginIssuer = `titan:web-login:${origin}`;
@@ -85,16 +88,12 @@ async function createReadyCompanyStore(company: (typeof companies)[number]): Pro
 
     if (company === companies[0]) {
       await storage.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({
-        vertical_profile: { company_id: company.companyId, revision: 1, profile: { module_id: "titan.workforce.cleaning" } },
-        cleaning_service_setup: {
-          schema: "titan.onboarding.cleaning-service-setup-record.v1",
+        retained_setting: "keep-company-a",
+        vertical_profile: {
+          schema: "titan.company.vertical-profile.v1",
           company_id: company.companyId,
-          revision: 1,
-          data: {
-            selections: [{ service_id: "regular_clean", job_type_id: "domestic_recurring", service_label: "Regular clean", enabled: true,
-              pricing: { mode: "hourly", fixed_price: null, hourly_rate: 42.5, minimum_charge: 25, currency: "AUD" } }],
-            recurrence: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly", supported_job_type_ids: ["domestic_recurring"] },
-          },
+          revision: 4,
+          profile: { pack_id: "existing-company-pack", pack_version: "2.0.0", module_id: "existing.vertical", module_version: "2.0.0" },
         },
       }), company.companyId]);
     } else {
@@ -163,9 +162,60 @@ afterEach(async () => {
     if (previous === undefined) delete process.env[name];
     else process.env[name] = previous;
   }
+  vi.useRealTimers();
 });
 
 describe("native visit checklist routes", () => {
+  it("expires, returns through re-login, preserves company A profile, and opens fresh-v3 company B checklist", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const runtime = await getWebSessionRuntime();
+    const initial = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
+    const initialProfile = await initializeCleaningProfileForLogin({ issued: initial });
+    expect(initialProfile).toMatchObject({
+      status: "retained",
+      revision: 4,
+      profile: { pack_id: "existing-company-pack", module_id: "existing.vertical" },
+    });
+
+    const protectedPath = `/app/visits/${commonIds.visit}`;
+    const expiryHref = expiredSessionLoginRedirectForPath(protectedPath);
+    const expiryUrl = new URL(expiryHref, origin);
+    expect(expiryUrl.pathname).toBe("/login");
+    expect(expiryUrl.searchParams.get("reason")).toBe("session-expired");
+    expect(resolvePostLoginHref("owner", { next: expiryUrl.searchParams.get("next") })).toBe(protectedPath);
+
+    // Expire the signed five-minute session in this disposable test clock; the
+    // request must reject it before a subsequent fresh password-backed issue.
+    vi.setSystemTime(new Date(Date.parse(initial.context.expires_at) + 1_000));
+    expect(Date.parse(initial.context.expires_at) - Date.now()).toBeLessThan(0);
+    const expiredChecklist = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, initial.credential));
+    expect(expiredChecklist.status).toBe(401);
+
+    const reLogin = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
+    const retainedAfterReLogin = await initializeCleaningProfileForLogin({ issued: reLogin });
+    expect(retainedAfterReLogin).toMatchObject({ status: "retained", revision: 4, profile: { module_id: "existing.vertical" } });
+    const companyASettings = await withVerifiedWebNativeCompanyStore({
+      currentSession: reLogin,
+      revalidateSession: () => runtime.resolveCredential(reLogin.credential),
+      requiredSchemaVersions: [companyNativeVisitChecklistManifest.schema_version, companyNativeCleaningJobsManifest.schema_version],
+      operation: async storage => (await storage.query<{ settings: string }>(
+        "SELECT settings FROM companies WHERE id=$1", [companies[0].companyId],
+      )).rows[0]?.settings,
+    });
+    expect(JSON.parse(companyASettings!)).toMatchObject({
+      retained_setting: "keep-company-a",
+      vertical_profile: { company_id: companies[0].companyId, revision: 4, profile: { module_id: "existing.vertical" } },
+    });
+
+    const companyBLogin = await runtime.issueForAuthenticatedWebUser(companies[1].userId, companies[1].accountId);
+    const companyBProfile = await initializeCleaningProfileForLogin({ issued: companyBLogin });
+    expect(companyBProfile).toMatchObject({ status: "selected", revision: 1, profile: { module_id: "titan.workforce.cleaning" } });
+
+    const checklist = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, companyBLogin.credential));
+    expect(checklist.status).toBe(200);
+    expect((await checklist.json()).visit).toMatchObject({ company_id: companies[1].companyId, work_order_id: commonIds.workOrder });
+  });
+
   it("uses the verified current session and each READY physical company store for list and update", async () => {
     const runtime = await getWebSessionRuntime();
     const a = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
@@ -218,6 +268,32 @@ describe("native visit checklist routes", () => {
     if (!bPlacement) throw new Error("company-a-placement-missing");
     const store = createSqliteStorage(join(storeRoot, `${bPlacement}.sqlite`));
     try {
+      const companySettings = (await store.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companies[0].companyId])).rows[0];
+      const settings = JSON.parse(companySettings!.settings) as {
+        vertical_profile: { profile: Record<string, string> };
+        [key: string]: unknown;
+      };
+      settings.vertical_profile.profile = {
+        pack_id: "titan.cleaning-workforce-pack", pack_version: "1.0.0",
+        module_id: "titan.workforce.cleaning", module_version: "1.0.0",
+      };
+      await store.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify(settings), companies[0].companyId]);
+
+      const configured = await saveCleaningServiceSetup(request("/api/v1/cleaning/service-setup", a.credential, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          expected_revision: 0,
+          selections: [{ service_id: "regular_clean", mode: "hourly", hourly_rate: 42.5, minimum_charge: 25, currency: "AUD" }],
+          recurring: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly" },
+        }),
+      }));
+      expect(configured.status).toBe(200);
+      expect((await configured.json()).data.revision).toBe(1);
+      const setupRead = await readCleaningServiceSetup(request("/api/v1/cleaning/service-setup", a.credential));
+      expect((await setupRead.json()).data).toMatchObject({ revision: 1,
+        selections: [{ service_id: "regular_clean", job_type_id: "domestic_recurring" }] });
+
       const created = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -266,13 +342,14 @@ describe("native visit checklist routes", () => {
       }));
       expect(bOnly.status).toBe(404);
 
-      await store.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({
-        vertical_profile: { company_id: companies[0].companyId, revision: 1, profile: { module_id: "titan.workforce.cleaning" } },
-        cleaning_service_setup: { schema: "titan.onboarding.cleaning-service-setup-record.v1", company_id: companies[0].companyId, revision: 2,
-          data: { selections: [{ service_id: "regular_clean", job_type_id: "domestic_recurring", enabled: true,
-            pricing: { mode: "hourly", fixed_price: null, hourly_rate: 99, minimum_charge: 25, currency: "AUD" } }],
-            recurrence: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly", supported_job_type_ids: ["domestic_recurring"] } } },
-      }), companies[0].companyId]);
+      const changedSetup = await saveCleaningServiceSetup(request("/api/v1/cleaning/service-setup", a.credential, {
+        method: "PUT", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ expected_revision: 1,
+          selections: [{ service_id: "regular_clean", mode: "hourly", hourly_rate: 99, minimum_charge: 25, currency: "AUD" }],
+          recurring: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly" } }),
+      }));
+      expect(changedSetup.status).toBe(200);
+      expect((await changedSetup.json()).data.revision).toBe(2);
       const stale = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ service_id: "regular_clean", expected_setup_revision: 1, client_id: commonIds.client,

@@ -4,6 +4,12 @@ import { z } from "zod";
 import { getDatabaseDialect } from "@/lib/db/dialect";
 import { portableQuery } from "@/lib/db/portable";
 import { createSession, setSessionCookie } from "@/lib/auth/session";
+import { getWebSessionRuntime } from "@/lib/auth/web-session-runtime";
+import {
+  CleaningProfileStoreSetupRequiredError,
+  CleaningProfileStoreUnavailableError,
+  initializeCleaningProfileForLogin,
+} from "@/lib/company-storage/cleaning-profile-login";
 import { randomUUID } from "crypto";
 import {
   checkRateLimit,
@@ -36,6 +42,7 @@ type UserRow = {
 
 export async function POST(request: NextRequest) {
   const traceId = randomUUID();
+  let issuedForCleanup: Awaited<ReturnType<typeof createSession>> | undefined;
 
   // Rate-limit by IP: 5 attempts per 15 minutes. Browser e2e performs many
   // real logins from localhost; unit tests cover exact limiter behavior.
@@ -153,6 +160,14 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       accountId: user.account_id,
     });
+    issuedForCleanup = issued;
+
+    const profile = await initializeCleaningProfileForLogin({
+      issued,
+    });
+    if (profile.status === "unavailable") {
+      throw new CleaningProfileStoreSetupRequiredError(["canonical Cleaning workforce bundle is unavailable"]);
+    }
 
     await setSessionCookie(issued);
 
@@ -166,6 +181,28 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
+    if (issuedForCleanup) {
+      try {
+        await (await getWebSessionRuntime()).revokeCredential(issuedForCleanup.credential);
+      } catch (revokeError) {
+        logger.error("Login session cleanup failed", revokeError, { traceId });
+      }
+    }
+    if (error instanceof CleaningProfileStoreSetupRequiredError) {
+      return NextResponse.json({ error: {
+        code: "CLEANING_PROFILE_SETUP_REQUIRED",
+        message: "The company profile store needs operator configuration.",
+        missing_configuration: error.missing_or_invalid,
+        traceId,
+      } }, { status: 503 });
+    }
+    if (error instanceof CleaningProfileStoreUnavailableError) {
+      return NextResponse.json({ error: {
+        code: "COMPANY_PROFILE_STORE_UNAVAILABLE",
+        message: "The company profile store is temporarily unavailable.",
+        traceId,
+      } }, { status: 503 });
+    }
     if (isWebAuthSetupRequiredError(error)) {
       return NextResponse.json({ error: {
         code: "WEB_AUTH_SETUP_REQUIRED",
