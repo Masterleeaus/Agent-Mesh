@@ -124,10 +124,10 @@ test('WordPress and Chrome product pages cover five planned AI-assisted areas', 
   const workSource = readFileSync(new URL('../pages/WorksEverywhere.jsx', import.meta.url), 'utf8')
   const pageSource = readFileSync(new URL('../pages/ProductFamilyPages.jsx', import.meta.url), 'utf8')
 
-  assert.match(appSource, /path="\\/wordpress-plugins"/)
-  assert.match(appSource, /path="\\/chrome-extensions"/)
-  assert.match(workSource, /detailsHref: '\\/wordpress-plugins'/)
-  assert.match(workSource, /detailsHref: '\\/chrome-extensions'/)
+  assert.ok(appSource.includes('path="/wordpress-plugins"'))
+  assert.ok(appSource.includes('path="/chrome-extensions"'))
+  assert.ok(workSource.includes("detailsHref: '/wordpress-plugins'"))
+  assert.ok(workSource.includes("detailsHref: '/chrome-extensions'"))
 
   for (const area of ['Bookings', 'Invoicing', 'Job Management', 'Quotes', 'CRM']) {
     assert.ok(pageSource.includes(`name: '${area}'`), `missing product area: ${area}`)
