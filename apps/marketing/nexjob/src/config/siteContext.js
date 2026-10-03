@@ -11,7 +11,10 @@ export const MARKETING_DOMAINS = Object.freeze({
 
 // This is a route-facing projection of the source catalogue, not a second
 // industry registry. Content, hostnames and canonical URLs share one owner.
-export const VERTICAL_SITES = Object.freeze(verticalCatalogue.map((profile) => Object.freeze({
+// Only Cleaning is public for this launch. Keep the full canonical catalogue for future releases.
+const PUBLIC_LAUNCH_VERTICAL_IDS = new Set(['cleaning'])
+
+export const VERTICAL_SITES = Object.freeze(verticalCatalogue.filter(({ id }) => PUBLIC_LAUNCH_VERTICAL_IDS.has(id)).map((profile) => Object.freeze({
   host: profile.slug,
   hostname: profile.host,
   name: profile.name,
@@ -30,23 +33,35 @@ const verticalByLegacyPath = new Map(
   VERTICAL_SITES.flatMap((site) => site.legacyPaths.map((path) => [`/industries/${path}`, site])),
 )
 
+const worksEverywhereNavigation = Object.freeze([
+  { label: 'Mobile app', href: '/works-everywhere#mobile-app' },
+  { label: 'PWA', href: '/works-everywhere#pwa' },
+  { label: 'Chrome extension', href: '/works-everywhere#chrome' },
+  { label: 'WordPress plugin', href: '/works-everywhere#wordpress' },
+  { label: 'ChatGPT integration', href: '/works-everywhere#chatgpt' },
+  { label: 'WhatsApp', href: '/works-everywhere#whatsapp' },
+  { label: 'Telegram', href: '/works-everywhere#telegram' },
+  { label: 'Facebook Messenger', href: '/works-everywhere#messenger' },
+])
+
 const hubNavigation = Object.freeze([
   { label: 'How it works', href: '/#how-it-works' },
   { label: 'Features', href: '/features' },
   { label: 'AI workforce', href: '/ai-workforce' },
-  { label: 'Works Everywhere', href: '/works-everywhere' },
-  { label: 'Industries', href: '/industries' },
+  { label: 'Works Everywhere', href: '/works-everywhere', children: worksEverywhereNavigation },
+  { label: 'Cleaning', href: '/industries/cleaning' },
   { label: 'Pricing', href: '/pricing' },
+  { label: 'Managed service', href: '/fully-managed' },
   { label: 'Resources', href: '/resources' },
 ])
 
 const verticalNavigation = Object.freeze([
-  { label: 'Workflows', href: '/#workflows' },
+  { label: 'How it works', href: '/#workflows' },
   { label: 'Features', href: '/#features' },
-  { label: 'WordPress', href: '/#wordpress' },
-  { label: 'Chrome', href: '/#chrome' },
-  { label: 'Channels', href: '/#channels' },
+  { label: 'AI workforce', href: '/ai-workforce' },
+  { label: 'Works Everywhere', href: '/works-everywhere', children: worksEverywhereNavigation },
   { label: 'Pricing', href: '/pricing' },
+  { label: 'Managed service', href: '/fully-managed' },
   { label: 'Start', href: undefined, external: true, action: true, disabled: true },
 ])
 
@@ -89,7 +104,7 @@ export function resolveSiteContext(hostname) {
 }
 
 export function getSiteNavigation(context) {
-  if (context?.kind === 'hub') return hubNavigation
+  if (context?.kind === 'hub' || context?.kind === 'preview') return hubNavigation
   if (context?.kind === 'industry') return verticalNavigation
   return Object.freeze([])
 }

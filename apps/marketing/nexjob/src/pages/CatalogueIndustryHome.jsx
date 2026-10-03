@@ -3,7 +3,6 @@ import SectionLabel from '../components/SectionLabel'
 import { ButtonPrimary, ButtonOutline } from '../components/Button'
 import { APP_SIGNUP_AVAILABLE, appRoutes } from '../config'
 import { getAvailability, verticalCatalogue } from '../data/verticalCatalogue'
-import { getIndustryDirectoryLinks } from '../config/siteContext'
 
 function Status({ offer }) {
   const text = offer.context ? `${offer.context}: ${offer.label}` : offer.label
@@ -19,7 +18,6 @@ export default function CatalogueIndustryHome({ profile }) {
   const runtimeState = getAvailability(profile.runtimeAvailabilityRef)
   const channelNames = { whatsappWorkChannel: 'WhatsApp', telegramWorkChannel: 'Telegram', facebookMessengerWorkChannel: 'Facebook Messenger' }
   const channelOffers = profile.platformAvailabilityRefs.messagingChannels.map((id) => ({ ...getAvailability(id), context: channelNames[id] }))
-  const directory = getIndustryDirectoryLinks().filter(({ moduleId }) => moduleId !== profile.id)
 
   return <>
     <PageMeta title={`${profile.name} Workflows`} description={profile.intro} />
@@ -28,7 +26,7 @@ export default function CatalogueIndustryHome({ profile }) {
         <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[800px] h-[800px] hero-glow pointer-events-none" />
         <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-[1.1fr_0.9fr] gap-12 xl:gap-20 items-center">
           <div>
-            <div className="text-xs font-bold tracking-[0.16em] uppercase text-nx-purple-light mb-5">{profile.group} · Titan Zero</div>
+            <div className="text-xs font-bold tracking-[0.16em] uppercase text-nx-purple-light mb-5">Cleaning SaaS · Titan Zero</div>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.02] tracking-tight mb-6">Titan Zero for {profile.name} teams.<br /><span className="text-nx-purple-light">Run the work with clearer next steps.</span></h1>
             <p className="text-lg text-nx-muted max-w-2xl mb-7 leading-relaxed">{profile.intro}</p>
             <div className="flex gap-3 flex-wrap mb-7"><Status offer={{ ...marketingState, context: 'Marketing' }} /><Status offer={{ ...getAvailability(profile.hostnameAvailabilityRef), context: 'Vertical host' }} /><Status offer={{ ...runtimeState, context: 'Runtime' }} /></div>
@@ -56,7 +54,7 @@ export default function CatalogueIndustryHome({ profile }) {
 
       <section id="workflows" className="py-20 px-6 border-y border-nx-border">
         <div className="max-w-7xl mx-auto">
-          <SectionLabel>{profile.name} workflow</SectionLabel>
+          <SectionLabel>Cleaning workflow</SectionLabel>
           <h2 className="text-4xl sm:text-5xl font-extrabold mb-4">From the first enquiry through work history.</h2>
           <p className="text-nx-muted max-w-3xl mb-9">A marketing description of the work journey. Production workflows depend on the shared application and an approved implementation.</p>
           <ol className="grid sm:grid-cols-2 xl:grid-cols-5 gap-4">{profile.workflow.map(([title, description], index) => <li key={title} className="bg-nx-surface border border-nx-border rounded-2xl p-6"><p className="text-xs font-bold text-nx-purple-light mb-3">{String(index + 1).padStart(2, '0')}</p><h3 className="font-bold mb-2">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></li>)}</ol>
@@ -65,9 +63,9 @@ export default function CatalogueIndustryHome({ profile }) {
 
       <section id="features" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
-          <SectionLabel>Industry examples</SectionLabel>
+          <SectionLabel>Cleaning service types</SectionLabel>
           <h2 className="text-4xl sm:text-5xl font-extrabold mb-4">Examples for {profile.name.toLowerCase()} work.</h2>
-          <p className="text-nx-muted max-w-3xl mb-9">These examples describe catalogue scope. They do not certify a released runtime profile or installed service.</p>
+          <p className="text-nx-muted max-w-3xl mb-9">The catalogue models these Cleaning use cases. Production workflows remain in development and require a verified company deployment.</p>
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">{profile.useCases.map(([id, title, description]) => <article key={id} className="bg-nx-surface border border-nx-border rounded-2xl p-6"><h3 className="font-bold mb-2">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}</div>
         </div>
       </section>
@@ -96,7 +94,7 @@ export default function CatalogueIndustryHome({ profile }) {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8"><article className="bg-nx-surface border border-nx-border rounded-2xl p-8"><SectionLabel>Platform</SectionLabel><h2 className="text-2xl font-bold mb-3">A shared Titan Zero product foundation.</h2><p className="text-sm text-nx-muted leading-relaxed mb-5">Explore the product platform and its current release state.</p><a href="https://titanzero.io/" className="text-sm font-semibold text-nx-purple-light">Titan Zero platform →</a></article><article className="bg-nx-surface border border-nx-border rounded-2xl p-8"><SectionLabel>Availability</SectionLabel><h2 className="text-2xl font-bold mb-3">Check current work surfaces.</h2><p className="text-sm text-nx-muted leading-relaxed mb-5">Release state and installation availability are shown for each surface.</p><a href="/works-everywhere" className="text-sm font-semibold text-nx-purple-light">See work surfaces →</a></article></div>
       </section>
 
-      <section className="px-6 py-20"><div className="max-w-7xl mx-auto"><SectionLabel>Other industries</SectionLabel><div className="mt-5 flex flex-wrap gap-2">{directory.map((site) => <a key={site.host} href={site.href} className="text-sm bg-nx-surface border border-nx-border rounded-lg px-3 py-2 hover:border-nx-purple">{site.label}</a>)}</div></div></section>
+
     </main>
   </>
 }
