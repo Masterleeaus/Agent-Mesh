@@ -61,6 +61,8 @@ export default async function AppLayout({
       role={session.role}
       userName={userName}
       reviewPending={reviewPending}
+      allowedCompanyIds={currentSession.context.allowed_company_ids}
+      currentCompanyId={currentSession.context.company_id}
       sessionExpiresAt={expiresAt}
       sessionRemainingMs={remainingMs}
     >
