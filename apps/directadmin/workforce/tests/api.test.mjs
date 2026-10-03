@@ -88,12 +88,12 @@ test('reassignment consumes the published READY descriptor and sends an assignee
     requires_fresh_approval: true, grants_authority: false }];
   const workers = [
     { company_id: 'company-a', worker_id: 'worker-old', kind: 'digital', active: true, capabilities: [] },
-    { company_id: 'company-a', worker_id: 'worker-target', kind: 'digital', active: true, capabilities: ['work.site.schedule'] },
+    { company_id: 'company-a', worker_id: 'worker-target', kind: 'digital', active: true, capabilities: [] },
     { company_id: 'company-a', worker_id: 'worker-inactive', kind: 'human', active: false, capabilities: [] },
   ];
   const work = [
     { company_id: 'company-a', work_id: 'ready-work', state: 'READY', assignee: 'worker-old',
-      required_capabilities: ['work.site.schedule'], context_refs: [], evidence_refs: [] },
+      required_capabilities: [], context_refs: [], evidence_refs: [] },
     { company_id: 'company-a', work_id: 'active-work', state: 'IN_PROGRESS', assignee: 'worker-old', context_refs: [], evidence_refs: [] },
   ];
   const session = fixture(controls, workers, work); const api = new WorkforceApi(session, () => 'operation-a');
@@ -144,7 +144,7 @@ test('unassigned READY work binds expected_assignee_id to null', async () => {
   const session = fixture([{ action: 'reassign', capability_id: 'titan.workforce.reassign',
     requires_fresh_approval: true, grants_authority: false }],
   [{ company_id: 'company-a', worker_id: 'target', kind: 'human', active: true, capabilities: [] }],
-  [{ company_id: 'company-a', work_id: 'ready-work', state: 'READY', context_refs: [], evidence_refs: [] }]);
+  [{ company_id: 'company-a', work_id: 'ready-work', state: 'READY', required_capabilities: [], context_refs: [], evidence_refs: [] }]);
   const api = new WorkforceApi(session, () => 'operation-unassigned');
   await api.control(context, { action: 'reassign', work_id: 'ready-work', target_worker_id: 'target', reason: 'Assign the ready item' });
   const intent = session.calls.find(([kind]) => kind === 'intent');

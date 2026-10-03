@@ -1,5 +1,41 @@
 /** Consumer of the actual #1049 browser session. No authentication or fetch implementation. */
 const REASSIGN_CAPABILITY = 'titan.workforce.reassign';
+function hasVerifiedSkillRequirement(skills, context, workerId, capabilityId) {
+  const projection = skills?.projection;
+  if (skills?.schema !== 'titan.directadmin.workforce-skills.v1' || skills.status !== 'available' ||
+      skills.company_id !== context.company_id || skills.context_revision !== context.context_revision ||
+      skills.read_only !== true || skills.grants_authority !== false ||
+      skills.capability_presence_confers_authority !== false || skills.verification_confers_authority !== false ||
+      skills.assignment_decision !== false || skills.routing_decision !== false ||
+      skills.entitlement_decision !== false || skills.execution_permitted !== false ||
+      projection?.schema !== 'titan.workforce.evidence-backed-skill-proof.v1' ||
+      projection.company_id !== context.company_id || projection.read_only !== true || projection.derived !== true ||
+      projection.assignment_decision !== false || projection.routing_decision !== false ||
+      projection.entitlement_decision !== false || projection.automatic_execution !== false ||
+      projection.execution_permitted !== false || projection.grants_authority !== false ||
+      !Array.isArray(projection.skill_proofs)) return false;
+
+  const matches = projection.skill_proofs.filter(proof => proof?.worker_id === workerId && proof?.capability_id === capabilityId);
+  if (matches.length !== 1) return false;
+  const proof = matches[0];
+  return proof.proof_state === 'verified' && proof.verification_state === 'VERIFIED' &&
+    proof.meets_registry_requirement === true && proof.require_verified === true &&
+    Number.isFinite(proof.required_min_proficiency) && proof.required_min_proficiency >= 0 &&
+    Number.isFinite(proof.proficiency) && proof.proficiency >= proof.required_min_proficiency &&
+    proof.expired_or_revoked === false && proof.capability_presence_confers_authority === false &&
+    proof.verification_confers_authority === false && proof.grants_authority === false &&
+    Array.isArray(proof.evidence_refs) && proof.evidence_refs.length > 0 &&
+    proof.evidence_count === proof.evidence_refs.length;
+}
+
+/** Current supported Cleaning service requirements use cleaning-named skill
+ * IDs, with linen_handling as the one shared turnover skill. Keep generic
+ * Workforce capability preflight behavior separate; the canonical host still
+ * owns every assignment decision. */
+function isCleaningSkillRequirement(capabilityId) {
+  return /cleaning/i.test(capabilityId) || capabilityId === 'linen_handling';
+}
+
 export class WorkforceApi {
   #snapshot;
   constructor(session, requestId = () => crypto.randomUUID()) { this.session = session; this.requestId = requestId; }
@@ -51,10 +87,14 @@ export class WorkforceApi {
       const item = status?.work?.find(work => work?.company_id === context.company_id && work.work_id === action.work_id);
       const target = discovery.workers?.find(worker => worker?.company_id === context.company_id && worker.worker_id === action.target_worker_id);
       const required = item?.required_capabilities;
+      const requiresCleaningSkillProof = Array.isArray(required) && required.some(isCleaningSkillRequirement);
+      const skills = requiresCleaningSkillProof ? await this.skills(context) : null;
       if (!item || item.state !== 'READY' || (item.assignee != null && (typeof item.assignee !== 'string' || !item.assignee.trim())) ||
-          (required !== undefined && (!Array.isArray(required) || required.some(value => typeof value !== 'string' || !value.trim()))) ||
+          !Array.isArray(required) || required.some(value => typeof value !== 'string' || !value.trim()) ||
           !target || target.active !== true || target.worker_id === item.assignee ||
-          (required?.length && (!Array.isArray(target.capabilities) || required.some(capability => !target.capabilities.includes(capability))))) {
+          required.some(capability => isCleaningSkillRequirement(capability)
+            ? !hasVerifiedSkillRequirement(skills, context, target.worker_id, capability)
+            : !Array.isArray(target.capabilities) || !target.capabilities.includes(capability))) {
         throw new Error('workforce-control-denied');
       }
       // Bind the request to the assignee from this canonical projection. The
