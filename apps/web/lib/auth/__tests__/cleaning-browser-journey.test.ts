@@ -428,7 +428,9 @@ describe("Cleaning first-run browser journey", () => {
 
     // A different authenticated company with a non-Cleaning profile cannot
     // read or mutate the saved Cleaning configuration.
+    const returnToA = page.waitForNavigation({ waitUntil: "domcontentloaded" });
     await page.getByLabel("Company").selectOption(companyA);
+    await returnToA;
     await expectPage(page.getByLabel("Company")).toHaveValue(companyA);
     expect((await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(409);
     const bStoreAfterA = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
@@ -443,7 +445,9 @@ describe("Cleaning first-run browser journey", () => {
     // Switch the same authenticated actor through the real canonical selector.
     const beforeFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(beforeFirstSwitch).toBeTruthy();
+    const switchToC = page.waitForNavigation({ waitUntil: "domcontentloaded" });
     await page.getByLabel("Company").selectOption(companyC);
+    await switchToC;
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
     await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
     const afterFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
