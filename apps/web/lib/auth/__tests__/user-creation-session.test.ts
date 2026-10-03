@@ -150,11 +150,11 @@ describe("user role changes keep selected membership coherent", () => {
     expect(db.prepare("SELECT role FROM users WHERE id=?").get(created.id)).toEqual({ role: "admin" });
     expect(db.prepare("SELECT role FROM business_memberships WHERE user_id=?").get(created.id)).toEqual({ role: "admin" });
   });
-  it.each(["revoked", "suspended"])("does not restore a %s membership while changing role", async (status) => {
+  it.each(["revoked", "suspended"])("can update the dormant %s role without restoring access", async (status) => {
     const created = (await (await createUser(request("admin2@example.test", "admin"))).json()).data;
     db.prepare("UPDATE business_memberships SET status=? WHERE user_id=?").run(status, created.id);
-    expect((await updateUser(patchRequest(created.id, "tech"))).status).toBe(404);
-    expect(db.prepare("SELECT role,status FROM business_memberships WHERE user_id=?").get(created.id)).toEqual({ role: "admin", status });
+    expect((await updateUser(patchRequest(created.id, "tech"))).status).toBe(200);
+    expect(db.prepare("SELECT role,status FROM business_memberships WHERE user_id=?").get(created.id)).toEqual({ role: "tech", status });
     expect(db.prepare("SELECT role FROM users WHERE id=?").get(created.id)).toEqual({ role: "admin" });
     state.token = await createSession({ userId: created.id, accountId: "company-a", role: "admin" });
     expect(await getSession()).toBeNull();
@@ -182,10 +182,10 @@ describe("user role changes keep selected membership coherent", () => {
     expect((await updateUser(patchRequest("user-b", "tech"))).status).toBe(404);
     expect(db.prepare("SELECT role FROM business_memberships WHERE user_id='user-b'").get()).toEqual({ role: "admin" });
   });
-  it("does not change a legacy user without an active company membership", async () => {
+  it("can repair an orphan primary-company role without creating membership or login access", async () => {
     db.exec("INSERT INTO users (id,account_id,role) VALUES ('legacy','company-a','admin');");
-    expect((await updateUser(patchRequest("legacy", "tech"))).status).toBe(404);
-    expect(db.prepare("SELECT role FROM users WHERE id='legacy'").get()).toEqual({ role: "admin" });
+    expect((await updateUser(patchRequest("legacy", "tech"))).status).toBe(200);
+    expect(db.prepare("SELECT role FROM users WHERE id='legacy'").get()).toEqual({ role: "tech" });
     expect(db.prepare("SELECT * FROM business_memberships WHERE user_id='legacy'").all()).toEqual([]);
     state.token = await createSession({ userId: "legacy", accountId: "company-a", role: "admin" });
     expect(await getSession()).toBeNull();

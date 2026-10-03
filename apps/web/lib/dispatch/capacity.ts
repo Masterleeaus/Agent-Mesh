@@ -4,6 +4,7 @@ import { buildDispatchRouteLegs, type DispatchRouteReadiness } from "./routing";
 import { availableMinutesInRange, loadAvailabilityForAccount, type AvailabilityWindow } from "@/lib/workforce/availability";
 import { loadTechnicianSkills, type TechnicianSkill } from "@/lib/workforce/skills";
 import { loadCurrentVehicleAssignments } from "@/lib/workforce/vehicle-assignment";
+import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 
 export interface DispatchTechnicianCapacity {
   userId: string;
@@ -115,17 +116,8 @@ export function buildCapacity(
 }
 
 export async function loadDispatchBoard(client: DbClient, accountId: string, rangeStart: Date, rangeEnd: Date) {
-  const techniciansResult = await client.query<DbTech>(
-    `SELECT u.id, u.full_name, u.email
-       FROM business_memberships bm
-       JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id
-      WHERE bm.account_id = $1
-        AND bm.status = 'active'
-        AND bm.role IN ('tech','admin','owner')
-      ORDER BY u.full_name ASC, u.email ASC`,
-    [accountId],
-  );
-  const technicians = techniciansResult.rows;
+  const technicians: DbTech[] = (await loadCompanyMemberDirectory(client, accountId))
+    .map(({ id, full_name, email }) => ({ id, full_name, email }));
   const [availability, skillsByUser, vehicleAssignments] = await Promise.all([
     loadAvailabilityForAccount(client, accountId),
     loadTechnicianSkills(client, accountId),
@@ -154,7 +146,7 @@ export async function loadDispatchBoard(client: DbClient, accountId: string, ran
        LEFT JOIN properties p ON p.id = j.property_id AND p.account_id = v.account_id
        LEFT JOIN work_orders wo ON wo.id = v.work_order_id AND wo.account_id = v.account_id
        LEFT JOIN travel_calculation_snapshots ts ON ts.id = COALESCE(v.travel_snapshot_id, wo.travel_snapshot_id) AND ts.account_id = v.account_id
-       LEFT JOIN users u ON u.id = v.assigned_user_id AND u.account_id = v.account_id
+       LEFT JOIN users u ON u.id = v.assigned_user_id
       WHERE v.account_id = $1
         AND v.scheduled_start >= $2
         AND v.scheduled_start < $3

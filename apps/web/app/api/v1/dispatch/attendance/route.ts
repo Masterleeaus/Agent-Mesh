@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth, type AuthSession } from "@/lib/auth/middleware";
 import { withTenantTransaction } from "@/lib/db/portable";
 import { summarizeAttendance, type AttendanceClockRow } from "@/lib/workforce/attendance";
+import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -28,15 +29,8 @@ export const GET = withAuth(async (request: NextRequest, session: AuthSession) =
   const overtimeThreshold = Math.max(0, Number(request.nextUrl.searchParams.get("weekly_overtime_minutes") ?? 2400) || 2400);
 
   const data = await withTenantTransaction(session, async (client, accountId) => {
-    const [members, clocks] = await Promise.all([
-      client.query<{ user_id: string; full_name: string; email: string; role: string }>(
-        `SELECT bm.user_id, u.full_name, u.email, bm.role
-           FROM business_memberships bm
-           JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id
-          WHERE bm.account_id = $1 AND bm.status = 'active'
-          ORDER BY u.full_name, u.email`,
-        [accountId],
-      ),
+    const [directory, clocks] = await Promise.all([
+      loadCompanyMemberDirectory(client, accountId),
       client.query<AttendanceClockRow & Record<string, unknown>>(
         `SELECT user_id, clock_in_at, clock_out_at, status
            FROM time_clock_sessions
@@ -47,9 +41,12 @@ export const GET = withAuth(async (request: NextRequest, session: AuthSession) =
       ),
     ]);
 
-    return members.rows.map((member) => ({
-      ...member,
-      ...summarizeAttendance(member.user_id, clocks.rows, overtimeThreshold, now),
+    return directory.map(({ id, full_name, email, role }) => ({
+      user_id: id,
+      full_name,
+      email,
+      role,
+      ...summarizeAttendance(id, clocks.rows, overtimeThreshold, now),
     }));
   });
   return NextResponse.json({ data: { start, end, weekly_overtime_minutes: overtimeThreshold, members: data } });

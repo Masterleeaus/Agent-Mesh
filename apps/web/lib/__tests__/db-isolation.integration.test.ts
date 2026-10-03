@@ -11,6 +11,7 @@ import { withTenantTransaction } from "../db/portable";
 import { loadAvailabilityForAccount } from "../workforce/availability";
 import { loadTechnicianSkills } from "../workforce/skills";
 import { loadFieldJobTemplates } from "../work-orders/field-job-templates";
+import { loadCompanyMemberDirectory } from "../workforce/member-directory";
 import { lockOwnerMembershipChanges } from "../db/owner-membership-lock";
 
 const enabled = !!process.env.TEST_DATABASE_URL && !!process.env.TEST_RUNTIME_DATABASE_URL;
@@ -26,6 +27,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   const userAdminA = randomUUID();
   const userATech = randomUUID();
   const userBOwner = randomUUID();
+  const extraOwnerA = randomUUID();
   const extraMemberA = randomUUID();
   const unassignedUserA = randomUUID();
   const clientB = randomUUID();
@@ -52,8 +54,9 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
               ($7, $8, $6, 'Duplicate B', $4, 'owner'),
               ($9, $2, $10, 'Extra A', $4, 'tech'),
               ($11, $2, $12, 'Unassigned A', $4, 'tech'),
-              ($13, $2, $14, 'RLS admin', $4, 'admin')`,
-      [userA, accountA, email, passwordHash, userATech, duplicateEmail, userBOwner, accountB, extraMemberA, `extra-${randomUUID()}@test.invalid`, unassignedUserA, `unassigned-${randomUUID()}@test.invalid`, userAdminA, `admin-${randomUUID()}@test.invalid`],
+              ($13, $2, $14, 'RLS admin', $4, 'admin'),
+              ($15, $2, $16, 'Second RLS owner', $4, 'owner')`,
+      [userA, accountA, email, passwordHash, userATech, duplicateEmail, userBOwner, accountB, extraMemberA, `extra-${randomUUID()}@test.invalid`, unassignedUserA, `unassigned-${randomUUID()}@test.invalid`, userAdminA, `admin-${randomUUID()}@test.invalid`, extraOwnerA, `second-owner-${randomUUID()}@test.invalid`],
     );
     // A principal may retain a membership in more than one company.
     // Do not add an account_id=user.account_id membership invariant.
@@ -65,8 +68,9 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
               ($2, $6, 'owner', 'active'),
               ($2, $3, 'tech', 'active'),
               ($1, $7, 'admin', 'active'),
-              ($2, $7, 'tech', 'active')`,
-      [accountA, accountB, userA, userATech, extraMemberA, userBOwner, userAdminA],
+              ($2, $7, 'tech', 'active'),
+              ($1, $8, 'owner', 'active')`,
+      [accountA, accountB, userA, userATech, extraMemberA, userBOwner, userAdminA, extraOwnerA],
     );
     await admin.query(
       "INSERT INTO clients (id, account_id, name) VALUES ($1, $2, 'Other account client')",
@@ -123,6 +127,11 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   it("denies users and client reads without session context, but supports bounded login", async () => {
     expect((await getPool().query("SELECT id FROM users")).rows).toEqual([]);
     expect((await getPool().query("SELECT id FROM clients")).rows).toEqual([]);
+    expect((await getPool().query("SELECT has_column_privilege(current_user, 'public.users', 'password_hash', 'SELECT') AS can_read_hash")).rows[0].can_read_hash).toBe(false);
+    await expect(getPool().query("SELECT password_hash FROM users"))
+      .rejects.toMatchObject({ code: "42501" });
+    await expect(getPool().query("SELECT * FROM users"))
+      .rejects.toMatchObject({ code: "42501" });
     const { rows } = await getPool().query("SELECT * FROM app_login_candidates($1)", [email.toUpperCase()]);
     expect(rows).toHaveLength(1);
     expect(rows[0].id).toBe(userA);
@@ -130,6 +139,43 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
     expect(await compare("wrong-password", rows[0].password_hash)).toBe(false);
     expect((await getPool().query("SELECT * FROM app_login_candidates($1)", ["missing@test.invalid"])).rows).toEqual([]);
     expect((await getPool().query("SELECT * FROM app_login_candidates($1)", [duplicateEmail])).rows).toHaveLength(2);
+  });
+
+  it("returns only active selected-company members and exposes no hash in the directory", async () => {
+    const companyA = await withTenantTransaction(session, async (client, accountId) =>
+      loadCompanyMemberDirectory(client, accountId),
+    );
+    expect(companyA.map((member) => member.id).sort()).toEqual(
+      [userA, userATech, extraMemberA, userAdminA, extraOwnerA].sort(),
+    );
+    expect(companyA.every((member) => member.status === "active")).toBe(true);
+    expect(companyA[0]).not.toHaveProperty("password_hash");
+
+    // userA's primary account is A, but its active membership in B makes the
+    // principal visible in B. A-only members remain invisible there.
+    const companyB = await withTenantTransaction(
+      { ...session, accountId: accountB, role: "tech" },
+      async (client, accountId) => loadCompanyMemberDirectory(client, accountId),
+    );
+    expect(companyB.map((member) => member.id).sort()).toEqual(
+      [userA, userBOwner, userAdminA].sort(),
+    );
+    expect(companyB.some((member) => member.id === extraMemberA || member.id === userATech)).toBe(false);
+
+    const selfHash = await withTenantTransaction(
+      { ...session, userId: userATech, role: "tech" },
+      async (client) => (await client.query<{ password_hash: string | null }>(
+        "SELECT public.app_user_password_hash($1::uuid) AS password_hash", [userATech],
+      )).rows[0]?.password_hash,
+    );
+    expect(selfHash).toBeTruthy();
+    const otherMemberHashForAdmin = await withTenantTransaction(
+      adminSession,
+      async (client) => (await client.query<{ password_hash: string | null }>(
+        "SELECT public.app_user_password_hash($1::uuid) AS password_hash", [userATech],
+      )).rows[0]?.password_hash,
+    );
+    expect(otherMemberHashForAdmin).toBeNull();
   });
 
   it("reads and writes only its account even when queries omit account filters", async () => {
@@ -244,7 +290,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       const memberships = await client.query<{ user_id: string }>(
         `SELECT user_id FROM business_memberships ORDER BY user_id`,
       );
-      expect(memberships.rows.map((row) => row.user_id).sort()).toEqual([userA, userATech, extraMemberA, userAdminA].sort());
+      expect(memberships.rows.map((row) => row.user_id).sort()).toEqual([userA, userATech, extraMemberA, userAdminA, extraOwnerA].sort());
 
       const skillMap = await loadTechnicianSkills(client, accountId);
       expect(skillMap.get(userATech)?.map((skill) => skill.skillId)).toEqual([skillA]);
@@ -327,6 +373,61 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       `DELETE FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
       [accountA, unassignedUserA],
     ));
+  });
+
+  it("serializes concurrent owner demotions so exactly one owner remains", async () => {
+    const demoteOwner = async (actorId: string, targetId: string) => withTenantTransaction(
+      { ...session, userId: actorId },
+      async (client, accountId) => {
+        await lockOwnerMembershipChanges(client, accountId);
+        const actor = await client.query<{ role: string }>(
+          `SELECT role FROM business_memberships
+            WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+          [accountId, actorId],
+        );
+        if (actor.rows[0]?.role !== "owner") return false;
+        const owners = await client.query<{ count: number }>(
+          `SELECT COUNT(*)::int AS count FROM business_memberships
+            WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
+          [accountId],
+        );
+        if ((owners.rows[0]?.count ?? 0) <= 1) return false;
+        return (await client.query(
+          `UPDATE business_memberships SET role = 'tech', updated_at = now()
+            WHERE account_id = $1 AND user_id = $2 AND status = 'active' AND role = 'owner'`,
+          [accountId, targetId],
+        )).rowCount === 1;
+      },
+    );
+
+    const outcomes = await Promise.all([
+      demoteOwner(userA, extraOwnerA),
+      demoteOwner(extraOwnerA, userA),
+    ]);
+    expect(outcomes.filter(Boolean)).toHaveLength(1);
+    const { rows } = await admin.query<{ count: number }>(
+      `SELECT COUNT(*)::int AS count FROM business_memberships
+        WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
+      [accountA],
+    );
+    expect(rows[0]?.count).toBe(1);
+  });
+
+  it("repairs an orphan legacy role without creating selected-company membership", async () => {
+    const { rows } = await withTenantTransaction(session, (client) =>
+      client.query<{ updated: boolean }>(
+        `SELECT public.app_update_legacy_user_role($1::uuid, 'admin') AS updated`,
+        [unassignedUserA],
+      ),
+    );
+    expect(rows[0]?.updated).toBe(true);
+    expect((await admin.query(
+      `SELECT role FROM users WHERE id = $1`, [unassignedUserA],
+    )).rows[0]?.role).toBe("admin");
+    expect((await admin.query(
+      `SELECT id FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
+      [accountA, unassignedUserA],
+    )).rows).toEqual([]);
   });
 
   it("revokes one company membership without removing another company's access or Workforce data", async () => {
@@ -600,6 +701,10 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       [randomUUID(), accountA, templateB],
     )).rejects.toMatchObject({ code: "23503" });
 
+    await admin.query(
+      `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'owner', 'active')`,
+      [accountB, unassignedUserA],
+    );
     await withTenantTransaction(session, async (client, accountId) => {
       await client.query(
         `INSERT INTO business_memberships (account_id, user_id, role, status) VALUES ($1, $2, 'tech', 'active')`,
@@ -614,16 +719,25 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
          VALUES ($1, $2, $3, 2, '08:00', '16:00')`,
         [randomUUID(), accountId, unassignedUserA],
       );
-      expect((await client.query(`DELETE FROM users WHERE id = $1 AND account_id = $2`, [unassignedUserA, accountId])).rowCount).toBe(1);
     });
-    const afterUserDelete = await admin.query(
+    await expect(withTenantTransaction(session, (client, accountId) => client.query(
+      `DELETE FROM users WHERE id = $1 AND account_id = $2`, [unassignedUserA, accountId],
+    ))).rejects.toMatchObject({ code: "42501" });
+    const afterDeniedUserDelete = await admin.query(
       `SELECT
-         (SELECT count(*) FROM business_memberships WHERE account_id = $1 AND user_id = $2) AS memberships,
+         (SELECT count(*) FROM business_memberships WHERE account_id = $1 AND user_id = $2) AS primary_memberships,
+         (SELECT count(*) FROM business_memberships WHERE account_id = $3 AND user_id = $2 AND status = 'active') AS other_company_memberships,
          (SELECT count(*) FROM technician_skills WHERE account_id = $1 AND user_id = $2) AS skills,
          (SELECT count(*) FROM technician_availability WHERE account_id = $1 AND user_id = $2) AS availability`,
-      [accountA, unassignedUserA],
+      [accountA, unassignedUserA, accountB],
     );
-    expect(afterUserDelete.rows[0]).toEqual({ memberships: "0", skills: "0", availability: "0" });
+    expect(afterDeniedUserDelete.rows[0]).toEqual({
+      primary_memberships: "1", other_company_memberships: "1", skills: "1", availability: "1",
+    });
+    await withTenantTransaction(session, (client) => client.query(
+      `DELETE FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
+      [accountA, unassignedUserA],
+    ));
   });
 
   it("serializes competing owner downgrades so at least one owner remains", async () => {

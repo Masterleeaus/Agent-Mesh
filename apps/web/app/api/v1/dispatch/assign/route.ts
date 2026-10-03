@@ -52,7 +52,6 @@ export const POST = withAuth(async (request: NextRequest, session: AuthSession) 
       if (parsed.data.assigned_user_id) {
         const member = await client.query<{ id: string }>(
           `SELECT bm.id FROM business_memberships bm
-             JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id
             WHERE bm.user_id = $1 AND bm.account_id = $2
               AND bm.status = 'active' AND bm.role IN ('tech','admin','owner')`,
           [parsed.data.assigned_user_id, accountId],

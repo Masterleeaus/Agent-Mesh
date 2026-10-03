@@ -3,7 +3,7 @@ import type { Route } from "next";
 import { headers } from "next/headers";
 import { getSession } from "@/lib/auth/session";
 import { getDatabaseDialect } from "@/lib/db/dialect";
-import { portableQuery } from "@/lib/db/portable";
+import { withTenantTransaction } from "@/lib/db/portable";
 import { businessToday } from "@/lib/operations/business-day";
 import { AppShell } from "@/components/AppShell";
 import {
@@ -29,20 +29,31 @@ export default async function AppLayout({
     return <>{children}</>;
   }
 
-  const [users, reviewRows] = await Promise.all([
-    portableQuery<{ full_name: string }>(
-      `SELECT full_name FROM users WHERE id = $1 AND ${getDatabaseDialect() === "sqlite" ? "company_id" : "account_id"} = $2`,
-      [session.userId, session.accountId],
-    ),
-    getDatabaseDialect() === "sqlite" ? Promise.resolve([]) : portableQuery<{ pending: boolean }>(
-      `SELECT (review_prompted_at IS NOT NULL AND closed_at IS NULL) AS pending
-       FROM business_days
-       WHERE account_id = $1 AND business_date = $2`,
-      [session.accountId, businessToday()],
-    ),
-  ]);
-  const userName = users[0]?.full_name ?? "";
-  const reviewPending = reviewRows[0]?.pending ?? false;
+  const { userName, reviewPending } = await withTenantTransaction(session, async (client, accountId) => {
+    const dialect = getDatabaseDialect();
+    const [users, reviewRows] = await Promise.all([
+      client.query<{ full_name: string }>(
+        dialect === "sqlite"
+          ? `SELECT full_name FROM users WHERE id = $1 AND company_id = $2`
+          : `SELECT u.full_name FROM business_memberships bm
+              JOIN users u ON u.id = bm.user_id
+             WHERE bm.user_id = $1 AND bm.account_id = $2 AND bm.status = 'active'`,
+        [session.userId, accountId],
+      ),
+      dialect === "sqlite"
+        ? Promise.resolve({ rows: [] as { pending: boolean }[] })
+        : client.query<{ pending: boolean }>(
+            `SELECT (review_prompted_at IS NOT NULL AND closed_at IS NULL) AS pending
+               FROM business_days
+              WHERE account_id = $1 AND business_date = $2`,
+            [accountId, businessToday()],
+          ),
+    ]);
+    return {
+      userName: users.rows[0]?.full_name ?? "",
+      reviewPending: reviewRows.rows[0]?.pending ?? false,
+    };
+  });
 
   return (
     <AppShell role={session.role} userName={userName} reviewPending={reviewPending}>

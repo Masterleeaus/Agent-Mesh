@@ -1,9 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { hash } from "bcryptjs";
 import { withRole } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { withTenantTransaction } from "@/lib/db/portable";
+import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 import { appendAuditLog } from "@/lib/db/audit";
 import { logger } from "@/lib/logger";
 
@@ -19,16 +21,9 @@ const createUserBody = z.object({
 
 export const GET = withRole(["owner", "admin"], async (_request: NextRequest, session: AuthSession) => {
   const rows = await withTenantTransaction(session, async (client, accountId) => {
-    const { rows } = await client.query(
-      `SELECT u.id, u.full_name, u.email, u.phone, bm.role, u.created_at
-         FROM users u
-         JOIN business_memberships bm
-           ON bm.user_id = u.id AND bm.account_id = $1 AND bm.status = 'active'
-        WHERE u.account_id = $1
-        ORDER BY bm.role, u.full_name`,
-      [accountId],
-    );
-    return rows;
+    return (await loadCompanyMemberDirectory(client, accountId)).map(({ id, full_name, email, phone, role, created_at }) => ({
+      id, full_name, email, phone, role, created_at,
+    }));
   });
   return NextResponse.json({ data: rows });
 });
@@ -63,21 +58,29 @@ export const POST = withRole(["owner", "admin"], async (request: NextRequest, se
       );
       if (existing.rowCount && existing.rowCount > 0) return { conflict: true as const };
 
-      const { rows } = await client.query(
-        `INSERT INTO users (account_id, full_name, email, phone, role, password_hash)
-         VALUES ($1, $2, $3, $4, $5, $6)
-         RETURNING id, full_name, email, phone, role, created_at`,
-        [accountId, full_name, email.toLowerCase().trim(), phone || null, role, password_hash],
+      const userId = randomUUID();
+      await client.query(
+        `INSERT INTO users (id, account_id, full_name, email, phone, role, password_hash)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [userId, accountId, full_name, email.toLowerCase().trim(), phone || null, role, password_hash],
       );
-      const newUser = rows[0];
 
       // Session resolution requires an explicit active membership. Keep creation
       // atomic so a membership failure cannot leave an unusable principal behind.
       await client.query(
         `INSERT INTO business_memberships (account_id, user_id, role, status)
          VALUES ($1, $2, $3, 'active')`,
-        [accountId, newUser.id, role],
+        [accountId, userId, role],
       );
+      // The users SELECT policy requires an active company membership. Read
+      // RETURNING fields only after the membership row exists.
+      const newUserResult = await client.query(
+        `SELECT id, full_name, email, phone, role, created_at
+           FROM users WHERE id = $1 AND account_id = $2`,
+        [userId, accountId],
+      );
+      const newUser = newUserResult.rows[0];
+      if (!newUser) throw new Error("CREATED_USER_NOT_VISIBLE_AFTER_MEMBERSHIP");
 
       await appendAuditLog(client, {
         account_id: accountId,

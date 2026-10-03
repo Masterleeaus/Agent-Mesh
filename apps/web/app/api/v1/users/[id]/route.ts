@@ -3,8 +3,10 @@ import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { withTenantTransaction } from "@/lib/db/portable";
+import { getDatabaseDialect } from "@/lib/db/dialect";
 import { appendAuditLog } from "@/lib/db/audit";
 import { lockOwnerMembershipChanges } from "@/lib/db/owner-membership-lock";
+import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 import { logger } from "@/lib/logger";
 import { getPathId } from "@/lib/route-utils";
 
@@ -29,24 +31,23 @@ export const GET = withAuth(async (request: NextRequest, session: AuthSession) =
       { status: 403 }
     );
   }
-  const row = await withTenantTransaction(session, async (client, accountId) => {
-    const { rows } = await client.query(
-      `SELECT u.id, u.full_name, u.email, u.phone, bm.role, u.created_at
-         FROM users u
-         JOIN business_memberships bm
-           ON bm.user_id = u.id AND bm.account_id = $2 AND bm.status = 'active'
-        WHERE u.id = $1 AND u.account_id = $2`,
-      [id, accountId],
-    );
-    return rows[0] ?? null;
-  });
+  const row = await withTenantTransaction(session, async (client, accountId) =>
+    (await loadCompanyMemberDirectory(client, accountId)).find((member) => member.id === id) ?? null,
+  );
   if (!row) {
     return NextResponse.json(
       { error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } },
       { status: 404 }
     );
   }
-  return NextResponse.json({ data: row });
+  return NextResponse.json({ data: {
+    id: row.id,
+    full_name: row.full_name,
+    email: row.email,
+    phone: row.phone,
+    role: row.role,
+    created_at: row.created_at,
+  } });
 });
 
 export const PATCH = withAuth(async (request: NextRequest, session: AuthSession) => {
@@ -108,19 +109,70 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         }
       }
 
-      const before = await client.query(
-        `SELECT u.id, u.full_name, u.email, u.phone, bm.role
-           FROM users u
-           JOIN business_memberships bm
-             ON bm.user_id = u.id AND bm.account_id = $2 AND bm.status = 'active'
-          WHERE u.id = $1 AND u.account_id = $2`,
-        [id, accountId],
-      );
-      if (!before.rowCount) {
+      const profileFieldsRequested = full_name !== undefined || email !== undefined || phone !== undefined;
+      const before = (await loadCompanyMemberDirectory(client, accountId)).find((member) => member.id === id);
+      if (!before) {
+        // Owners may change the dormant membership role without reactivating
+        // a revoked or suspended member. The selected company status remains
+        // untouched, so this cannot restore login/session or dispatch access.
+        if (role !== undefined && !profileFieldsRequested) {
+          const dormant = await client.query<{ id: string; role: string; status: string }>(
+            `SELECT id, role, status FROM business_memberships
+              WHERE account_id = $1 AND user_id = $2 AND status IN ('revoked', 'suspended')`,
+            [accountId, id],
+          );
+          if (dormant.rows[0]) {
+            const updated = await client.query<{ id: string; role: string; status: string }>(
+              `UPDATE business_memberships SET role = $1, updated_at = now()
+                WHERE account_id = $2 AND user_id = $3 AND status = $4
+                RETURNING id, role, status`,
+              [role, accountId, id, dormant.rows[0].status],
+            );
+            if (updated.rows[0]) {
+              await appendAuditLog(client, {
+                account_id: accountId,
+                entity_type: "business_membership",
+                entity_id: updated.rows[0].id,
+                action: "update",
+                actor_id: session.userId,
+                trace_id: session.traceId,
+                old_value: dormant.rows[0] as unknown as Record<string, unknown>,
+                new_value: updated.rows[0] as unknown as Record<string, unknown>,
+              });
+              return NextResponse.json({ data: { id, role: updated.rows[0].role, status: updated.rows[0].status } });
+            }
+          } else {
+            const dialect = client.dialect ?? getDatabaseDialect();
+            let updated = false;
+            if (dialect === "postgres") {
+              const result = await client.query<{ updated: boolean }>(
+                `SELECT public.app_update_legacy_user_role($1::uuid, $2) AS updated`,
+                [id, role],
+              );
+              updated = result.rows[0]?.updated === true;
+            } else {
+              const legacyUser = await client.query<{ id: string }>(
+                `SELECT id FROM users WHERE id = $1 AND account_id = $2`, [id, accountId],
+              );
+              const existingMembership = await client.query(
+                `SELECT id FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
+                [accountId, id],
+              );
+              if (legacyUser.rows[0] && !existingMembership.rows[0]) {
+                const result = await client.query(
+                  `UPDATE users SET role = $1, updated_at = now() WHERE id = $2 AND account_id = $3`,
+                  [role, id, accountId],
+                );
+                updated = (result.rowCount ?? 0) === 1;
+              }
+            }
+            if (updated) return NextResponse.json({ data: { id, role } });
+          }
+        }
         return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
       }
 
-      const previousRole = (before.rows[0] as { role: string }).role;
+      const previousRole = before.role;
       if (role !== undefined && previousRole === "owner" && role !== "owner") {
         const { rows: ownerRows } = await client.query<{ cnt: number }>(
           `SELECT COUNT(*)::int AS cnt FROM business_memberships
@@ -135,25 +187,55 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         }
       }
 
-      const setClauses: string[] = ["updated_at = now()"];
-      const params: unknown[] = [];
-      let idx = 1;
-
-      if (full_name !== undefined) { setClauses.push(`full_name = $${idx++}`); params.push(full_name); }
-      if (email !== undefined) { setClauses.push(`email = $${idx++}`); params.push(email.toLowerCase().trim()); }
-      if (phone !== undefined) { setClauses.push(`phone = $${idx++}`); params.push(phone || null); }
-      if (role !== undefined) {
-        // Legacy projection for users.account_id only. Sessions use the
-        // selected-company membership as their authority.
-        setClauses.push(`role = $${idx++}`);
-        params.push(role);
-      }
-      params.push(id);
-
-      const { rows } = await client.query(
-        `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} AND account_id = $${idx + 1} RETURNING id, full_name, email, phone`,
-        [...params, accountId],
+      const primaryProfile = await client.query<{ id: string }>(
+        `SELECT id FROM users WHERE id = $1 AND account_id = $2`,
+        [id, accountId],
       );
+      if (profileFieldsRequested && !primaryProfile.rows[0]) {
+        return NextResponse.json({ error: {
+          code: "PRIMARY_COMPANY_PROFILE_REQUIRED",
+          message: "Profile fields can only be changed through the user's primary company",
+          traceId: session.traceId,
+        } }, { status: 403 });
+      }
+
+      if (profileFieldsRequested || (role !== undefined && primaryProfile.rows[0])) {
+        const dialect = client.dialect ?? getDatabaseDialect();
+        const profile = {
+          full_name: full_name ?? before.full_name,
+          email: email === undefined ? before.email : email.toLowerCase().trim(),
+          phone: phone === undefined ? before.phone : phone || null,
+          role: role ?? (await client.query<{ role: string }>(
+            `SELECT role FROM users WHERE id = $1 AND account_id = $2`, [id, accountId],
+          )).rows[0]?.role ?? before.role,
+        };
+        if (dialect === "postgres") {
+          const updated = await client.query<{ updated: boolean }>(
+            `SELECT public.app_update_company_member_profile($1::uuid, $2, $3, $4, $5) AS updated`,
+            [id, profile.full_name, profile.email, profile.phone, profile.role],
+          );
+          if (updated.rows[0]?.updated !== true) {
+            return NextResponse.json({ error: {
+              code: "FORBIDDEN",
+              message: "Company member profile update is not authorized",
+              traceId: session.traceId,
+            } }, { status: 403 });
+          }
+        } else {
+          const setClauses: string[] = ["updated_at = now()"];
+          const params: unknown[] = [];
+          let idx = 1;
+          if (full_name !== undefined) { setClauses.push(`full_name = $${idx++}`); params.push(full_name); }
+          if (email !== undefined) { setClauses.push(`email = $${idx++}`); params.push(email.toLowerCase().trim()); }
+          if (phone !== undefined) { setClauses.push(`phone = $${idx++}`); params.push(phone || null); }
+          if (role !== undefined) { setClauses.push(`role = $${idx++}`); params.push(role); }
+          params.push(id, accountId);
+          await client.query(
+            `UPDATE users SET ${setClauses.join(", ")} WHERE id = $${idx} AND account_id = $${idx + 1}`,
+            params,
+          );
+        }
+      }
 
       if (role !== undefined) {
         // Roles belong to the selected company membership, not the global principal.
@@ -165,7 +247,13 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         if (membershipUpdate.rowCount !== 1) throw new Error("Active membership disappeared during role update");
       }
 
-      const updated = { ...rows[0], role: role ?? (before.rows[0] as { role: string }).role };
+      const updated = {
+        id: before.id,
+        full_name: full_name ?? before.full_name,
+        email: email === undefined ? before.email : email.toLowerCase().trim(),
+        phone: phone === undefined ? before.phone : phone || null,
+        role: role ?? before.role,
+      };
 
       await appendAuditLog(client, {
         account_id: accountId,
@@ -174,7 +262,7 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         action: "update",
         actor_id: session.userId,
         trace_id: session.traceId,
-        old_value: before.rows[0] as Record<string, unknown>,
+        old_value: before as unknown as Record<string, unknown>,
         new_value: updated,
       });
       return NextResponse.json({ data: updated });
@@ -220,11 +308,9 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
       }
 
       const before = await client.query(
-        `SELECT u.id, u.full_name, u.email, bm.role, bm.status, bm.id AS membership_id
-           FROM users u
-           JOIN business_memberships bm
-             ON bm.user_id = u.id AND bm.account_id = $2
-          WHERE u.id = $1 AND u.account_id = $2 AND bm.status <> 'revoked'`,
+        `SELECT user_id AS id, role, status, id AS membership_id
+           FROM business_memberships
+          WHERE user_id = $1 AND account_id = $2 AND status <> 'revoked'`,
         [id, accountId],
       );
       if (!before.rowCount) {
@@ -246,18 +332,36 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
         }
       }
 
+      // Keep account_id-scoped legacy consumers from seeing a removed owner.
+      // This is constrained to the user's primary account; other memberships
+      // and their role authority are untouched.
+      if (target.status === "active") {
+        const primaryProfile = await client.query<{ id: string }>(
+          `SELECT id FROM users WHERE id = $1 AND account_id = $2`, [id, accountId],
+        );
+        if (primaryProfile.rowCount === 1) {
+          const profile = (await loadCompanyMemberDirectory(client, accountId)).find((member) => member.id === id);
+          if (profile) {
+            const dialect = client.dialect ?? getDatabaseDialect();
+            if (dialect === "postgres") {
+              const updated = await client.query<{ updated: boolean }>(
+                `SELECT public.app_update_company_member_profile($1::uuid, $2, $3, $4, 'tech') AS updated`,
+                [id, profile.full_name, profile.email, profile.phone],
+              );
+              if (updated.rows[0]?.updated !== true) throw new Error("Could not update primary-company role projection");
+            } else {
+              await client.query(
+                `UPDATE users SET role = 'tech', updated_at = now() WHERE id = $1 AND account_id = $2`,
+                [id, accountId],
+              );
+            }
+          }
+        }
+      }
       await client.query(
         `UPDATE business_memberships SET status = 'revoked', updated_at = now()
           WHERE account_id = $1 AND user_id = $2 AND status <> 'revoked'`,
         [accountId, id],
-      );
-      // Keep account_id-scoped legacy consumers from seeing a removed owner.
-      // This is constrained to the user's primary account; other memberships
-      // and their role authority are untouched.
-      await client.query(
-        `UPDATE users SET role = 'tech', updated_at = now()
-          WHERE id = $1 AND account_id = $2`,
-        [id, accountId],
       );
 
       await appendAuditLog(client, {

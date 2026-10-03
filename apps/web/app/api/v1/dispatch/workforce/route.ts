@@ -4,6 +4,7 @@ import { z } from "zod";
 import { withAuth } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { withTenantTransaction } from "@/lib/db/portable";
+import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -38,11 +39,15 @@ export const GET = withAuth(async (_request: NextRequest, session: AuthSession) 
   if (!requireManager(session)) return NextResponse.json({ error: { code: "FORBIDDEN", message: "Owner or admin role required" } }, { status: 403 });
   const data = await withTenantTransaction(session, async (client, accountId) => {
     const [members, skills, availability] = await Promise.all([
-      client.query(`SELECT bm.user_id, bm.role, bm.status, u.full_name, u.email FROM business_memberships bm JOIN users u ON u.id = bm.user_id AND u.account_id = bm.account_id WHERE bm.account_id = $1 AND bm.status = 'active' ORDER BY u.full_name, u.email`, [accountId]),
+      loadCompanyMemberDirectory(client, accountId),
       client.query(`SELECT ts.user_id, ws.id AS skill_id, ws.name, ws.category, ts.proficiency FROM technician_skills ts JOIN workforce_skills ws ON ws.id = ts.skill_id AND ws.account_id = ts.account_id WHERE ts.account_id = $1 AND ws.active = TRUE ORDER BY ts.user_id, ws.name`, [accountId]),
       client.query(`SELECT id, user_id, weekday, specific_date, start_time, end_time, availability_kind, note FROM technician_availability WHERE account_id = $1 ORDER BY user_id, specific_date, weekday, start_time`, [accountId]),
     ]);
-    return { members: members.rows, skills: skills.rows, availability: availability.rows };
+    return {
+      members: members.map(({ id, ...member }) => ({ user_id: id, ...member })),
+      skills: skills.rows,
+      availability: availability.rows,
+    };
   });
   return NextResponse.json({ data });
 });

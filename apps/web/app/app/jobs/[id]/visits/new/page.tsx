@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import { canCreateVisit, canAssignVisit } from "@/lib/auth/permissions";
 import { query, queryOne } from "@/lib/db";
 import { withTenantTransaction } from "@/lib/db/portable";
+import { loadCompanyMemberDirectory } from "@/lib/workforce/member-directory";
 import { VisitScheduleForm } from "./VisitScheduleForm";
 import { Card, PageContainer, PageHeader } from "@/components/ui";
 
@@ -66,16 +67,7 @@ export default async function NewVisitPage({
 
   const users = canAssign
     ? await withTenantTransaction(session, async (client, accountId) => {
-        const { rows } = await client.query<User>(
-          `SELECT u.id, u.full_name, bm.role
-             FROM users u
-             JOIN business_memberships bm
-               ON bm.user_id = u.id AND bm.account_id = $1 AND bm.status = 'active'
-            WHERE u.account_id = $1
-            ORDER BY u.full_name ASC`,
-          [accountId],
-        );
-        return rows;
+        return (await loadCompanyMemberDirectory(client, accountId)).map(({ id, full_name, role }) => ({ id, full_name, role }));
       })
     : [];
 
