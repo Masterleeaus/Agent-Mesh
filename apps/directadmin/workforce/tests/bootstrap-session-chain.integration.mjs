@@ -194,6 +194,8 @@ test('packaged RAW nonce to #302 assertion to #1049 session issuance preserves t
   const expectedTuple = { company_id: 'cleaning-company-1', device_id: 'cleaning-device-1' };
   for (const role of ['admin', 'reseller', 'user']) {
     const requestCookies = cookieHeader();
+    const previousCredential = previousTitanCookie.slice('__Host-titan-da-session='.length);
+    const previousSession = await baseSessions.authenticate(previousCredential, expectedTuple);
     const roleNonce = await runRaw('nonce', { role, cookie: requestCookies });
     assert.equal(roleNonce.status, 200, `${role} nonce route: ${JSON.stringify(roleNonce.body)}`);
     assert.equal(roleNonce.headers.has('set-cookie'), false);
@@ -213,6 +215,11 @@ test('packaged RAW nonce to #302 assertion to #1049 session issuance preserves t
     const roleSession = await baseSessions.authenticate(roleCredential, expectedTuple);
     assert.deepEqual({ company_id: roleSession.context.company_id, device_id: roleSession.context.device_id }, expectedTuple,
       `${role} route preserves the selected company/device tuple`);
+    const revokedRow = await f.storage.query('SELECT revoked FROM titan_security_sessions WHERE session_id=$1',
+      [previousSession.context.session_id]);
+    assert.equal(revokedRow.rows[0]?.revoked, 1, `${role} repeat login revokes the superseded canonical session`);
+    await assert.rejects(baseSessions.authenticate(previousCredential, expectedTuple), /authentication-denied/,
+      `${role} repeat login rejects the superseded browser credential`);
   }
   assert.deepEqual(issueInputs, Array.from({ length: 4 }, () => expectedTuple),
     'each role route pair passes only the same canonical selected tuple to sessions.issue');
