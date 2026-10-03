@@ -88,6 +88,21 @@ export default function PlatformHubHome() {
         </div>
       </section>
 
+      <section id="growth" className="px-6 py-20 border-y border-nx-border bg-nx-surface/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl mb-10">
+            <SectionLabel>Reception, marketing & new business</SectionLabel>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">Answer, follow up and find the next clean.</h2>
+            <p className="text-nx-muted leading-relaxed">Connect AI Reception, customer messaging and local prospect discovery to the same cleaning workflow—from the first call through a booked job and the next repeat service.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            <article className="border border-nx-border rounded-2xl bg-nx-bg p-6"><h3 className="text-xl font-bold mb-2">AI Reception</h3><p className="text-sm text-nx-muted leading-relaxed mb-5">Answer customer calls, capture cleaning details, book from configured availability and recover missed enquiries.</p><Link to="/reception" className="text-sm font-semibold text-nx-purple-light">Explore Reception →</Link></article>
+            <article className="border border-nx-border rounded-2xl bg-nx-bg p-6"><h3 className="text-xl font-bold mb-2">Omnichannel Marketing</h3><p className="text-sm text-nx-muted leading-relaxed mb-5">Coordinate eligible follow-up across SMS, WhatsApp, Messenger, Telegram and phone, then measure quotes and bookings.</p><Link to="/marketing" className="text-sm font-semibold text-nx-purple-light">Explore Marketing →</Link></article>
+            <article className="border border-nx-border rounded-2xl bg-nx-bg p-6"><h3 className="text-xl font-bold mb-2">Lead Generation</h3><p className="text-sm text-nx-muted leading-relaxed mb-5">Discover local cleaning prospects or import a call list, then review and approve candidates before outreach.</p><Link to="/lead-generation" className="text-sm font-semibold text-nx-purple-light">Find new prospects →</Link></article>
+          </div>
+        </div>
+      </section>
+
       <section id="features" className="px-6 py-24 border-y border-nx-border">
         <div className="max-w-6xl mx-auto">
           <div className="max-w-3xl mb-11"><SectionLabel>The operating system</SectionLabel><h2 className="text-3xl sm:text-4xl font-extrabold mb-4">The details that keep a cleaning business running.</h2><p className="text-nx-muted leading-relaxed">Keep the daily business record connected: who asked, what was agreed, where the work happens, who is assigned, what was completed, what needs attention and what is ready to bill.</p></div>

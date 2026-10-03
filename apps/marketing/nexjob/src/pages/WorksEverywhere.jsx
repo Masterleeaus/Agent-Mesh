@@ -5,14 +5,16 @@ import { ButtonPrimary } from '../components/Button'
 import { APP_SIGNUP_AVAILABLE, appRoutes } from '../config'
 
 const surfaces = [
-  { id: 'mobile-app', name: 'Mobile app', audience: 'Owners, managers and field teams', description: 'Check the day’s work, view team assignments, open site instructions, complete visit tasks, capture photos and notes, and send updates from the field.' },
+  { id: 'mobile-app', name: 'Owner and cleaner mobile apps', audience: 'Titan Command for owners · Titan Go for cleaners', description: 'Owners and managers review the business from Titan Command. Cleaners use Titan Go on the job to see assigned visits, site instructions and checklists, capture photos and notes, and report progress. See mobile upgrade pricing.', href: '/pricing#cleaner-mobile', cta: 'See mobile app pricing' },
   { id: 'pwa', name: 'Progressive web app', audience: 'Office and field teams', description: 'Open the Cleaning workspace in a browser and install it as a PWA on supported devices for a quick, app-like way to access the same business workflow.' },
   { id: 'chrome', name: 'Five Chrome extensions', audience: 'People doing browser-based business work', description: 'Install separate extensions for Bookings, Invoicing, Job Management, Quotes and CRM. Each uses approved page context to prepare work for the connected business.' , href: '/chrome-extensions', cta: 'Explore five Chrome extensions' },
   { id: 'wordpress', name: 'Five WordPress plugins', audience: 'Cleaning businesses with a WordPress site', description: 'Install separate plugins for Bookings, Invoicing, Job Management, Quotes and CRM. Use WordPress forms and records locally, or connect them to the Cleaning system.', href: '/wordpress-plugins', cta: 'Explore five WordPress plugins' },
   { id: 'chatgpt', name: 'ChatGPT', audience: 'Owners, managers and staff', description: 'Ask about approved cleaning business context, prepare replies and quotes, and request next steps through a connected ChatGPT experience.' },
   { id: 'whatsapp', name: 'WhatsApp', audience: 'Customers, owners and staff', description: 'Receive customer enquiries and service updates, coordinate approved tasks and keep work conversations connected to the right business record.' },
   { id: 'telegram', name: 'Telegram', audience: 'Owners and staff', description: 'Use a team-friendly channel for job coordination, status updates, questions and follow-up with the right company context.' },
-  { id: 'messenger', name: 'Facebook Messenger', audience: 'Customers, owners and staff', description: 'Respond to social enquiries, continue customer conversations and route requests into the same cleaning workflow.' },
+  { id: 'messenger', name: 'Facebook Messenger', audience: 'Customers, owners and staff', description: 'Respond to social enquiries, continue customer conversations and route requests into the same cleaning workflow.', href: '/marketing', cta: 'See the marketing system' },
+  { id: 'sms', name: 'SMS', audience: 'Customers, owners and staff', description: 'Send approved booking reminders and service updates; give staff a connected way to receive work and report progress.', href: '/marketing', cta: 'See the marketing system' },
+  { id: 'phone', name: 'Phone calls', audience: 'Customers, owners and staff', description: 'AI Reception can answer customer calls, capture cleaning details, book from configured availability and route complex requests to your team.', href: '/reception', cta: 'See AI Reception' },
 ]
 
 const workExamples = [
@@ -23,7 +25,7 @@ const workExamples = [
 
 export default function WorksEverywhere() {
   return <>
-    <PageMeta title="Works Everywhere for Cleaning Teams" description="Use the Cleaning workforce and business system through the mobile app, PWA, five Chrome extensions, five WordPress plugins, ChatGPT, WhatsApp, Telegram and Facebook Messenger." />
+    <PageMeta title="Works Everywhere for Cleaning Teams" description="Use the Cleaning workforce and business system through owner and cleaner mobile apps, the PWA, five Chrome extensions, five WordPress plugins, ChatGPT, SMS, phone, WhatsApp, Telegram and Facebook Messenger." />
     <main>
       <section className="pt-32 pb-16 px-6 text-center">
         <div className="max-w-5xl mx-auto">

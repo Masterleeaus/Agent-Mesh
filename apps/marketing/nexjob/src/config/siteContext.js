@@ -42,6 +42,12 @@ const worksEverywhereNavigation = Object.freeze([
   { label: 'Facebook Messenger', href: '/works-everywhere#messenger' },
 ])
 
+const growthNavigation = Object.freeze([
+  { label: 'AI Reception', href: '/reception' },
+  { label: 'Omnichannel marketing', href: '/marketing' },
+  { label: 'Lead generation', href: '/lead-generation' },
+])
+
 const moreNavigation = Object.freeze([
   { label: 'What is Titan Zero?', href: '/titan-zero' },
   { label: 'Managed service', href: '/fully-managed' },
@@ -53,6 +59,7 @@ const hubNavigation = Object.freeze([
   { label: 'Features', href: '/features' },
   { label: 'AI workforce', href: '/ai-workforce' },
   { label: 'Works Everywhere', href: '/works-everywhere', children: worksEverywhereNavigation },
+  { label: 'Customer growth', href: '/marketing', children: growthNavigation },
   { label: 'Cleaning', href: '/industries/cleaning' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'More', href: '/resources', children: moreNavigation },
@@ -63,6 +70,7 @@ const verticalNavigation = Object.freeze([
   { label: 'Features', href: '/#features' },
   { label: 'AI workforce', href: '/ai-workforce' },
   { label: 'Works Everywhere', href: '/works-everywhere', children: worksEverywhereNavigation },
+  { label: 'Customer growth', href: '/marketing', children: growthNavigation },
   { label: 'What is Titan Zero?', href: '/titan-zero' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Managed service', href: '/fully-managed' },
