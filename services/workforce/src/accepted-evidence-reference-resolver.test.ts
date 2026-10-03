@@ -5,6 +5,10 @@ import { DatabaseSync } from "node:sqlite";
 import { AcceptedEvidenceLedger } from "../../../packages/tools/accepted-evidence-ledger.mjs";
 // @ts-expect-error The production field-service composition is JavaScript.
 import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
+// @ts-expect-error The canonical runtime's producer hook is JavaScript.
+import { assertReplayTaskLineage, verifiedTaskLineageFromProducerEvent } from "./field-service-runtime.mjs";
+// @ts-expect-error The native business operation is JavaScript.
+import { createNativeWorkOrders } from "./native-work-orders.mjs";
 
 const at = "2026-10-03T09:00:00.000Z";
 type Criteria = Readonly<{ company_id: string; work_id: string; visit_id: string; work_order_id: string;
@@ -59,6 +63,30 @@ function createTestSqliteStorage() {
   return storage;
 }
 
+function createNativeOperationContextStore(withDisposition = true) {
+  const db = new DatabaseSync(":memory:");
+  db.exec(`CREATE TABLE work_orders(id TEXT,company_id TEXT,assigned_user_id TEXT,status TEXT,completed_at TEXT);
+    CREATE TABLE visits(id TEXT,company_id TEXT,work_order_id TEXT,assigned_user_id TEXT,status TEXT,completed_at TEXT);
+    CREATE TABLE work_order_tasks(id TEXT,company_id TEXT,work_order_id TEXT,completed INTEGER,status TEXT);
+    CREATE TABLE visit_tasks(company_id TEXT,visit_id TEXT,work_order_id TEXT,task_id TEXT${withDisposition ? ",disposition TEXT" : ""});
+    INSERT INTO work_orders VALUES('order-a','company-a','actor-a','completed','2026-10-03T08:00:00Z');
+    INSERT INTO visits VALUES('visit-a','company-a','order-a','actor-a','completed','2026-10-03T07:00:00Z');
+    INSERT INTO work_order_tasks VALUES('task-a','company-a','order-a',1,'done');
+    INSERT INTO visit_tasks(company_id,visit_id,work_order_id,task_id${withDisposition ? ",disposition" : ""})
+      VALUES('company-a','visit-a','order-a','task-a'${withDisposition ? ",'fix_now'" : ""});`);
+  return {
+    dialect: "sqlite",
+    async query(sql: string, params: readonly unknown[] = []) {
+      const values: any[] = [];
+      const normalized = sql.replace(/\$(\d+)/g, (_match, raw: string) => { values.push(params[Number(raw) - 1] as any); return "?"; });
+      const statement = db.prepare(normalized);
+      if (statement.columns().length) { const rows = statement.all(...values) as unknown[]; return { rows, rowCount: rows.length }; }
+      return { rows: [], rowCount: statement.run(...values).changes };
+    },
+    close() { db.close(); },
+  };
+}
+
 async function fixture() {
   const storage = createTestSqliteStorage();
   const runtime = await createFieldServiceRuntime({ storage, workOrders: {
@@ -71,7 +99,8 @@ async function fixture() {
 function acceptedRecord(input: Criteria, options: {
   evidence_id?: string; state?: string; final_outcome?: string | null; verified?: boolean;
   request?: Partial<Criteria>; observed?: Partial<Criteria>; verification?: Partial<Criteria>;
-  provenance?: Partial<Criteria>; omit_accepted_marker?: boolean; supersedes_evidence_id?: string;
+  provenance?: Partial<Criteria>; context?: Partial<Criteria>; omit_context?: boolean;
+  omit_accepted_marker?: boolean; supersedes_evidence_id?: string;
 } = {}, ledger = new AcceptedEvidenceLedger({ now: () => at })) {
   const evidence_id = options.evidence_id ?? "evidence-a";
   const state = options.state ?? "VERIFIED";
@@ -82,7 +111,8 @@ function acceptedRecord(input: Criteria, options: {
     verified: options.verified ?? true, verification_id: `verification-${evidence_id}`,
     method: "canonical-reread", ...input, ...options.verification,
   } : null;
-  const requestInput = { ...input, ...options.request };
+  const requestInput = { company_id: input.company_id, work_id: input.work_id,
+    work_order_id: input.work_order_id, ...options.request };
   const observed = { status: "verified", ...input, ...options.observed };
   const provenance = {
     company_id: input.company_id, work_id: input.work_id, visit_id: input.visit_id,
@@ -95,7 +125,11 @@ function acceptedRecord(input: Criteria, options: {
     work_id: input.work_id, run_id, correlation_id: `correlation-${evidence_id}`,
     agent_id: "agent-a", capability: "work.visit.task.inspect", provider: "native",
     execution_class: "native", state, final_outcome: options.final_outcome ?? (state === "VERIFIED" ? "verified" : null),
-    request_summary: { capability: "work.visit.task.inspect", input: requestInput, decision_id, work_id: input.work_id, run_id },
+    request_summary: { capability: "crm.work_order.complete", input: requestInput,
+      ...(options.omit_context ? {} : { canonical_operation_context: {
+        company_id: input.company_id, work_order_id: input.work_order_id, visit_id: input.visit_id,
+        task_id: input.task_id, disposition: input.disposition, ...options.context,
+      } }), decision_id, work_id: input.work_id, run_id },
     observed_result: observed, verification, failure: null, supersedes_evidence_id: options.supersedes_evidence_id,
   });
   const raw = {
@@ -139,6 +173,64 @@ test("production reference resolver reads the current base evidence table in one
   } finally { await storage.close(); }
 });
 
+test("transaction producer persists native verified task context that the resolver exposes", async () => {
+  const { storage, runtime } = await fixture();
+  const companyStorage = createNativeOperationContextStore();
+  try {
+    const source = acceptedRecord(target);
+    const { accepted_evidence: _priorAcceptance, ...base } = source.raw;
+    const nativeOperation = createNativeWorkOrders();
+    const canonical = await nativeOperation.read({ company_id: "company-a", actor_id: "actor-a",
+      work_order_id: "order-a", companyStorage, signal: new AbortController().signal });
+    const evidence_context = canonical.evidence_context;
+    assert.deepEqual(evidence_context, { company_id: "company-a", work_order_id: "order-a",
+      visit_id: "visit-a", task_id: "task-a", disposition: "fix_now" });
+    const producerEvent = {
+      ...base,
+      request_summary: { capability: "crm.work_order.complete",
+        input: { company_id: target.company_id, work_id: target.work_id, work_order_id: target.work_order_id },
+        decision_id: "decision-a", work_id: target.work_id, run_id: "run-a" },
+      observed_result: { status: "completed", evidence_context },
+      verification: { verified: true, verification_id: "verification-native-task-a", method: "independent-company-store-reread", evidence_context },
+    };
+    const context = verifiedTaskLineageFromProducerEvent(producerEvent);
+    assert.deepEqual(context, evidence_context);
+    assert.equal(verifiedTaskLineageFromProducerEvent({ ...producerEvent,
+      verification: { ...producerEvent.verification, evidence_context: { ...evidence_context, company_id: "company-b" } } }), null);
+    assert.doesNotThrow(() => assertReplayTaskLineage({ accepted_evidence: { request_summary: { canonical_operation_context: evidence_context } } }, { evidence_context }));
+    assert.throws(() => assertReplayTaskLineage({ accepted_evidence: { request_summary: { canonical_operation_context: evidence_context } } },
+      { evidence_context: { ...evidence_context, task_id: "task-b" } }), /zero-replay-task-context-no-longer-verified/);
+    const ledger = new AcceptedEvidenceLedger({ now: () => at });
+    const persistedEvent = {
+      ...producerEvent,
+      request_summary: { ...producerEvent.request_summary, canonical_operation_context: context },
+      observed_result: { ...producerEvent.observed_result, ...context },
+      verification: { ...producerEvent.verification, ...context },
+    };
+    const accepted = ledger.append(persistedEvent);
+    assert.equal(ledger.projectJob(target.company_id, target.work_id).status, "VERIFIED");
+    const provenance = { ...source.provenance, ...context };
+    await storage.query(
+      "INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,'work',$3,'gateway_execution',$4,$5)",
+      [producerEvent.evidence_id, target.company_id, target.work_id, JSON.stringify(provenance),
+        JSON.stringify({ ...persistedEvent, provenance, accepted_evidence: accepted })],
+    );
+    const references = await runtime.resolveAcceptedEvidenceReferences(target);
+    assert.deepEqual(references.map((reference: any) => reference.evidence_id), [producerEvent.evidence_id]);
+  } finally { await storage.close(); companyStorage.close(); }
+});
+
+test("native context derivation denies wrong company and schemas without persisted disposition", async () => {
+  const nativeOperation = createNativeWorkOrders();
+  const current = createNativeOperationContextStore();
+  const legacy = createNativeOperationContextStore(false);
+  try {
+    assert.equal(await nativeOperation.read({ company_id: "company-b", actor_id: "actor-a", work_order_id: "order-a", companyStorage: current }), null);
+    assert.equal(await nativeOperation.read({ company_id: "company-a", actor_id: "actor-b", work_order_id: "order-a", companyStorage: current }), null);
+    assert.equal((await nativeOperation.read({ company_id: "company-a", actor_id: "actor-a", work_order_id: "order-a", companyStorage: legacy })).evidence_context, null);
+  } finally { current.close(); legacy.close(); }
+});
+
 test("raw gateway rows and provider acknowledgements never resolve as accepted references", async () => {
   const { storage, runtime } = await fixture();
   try {
@@ -156,7 +248,7 @@ test("current generic work-order completion evidence lacks visit/task/dispositio
   try {
     const absentTaskLink = { visit_id: undefined, task_id: undefined, disposition: undefined };
     await insertRecord(storage, target, { request: absentTaskLink, observed: absentTaskLink,
-      verification: absentTaskLink, provenance: absentTaskLink });
+      verification: absentTaskLink, provenance: absentTaskLink, omit_context: true });
     assert.deepEqual(await runtime.resolveAcceptedEvidenceReferences(target), []);
   } finally { await storage.close(); }
 });
@@ -169,7 +261,7 @@ test("references fail closed for wrong company, mismatched scope, disposition, o
     assert.deepEqual(await runtime.resolveAcceptedEvidenceReferences({ ...target, work_order_id: "order-b" }), []);
 
     const mismatchCases: Array<Parameters<typeof acceptedRecord>[1]> = [
-      { evidence_id: "wrong-visit", request: { visit_id: "visit-b" } },
+      { evidence_id: "wrong-visit", context: { visit_id: "visit-b" } },
       { evidence_id: "wrong-task", observed: { task_id: "task-b" } },
       { evidence_id: "wrong-disposition", verification: { disposition: "ok" } },
       { evidence_id: "missing-provenance", provenance: { task_id: undefined } },

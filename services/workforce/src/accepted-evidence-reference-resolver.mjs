@@ -39,10 +39,11 @@ function sameJson(left, right) {
 
 function requiredLineage(record, raw, row, provenance, input) {
   const requestInput = object(record.request_summary?.input);
+  const operationContext = object(record.request_summary?.canonical_operation_context);
   const observed = object(record.observed_result);
   const verification = object(record.verification);
   const eventProvenance = object(raw.provenance);
-  if (!requestInput || !observed || !verification || !eventProvenance) return false;
+  if (!requestInput || !operationContext || !observed || !verification || !eventProvenance) return false;
 
   const idFields = ['execution_id', 'decision_id'];
   if (idFields.some(field => typeof record[field] !== 'string' || !record[field].trim())) return false;
@@ -71,7 +72,8 @@ function requiredLineage(record, raw, row, provenance, input) {
   const target = ['visit_id', 'work_order_id', 'task_id', 'disposition'];
   return target.every(field => {
     const expected = input[field];
-    return requestInput[field] === expected
+    return operationContext[field] === expected
+      && (field !== 'work_order_id' || requestInput[field] === expected)
       && observed[field] === expected
       && verification[field] === expected
       && provenance[field] === expected;
