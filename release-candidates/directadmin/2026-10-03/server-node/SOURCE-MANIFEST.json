@@ -14,12 +14,22 @@
     "repository": "Masterleeaus/Titan-Zero-Field-Service-Workforce",
     "path": "apps/directadmin/server-node",
     "revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
-    "tree_sha256": "ffb2ce077426dfd5400f37ebdba858d989b9db0c"
+    "git_tree_oid": "ffb2ce077426dfd5400f37ebdba858d989b9db0c",
+    "git_object_format": "sha1"
   },
   "packaging": {
-    "portfolio_builder_commit": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+    "portfolio_orchestrator": {
+      "revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+      "path": "scripts/package-directadmin-portfolio.mjs",
+      "sha256": "6f611eb94942613433cdd53f201ad361b484e1e63603274c71c1618b67479679",
+      "git_blob_oid": "351c72c3d22832476cc32fdc3e00c634f41ed152",
+      "git_object_format": "sha1"
+    },
+    "builder_script_revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
     "builder_script_path": "scripts/package-directadmin-plugin.mjs",
-    "builder_script_sha256": "d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e"
+    "builder_script_sha256": "d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e",
+    "builder_script_git_blob": "9c5ab8c4392a316f72e3d98d6d19940af38bb60e",
+    "builder_script_git_object_format": "sha1"
   },
   "dependency_inventory": {
     "packaged_third_party_components": [],

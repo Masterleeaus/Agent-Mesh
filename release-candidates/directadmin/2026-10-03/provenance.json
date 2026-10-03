@@ -5,7 +5,7 @@
   "branch": "release/directadmin-candidates-20261003",
   "base_commit": "512f623e065242b3d6066b493130148989a37ab7",
   "issue_ref": "Refs #1157",
-  "status": "all_three_candidate_archives_published_pending_separate_artifact_review",
+  "status": "all_three_candidate_archives_published_portal_release_blocked_pending_security_remediation",
   "distribution": {
     "repository_license_decision": "OWNER_DECISION_REQUIRED",
     "this_scope_decision": "PROPRIETARY_ALL_RIGHTS_RESERVED",
@@ -21,12 +21,28 @@
       "path": "server-node/titan-server-node.tar.gz",
       "sha256": "580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d",
       "source_commit": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
-      "source_tree_sha256": "ffb2ce077426dfd5400f37ebdba858d989b9db0c",
       "source_manifest": "server-node/SOURCE-MANIFEST.json",
       "license": "server-node/LICENSE.txt",
       "notice": "server-node/THIRD_PARTY_NOTICES.txt",
       "archive_bytes_unchanged": true,
-      "operational_status": "experimental; production RAW relay disabled; no live DirectAdmin certification"
+      "operational_status": "experimental; production RAW relay disabled; no live DirectAdmin certification",
+      "source_git_tree_oid": "ffb2ce077426dfd5400f37ebdba858d989b9db0c",
+      "source_git_object_format": "sha1",
+      "packaging": {
+        "portfolio_orchestrator": {
+          "revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+          "path": "scripts/package-directadmin-portfolio.mjs",
+          "sha256": "6f611eb94942613433cdd53f201ad361b484e1e63603274c71c1618b67479679",
+          "git_blob_oid": "351c72c3d22832476cc32fdc3e00c634f41ed152",
+          "git_object_format": "sha1"
+        },
+        "builder_script_revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+        "builder_script_path": "scripts/package-directadmin-plugin.mjs",
+        "builder_script_sha256": "d18300abe715d6c3f481a9208cc91c7d753098041d0f6cd06326581e90f7994e",
+        "builder_script_git_blob": "9c5ab8c4392a316f72e3d98d6d19940af38bb60e",
+        "builder_script_git_object_format": "sha1"
+      },
+      "source_manifest_sha256": "44cf1c5c58797d8030f79e55b5458f97909b96e7777e2bfa7b793f8b6653bd35"
     },
     {
       "display_name": "Titan Workforce",
@@ -35,7 +51,6 @@
       "path": "workforce/titan_workforce.tar.gz",
       "sha256": "100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26",
       "source_commit": "097d3eaf480331c78443e89f4f57257b01d5c98c",
-      "source_tree_sha256": "abd77cbd382c1def96e8cdd705fa732d03933813",
       "source_manifest": "workforce/SOURCE-MANIFEST.json",
       "license": "workforce/LICENSE.txt",
       "notice": "workforce/THIRD_PARTY_NOTICES.txt",
@@ -46,7 +61,24 @@
         "head": "433902270dc6a58a5e70ae16ae541b4d9de49883",
         "packaged_paths_changed_since_pin": false
       },
-      "operational_status": "candidate; no live DirectAdmin Manager lifecycle or production session certification"
+      "operational_status": "candidate; no live DirectAdmin Manager lifecycle or production session certification",
+      "source_git_tree_oid": "abd77cbd382c1def96e8cdd705fa732d03933813",
+      "source_git_object_format": "sha1",
+      "packaging": {
+        "portfolio_orchestrator": {
+          "revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+          "path": "scripts/package-directadmin-portfolio.mjs",
+          "sha256": "6f611eb94942613433cdd53f201ad361b484e1e63603274c71c1618b67479679",
+          "git_blob_oid": "351c72c3d22832476cc32fdc3e00c634f41ed152",
+          "git_object_format": "sha1"
+        },
+        "builder_script_revision": "097d3eaf480331c78443e89f4f57257b01d5c98c",
+        "builder_script_path": "apps/directadmin/workforce/tools/package.mjs",
+        "builder_script_sha256": "77e72e924f63e262aa6c7ba1cc9cb5e7f279e2544c7b5e5dff7c62d304daacd9",
+        "builder_script_git_blob": "2d8deff0ce7dd88fe718b1c3c02bfc76ee90ca17",
+        "builder_script_git_object_format": "sha1"
+      },
+      "source_manifest_sha256": "ae2d3f195257bba09978dfa12a645700f6dd92e2d59438eda89d4025fb19a655"
     },
     {
       "display_name": "Developer Portal",
@@ -65,12 +97,13 @@
       "archive_bytes_unchanged": true,
       "workflow_run_id": 37077046801,
       "workflow_artifact_zip_sha256": "715a65fe02801244fdb0fbf13675e0e9d1b569b55d472c15072b6ba0ced7a8d0",
-      "independent_source_review": "cleared for exact source commit 10f5ee96626663abea770132de6397063b5b688c; see PR #1391 comment 5963160873",
+      "independent_source_review": "Earlier scoped review cleared exact source commit 10f5ee96626663abea770132de6397063b5b688c (PR #1391 comment 5963160873); later independent review found a potential private-key disclosure path in the same commit (PR #1438 comment 5969796119). Current release clearance is blocked.",
       "operational_status": "candidate; not live-certified; no DirectAdmin Manager lifecycle or production SSH certification",
       "publication_status": "archive_and_companion_records_published_and_hash_verified",
-      "packaged_source_transport_review": "pending separate read-only review; see PR #1438 comment 5969727346",
+      "packaged_source_transport_review": "blocked_pending_source_fix_role_executable_negative_regression_and_independent_replacement_package_review; see PR #1438 comment 5969796119",
       "product_owner_verification": "pending; see PR #1438 comment 5969727346",
-      "build_time_review_snapshot": "The embedded workflow provenance records independent review as pending at build time; it is preserved as historical build evidence and does not represent the later source-review clearance."
+      "build_time_review_snapshot": "The embedded workflow provenance records independent review as pending at build time; it is preserved as historical build evidence and does not represent the later source-review clearance.",
+      "security_release_status": "blocked_by_potential_private_key_disclosure_in_source_commit_10f5ee9"
     }
   ],
   "portfolio_dependencies": {
@@ -83,7 +116,26 @@
   "verification": {
     "sidecars": "All three package sidecars match their unchanged TAR bytes. Portal's 13 packaged-file hashes are recorded in its source manifest and match exact source commit 10f5ee96626663abea770132de6397063b5b688c. Companion notices and source records remain outside the validated installer archive.",
     "archive_structure": "Server Node 15/15, Workforce 26/26, and Developer Portal 13/13 safe regular file members; exact source hashes match; required executable modes are preserved; no unsafe paths, links, or special files were found.",
-    "workforce_sdk": "Rebuilt with esbuild 0.28.1 exact flags; output matches packaged SDK SHA-256.",
+    "workforce_sdk": {
+      "source_path": "packages/titan-platform/src/directadmin-plugin.ts",
+      "source_revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+      "source_sha256": "c4a45025347733e2d4a0735dc6b68c9e6335484da1b54967582bb0e34d561489",
+      "source_git_blob_oid": "c4c59c35019716718472f7b9eb01683b8d527852",
+      "source_git_object_format": "sha1",
+      "compiler": "esbuild@0.28.1",
+      "compiler_license": "MIT; build-only and not redistributed",
+      "lockfile": "pnpm-lock.yaml",
+      "lockfile_sha256": "0a10da0aaaf6c8d3df420326b9b1238debc1436e025670448623ab1093c76ad8",
+      "flags": [
+        "--bundle",
+        "--format=esm",
+        "--platform=browser",
+        "--target=es2022"
+      ],
+      "command": "node_modules/esbuild/bin/esbuild packages/titan-platform/src/directadmin-plugin.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=<temporary>/titan-directadmin-cockpit-sdk.mjs",
+      "output_sha256": "7c08d37f6ea274760f8e52092b2e86a07a93ae175fe4a6216df9156d1fc39681",
+      "matches_workforce_archive_member": true
+    },
     "live_host_operations": false,
     "source_pr_merges": false,
     "focused_commands": [

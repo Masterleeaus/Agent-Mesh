@@ -17,4 +17,4 @@ These are proprietary candidate packages, not live-certified production releases
 
 ## Operational limits
 
-No authorized disposable DirectAdmin host was used for Manager installation, update, rollback, uninstall, real CGI, cookie isolation, SSH access, or reboot recovery. Server Node's production RAW relay is disabled and returns sanitized 503. Workforce's production session path is not commissioned. Package checks do not constitute live-host certification.
+The Developer Portal 1.3.10 archive is published but security-blocked pending repair of a potential private-key disclosure path in its pinned source, a role-executable negative regression, and independent review of a replacement package; see the security finding in PR #1438. No authorized disposable DirectAdmin host was used for Manager installation, update, rollback, uninstall, real CGI, cookie isolation, SSH access, or reboot recovery. Server Node's production RAW relay is disabled and returns sanitized 503. Workforce's production session path is not commissioned. Package checks do not constitute live-host certification.

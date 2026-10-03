@@ -77,7 +77,7 @@
       "source_revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
       "source_manifest": {
         "path": "release-candidates/directadmin/2026-10-03/server-node/SOURCE-MANIFEST.json",
-        "sha256": "f86be54bcefd65f1473db6f1fc5e5798b274e86357cd9c32e6da9c84dc3baff9"
+        "sha256": "44cf1c5c58797d8030f79e55b5458f97909b96e7777e2bfa7b793f8b6653bd35"
       },
       "distribution_state": "approved",
       "first_party_spdx": "LicenseRef-TitanZero-Proprietary",
@@ -104,7 +104,7 @@
       "source_revision": "097d3eaf480331c78443e89f4f57257b01d5c98c",
       "source_manifest": {
         "path": "release-candidates/directadmin/2026-10-03/workforce/SOURCE-MANIFEST.json",
-        "sha256": "cb44bcbd547e0b118213157ab97184a33de9de81df76fac68cc0d33f9b687e5d"
+        "sha256": "ae2d3f195257bba09978dfa12a645700f6dd92e2d59438eda89d4025fb19a655"
       },
       "distribution_state": "approved",
       "first_party_spdx": "LicenseRef-TitanZero-Proprietary",
