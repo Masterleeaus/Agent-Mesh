@@ -180,6 +180,7 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
         record.body = body.toString('utf8');
         const response = await gateway(new Request(`${origin}${incoming.url}`, { method: incoming.method, headers,
           ...(incoming.method === 'POST' ? { body } : {}) }));
+        record.responseStatus = response.status;
         outgoing.writeHead(response.status, Object.fromEntries(response.headers)); outgoing.end(await response.text()); return;
       }
       if (path === '/test/cockpit') {
@@ -275,7 +276,7 @@ test('Chromium: real consumers, cookie flags, browser CSRF headers, safe renderi
       status: root.querySelector('[role="status"]')?.textContent ?? '',
       evidence: root.querySelector('pre')?.textContent ?? '',
     }));
-    throw new Error(`Brand projection did not expose the text-rendering input: ownerCalls=${brandProjectionCalls}; view=${JSON.stringify(brandView)}; requests=${observed.map(record => record.path).join(',')}; page=${errors.join('; ')}; console=${consoleErrors.join('; ')}; failed=${failedRequests.join('; ')}; server=${serverErrors.join('; ')}`);
+    throw new Error(`Brand projection did not expose the text-rendering input: ownerCalls=${brandProjectionCalls}; view=${JSON.stringify(brandView)}; responses=${JSON.stringify(observed.map(record => ({ method: record.method, path: record.path, status: record.responseStatus })))}; page=${errors.join('; ')}; console=${consoleErrors.join('; ')}; failed=${failedRequests.join('; ')}; server=${serverErrors.join('; ')}`);
   }
   assert.equal(await page.locator('#brand img, #brand script').count(), 0);
   assert.equal(await page.evaluate(() => window.injected), undefined);
