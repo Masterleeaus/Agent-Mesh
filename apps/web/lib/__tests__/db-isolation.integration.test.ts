@@ -200,9 +200,9 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       .toEqual({ id: null, user_id: null, role: null });
     await expect(withDbSession({ ...session, role: "tech" }, (client) =>
       client.query("INSERT INTO clients (account_id, name) VALUES ($1, 'Forbidden tech write')", [accountA]),
-    )).rejects.toMatchObject({ code: "42501" });
+    )).rejects.toMatchObject({ code: "TENANT_MEMBERSHIP_CONTEXT_STALE" });
     expect((await getPool().query("SELECT id FROM clients")).rows).toEqual([]);
-    await withDbSession({ ...session, accountId: accountB }, async (client) => {
+    await withDbSession({ ...session, accountId: accountB, role: "tech" }, async (client) => {
       expect((await client.query("SELECT id FROM clients")).rows).toEqual([{ id: clientB }]);
     });
   });
@@ -329,7 +329,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
     await expect(withTenantTransaction({ ...session, role: "tech" }, (client) => client.query(
       `INSERT INTO workforce_skills (id, account_id, name) VALUES ($1, $2, 'Rolled-back tech write')`,
       [randomUUID(), accountA],
-    ))).rejects.toMatchObject({ code: "42501" });
+    ))).rejects.toMatchObject({ code: "TENANT_MEMBERSHIP_CONTEXT_STALE" });
     expect((await getPool().query(
       `SELECT app_account_id() AS account_id, app_user_id() AS user_id, app_role() AS role`,
     )).rows[0]).toEqual({ account_id: null, user_id: null, role: null });
@@ -376,6 +376,11 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   });
 
   it("serializes concurrent owner demotions so exactly one owner remains", async () => {
+    await admin.query(
+      `UPDATE business_memberships SET role = 'owner'
+        WHERE account_id = $1 AND user_id = ANY($2::uuid[]) AND status = 'active'`,
+      [accountA, [userA, extraOwnerA]],
+    );
     const demoteOwner = async (actorId: string, targetId: string) => withTenantTransaction(
       { ...session, userId: actorId },
       async (client, accountId) => {
@@ -411,6 +416,12 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       [accountA],
     );
     expect(rows[0]?.count).toBe(1);
+    // Restore a deterministic fixture for later auth-context tests.
+    await admin.query(
+      `UPDATE business_memberships SET role = 'owner'
+        WHERE account_id = $1 AND user_id = ANY($2::uuid[]) AND status = 'active'`,
+      [accountA, [userA, extraOwnerA]],
+    );
   });
 
   it("repairs an orphan legacy role without creating selected-company membership", async () => {
@@ -428,6 +439,54 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       `SELECT id FROM business_memberships WHERE account_id = $1 AND user_id = $2`,
       [accountA, unassignedUserA],
     )).rows).toEqual([]);
+  });
+
+  it("rejects stale role and revoked selected-company contexts while preserving other-company membership", async () => {
+    try {
+      await admin.query(
+        `UPDATE business_memberships SET role = 'tech'
+          WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+        [accountA, userAdminA],
+      );
+
+      await expect(withTenantTransaction(adminSession, async () => "protected data"))
+        .rejects.toMatchObject({ code: "TENANT_MEMBERSHIP_CONTEXT_STALE" });
+      await expect(withDbSession(adminSession, async () => "protected data"))
+        .rejects.toMatchObject({ code: "TENANT_MEMBERSHIP_CONTEXT_STALE" });
+      await expect(withTenantTransaction({ ...adminSession, role: "tech" }, async () => "company A"))
+        .resolves.toBe("company A");
+      await expect(withTenantTransaction({ ...adminSession, accountId: accountB, role: "tech" }, async () => "company B"))
+        .resolves.toBe("company B");
+
+      await admin.query(
+        `UPDATE business_memberships SET status = 'revoked'
+          WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+        [accountA, userAdminA],
+      );
+      await expect(withTenantTransaction({ ...adminSession, role: "tech" }, async () => "protected data"))
+        .rejects.toMatchObject({ code: "TENANT_MEMBERSHIP_CONTEXT_STALE" });
+      await expect(withDbSession({ ...adminSession, role: "tech" }, async () => "protected data"))
+        .rejects.toMatchObject({ code: "TENANT_MEMBERSHIP_CONTEXT_STALE" });
+      await expect(withTenantTransaction({ ...adminSession, accountId: accountB, role: "tech" }, async () => "company B"))
+        .resolves.toBe("company B");
+
+      const memberships = await admin.query(
+        `SELECT account_id, role, status FROM business_memberships
+          WHERE user_id = $1 AND account_id = ANY($2::uuid[]) ORDER BY account_id`,
+        [userAdminA, [accountA, accountB]],
+      );
+      expect(memberships.rows).toHaveLength(2);
+      expect(memberships.rows).toEqual(expect.arrayContaining([
+        { account_id: accountA, role: "tech", status: "revoked" },
+        { account_id: accountB, role: "tech", status: "active" },
+      ]));
+    } finally {
+      await admin.query(
+        `UPDATE business_memberships SET role = 'admin', status = 'active'
+          WHERE account_id = $1 AND user_id = $2`,
+        [accountA, userAdminA],
+      );
+    }
   });
 
   it("revokes one company membership without removing another company's access or Workforce data", async () => {
@@ -743,6 +802,14 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
   it("serializes competing owner downgrades so at least one owner remains", async () => {
     await admin.query(
       `UPDATE business_memberships SET role = 'owner' WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+      [accountA, userA],
+    );
+    await admin.query(
+      `UPDATE business_memberships SET role = 'tech' WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+      [accountA, extraOwnerA],
+    );
+    await admin.query(
+      `UPDATE business_memberships SET role = 'owner' WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
       [accountA, userATech],
     );
     const secondOwnerSession = { ...session, userId: userATech };
@@ -793,7 +860,7 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
     const [, secondResult] = await Promise.all([first, second]);
     expect(secondResult).toBe("blocked");
     expect(remainingOwners).toBe(1);
-    await withTenantTransaction(session, async (client) => {
+    await withTenantTransaction(secondOwnerSession, async (client) => {
       expect((await client.query(
         `SELECT user_id FROM business_memberships WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
         [accountA],
