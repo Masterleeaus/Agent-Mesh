@@ -16,8 +16,8 @@ test('consumer uses actual shared session routes and preserves REQUESTED acknowl
   await Promise.all([api.discover(ctx), api.status(ctx)]); assert.equal(session.calls.length, 1);
   const receipt = await api.control(ctx, { action: 'pause', work_id: 'work1', reason: 'Operator request', authority: 'root' });
   assert.equal(receipt.state, 'REQUESTED'); assert.deepEqual(receipt.evidence_refs, []);
-  assert.deepEqual(session.calls[1], ['intent', 'titan_workforce', { company_id: 'company-a', actor_id: 'actor-a', capability_id: 'canonical.pause', operation_id: 'fixture-id', correlation_id: 'fixture-id', input: { action: 'pause', work_id: 'work1', reason: 'Operator request' } }]);
-  await api.status(ctx); assert.equal(session.calls.length, 3); // post-effect refresh, not cached work truth
+  assert.deepEqual(session.calls[2], ['intent', 'titan_workforce', { company_id: 'company-a', actor_id: 'actor-a', capability_id: 'canonical.pause', operation_id: 'fixture-id', correlation_id: 'fixture-id', input: { action: 'pause', work_id: 'work1', reason: 'Operator request' } }]);
+  await api.status(ctx); assert.equal(session.calls.length, 4); // fresh pre-control and post-effect projections, not cached work truth
 });
 test('unsupported control and undiscovered capability never reach intent transport', async () => {
   for (const action of ['shell', 'resume', 'revoke']) {
