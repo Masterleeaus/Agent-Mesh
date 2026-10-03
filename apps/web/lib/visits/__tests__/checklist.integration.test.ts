@@ -15,6 +15,7 @@
  */
 
 import { describe, it, expect, beforeAll } from "vitest";
+import { Pool } from "pg";
 
 const RUN_INTEGRATION =
   !!process.env.TEST_DATABASE_URL && !!process.env.TEST_BASE_URL;
@@ -23,6 +24,8 @@ describe.skipIf(!RUN_INTEGRATION)("Visit Checklist API integration", () => {
   const BASE_URL = process.env.TEST_BASE_URL ?? "http://localhost:3000";
 
   let ownerCookie: string;
+  let ownerBCookie: string;
+  let ownerBLoginStatus: number;
   let techCookie: string;
   let testVisitId: string;
 
@@ -52,6 +55,15 @@ describe.skipIf(!RUN_INTEGRATION)("Visit Checklist API integration", () => {
       body: JSON.stringify({ email: "owner@test.com", password: "password" }),
     });
     ownerCookie = ownerLogin.headers.get("set-cookie") ?? "";
+
+    // Authenticate the owner from the other seeded company for the isolation regression.
+    const ownerBLogin = await fetch(`${BASE_URL}/api/v1/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-forwarded-for": "it-visits-__tests__-checklist-integration-test-ts" },
+      body: JSON.stringify({ email: "owner-b@test.com", password: "password" }),
+    });
+    ownerBLoginStatus = ownerBLogin.status;
+    ownerBCookie = ownerBLogin.headers.get("set-cookie") ?? "";
 
     // Authenticate tech
     const techLogin = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -90,6 +102,45 @@ describe.skipIf(!RUN_INTEGRATION)("Visit Checklist API integration", () => {
   // -------------------------------------------------------------------------
   // GET — seed on first access
   // -------------------------------------------------------------------------
+
+  it("integration seed grants only intended company memberships and cross-company reads are denied", async () => {
+    expect(ownerBLoginStatus).toBe(200);
+    expect(ownerBCookie).toContain("fsm_session=");
+
+    const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL });
+    try {
+      const { rows } = await pool.query(
+        `SELECT u.email, bm.account_id::text AS account_id, bm.role, bm.status
+           FROM users u
+           LEFT JOIN business_memberships bm ON bm.user_id = u.id
+          WHERE lower(u.email) = ANY($1::text[])
+          ORDER BY u.email, bm.account_id`,
+        [["owner@test.com", "admin@test.com", "tech@test.com", "owner-b@test.com"]]
+      );
+
+      expect(rows).toEqual([
+        { email: "admin@test.com", account_id: "11111111-1111-1111-1111-111111111111", role: "admin", status: "active" },
+        { email: "owner-b@test.com", account_id: "22222222-2222-2222-2222-222222222222", role: "owner", status: "active" },
+        { email: "owner@test.com", account_id: "11111111-1111-1111-1111-111111111111", role: "owner", status: "active" },
+        { email: "tech@test.com", account_id: "11111111-1111-1111-1111-111111111111", role: "tech", status: "active" },
+      ]);
+
+      const visit = await pool.query(
+        `SELECT id FROM visits WHERE id = $1 AND account_id = $2`,
+        [testVisitId, "11111111-1111-1111-1111-111111111111"]
+      );
+      expect(visit.rows).toHaveLength(1);
+    } finally {
+      await pool.end();
+    }
+
+    const { status } = await apiRequest(
+      "GET",
+      `/api/v1/visits/${testVisitId}/checklist`,
+      ownerBCookie
+    );
+    expect(status).toBe(404);
+  });
 
   it("GET checklist returns 200 and seeds 28 items on first access", async () => {
     const { status, data } = await apiRequest(
