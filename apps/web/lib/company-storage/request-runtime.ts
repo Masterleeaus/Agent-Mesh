@@ -1,4 +1,4 @@
-import { isAbsolute } from "node:path";
+import { isAbsolute, resolve } from "node:path";
 import {
   createCompanyStorageResolver,
   createSqliteCompanyPlacementRegistry,
@@ -61,7 +61,9 @@ export async function withVerifiedWebNativeCompanyStore<T>(input: {
       if (!isAbsolute(registryPath)) throw new Error("native-company-runtime-config-required:TITAN_WEB_IDENTITY_REGISTRY_PATH must be absolute");
       registryStorage = openExistingSqliteStorage(registryPath);
       registry = await createSqliteCompanyPlacementRegistry({ storage: registryStorage, storage_role: "GLOBAL_REGISTRY" });
-      opener = createSqliteCompanyStoreOpener({ companyStoreRoot });
+      opener = createSqliteCompanyStoreOpener({
+        companyStoreRoot: isAbsolute(companyStoreRoot) ? companyStoreRoot : resolve(process.cwd(), companyStoreRoot),
+      });
     }
 
     const resolver: CompanyStorageResolver<StorageClient> = createCompanyStorageResolver({
