@@ -6,8 +6,8 @@ import { getAvailability } from '../data/verticalCatalogue'
 const surfaces = [
   { id: 'mobile-app', name: 'Mobile app', offer: 'nativeMobile' },
   { id: 'pwa', name: 'PWA', offer: 'pwa' },
-  { id: 'chrome', name: 'Cleaning Chrome extension', offer: 'chromeVerticalExtension', detailsHref: '/chrome-extensions' },
-  { id: 'wordpress', name: 'Cleaning WordPress plugin', offer: 'wordpressVerticalPlugin', detailsHref: '/wordpress-plugins' },
+  { id: 'chrome', name: 'Cleaning Chrome extensions', offer: 'chromeVerticalExtension', detailsHref: '/chrome-extensions' },
+  { id: 'wordpress', name: 'Cleaning WordPress plugins', offer: 'wordpressVerticalPlugin', detailsHref: '/wordpress-plugins' },
   { id: 'chatgpt', name: 'ChatGPT integration', offer: 'chatGptApp' },
   { id: 'whatsapp', name: 'WhatsApp', offer: 'whatsappWorkChannel' },
   { id: 'telegram', name: 'Telegram', offer: 'telegramWorkChannel' },
