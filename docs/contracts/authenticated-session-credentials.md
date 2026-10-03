@@ -118,6 +118,46 @@ current authentication and compare-and-update; it never treats an ID as bearer p
 The exact selected operation scope is `[context.company_id]`.
 `allowed_company_ids` remains only switch choices, never operation scope.
 
+## Web request ingress adapter
+
+`apps/web/lib/auth/current-session.ts` exposes the existing-owner
+`createCurrentWebSessionIngress(verifier, projection)` composition. The verifier
+is the verification-only `createSessionCredentialVerifier` configured at trusted
+server startup with pinned session issuer/audience/key/algorithm, trusted upstream
+metadata, and the existing `GLOBAL_REGISTRY`; the approved projection separately
+maps canonical `company_id` to a legacy `account_id` when a compatibility caller
+needs that field. This adapter does not create a registry, keys, identities, or
+credentials.
+
+`resolveRequest(request)` reads one canonical `__Host-titan-web-session` cookie.
+The cookie issuer must set it `HttpOnly; Secure; SameSite=Lax; Path=/` without a
+`Domain` attribute. The ingress rejects duplicate or malformed canonical cookie
+values; `fsm_session`, Authorization, query/body/header company IDs and raw
+session IDs do not authenticate. It calls `authenticate(credential)` without a
+request expectation, so the configured verifier checks signature, issuer,
+audience, type, key, expiry and the durable session identity before resolving the
+current actor/company/device/session/context revisions from GLOBAL_REGISTRY. After
+the approved legacy-account mapping completes, it resolves that exact verified
+company/device/actor/context revision again to reject a stale projection.
+
+The result contains the full `CurrentSessionContext` (including `device_id`,
+`session_id`, `session_revision` and `context_revision`), a
+`VerifiedCompanyScope` projection of that current context for the company-storage
+resolver, and operation scope `[context.company_id]`. The request cannot choose
+the company. This authenticates identity and current membership; it does not
+grant business authority or replace CSRF/origin checks on mutating routes.
+Malformed, missing, legacy, invalid and stale credentials return `null`. A
+sanitized `identity-registry-unavailable` error is preserved so route handlers
+can report temporary server unavailability instead of turning a registry outage
+into an authentication redirect; no backend details or credential data escape.
+
+This is an injectable ingress contract, not a production cutover. Current web
+login still issues the legacy `fsm_session`; no production web verifier instance,
+trusted upstream issuer, GLOBAL_REGISTRY connection, or canonical cookie issuer
+is configured in `apps/web`. The ingress therefore remains unavailable until an
+existing trusted server composition supplies those dependencies; failure returns
+no current web session and never falls back to the legacy cookie.
+
 ## DirectAdmin → Workforce/Zero exchange
 
 ```ts
