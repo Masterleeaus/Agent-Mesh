@@ -644,27 +644,20 @@ try {
   await page.getByText('fixture-company-b-work', { exact: true }).waitFor();
 
   // There is intentionally no browser-selected company ingress. With A and B
-  // both active, a new document's unique-context nonce request fails closed.
-  const reloadContext = await browser.newContext({ ignoreHTTPSErrors: true });
-  let reloadPage;
-  try {
-    await reloadContext.addCookies([
-      { name: 'session', value: 'fixture-da-session', url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
-      { name: 'key', value: 'fixture-da-key', url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
-      { name: '__Host-titan-da-session', value: switchedCookie.value, url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
-    ]);
-    reloadPage = await reloadContext.newPage();
-    reloadPage.on('pageerror', error => pageErrors.push(safeError(error)));
-    await reloadPage.goto(panelOrigin);
-    try {
-      await reloadPage.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
-    } catch {
-      throw new Error(`ambiguous reload did not render unavailable state; view=${JSON.stringify(await reloadPage.locator('#titan-workforce').innerText().catch(() => 'unavailable'))}; raw=${JSON.stringify(panelObservations.slice(-4).map(({ method, pathname, status, rejectedFields }) => ({ method, pathname, status, rejectedFields })))}; identityFetches=${JSON.stringify(bootstrapIdentityObservations.slice(-2).map(({ url, method, cookie, authorization, redirect, cache, credentials }) => ({ url, method, cookieNames: cookie?.split(';').map(part => part.trim().split('=', 1)[0]) ?? [], authorization, redirect, cache, credentials })))}; errors=${JSON.stringify(pageErrors)}`);
-    }
-    assert.equal(await reloadPage.getByRole('navigation').count(), 0, 'ambiguous company context renders no stale view');
-    assert.equal((await titanBrowserCookie(reloadContext, panelOrigin))?.value, switchedCookie.value,
-      'a failed ambiguous nonce request does not replace or clear the still-canonical company B session');
-  } finally { await reloadContext.close(); }
+  // both active, a new packaged nonce request fails closed. Keep the current
+  // page's canonical B session intact; no new company context is selected.
+  const ambiguousNonce = await page.evaluate(async () => {
+    const response = await fetch('/CMD_PLUGINS/titan_workforce/bootstrap-nonce.raw?headers_to_env=yes&pipe_post=yes', {
+      method: 'POST', credentials: 'same-origin',
+    });
+    return { status: response.status, body: await response.json() };
+  });
+  assert.deepEqual(ambiguousNonce, { status: 401, body: { error: 'directadmin-session-rejected', read_only: true } },
+    'the actual packaged nonce RAW route denies the ambiguous canonical binding');
+  assert.equal((await titanBrowserCookie(context, panelOrigin))?.value, switchedCookie.value,
+    'the nonce-only denial does not replace or clear the still-canonical company B session');
+  assert.equal(await page.getByText('fixture-company-b-worker', { exact: true }).count(), 1,
+    'the existing page retains only its still-valid company B projection while fresh selection fails closed');
 
   // Once the canonical registry revokes A, B becomes the sole current binding.
   // The packaged reload now obtains B from #302 and renders only B's hosted rows.

@@ -547,9 +547,10 @@ That route is called through the extracted relay, then the host's
 picker. This end-to-end browser journey executes the User role only; Admin and
 Reseller nonce/bootstrap, renewal, revocation and hostile-input paths are
 covered separately by the 4-case session-chain suite.
-With A and B active, a fresh packaged bootstrap is denied as ambiguous. After
-the fixture canonically revokes A, B is the unique binding and the packaged
-reload/expiry-renewal succeeds. Revoking B clears the rendered company data and
+With A and B active, a fresh packaged User nonce request from that browser page
+is denied as ambiguous while its existing canonical B session remains intact.
+After the fixture canonically revokes A, B is the unique binding and a full
+packaged reload/expiry-renewal succeeds. Revoking B clears the rendered company data and
 governed controls. The projection's controls remain empty; its governed action
 is denied by the actual #811 owner, and the test verifies no business/event
 writes. The production relay default remains an explicit `503
