@@ -11,14 +11,16 @@ import {
 import {
   createSqliteStorage,
   initializeSqliteCompanyPlacementRegistry,
+  provisionSqliteCompanyPlacement,
   type StorageClient,
 } from "../../../../../packages/storage/src/index";
-import { initializeFreshCompanyNativeStore } from "../../../../../packages/storage/src/company-native-store-initializer";
-import { companyNativeVisitChecklistManifest } from "../../../../../packages/storage/src/company-native-schema-manifest";
+import { companyNativeCleaningJobsManifest, companyNativeVisitChecklistManifest } from "../../../../../packages/storage/src/company-native-schema-manifest";
 import { CURRENT_WEB_SESSION_COOKIE_NAME } from "../../auth/current-session";
 import { _resetWebSessionRuntimeForTests, getWebSessionRuntime } from "../../auth/web-session-runtime";
+import { withVerifiedWebNativeCompanyStore } from "../../company-storage/request-runtime";
 import { GET as getChecklist } from "@/app/api/v1/visits/[id]/checklist/route";
 import { PATCH as patchChecklist } from "@/app/api/v1/visits/[id]/checklist/[itemId]/route";
+import { POST as createCleaningJob } from "@/app/api/v1/cleaning/jobs/route";
 
 const origin = "https://field.example.test";
 const loginIssuer = `titan:web-login:${origin}`;
@@ -36,9 +38,12 @@ const commonIds = {
   isolatedVisit: "20000000-0000-4000-8000-000000000007",
   isolatedTask: "20000000-0000-4000-8000-000000000008",
 };
+const companyBOnlyClientId = "20000000-0000-4000-8000-000000000009";
+const companyBOnlyPropertyId = "20000000-0000-4000-8000-000000000010";
 
 let directory: string;
 let storeRoot: string;
+let fileRoot: string;
 let identityStorage: StorageClient;
 let identityRegistry: IdentitySessionRegistry;
 let oldEnvironment: Record<string, string | undefined>;
@@ -51,27 +56,24 @@ const envNames = [
 function request(path: string, credential: string, init?: RequestInit): NextRequest {
   const headers = new Headers(init?.headers);
   headers.set("cookie", `${CURRENT_WEB_SESSION_COOKIE_NAME}=${credential}`);
+  headers.set("origin", origin);
   return new NextRequest(`${origin}${path}`, {
     ...init,
     headers,
   });
 }
 
-async function createReadyCompanyStore(company: (typeof companies)[number], placementId: string): Promise<void> {
-  const schemaVersion = companyNativeVisitChecklistManifest.schema_version;
-  await identityStorage.query(
-    `INSERT INTO titan_company_storage_placements
-      (company_id, placement_id, placement_revision, provider, schema_version, status)
-     VALUES ($1,$2,1,'sqlite',$3,'READY')`,
-    [company.companyId, placementId, schemaVersion],
-  );
+async function createReadyCompanyStore(company: (typeof companies)[number]): Promise<void> {
+  const manifest = company === companies[0] ? companyNativeCleaningJobsManifest : companyNativeVisitChecklistManifest;
+  const placement = await provisionSqliteCompanyPlacement({
+    registry: { storage: identityStorage, storage_role: "GLOBAL_REGISTRY", companyStoreRoot: storeRoot, companyFileStoreRoot: fileRoot },
+    company_id: company.companyId,
+    company_name: company.companyId,
+    schema_version: manifest.schema_version,
+  });
+  const placementId = placement.placement_id;
   const storage = createSqliteStorage(join(storeRoot, `${placementId}.sqlite`));
   try {
-    await initializeFreshCompanyNativeStore({
-      storage,
-      placement: { company_id: company.companyId, placement_id: placementId, placement_revision: 1, provider: "sqlite", schema_version: schemaVersion },
-      company_profile: { name: company.companyId },
-    });
     const id = commonIds;
     await storage.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", [id.client, company.companyId, `${company.companyId} client`]);
     await storage.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", [id.property, company.companyId, id.client, `${company.companyId} address`]);
@@ -80,6 +82,25 @@ async function createReadyCompanyStore(company: (typeof companies)[number], plac
     await storage.query("INSERT INTO work_order_tasks(id,company_id,work_order_id,label,note) VALUES($1,$2,$3,$4,$5)", [id.task, company.companyId, id.workOrder, `${company.companyId} checklist task`, `work-order-${company.companyId}`]);
     await storage.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [id.visit, company.companyId, id.job, company.actorId, "2026-10-03T10:00:00.000Z", "2026-10-03T11:00:00.000Z", id.workOrder]);
     await storage.query("INSERT INTO visit_tasks(company_id,visit_id,work_order_id,task_id,item_key,section,disposition,note) VALUES($1,$2,$3,$4,$5,$6,NULL,$7)", [company.companyId, id.visit, id.workOrder, id.task, "cleaning_surface_wipe", "Kitchen", `original-${company.companyId}`]);
+
+    if (company === companies[0]) {
+      await storage.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({
+        vertical_profile: { company_id: company.companyId, revision: 1, profile: { module_id: "titan.workforce.cleaning" } },
+        cleaning_service_setup: {
+          schema: "titan.onboarding.cleaning-service-setup-record.v1",
+          company_id: company.companyId,
+          revision: 1,
+          data: {
+            selections: [{ service_id: "regular_clean", job_type_id: "domestic_recurring", service_label: "Regular clean", enabled: true,
+              pricing: { mode: "hourly", fixed_price: null, hourly_rate: 42.5, minimum_charge: 25, currency: "AUD" } }],
+            recurrence: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly", supported_job_type_ids: ["domestic_recurring"] },
+          },
+        },
+      }), company.companyId]);
+    } else {
+      await storage.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", [companyBOnlyClientId, company.companyId, "B only client"]);
+      await storage.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", [companyBOnlyPropertyId, company.companyId, companyBOnlyClientId, "B only address"]);
+    }
 
     if (company === companies[0]) {
       await storage.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [id.isolatedVisit, company.companyId, id.job, company.actorId, "2026-10-03T12:00:00.000Z", "2026-10-03T13:00:00.000Z", id.workOrder]);
@@ -96,7 +117,9 @@ beforeEach(async () => {
   oldEnvironment = Object.fromEntries(envNames.map(name => [name, process.env[name]]));
   directory = await mkdtemp(join(tmpdir(), "titan-native-checklist-route-"));
   storeRoot = join(directory, "companies");
+  fileRoot = join(directory, "company-files");
   await mkdir(storeRoot, { mode: 0o700 });
+  await mkdir(fileRoot, { mode: 0o700 });
   const registryPath = join(directory, "global-registry.sqlite");
   const bindings = companies.map(company => ({
     legacy_user_id: company.userId,
@@ -126,8 +149,8 @@ beforeEach(async () => {
     await identityRegistry.putDevice({ device_id: company.deviceId, actor_id: company.actorId, status: "active" }, null);
     await identityRegistry.putExternalBinding({ binding_id: `web-login-${company.companyId}`, provider: loginIssuer, subject: company.userId, actor_id: company.actorId, company_id: company.companyId, status: "active" }, null);
   }
-  await createReadyCompanyStore(companies[0], "placement-company-a");
-  await createReadyCompanyStore(companies[1], "placement-company-b");
+  await createReadyCompanyStore(companies[0]);
+  await createReadyCompanyStore(companies[1]);
 });
 
 afterEach(async () => {
@@ -147,6 +170,16 @@ describe("native visit checklist routes", () => {
     const runtime = await getWebSessionRuntime();
     const a = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
     const b = await runtime.issueForAuthenticatedWebUser(companies[1].userId, companies[1].accountId);
+
+    const justIssuedCompany = await withVerifiedWebNativeCompanyStore({
+      currentSession: a,
+      revalidateSession: () => runtime.resolveCredential(a.credential),
+      requiredSchemaVersions: [companyNativeVisitChecklistManifest.schema_version, companyNativeCleaningJobsManifest.schema_version],
+      operation: async storage => (await storage.query<{ id: string }>(
+        "SELECT id FROM companies WHERE id=$1", [companies[0].companyId],
+      )).rows[0]?.id,
+    });
+    expect(justIssuedCompany).toBe(companies[0].companyId);
 
     const aResponse = await getChecklist(request(`/api/v1/visits/${commonIds.visit}/checklist`, a.credential));
     expect(aResponse.status).toBe(200);
@@ -174,6 +207,103 @@ describe("native visit checklist routes", () => {
 
     const crossCompany = await getChecklist(request(`/api/v1/visits/${commonIds.isolatedVisit}/checklist`, b.credential));
     expect(crossCompany.status).toBe(404);
+  });
+
+  it("creates a native Cleaning job/visit from saved setup, isolates companies, and keeps its price snapshot immutable", async () => {
+    const runtime = await getWebSessionRuntime();
+    const a = await runtime.issueForAuthenticatedWebUser(companies[0].userId, companies[0].accountId);
+    const bPlacement = (await identityStorage.query<{ placement_id: string }>(
+      "SELECT placement_id FROM titan_company_storage_placements WHERE company_id=$1", [companies[0].companyId],
+    )).rows[0]?.placement_id;
+    if (!bPlacement) throw new Error("company-a-placement-missing");
+    const store = createSqliteStorage(join(storeRoot, `${bPlacement}.sqlite`));
+    try {
+      const created = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          service_id: "regular_clean", expected_setup_revision: 1,
+          client_id: commonIds.client, property_id: commonIds.property, title: "Saved setup job",
+          scheduled_start: "2026-10-05T09:00:00.000Z", scheduled_end: "2026-10-05T11:00:00.000Z",
+        }),
+      }));
+      expect(created.status).toBe(201);
+      const createdData = (await created.json()).data;
+      expect(createdData).toMatchObject({
+        company_id: companies[0].companyId,
+        service_id: "regular_clean",
+        job_type_id: "domestic_recurring",
+        service_setup_revision: 1,
+        pricing_snapshot: { mode: "hourly", hourly_rate: 42.5, minimum_charge: 25, currency: "AUD" },
+        recurrence_snapshot: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly" },
+      });
+      const persisted = (await store.query<{ company_id: string; service_id: string; job_type_id: string; service_setup_revision: number;
+        service_pricing_snapshot: string; service_recurrence_snapshot: string }>(
+        `SELECT company_id,service_id,job_type_id,service_setup_revision,service_pricing_snapshot,service_recurrence_snapshot
+           FROM jobs WHERE id=$1`, [createdData.job_id],
+      )).rows[0];
+      expect(persisted).toMatchObject({ company_id: companies[0].companyId, service_id: "regular_clean",
+        job_type_id: "domestic_recurring", service_setup_revision: 1 });
+      expect(JSON.parse(persisted!.service_pricing_snapshot)).toEqual(createdData.pricing_snapshot);
+      expect(JSON.parse(persisted!.service_recurrence_snapshot)).toEqual(createdData.recurrence_snapshot);
+      expect((await store.query<{ company_id: string; job_id: string }>(
+        "SELECT company_id,job_id FROM visits WHERE id=$1", [createdData.visit_id],
+      )).rows[0]).toEqual({ company_id: companies[0].companyId, job_id: createdData.job_id });
+
+      const jobTypeAsService = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ service_id: "domestic_recurring", expected_setup_revision: 1,
+          client_id: commonIds.client, title: "Retained type is not a service id",
+          scheduled_start: "2026-10-05T11:00:00.000Z", scheduled_end: "2026-10-05T12:00:00.000Z" }),
+      }));
+      expect(jobTypeAsService.status).toBe(409);
+
+      const bOnly = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ service_id: "regular_clean", expected_setup_revision: 1,
+          client_id: companyBOnlyClientId, property_id: companyBOnlyPropertyId, title: "Cross company attempt",
+          scheduled_start: "2026-10-05T12:00:00.000Z", scheduled_end: "2026-10-05T13:00:00.000Z" }),
+      }));
+      expect(bOnly.status).toBe(404);
+
+      await store.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({
+        vertical_profile: { company_id: companies[0].companyId, revision: 1, profile: { module_id: "titan.workforce.cleaning" } },
+        cleaning_service_setup: { schema: "titan.onboarding.cleaning-service-setup-record.v1", company_id: companies[0].companyId, revision: 2,
+          data: { selections: [{ service_id: "regular_clean", job_type_id: "domestic_recurring", enabled: true,
+            pricing: { mode: "hourly", fixed_price: null, hourly_rate: 99, minimum_charge: 25, currency: "AUD" } }],
+            recurrence: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly", supported_job_type_ids: ["domestic_recurring"] } } },
+      }), companies[0].companyId]);
+      const stale = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ service_id: "regular_clean", expected_setup_revision: 1, client_id: commonIds.client,
+          property_id: commonIds.property, title: "Stale revision attempt", scheduled_start: "2026-10-06T09:00:00.000Z",
+          scheduled_end: "2026-10-06T11:00:00.000Z" }),
+      }));
+      expect(stale.status).toBe(409);
+      await store.query("UPDATE companies SET settings=json_set(settings,'$.cleaning_service_setup.data.selections[0].job_type_id','deep_clean') WHERE id=$1", [companies[0].companyId]);
+      const mismatchedMapping = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ service_id: "regular_clean", expected_setup_revision: 2, client_id: commonIds.client,
+          property_id: commonIds.property, title: "Forged retained type", scheduled_start: "2026-10-06T12:00:00.000Z",
+          scheduled_end: "2026-10-06T13:00:00.000Z" }),
+      }));
+      expect(mismatchedMapping.status).toBe(409);
+      await store.query("UPDATE companies SET settings=json_set(settings,'$.cleaning_service_setup.data.selections[0].job_type_id','domestic_recurring') WHERE id=$1", [companies[0].companyId]);
+      const oldSnapshot = (await store.query<{ service_pricing_snapshot: string }>(
+        "SELECT service_pricing_snapshot FROM jobs WHERE id=$1", [createdData.job_id],
+      )).rows[0]?.service_pricing_snapshot;
+      expect(JSON.parse(oldSnapshot!)).toMatchObject({ hourly_rate: 42.5 });
+      await expect(store.query("UPDATE jobs SET service_pricing_snapshot=$1 WHERE id=$2", ["{}", createdData.job_id]))
+        .rejects.toThrow(/cleaning-job-snapshot-immutable/);
+      const changedSetupJob = await createCleaningJob(request("/api/v1/cleaning/jobs", a.credential, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ service_id: "regular_clean", expected_setup_revision: 2, client_id: commonIds.client,
+          property_id: commonIds.property, title: "Updated rate job", scheduled_start: "2026-10-07T09:00:00.000Z",
+          scheduled_end: "2026-10-07T11:00:00.000Z" }),
+      }));
+      expect(changedSetupJob.status).toBe(201);
+      expect((await changedSetupJob.json()).data.pricing_snapshot.hourly_rate).toBe(99);
+    } finally { await store.close(); }
   });
 
   it("denies revoked and missing credentials before opening checklist business state", async () => {

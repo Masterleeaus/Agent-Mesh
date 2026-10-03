@@ -142,10 +142,50 @@ export const companyNativeVisitChecklistManifest: CompanyNativeSchemaManifest = 
   ]),
 });
 
+/** Fresh-only Cleaning job snapshot profile. Existing v1-v3 stores keep their
+ * original attestations and rows; only stores provisioned on this version get
+ * the new nullable job snapshot columns and immutable update guards. */
+export const companyNativeCleaningJobsManifest: CompanyNativeSchemaManifest = Object.freeze({
+  format: "titan-company-native-fsm-manifest/v1",
+  owner: "COMPANY_NATIVE_FSM",
+  profile_id: "native-cleaning-jobs-v4",
+  schema_version: "company-native-cleaning-jobs-v4",
+  schema_scope: companyNativeVisitChecklistManifest.schema_scope,
+  source_provenance: Object.freeze([
+    ...companyNativeVisitChecklistManifest.source_provenance,
+    Object.freeze({
+      path: "db/sqlite/company-native/0004_cleaning_job_snapshot.sql",
+      sha256: "cf9e41a49dce7a090684eb80ea38f0bf43a0f7864e95732fceb286f9a20108f7",
+      included_objects: Object.freeze([
+        "jobs.service_id", "jobs.job_type_id", "jobs.service_setup_revision",
+        "jobs.service_pricing_snapshot", "jobs.service_recurrence_snapshot",
+        "jobs_cleaning_snapshot_insert_complete", "jobs_cleaning_snapshot_update_complete",
+        "jobs_cleaning_snapshot_immutable",
+      ]),
+      excluded_objects: Object.freeze(["companies.settings remains setup authority", "no historical jobs are backfilled"]),
+      adaptations: Object.freeze([
+        "new jobs snapshot canonical service id, separately mapped retained job type, saved setup revision, pricing and recurrence intent",
+        "existing rows remain null and snapshot fields cannot be updated after insert",
+      ]),
+    }),
+  ]),
+  schema_fingerprint_sha256: "3a5082b12e8735a4883f8c29b4b5d74987cda390c6a7a600130e8787f2428517",
+  migrations: Object.freeze([
+    ...companyNativeVisitChecklistManifest.migrations,
+    Object.freeze({
+      sequence: 4,
+      migration_id: "company-native-fsm/0004-cleaning-job-snapshot",
+      path: "db/sqlite/company-native/0004_cleaning_job_snapshot.sql",
+      sha256: "cf9e41a49dce7a090684eb80ea38f0bf43a0f7864e95732fceb286f9a20108f7",
+    }),
+  ]),
+});
+
 const manifestsByVersion = new Map<string, CompanyNativeSchemaManifest>([
   [companyNativeWorkOrdersManifest.schema_version, companyNativeWorkOrdersManifest],
   [companyNativeWorkOrdersVisitsManifest.schema_version, companyNativeWorkOrdersVisitsManifest],
   [companyNativeVisitChecklistManifest.schema_version, companyNativeVisitChecklistManifest],
+  [companyNativeCleaningJobsManifest.schema_version, companyNativeCleaningJobsManifest],
 ]);
 
 export function getCompanyNativeSchemaManifest(schemaVersion: string): CompanyNativeSchemaManifest | null {

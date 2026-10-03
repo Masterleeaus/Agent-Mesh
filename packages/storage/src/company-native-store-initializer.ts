@@ -21,11 +21,17 @@ function fail(code: CompanyNativeSchemaAttestationErrorCode): never {
 }
 
 function splitMigration(sql: string): string[] {
-  // This fresh profile source is intentionally one-statement-per-semicolon and
-  // contains no trigger bodies or semicolons embedded in literals.
-  return sql.replace(/^\s*--[^\n]*;[^\n]*$/gm, "").split(";")
-    .map(statement => statement.trim())
-    .filter(statement => statement.replace(/^\s*--.*$/gm, "").trim().length > 0);
+  // Preserve the exact v1-v3 parser semantics for their pinned fingerprints.
+  if (!/\bCREATE TRIGGER\b/i.test(sql)) {
+    return sql.replace(/^\s*--[^\n]*;[^\n]*$/gm, "").split(";")
+      .map(statement => statement.trim())
+      .filter(statement => statement.replace(/^\s*--.*$/gm, "").trim().length > 0);
+  }
+  // Keep a CREATE TRIGGER body intact while splitting its simple SQL migration.
+  const normalized = sql.replace(/^\s*--[^\n]*$/gm, "").replace(/;\s*/g, ";").trim();
+  return (normalized.match(/CREATE TRIGGER\b[\s\S]*?\bEND\s*;|[^;]+;/gi) ?? [])
+    .map(statement => statement.trim().replace(/;\s*$/, ""))
+    .filter(Boolean);
 }
 
 function sourceSha256(sql: string): string {
@@ -45,6 +51,7 @@ async function loadProfileMigration(path: string): Promise<string> {
     "db/sqlite/company-native/0001_work_orders.sql": new URL("../../../db/sqlite/company-native/0001_work_orders.sql", import.meta.url),
     "db/sqlite/company-native/0002_visit_tasks.sql": new URL("../../../db/sqlite/company-native/0002_visit_tasks.sql", import.meta.url),
     "db/sqlite/company-native/0003_visit_checklist_state.sql": new URL("../../../db/sqlite/company-native/0003_visit_checklist_state.sql", import.meta.url),
+    "db/sqlite/company-native/0004_cleaning_job_snapshot.sql": new URL("../../../db/sqlite/company-native/0004_cleaning_job_snapshot.sql", import.meta.url),
   };
   const source = sources[path];
   if (!source) {
