@@ -111,9 +111,11 @@ test('adapter uses the real cleaning bundle and retained runtime contract',async
   ]});
   const payload=toRetainedCleaningServiceSetupPayload(configured);
   const expectedBundleIds=['domestic_recurring','deep_clean','bond_end_of_lease','airbnb_turnover','commercial','move_in','office'];
+  const expectedServiceIds=['regular_clean','deep_clean','bond_end_of_lease','airbnb_turnover','commercial_clean','move_in_out_clean','office_clean'];
   const bundleIds=cleaningBundle.modules.find(module=>module.id==='titan.workforce.cleaning').contributes.projections.find(projection=>projection.id==='job-types').value.map(jobType=>jobType.id);
   assert.deepEqual(bundleIds,expectedBundleIds);
   assert.ok(payload.selections.every(selection=>bundleIds.includes(selection.job_type_id)));
+  assert.deepEqual(payload.selections.map(selection=>selection.service_id),expectedServiceIds);
 
   const records=new Map();
   const database={
@@ -126,6 +128,8 @@ test('adapter uses the real cleaning bundle and retained runtime contract',async
   const saved=await authority.save({company_id:'company-a'},payload);
   assert.deepEqual(saved.selected_job_types,expectedBundleIds);
   const view=await authority.read({company_id:'company-a'});
+  assert.deepEqual(view.selections.map(selection=>selection.service_id),expectedServiceIds);
+  assert.deepEqual(view.selections.map(selection=>selection.job_type_id),expectedBundleIds);
   assert.equal(view.company_id,'company-a');
   assert.equal(view.selections[0].pricing.hourly_rate,62.5);
   assert.equal(view.selections[1].pricing.fixed_price,310);

@@ -58,7 +58,10 @@ function normalizeSelection(input, byId) {
     if (!Number.isInteger(index) || index < 0 || index >= canonical.checklist.length) throw new Error(`${job_type_id} checklist selection is outside canonical checklist`);
   }
   const sortedChecklist = [...checklist_selection].sort((a,b)=>a-b);
+  const service_id = input?.service_id == null ? null : clean(input.service_id);
+  if (input?.service_id != null && !service_id) throw new Error(`${job_type_id}.service_id must be a non-empty catalogue id`);
   return Object.freeze({
+    ...(service_id ? { service_id } : {}),
     job_type_id,
     service_label: clean(input?.service_label || canonical.label),
     enabled: input?.enabled !== false,

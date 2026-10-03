@@ -193,6 +193,9 @@ function projectRetainedCleaningServiceSetup(setup: RetainedCleaningServiceSetup
     if (mode==='fixed' && configured?.fixed_price==null) throw new Error(`${service.service_id}.fixed_price is required before saving cleaning service setup`);
     if (mode==='hourly' && configured?.hourly_rate==null) throw new Error(`${service.service_id}.hourly_rate is required before saving cleaning service setup`);
     return Object.freeze({
+      // Preserve catalogue identity separately from the retained bundle job
+      // type that the onboarding runtime validates and stores.
+      service_id: service.service_id,
       job_type_id,
       service_label: service.label,
       enabled: true,
