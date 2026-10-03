@@ -280,6 +280,10 @@
       "apps/web/lib/auth/session.ts",
       "apps/web/lib/portal/session.ts"
     ],
+    "SERVER_NAME": [
+      "apps/directadmin/dev-access/lib/app.php",
+      "apps/directadmin/dev-access/tools/security-test.php"
+    ],
     "SMS_GATEWAY_PASSWORD": [
       "apps/web/lib/sms/gateway.ts"
     ],
@@ -344,6 +348,14 @@
     ],
     "TITAN_DEPLOYMENT_PROFILE": [
       "apps/web/lib/env.ts"
+    ],
+    "TITAN_DEV_ACCESS_SSH_HOST": [
+      "apps/directadmin/dev-access/lib/app.php",
+      "apps/directadmin/dev-access/tools/security-test.php"
+    ],
+    "TITAN_DEV_ACCESS_SSH_PORT": [
+      "apps/directadmin/dev-access/lib/app.php",
+      "apps/directadmin/dev-access/tools/security-test.php"
     ],
     "TITAN_MCP_CAPABILITY_TOOL_MAP": [
       "apps/llm-plugin/lib/titan/catalogue.ts"
