@@ -45,10 +45,12 @@ test('the hub has Cleaning, Works Everywhere children and an internal managed-se
 
   const children = nav.find(({ label }) => label === 'Works Everywhere').children
   assert.deepEqual(children.map(({ label }) => label), [
-    'Mobile app', 'PWA', 'Chrome extension', 'WordPress plugin',
+    'Mobile app', 'PWA', 'Chrome extensions', 'WordPress plugins',
     'ChatGPT integration', 'WhatsApp', 'Telegram', 'Facebook Messenger',
   ])
-  assert.ok(children.every(({ href }) => href.startsWith('/works-everywhere#')))
+  assert.equal(children.find(({ label }) => label === 'Chrome extensions').href, '/chrome-extensions')
+  assert.equal(children.find(({ label }) => label === 'WordPress plugins').href, '/wordpress-plugins')
+  assert.ok(children.filter(({ label }) => !['Chrome extensions', 'WordPress plugins'].includes(label)).every(({ href }) => href.startsWith('/works-everywhere#')))
 })
 
 test('the Cleaning menu is contextual and other vertical hosts are not public', () => {
@@ -114,4 +116,27 @@ test('launch pages keep managed service internal and show accurate release state
   assert.match(workSource, /Facebook Messenger/)
   assert.match(workSource, /planned integrations/)
   assert.doesNotMatch(cleaningSource, /Other industries|titanzero\.pro/)
+})
+
+
+test('WordPress and Chrome product pages cover five planned AI-assisted areas', () => {
+  const appSource = readFileSync(new URL('../App.jsx', import.meta.url), 'utf8')
+  const workSource = readFileSync(new URL('../pages/WorksEverywhere.jsx', import.meta.url), 'utf8')
+  const pageSource = readFileSync(new URL('../pages/ProductFamilyPages.jsx', import.meta.url), 'utf8')
+
+  assert.ok(appSource.includes('path="/wordpress-plugins"'))
+  assert.ok(appSource.includes('path="/chrome-extensions"'))
+  assert.ok(workSource.includes("detailsHref: '/wordpress-plugins'"))
+  assert.ok(workSource.includes("detailsHref: '/chrome-extensions'"))
+
+  for (const area of ['Bookings', 'Invoicing', 'Job Management', 'Quotes', 'CRM']) {
+    assert.ok(pageSource.includes(`name: '${area}'`), `missing product area: ${area}`)
+  }
+  assert.match(pageSource, /AI Assist/)
+  assert.match(pageSource, /Standalone · local-first/)
+  assert.match(pageSource, /Connected Titan/)
+  assert.match(pageSource, /one shared Browser Node/)
+  assert.match(pageSource, /Planned · not available to install/)
+  assert.match(pageSource, /AI can be turned off without disabling the core workflow/)
+  assert.match(pageSource, /It does not invent totals or mark a payment as received/)
 })

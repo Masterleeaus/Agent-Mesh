@@ -27,6 +27,7 @@ import SecurityRecovery from './pages/SecurityRecovery'
 import MeasuredOutcomes from './pages/MeasuredOutcomes'
 import PlatformHubHome from './pages/PlatformHubHome'
 import WorksEverywhere from './pages/WorksEverywhere'
+import { ChromeExtensions, WordPressPlugins } from './pages/ProductFamilyPages'
 import PlatformPricing from './pages/PlatformPricing'
 import Resources from './pages/Resources'
 import { getCurrentSiteContext, getLegacyIndustryRedirect, getVerticalSiteForLegacyPath } from './config/siteContext'
@@ -91,6 +92,8 @@ export default function App() {
         <Route path="/investment" element={<Navigate to="/pricing" replace />} />
         <Route path="/pricing" element={<PlatformPricing />} />
         <Route path="/works-everywhere" element={<WorksEverywhere />} />
+        <Route path="/chrome-extensions" element={<ChromeExtensions />} />
+        <Route path="/wordpress-plugins" element={<WordPressPlugins />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/industries" element={<Industries />} />
         <Route path="/industries/:industry" element={<IndustryPath context={siteContext} />} />
