@@ -134,7 +134,7 @@ export function createCleaningServiceSetupAuthority({ database, cleaningBundle, 
     if (input.expected_revision != null && Number(input.expected_revision) !== priorVersion) throw new Error('cleaning setup revision mismatch');
     const updated_at = Number(clock());
     const stored = await database.putRecord(context, {
-      ...locator(), updated_at,
+      ...locator(), expected_revision:priorVersion, updated_at,
       data:{ schema:'titan.onboarding.cleaning-service-setup-record.v1', company_id:context.company_id, selections:normalized, recurrence, source_module:'titan.workforce.cleaning', source_projection:'job-types', grants_authority:false, authority_granted:false, execution_permitted:false, updated_at },
       provenance:{ source:'titan-onboarding-cleaning-service-setup', canonical_module:'titan.workforce.cleaning', copied_catalogue:false }
     });

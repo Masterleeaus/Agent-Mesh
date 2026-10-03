@@ -1,4 +1,5 @@
-import { spawn, type ChildProcess } from "node:child_process";
+import { execFileSync, spawn, type ChildProcess } from "node:child_process";
+import { existsSync } from "node:fs";
 import { createServer } from "node:net";
 import { request as httpsRequest } from "node:https";
 import { mkdtemp, mkdir, readFile, readdir, rm } from "node:fs/promises";
@@ -221,8 +222,12 @@ describe("Cleaning first-run browser journey", () => {
     const identityPath = join(fixtureDirectory, "global-registry.sqlite");
     const storeRoot = join(fixtureDirectory, "company-stores");
     const fileRoot = join(fixtureDirectory, "company-files");
+    const tlsKey = join(fixtureDirectory, "localhost-key.pem");
+    const tlsCert = join(fixtureDirectory, "localhost-cert.pem");
     await mkdir(storeRoot, { mode: 0o700 });
     await mkdir(fileRoot, { mode: 0o700 });
+    execFileSync("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", tlsKey,
+      "-out", tlsCert, "-days", "1", "-subj", "/CN=localhost", "-addext", "subjectAltName=DNS:localhost,IP:127.0.0.1"], { stdio: "ignore" });
     await prepareLegacyDatabase(appDatabase);
     await provisionCompanies({ identityPath, storeRoot, fileRoot });
 
@@ -250,7 +255,8 @@ describe("Cleaning first-run browser journey", () => {
     };
     nextServer = spawn(process.execPath, [
       resolve(webRoot, "node_modules/next/dist/bin/next"),
-      "dev", "--experimental-https", "--hostname", "0.0.0.0", "--port", String(port),
+      "dev", "--experimental-https", "--experimental-https-key", tlsKey,
+      "--experimental-https-cert", tlsCert, "--hostname", "0.0.0.0", "--port", String(port),
     ], { cwd: webRoot, env: runtimeEnvironment, stdio: ["ignore", "pipe", "pipe"] });
     let serverOutput = "";
     nextServer.stdout?.on("data", chunk => { serverOutput = `${serverOutput}${chunk}`.slice(-8_000); });
@@ -261,9 +267,13 @@ describe("Cleaning first-run browser journey", () => {
       throw new Error(`${error instanceof Error ? error.message : String(error)}\n${serverOutput}`);
     }
 
-    browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
+    const systemChromium = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
+      || (existsSync("/usr/bin/chromium") ? "/usr/bin/chromium" : undefined);
+    browser = await chromium.launch({ headless: true, args: ["--no-sandbox"], ...(systemChromium ? { executablePath: systemChromium } : {}) });
     const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
+    page.on("pageerror", error => { serverOutput = `${serverOutput}\nPAGEERROR: ${error.message}`.slice(-8_000); });
+    page.on("console", message => { if (message.type() === "error") serverOutput = `${serverOutput}\nCONSOLE: ${message.text()}`.slice(-8_000); });
     // Existing non-Cleaning profile stays selected through the real password route.
     await page.goto(`${baseUrl}/login`);
     await page.getByLabel("Email").fill(userA.email);
@@ -288,6 +298,7 @@ describe("Cleaning first-run browser journey", () => {
       window.setTimeout = ((callback: TimerHandler, timeout?: number, ...args: unknown[]) => {
         let selectedDelay = timeout;
         if (typeof selectedDelay === "number" && selectedDelay >= 280_000 && selectedDelay <= 300_000
+          && sessionStorage.getItem("titan-expiry-timer-ready") === "1"
           && !sessionStorage.getItem("titan-expiry-timer-fired")) {
           sessionStorage.setItem("titan-expiry-timer-fired", "1");
           selectedDelay = 15_000;
@@ -301,6 +312,8 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    const setupApiResponse = await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`);
+    if (!setupApiResponse.ok()) throw new Error(`Cleaning setup GET ${setupApiResponse.status()}: ${await setupApiResponse.text()}\n${serverOutput}`);
     await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("company-provided prices are configured separately");
 
     const bCookie = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
@@ -308,6 +321,9 @@ describe("Cleaning first-run browser journey", () => {
     expect(bCookie!.expires).toBeGreaterThan(Date.now() / 1000);
     expect(bCookie!.expires).toBeLessThanOrEqual(Date.now() / 1000 + 300);
 
+    await page.evaluate(() => sessionStorage.setItem("titan-expiry-timer-ready", "1"));
+    await page.reload();
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await page.waitForURL(url => url.pathname === "/login" && url.searchParams.get("reason") === "session-expired", { timeout: 25_000 });
     const loginUrl = new URL(page.url());
     expect(loginUrl.searchParams.get("next")).toBe("/app");
@@ -317,6 +333,34 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+
+    // Configure through the actual company-scoped browser form after the
+    // expiry journey, then reload to prove saved rate and recurrence restore.
+    await expectPage(page.getByLabel("Regular clean", { exact: false }).first()).toBeVisible({ timeout: 20_000 });
+    await page.getByLabel("Regular clean", { exact: false }).first().check();
+    await page.getByLabel("Regular clean hourly rate").fill("42.50");
+    await page.getByLabel("End-of-lease / bond clean", { exact: false }).check();
+    await expectPage(page.getByText("Quote required.", { exact: true })).toBeVisible();
+    await expectPage(page.getByLabel("End-of-lease / bond clean fixed price")).toHaveCount(0);
+    await page.getByLabel("Enable recurring configuration").check();
+    await page.getByRole("checkbox", { name: "Weekly" }).check();
+    await page.getByLabel("Default frequency").selectOption("weekly");
+    await page.getByRole("button", { name: "Save service setup" }).click();
+    await expectPage(page.getByRole("status").filter({ hasText: "Cleaning service setup saved" })).toBeVisible();
+    const staleSave = await context.request.put(`${baseUrl}/api/v1/cleaning/service-setup`, {
+      data: {
+        expected_revision: 0,
+        selections: [{ service_id: "regular_clean", mode: "hourly", hourly_rate: 999 }],
+        recurring: { enabled: false, supported_frequencies: [], default_frequency: null },
+      },
+    });
+    expect(staleSave.status()).toBe(409);
+    await page.getByRole("button", { name: "Reload saved setup" }).click();
+    await expectPage(page.getByLabel("Regular clean hourly rate")).toHaveValue("42.5");
+    await expectPage(page.getByLabel("Enable recurring configuration")).toBeChecked();
+    await expectPage(page.getByRole("checkbox", { name: "Weekly" })).toBeChecked();
+    await expectPage(page.getByLabel("Default frequency")).toHaveValue("weekly");
+    await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("company-provided prices are configured separately");
 
     const checklistResponse = await context.request.get(`${baseUrl}/api/v1/visits/${ids.visit}/checklist`);
     expect(checklistResponse.status()).toBe(200);
@@ -328,7 +372,32 @@ describe("Cleaning first-run browser journey", () => {
     try {
       const settings = JSON.parse((await bStore.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyB])).rows[0]!.settings);
       expect(settings.vertical_profile).toMatchObject({ company_id: companyB, revision: 1, profile: { module_id: "titan.workforce.cleaning" } });
+      expect(settings.cleaning_service_setup).toMatchObject({ company_id: companyB, revision: 1, data: {
+        selections: [
+          { job_type_id: "domestic_recurring", pricing: { mode: "hourly", hourly_rate: 42.5 } },
+          { job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
+        ],
+        recurrence: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly" },
+      } });
     } finally { await bStore.close(); }
+
+    // A different authenticated company with a non-Cleaning profile cannot
+    // read or mutate the saved Cleaning configuration.
+    await context.clearCookies();
+    await page.goto(`${baseUrl}/login`);
+    await page.getByLabel("Email").fill(userA.email);
+    await page.getByLabel("Password").fill(userA.password);
+    await page.getByRole("button", { name: "Sign In" }).click();
+    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    expect((await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(409);
+    const bStoreAfterA = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
+    try {
+      const settings = JSON.parse((await bStoreAfterA.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyB])).rows[0]!.settings);
+      expect(settings.cleaning_service_setup).toMatchObject({ company_id: companyB, revision: 1, data: { selections: [
+        { job_type_id: "domestic_recurring", pricing: { hourly_rate: 42.5 } },
+        { job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
+      ] } });
+    } finally { await bStoreAfterA.close(); }
     await context.close();
   }, 180_000);
 });

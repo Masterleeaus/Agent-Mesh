@@ -39,6 +39,25 @@ export interface CleaningServicePricingConfiguration {
   currency?: string;
 }
 
+export interface CleaningServiceSetupSelectionInput {
+  service_id: string;
+  mode: 'fixed'|'hourly'|'quote_required';
+  fixed_price?: number | null;
+  hourly_rate?: number | null;
+  minimum_charge?: number | null;
+  currency?: string;
+}
+
+export interface CleaningServiceSetupInput {
+  company_id: string;
+  selections: readonly CleaningServiceSetupSelectionInput[];
+  recurring: {
+    enabled: boolean;
+    supported_frequencies?: readonly Exclude<CleaningFrequency, 'one_off'>[];
+    default_frequency?: Exclude<CleaningFrequency, 'one_off'> | null;
+  };
+}
+
 export interface CleaningOnboardingProjection {
   schema: typeof CLEANING_ONBOARDING_SCHEMA;
   company_id: string;
@@ -153,7 +172,10 @@ export function buildCleaningOnboardingSetup(input: CleaningOnboardingSetupInput
   });
 }
 
-export function toRetainedCleaningServiceSetupPayload(setup: CleaningOnboardingProjection) {
+type RetainedCleaningServiceSetupSource = Pick<CleaningOnboardingProjection,
+  'company_id' | 'offered_services' | 'enabled_pricing_modes' | 'configured_pricing' | 'recurring'>;
+
+function projectRetainedCleaningServiceSetup(setup: RetainedCleaningServiceSetupSource) {
   const selectedJobTypes=new Set<string>();
   const selections=setup.offered_services.map(service => {
     const catalogueService=CLEANING_SERVICE_BY_ID[service.service_id];
@@ -200,5 +222,64 @@ export function toRetainedCleaningServiceSetupPayload(setup: CleaningOnboardingP
     requires_retained_onboarding_authority: true,
     grants_authority: false,
     execution_permitted: false
+  });
+}
+
+export function toRetainedCleaningServiceSetupPayload(setup: CleaningOnboardingProjection) {
+  return projectRetainedCleaningServiceSetup(setup);
+}
+
+/** Build the narrow company service-configuration payload without requiring
+ * unrelated onboarding fields such as work areas or operating windows. The
+ * retained setup authority remains the persistence and bundle-validation owner. */
+export function toRetainedCleaningServiceSetupPayloadFromSelections(input: CleaningServiceSetupInput) {
+  rejectLegacy(input);
+  const company_id = clean(input.company_id);
+  if (!company_id) throw new Error('company_id is required');
+  if (!Array.isArray(input.selections) || input.selections.length === 0) throw new Error('at least one cleaning service selection is required');
+  const offered_services = input.selections.map((selection, index) => {
+    const service_id = clean(selection.service_id);
+    const service = CLEANING_SERVICE_BY_ID[service_id];
+    if (!service) throw new Error(`unknown cleaning service id: ${service_id || `<row-${index + 1}>`}`);
+    if (!service.retained_job_type_id) throw new Error(`cleaning service ${service_id} has no retained job type mapping and cannot be configured`);
+    if (!['fixed', 'hourly', 'quote_required'].includes(selection.mode)) throw new Error(`configured pricing mode for ${service_id} must be fixed, hourly, or quote_required`);
+    if (!service.pricing_hints.includes(selection.mode)) throw new Error(`pricing mode ${selection.mode} is not enabled and supported for cleaning service ${service_id}`);
+    if (service.quote_required && selection.mode !== 'quote_required') throw new Error(`${service_id} requires quote_required pricing`);
+    const fixed_price = configuredAmount(selection.fixed_price, `${service_id}.fixed_price`);
+    const hourly_rate = configuredAmount(selection.hourly_rate, `${service_id}.hourly_rate`);
+    if (selection.mode === 'fixed' && fixed_price == null) throw new Error(`${service_id}.fixed_price is required before saving cleaning service setup`);
+    if (selection.mode === 'hourly' && hourly_rate == null) throw new Error(`${service_id}.hourly_rate is required before saving cleaning service setup`);
+    return Object.freeze({
+      service_id,
+      label: service.label,
+      recurring_supported: service.recurring_supported,
+      pricing_hints: service.pricing_hints,
+      default_crew_size: service.default_crew_size,
+    });
+  });
+  const modes = [...new Set(input.selections.map(selection => selection.mode))];
+  const configured_pricing = input.selections.map(selection => Object.freeze({
+    service_id: clean(selection.service_id),
+    mode: selection.mode,
+    fixed_price: configuredAmount(selection.fixed_price, `${selection.service_id}.fixed_price`),
+    hourly_rate: configuredAmount(selection.hourly_rate, `${selection.service_id}.hourly_rate`),
+    minimum_charge: configuredAmount(selection.minimum_charge, `${selection.service_id}.minimum_charge`),
+    currency: clean(selection.currency || 'AUD').toUpperCase(),
+  }));
+  const recurrence = input.recurring;
+  if (!recurrence || typeof recurrence.enabled !== 'boolean') throw new Error('recurring.enabled must be a boolean');
+  const supported_frequencies = [...new Set(recurrence.supported_frequencies || [])];
+  const allowedFrequencies = new Set(['weekly', 'fortnightly', 'monthly', 'custom']);
+  for (const frequency of supported_frequencies) if (!allowedFrequencies.has(frequency)) throw new Error(`unsupported recurring frequency: ${frequency}`);
+  const default_frequency = recurrence.default_frequency ?? null;
+  if (default_frequency && !supported_frequencies.includes(default_frequency)) throw new Error('default recurring frequency must be enabled');
+  if (recurrence.enabled && !supported_frequencies.length) throw new Error('recurring enabled but no supported recurring frequencies are configured');
+  if (recurrence.enabled && !offered_services.some(service => service.recurring_supported)) throw new Error('recurring enabled but no selected service supports recurrence');
+  return projectRetainedCleaningServiceSetup({
+    company_id,
+    offered_services,
+    enabled_pricing_modes: modes,
+    configured_pricing,
+    recurring: Object.freeze({ enabled: recurrence.enabled, supported_frequencies, default_frequency }),
   });
 }

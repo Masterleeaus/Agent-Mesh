@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { Card, PageContainer, PageHeader, SectionHeader } from "@/components/ui";
+import { CleaningServiceSetupForm } from "./CleaningServiceSetupForm";
 
 /** Cleaning-first company home; service activation and pricing remain separate configuration. */
 export function CleaningHome() {
@@ -24,6 +25,8 @@ export function CleaningHome() {
             <Link href={"/app/schedule" as Route}>Open schedule</Link>
           </div>
         </Card>
+
+        <CleaningServiceSetupForm />
 
         <Card>
           <SectionHeader title="Service configuration" />

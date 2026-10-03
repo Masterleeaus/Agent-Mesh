@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildCleaningOnboardingSetup, toRetainedCleaningServiceSetupPayload } from '../.cleaning-test-dist/verticals/cleaning/onboarding.js';
+import { buildCleaningOnboardingSetup, toRetainedCleaningServiceSetupPayload, toRetainedCleaningServiceSetupPayloadFromSelections } from '../.cleaning-test-dist/verticals/cleaning/onboarding.js';
 import { createCleaningServiceSetupAuthority } from '../../onboarding/runtime/cleaning-service-setup.mjs';
 import { readFileSync } from 'node:fs';
 
@@ -79,6 +79,24 @@ test('configured pricing rejects missing required amounts and unmapped job types
     {service_id:'one_off_clean',mode:'hourly',hourly_rate:60}
   ]});
   assert.throws(()=>toRetainedCleaningServiceSetupPayload(colliding),/collide on retained job type domestic_recurring/);
+});
+
+test('narrow service setup adapter maps catalogue ids and requires configured rates',()=>{
+  const input={company_id:'company-a',selections:[
+    {service_id:'regular_clean',mode:'hourly',hourly_rate:42.5},
+    {service_id:'bond_end_of_lease',mode:'quote_required'},
+  ],recurring:{enabled:true,supported_frequencies:['weekly'],default_frequency:'weekly'}};
+  const payload=toRetainedCleaningServiceSetupPayloadFromSelections(input);
+  assert.deepEqual(payload.selections.map(row=>row.job_type_id),['domestic_recurring','bond_end_of_lease']);
+  assert.equal(payload.selections[0].pricing.hourly_rate,42.5);
+  assert.equal(payload.selections[1].pricing.mode,'quote_required');
+  assert.throws(()=>toRetainedCleaningServiceSetupPayloadFromSelections({...input,selections:[{service_id:'regular_clean',mode:'hourly'}]}),/hourly_rate is required/);
+  assert.throws(()=>toRetainedCleaningServiceSetupPayloadFromSelections({...input,selections:[{service_id:'regular_clean',mode:'fixed'}]}),/fixed_price is required/);
+  assert.throws(()=>toRetainedCleaningServiceSetupPayloadFromSelections({...input,selections:[{service_id:'commercial_clean',mode:'hourly',hourly_rate:50}]}),/requires quote_required/);
+  assert.throws(()=>toRetainedCleaningServiceSetupPayloadFromSelections({...input,selections:[{service_id:'carpet_cleaning',mode:'fixed',fixed_price:90}]}),/no retained job type mapping/);
+  assert.throws(()=>toRetainedCleaningServiceSetupPayloadFromSelections({...input,selections:[
+    {service_id:'regular_clean',mode:'fixed',fixed_price:90},{service_id:'one_off_clean',mode:'hourly',hourly_rate:40},
+  ]}),/collide on retained job type domestic_recurring/);
 });
 
 test('adapter uses the real cleaning bundle and retained runtime contract',async()=>{
