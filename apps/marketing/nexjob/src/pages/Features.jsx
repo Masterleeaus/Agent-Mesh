@@ -1,36 +1,74 @@
 import { Link } from 'react-router-dom'
+import PageMeta from '../components/PageMeta'
 import SectionLabel from '../components/SectionLabel'
-import CTASection from '../components/CTASection'
 
-const capabilityPages=[
-['Your Zero','/your-zero','Your persistent digital working intelligence learns you, your role, corrections, experience and the business context you are authorised to use.'],
-['AI Workforce','/ai-workforce','Your Zero coordinates appropriate specialist capabilities so owners, staff and customers do not have to choose and micromanage agents or models.'],
-['Intelligence & Decisions','/intelligence-decisions','Evidence, uncertainty, investigation, multiple perspectives, consequences and governed decision support.'],
-['Continuous Evolution','/continuous-evolution','Observe meaningful change, reassess assumptions and evolve configuration as the business changes.'],
-['Existing Systems & Integrations','/existing-systems','Keep useful CRM, accounting, booking, phone and field systems; connect them and fill genuine gaps.'],
-['Chat, Voice, Camera & Location','/real-world-intelligence','Talk to Zero, show it the physical world and bring spatial and communication context into the work.'],
-['Command, Go & Hub','/apps','Personal Zero experiences for owners and managers, staff and field teams, and customers around the same governed business environment.'],
-['Privacy & Architecture','/privacy-architecture','Local-first options, governed context, customer-controlled infrastructure and company-scoped architecture.'],
-['Cost Sovereignty','/cost-sovereignty','Use your providers, keys, models and compute where suitable, with explicit Titan-managed options.'],
-['Security, Evidence & Recovery','/security-recovery','Protect learning and execution, preserve provenance and retain history around important changes.'],
-['Measured Outcomes','/measured-outcomes','Compare baseline, expected and actual results so experience improves future decisions.'],
-['Environmental Intelligence','/environmental-systems','Connect environmental evidence, risk, resource efficiency and improvement to normal business operations.'],
-['Trust & Authority','/fully-managed','Progress from observation toward bounded automation without confusing intelligence with permission to act.'],
+const capabilities = [
+  ['Enquiries & CRM', 'Capture calls, web requests, messages, referrals and imported prospects. Keep contacts, locations, property details, history, source and customer preferences together.'],
+  ['Quotes & service setup', 'Define what is included, the property and room scope, frequency, access needs and company-set fixed, hourly or quote-required pricing.'],
+  ['Bookings & recurring work', 'Coordinate customer choices, configured availability, repeat visits, booking changes and property-specific requirements.'],
+  ['Teams & scheduling', 'See who is available, match assignments to skills and locations, and handle conflicts, route context and day-of changes.'],
+  ['Job management', 'Keep the work order, property, visit, access notes, room or site checklist, time, materials and customer updates connected.'],
+  ['Quality & evidence', 'Capture checklist progress, photos, notes, exceptions and accepted completion evidence. Required evidence and incomplete tasks keep a visit from closing as complete.'],
+  ['Invoices & payments', 'Prepare billing from verified work, manage receipts, credits and refunds, track payment status, reconcile transactions and follow up on exceptions.'],
+  ['Materials & equipment', 'See consumable readiness and job usage, equipment custody, condition, availability and maintenance needs. Purchasing remains under the company’s spending controls.'],
+  ['Customer care & retention', 'Recover missed enquiries, keep customers informed, manage complaints, coordinate rework, rebook recurring service and retain useful history.'],
 ]
-const cleaningCapabilities=[
-['Reception & communications','Enquiries, qualification, booking, reminders, updates and follow-up.'],
-['Scheduling & coordination','Recurring work, teams, locations, exceptions and operational next actions.'],
-['Quotes & proposals','Prepare structured work from customer, property, history and approved business knowledge.'],
-['Cleaning job operations','Keep property, access, room tasks, crew details and changes connected to each clean.'],
-['Evidence & visual workflows','Connect authorised photos, documents, notes and camera input to operational records.'],
-['Customer care','Keep service communication, issues, feedback, repeat work and retention moving.'],
-['Billing workflow','Move authorised completed work toward invoicing and payment through selected systems.'],
-['Cleaning supplies','Connect consumables, stock, purchasing and supplier context where those workflows are configured.'],
-['Private business knowledge','Use governed company knowledge and private retrieval options for relevant context.'],
-['Software gap filling','Add Titan Zero software and interfaces when the existing stack genuinely lacks a capability.'],
+
+const serviceCoverage = [
+  ['Residential', 'Recurring, one-off and deep cleans; move-in, move-out and end-of-lease work.'],
+  ['Short stay', 'Airbnb and other short-stay turnovers with property-specific room and changeover tasks.'],
+  ['Commercial', 'Office and commercial premises, including multi-site cleaning teams.'],
+  ['Specialist cleaning', 'Window, pressure, carpet and upholstery services with their own scope, skills, equipment and checklists.'],
+  ['Handover and active sites', 'Post-construction/final handover and active construction-site cleaning are distinct service profiles. Active-site work requires access, induction and hazard review.'],
+  ['Organising and removal', 'Home organising requires clear customer approval before moving or discarding items. Junk removal is limited to approved categories with disposal evidence; hazardous and regulated waste stays gated.'],
+  ['Medical equipment', 'Offered only when manufacturer instructions, approved procedures, verified skills and equipment, applicable standards and review evidence are in place.'],
 ]
-export default function Features(){return <><section className="pt-32 pb-16 px-6 text-center"><div className="max-w-6xl mx-auto"><SectionLabel>Capabilities</SectionLabel><h1 className="text-4xl sm:text-6xl font-extrabold mb-5">One connected business.<br/><span className="text-nx-purple-light">Many Zeros. Many capabilities.</span></h1><p className="text-lg text-nx-muted max-w-3xl mx-auto">Features map the Titan Zero product around the first launch vertical: Cleaning. The current source models cleaning service, quote, booking, crew, job evidence, quality and follow-up workflows; availability depends on release and deployment evidence.</p></div></section>
-<section className="px-6 pb-24"><div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-5">{capabilityPages.map(([t,path,d],i)=><Link key={path} to={path} className="group bg-nx-surface border border-nx-border rounded-2xl p-7 hover:bg-nx-surface2 transition-colors"><div className="text-xs font-bold text-nx-purple-light mb-3">{String(i+1).padStart(2,'0')}</div><h2 className="text-xl font-bold mb-3 group-hover:text-nx-purple-light transition-colors">{t}</h2><p className="text-sm text-nx-muted leading-relaxed">{d}</p><p className="text-sm font-bold text-nx-purple-light mt-5">Explore →</p></Link>)}</div></section>
-<section className="py-20 px-6 border-y border-nx-border"><div className="max-w-7xl mx-auto"><div className="text-center mb-12"><SectionLabel>Cleaning workflows</SectionLabel><h2 className="text-4xl font-extrabold mb-3">Cleaning work shaped into practical capability.</h2><p className="text-nx-muted max-w-2xl mx-auto">Titan Zero is being prepared around Cleaning first. The shared product capabilities below are not all released, and the Cleaning workflow source remains in development.</p></div><div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">{fieldCapabilities.map(([t,d])=><div key={t} className="bg-nx-surface border border-nx-border rounded-2xl p-5"><h3 className="font-bold mb-2">{t}</h3><p className="text-xs text-nx-muted leading-relaxed">{d}</p></div>)}</div></div></section>
-<section className="py-20 px-6"><div className="max-w-5xl mx-auto text-center"><SectionLabel>One + Zero + Team</SectionLabel><h2 className="text-4xl font-extrabold mb-5">Complexity behind Zero.</h2><p className="text-lg text-nx-muted">Each One works through their own Zero rather than selecting models, APIs or agents. Titan coordinates the appropriate capabilities, connected systems and evidence behind the interaction, while authority remains separately governed for that person, role and relationship.</p></div></section>
-<CTASection title="Build the capability around your operation." subtitle="Keep what works, connect the business, fill the gaps and manage the resulting intelligence system as one Titan Zero environment."/></>}
+
+export default function Features() {
+  return <>
+    <PageMeta title="Cleaning System Features" description="Explore the connected cleaning workflow for CRM, quotes, bookings, scheduling, job management, quality evidence, payments, equipment and customer care." />
+    <main>
+      <section className="pt-32 pb-16 px-6 text-center">
+        <div className="max-w-6xl mx-auto">
+          <SectionLabel>Cleaning system features</SectionLabel>
+          <h1 className="text-4xl sm:text-6xl font-extrabold mb-5">One system for the work behind every clean.</h1>
+          <p className="text-lg text-nx-muted max-w-3xl mx-auto leading-relaxed">Keep customer, service, crew, visit, evidence and payment details connected. The cleaning workforce helps the team move the work along; the business rules and authorised people remain in control.</p>
+        </div>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-5">{capabilities.map(([title, description], index) => <article key={title} className="bg-nx-surface border border-nx-border rounded-2xl p-7"><div className="text-xs font-bold text-nx-purple-light mb-3">CAPABILITY {String(index + 1).padStart(2, '0')}</div><h2 className="text-xl font-bold mb-3">{title}</h2><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}</div>
+      </section>
+
+      <section id="service-range" className="py-20 px-6 border-y border-nx-border bg-nx-surface/30">
+        <div className="max-w-6xl mx-auto">
+          <SectionLabel>Cleaning service range</SectionLabel>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-5">Set up the service mix your company delivers.</h2>
+          <p className="text-nx-muted leading-relaxed max-w-4xl mb-9">Each service carries its own scope, price mode, team needs, checklist and completion evidence. Availability depends on the company’s configured profile and verified requirements.</p>
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">{serviceCoverage.map(([title, description]) => <article key={title} className="border-t border-nx-border pt-5"><h3 className="font-bold mb-2">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section id="ai-assist" className="px-6 py-20">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-9 items-start">
+          <div><SectionLabel>AI Assist</SectionLabel><h2 className="text-3xl sm:text-4xl font-extrabold mb-4">AI helps prepare the work. Rules govern the action.</h2><p className="text-nx-muted leading-relaxed">Use AI to interpret enquiries, extract information from approved context, summarise records, draft quotes and customer messages, and recommend next steps. Prices, capacity, permissions, completion status and payment records come from configured business rules and verified events.</p></div>
+          <div className="grid sm:grid-cols-2 gap-3">{['Draft an enquiry response', 'Summarise a property history', 'Prepare a quote for review', 'Explain a schedule conflict', 'Highlight checklist gaps', 'Draft an invoice follow-up'].map((item) => <div key={item} className="bg-nx-surface border border-nx-border rounded-xl p-4 text-sm font-medium">{item}</div>)}</div>
+        </div>
+      </section>
+
+      <section id="trust" className="px-6 py-16 border-y border-nx-border">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-7">
+          {[
+            ['Company-owned settings', 'The business sets service scope, prices, roles, access, purchasing limits and the work that needs approval.'],
+            ['Evidence before completion', 'Required checklists and accepted evidence stay attached to the property and visit. A note or AI summary cannot stand in for required proof.'],
+            ['Human review where it matters', 'Sensitive work, scope exceptions, financial changes and external communications follow their configured authority and consent controls.'],
+          ].map(([title, description]) => <article key={title} className="border-t border-nx-border pt-5"><h2 className="font-bold mb-2">{title}</h2><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}
+        </div>
+      </section>
+
+      <section className="px-6 py-16">
+        <div className="max-w-6xl mx-auto flex flex-wrap gap-5 border-t border-nx-border pt-7"><Link to="/ai-workforce" className="text-sm font-semibold text-nx-purple-light">Meet the AI workforce →</Link><Link to="/works-everywhere" className="text-sm font-semibold text-nx-purple-light">Works Everywhere →</Link><Link to="/wordpress-plugins" className="text-sm font-semibold text-nx-purple-light">WordPress plugins →</Link><Link to="/chrome-extensions" className="text-sm font-semibold text-nx-purple-light">Chrome extensions →</Link><Link to="/titan-zero" className="text-sm font-semibold text-nx-purple-light">What is Titan Zero? →</Link></div>
+      </section>
+    </main>
+  </>
+}

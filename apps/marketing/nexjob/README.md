@@ -1,8 +1,8 @@
 # Titan Zero Cleaning Marketing Site
 
-This shared static marketing app renders the Titan Zero Cleaning SaaS hub on `titanzero.io` and its Cleaning-specific context on `cleaning.titanzero.io`. Cleaning is the only vertical exposed for the initial launch. The full canonical vertical catalogue remains in source for future releases but is not routed or marketed here. This app is a marketing surface, never a runtime or backend dependency.
+This shared marketing app renders the Cleaning SaaS hub on `titanzero.io` and its Cleaning-specific menu and landing page on `cleaning.titanzero.io`. Cleaning is the only public vertical for this launch. Other vertical profiles remain in the internal catalogue for future releases.
 
-Titan Zero's managed-service offer remains an internal `titanzero.io/fully-managed` page. `titanzero.pro` is planned for a separate Cleaning franchise site and is not rendered by this app.
+The site leads with the Cleaning AI workforce and connected operating system. It includes a dedicated Titan Zero explainer, a six-role Cleaning workforce page, a system feature catalogue, Works Everywhere information, five separate WordPress plugins and five separate Chrome extensions for Bookings, Invoicing, Job Management, Quotes and CRM, each with AI Assist. Managed Service remains at `titanzero.io/fully-managed`. `titanzero.pro` remains reserved for the separate Cleaning franchise site.
 
 ## Local development
 
@@ -11,24 +11,26 @@ npm ci
 npm run dev
 ```
 
-Production build for review:
+Production build check:
+
+```npm run check
+```
+
+For review-only builds, set account access off explicitly:
 
 ```bash
-VITE_APP_ACCESS_AVAILABLE=false VITE_APP_URL=https://app.titanzero.io npm run check
+VITE_APP_ACCESS_AVAILABLE=false VITE_APP_SIGNUP_AVAILABLE=false VITE_APP_URL=https://app.titanzero.io npm run check
 ```
+
+The production defaults point sign-in and sign-up to `app.titanzero.io/login` and `app.titanzero.io/signup`. Those app routes must be available before publishing the marketing build.
 
 ## Host behavior
 
-- The hostname selects the Cleaning product hub, reserved app/PWA host, Cleaning-specific host, or local preview through `src/config/siteContext.js`.
-- Public launch routing uses the canonical Cleaning profile from `src/data/verticalCatalogue.js`. Other profiles stay in the internal catalogue and are not public industry sites in this launch.
-- Legacy `/industries/cleaning` paths point to the Cleaning host. Other legacy industry paths no longer redirect to an industry host.
-- The managed-service page stays on `titanzero.io/fully-managed`; do not route it through `titanzero.pro`.
-- `titanzero.pro` is reserved for the separately planned Cleaning franchise site. The current marketing app does not serve that host or make claims about its availability.
-- Product login links target the canonical app host. They remain disabled in the review build until the app workflow is confirmed. There is no public signup route in this build.
-- Cleaning catalogue and blueprint source is substantial, but the Cleaning runtime remains in development. Source and tests do not certify a production company installation or published release.
-- “Works Everywhere” surfaces (mobile app, PWA, Chrome, WordPress, ChatGPT, WhatsApp, Telegram and Facebook Messenger) show their evidence-based release states. No planned extension, plugin or channel is presented as published or live.
-- Typography retains the existing Inter family from Google Fonts with system sans-serif fallback. No self-hosted Inter font asset/license was found in the repository.
-
-## Review and release state
-
-The current build is a `noindex` review preview. Do not enable indexing, change DNS, or publish until the Cleaning runtime, host routing, TLS, app access, channel integrations, package releases and deployment plan have been verified by their owners.
+- Hostname selects the Cleaning product hub, reserved app/PWA host, Cleaning-specific host or local preview through `src/config/siteContext.js`.
+- Public launch routing uses the canonical Cleaning profile from `src/data/verticalCatalogue.js`; other verticals are not shown in the public industry directory.
+- Legacy `/industries/cleaning` paths route visitors to the Cleaning host. Other legacy industry routes resolve to the public Cleaning home.
+- The managed-service page stays on `titanzero.io/fully-managed`; it is not routed through `titanzero.pro`.
+- Product copy describes the launch experience. Company setup and configured safety gates still determine which service scopes and actions can be enabled.
+- Specialist work such as active construction sites, medical equipment and waste removal keeps its authorization, skills, equipment, procedure and evidence requirements.
+- Sign-in and sign-up destinations are environment-configurable for review builds. Do not publish until account access, runtime routing, channel providers and downloadable product packages have passed their release checks.
+- Typography retains the existing Inter family from Google Fonts with system sans-serif fallback. No self-hosted Inter font asset or license was found in the repository.

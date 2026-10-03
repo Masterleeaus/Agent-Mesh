@@ -9,9 +9,7 @@ export const MARKETING_DOMAINS = Object.freeze({
   app: 'app.titanzero.io',
 })
 
-// This is a route-facing projection of the source catalogue, not a second
-// industry registry. Content, hostnames and canonical URLs share one owner.
-// Only Cleaning is public for this launch. Keep the full canonical catalogue for future releases.
+// Only Cleaning is public for this launch. Keep the complete canonical catalogue for future releases.
 const PUBLIC_LAUNCH_VERTICAL_IDS = new Set(['cleaning'])
 
 export const VERTICAL_SITES = Object.freeze(verticalCatalogue.filter(({ id }) => PUBLIC_LAUNCH_VERTICAL_IDS.has(id)).map((profile) => Object.freeze({
@@ -38,10 +36,16 @@ const worksEverywhereNavigation = Object.freeze([
   { label: 'PWA', href: '/works-everywhere#pwa' },
   { label: 'Chrome extensions', href: '/chrome-extensions' },
   { label: 'WordPress plugins', href: '/wordpress-plugins' },
-  { label: 'ChatGPT integration', href: '/works-everywhere#chatgpt' },
+  { label: 'ChatGPT', href: '/works-everywhere#chatgpt' },
   { label: 'WhatsApp', href: '/works-everywhere#whatsapp' },
   { label: 'Telegram', href: '/works-everywhere#telegram' },
   { label: 'Facebook Messenger', href: '/works-everywhere#messenger' },
+])
+
+const moreNavigation = Object.freeze([
+  { label: 'What is Titan Zero?', href: '/titan-zero' },
+  { label: 'Managed service', href: '/fully-managed' },
+  { label: 'Resources & FAQ', href: '/resources' },
 ])
 
 const hubNavigation = Object.freeze([
@@ -51,8 +55,7 @@ const hubNavigation = Object.freeze([
   { label: 'Works Everywhere', href: '/works-everywhere', children: worksEverywhereNavigation },
   { label: 'Cleaning', href: '/industries/cleaning' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'Managed service', href: '/fully-managed' },
-  { label: 'Resources', href: '/resources' },
+  { label: 'More', href: '/resources', children: moreNavigation },
 ])
 
 const verticalNavigation = Object.freeze([
@@ -60,9 +63,9 @@ const verticalNavigation = Object.freeze([
   { label: 'Features', href: '/#features' },
   { label: 'AI workforce', href: '/ai-workforce' },
   { label: 'Works Everywhere', href: '/works-everywhere', children: worksEverywhereNavigation },
+  { label: 'What is Titan Zero?', href: '/titan-zero' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Managed service', href: '/fully-managed' },
-  { label: 'Start', href: undefined, external: true, action: true, disabled: true },
 ])
 
 export function normalizeHostname(hostname = '') {

@@ -1,75 +1,81 @@
 import { Link } from 'react-router-dom'
 import PageMeta from '../components/PageMeta'
 import SectionLabel from '../components/SectionLabel'
+import { ButtonPrimary } from '../components/Button'
+import { APP_SIGNUP_AVAILABLE, appRoutes } from '../config'
 
 const productAreas = [
   {
     id: 'bookings',
     name: 'Bookings',
-    wordpress: 'Collect cleaning service requests, property and room details, access needs, preferred times and recurring preferences. Booking availability and staff/resource selection remain governed by configured business rules.',
-    chrome: 'Turn an approved page or conversation into a draft cleaning request. Review property, service, access and timing details, then pass the request to the canonical booking workflow for availability checks and any required approval.',
-    ai: 'Interprets enquiries, extracts service, property and timing details, flags missing information, and drafts customer responses. Availability and booking decisions stay rule-based and authorised.',
+    wordpress: 'Collect service requests with property, room or site details, access requirements, preferred times and recurring preferences. Confirmed bookings use the company’s configured availability and staffing rules.',
+    chrome: 'Turn an approved website enquiry into a structured cleaning request. Check the service, property, access and timing details, fill gaps, then send it into the booking workflow for availability review.',
+    ai: 'Interprets enquiries, extracts service and property details, flags missing information and drafts customer replies. The configured booking rules decide availability.',
   },
   {
     id: 'invoicing',
     name: 'Invoicing',
-    wordpress: 'Prepare invoices, receipts, credits and refunds, and track payment status and reconciliation. Present configured payment choices such as PayID, bank transfer, cash and optional card or gateway methods.',
-    chrome: 'Review the current approved invoice or payment context and prepare a follow-up or reconciliation task. Financial changes must use the canonical invoice/payment capability and its required authority checks.',
-    ai: 'Extracts details from approved records, drafts payment reminders, and explains invoice status. It does not invent totals or mark a payment as received.',
+    wordpress: 'Prepare invoices, receipts, credits and refunds from approved work records. Track payment status and reconciliation, and present the business’s enabled methods such as PayID, bank transfer, cash or card.',
+    chrome: 'Review invoice and payment context while working in supported business pages. Prepare a reminder or reconciliation task, then send it through the authorised finance workflow.',
+    ai: 'Summarises approved records, drafts payment reminders and explains invoice status. It does not invent totals or mark a payment received.',
   },
   {
     id: 'job-management',
     name: 'Job Management',
-    wordpress: 'Manage work orders, assignments, status, tasks and checklists, time and materials, photos and evidence, and customer-facing job updates.',
-    chrome: 'Capture approved job context from supported business pages, find the related work item, and prepare a follow-up or status action. The shared job system remains the source of business records.',
-    ai: 'Summarises job notes, drafts checklist or customer-update text, and highlights exceptions. It cannot create evidence or grant authority to mark work complete.',
+    wordpress: 'Manage work orders, assignments, job status, visit tasks, room or site checklists, time, materials, photos, evidence and customer-facing updates.',
+    chrome: 'Open the relevant work item from supported business context, review assignment and visit details, and prepare a status update or follow-up for the team.',
+    ai: 'Summarises job notes, drafts customer updates and highlights checklist gaps or exceptions. Completion follows the required checklist and accepted evidence.',
   },
   {
     id: 'quotes',
     name: 'Quotes',
-    wordpress: 'Prepare service scopes, line items and transparent options; track revisions, customer acceptance or rejection, signatures and related documents. Service tiers and payment-term choices remain separate settings.',
-    chrome: 'Extract relevant details from an approved enquiry page and draft a quote for review. The quote remains a proposal until the authorised person or configured workflow accepts it.',
-    ai: 'Clarifies scope and drafts quote descriptions or options. Pricing calculations and quote acceptance remain governed by business rules and authority.',
+    wordpress: 'Build service scopes and line items, keep quote revisions together, and record customer acceptance, rejection, signatures and related documents. Fixed, hourly and quote-required pricing are configured by the business.',
+    chrome: 'Extract service, property and customer details from an approved enquiry page and prepare a quote draft for review before it enters the canonical quote workflow.',
+    ai: 'Clarifies service scope and drafts descriptions or options. Configured prices, calculations, capacity and quote acceptance remain governed by business rules.',
   },
   {
     id: 'crm',
     name: 'CRM',
-    wordpress: 'Keep CRM-lite customer, company and contact records, locations and assets, notes, history, custom fields and repeat-work context together with the service workflow.',
-    chrome: 'Capture approved customer, contact and location details from a supported page, check the existing business context, and prepare a CRM update or follow-up for review.',
-    ai: 'Extracts contact details from approved context, summarises relationship history, and drafts follow-ups. Identity matching and record changes remain controlled by the CRM workflow.',
+    wordpress: 'Keep prospects, customers, companies, contacts, locations, properties, assets, notes, custom fields and service history connected. Import lists, review duplicates and retain source, consent and opt-out context.',
+    chrome: 'Capture approved customer, contact or location details from a supported page, check existing records and prepare a CRM update or follow-up for review.',
+    ai: 'Extracts details from approved page context, summarises relationship history and drafts follow-up. Identity matching, consent and record changes stay in the CRM workflow.',
   },
 ]
 
 const pageContent = {
   wordpress: {
-    title: 'WordPress Plugins for Cleaning Businesses',
-    description: 'Explore five planned Titan Zero WordPress product modules for cleaning bookings, invoicing, job management, quotes and CRM, with optional AI Assist.',
-    eyebrow: 'WordPress product family · planned',
-    heading: 'Five focused tools for the cleaning business workflow.',
-    intro: 'The planned Titan Zero WordPress family brings bookings, invoicing, job management, quotes and CRM together through one reusable service-business engine. Each product area can use AI Assist, while the core workflow remains useful without AI.',
-    platformHeading: 'Choose how the WordPress site connects.',
+    title: 'Cleaning WordPress Plugins',
+    description: 'Five separate WordPress plugins for cleaning bookings, invoicing, job management, quotes and CRM, with AI Assist and connected Titan Zero workflows.',
+    eyebrow: 'Five WordPress plugins for Cleaning',
+    heading: 'The cleaning workflow, inside your WordPress site.',
+    intro: 'Choose the focused plugins your business needs. Each product installs separately, and each can use AI Assist for the language work around cleaning operations.',
+    installLabel: 'Get WordPress plugins',
+    installText: 'Create your account to download the individual plugin packages and follow the connection steps. Use the plugins independently for a local WordPress workflow, or connect them to the Cleaning system so approved records and actions stay in sync.',
+    platformHeading: 'Start locally or connect the business workflow.',
     platformSteps: [
-      ['Standalone · local-first', 'The WordPress installation owns its local customer and operational records, authentication and core workflow. Use local or bring-your-own AI providers if wanted; Titan-hosted inference is not required for the standalone workflow.'],
-      ['Connected Titan', 'After an explicit connection, Titan company identity, canonical business capabilities, Workforce, authority and evidence remain authoritative. WordPress acts as the customer-facing adapter and may provide permitted cache or offline behaviour without creating a second source of truth.'],
+      ['WordPress workflow', 'Manage the plugin’s customer-facing forms and local WordPress records with WordPress authentication and storage. Use AI Assist when configured; the everyday workflow remains available without it.'],
+      ['Connected Cleaning system', 'Connect the site to the company workspace so Titan Zero’s Cleaning workforce and canonical business records remain the source for approved customer, quote, booking, job and payment actions.'],
     ],
-    assistHeading: 'AI helps with language work; business rules stay deterministic.',
-    assist: 'AI Assist can interpret enquiries, extract details, draft quotes and messages, summarise job history and recommend next steps. Calculations, availability, payment rules, permissions and workflow state are handled by deterministic business logic. AI can be turned off without disabling the core workflow. Managed Titan AI and Premium Knowledge/RAG are optional.',
-    close: 'These are planned product modules, not five released downloads. No WordPress.org package or live Titan connection is available from this review site.',
+    assistHeading: 'AI Assist for the work around the workflow.',
+    assist: 'AI Assist interprets service requests, extracts details, drafts quotes and messages, summarises job history and suggests the next step. It does not set prices, promise availability, approve a quote, prove job completion or record a payment. Turn AI off and the core WordPress workflow remains usable.',
+    close: 'Each plugin has a defined product scope. Install one or combine all five; the business keeps one customer and service history.',
   },
   chrome: {
-    title: 'Chrome Extensions for Cleaning Teams',
-    description: 'Explore five planned Titan Zero Chrome product profiles for cleaning bookings, invoicing, job management, quotes and CRM, with governed AI Assist.',
-    eyebrow: 'Chrome product family · planned',
-    heading: 'Cleaning business assistance in the browser.',
-    intro: 'The planned Chrome family brings five focused work areas—Bookings, Invoicing, Job Management, Quotes and CRM—into a persistent browser side panel. They are profiles over one shared Browser Node, not five duplicated business engines.',
-    platformHeading: 'A governed path from page context to business work.',
+    title: 'Cleaning Chrome Extensions',
+    description: 'Five separate Chrome extensions for cleaning bookings, invoicing, job management, quotes and CRM, with AI Assist and governed access to page context.',
+    eyebrow: 'Five Chrome extensions for Cleaning',
+    heading: 'Bring the next cleaning task into your browser.',
+    intro: 'Install separate extensions for Bookings, Invoicing, Job Management, Quotes and CRM. Each focuses on one kind of work and connects through the shared Cleaning system.',
+    installLabel: 'Get Chrome extensions',
+    installText: 'Create your account to download or install each extension and follow its setup steps. Choose only the products your team needs, then connect them to the correct company workspace.',
+    platformHeading: 'From page context to verified business work.',
     platformSteps: [
-      ['Capture with boundaries', 'On supported websites, the Browser Node reads only approved page context. Local extraction and redaction happen first where available, and only the minimum necessary context is sent to an enabled intelligence provider.'],
-      ['Prepare, review and verify', 'AI can prepare a booking, quote, job, invoice or CRM action. The applicable business authority still controls consequential changes; the extension rereads the target or canonical record and records verification rather than treating a click as proof of success.'],
+      ['Capture only what is needed', 'Grant access to the websites your team approves. The extension reads the relevant page context, extracts useful details, and limits what is shared with an enabled AI provider. Access can be reviewed and revoked.'],
+      ['Prepare, review and verify', 'AI Assist can prepare a booking, quote, job update, invoice follow-up or CRM action. The business workflow checks role, company, authority and approval; the extension verifies the resulting record instead of treating a click as proof.'],
     ],
-    assistHeading: 'Ask Zero about the page and prepare the next step.',
-    assist: 'AI Assist can summarise approved page context, extract customer or service details, draft a quote or message, and suggest a relevant booking, job, invoice or CRM action. Local or bring-your-own models may be used where supported. Browser access is bounded and revocable, and model output does not grant business authority.',
-    close: 'These are planned Chrome product profiles. No Chrome Web Store package or live extension is available from this review site.',
+    assistHeading: 'A practical assistant for browser-based work.',
+    assist: 'AI Assist can summarise approved page context, extract customer or service details, draft a quote or message, explain a job record and recommend a next action. AI output remains a draft until the appropriate person or configured rule authorises the business change.',
+    close: 'Five separate installable products share the Cleaning workforce and browser runtime, covering five workflows without creating competing customer databases.',
   },
 }
 
@@ -78,6 +84,7 @@ function ProductFamilyLanding({ platform }) {
   const isWordPress = platform === 'wordpress'
   const otherPath = isWordPress ? '/chrome-extensions' : '/wordpress-plugins'
   const otherLabel = isWordPress ? 'See Chrome extensions' : 'See WordPress plugins'
+  const productLabel = isWordPress ? 'WORDPRESS PLUGIN' : 'CHROME EXTENSION'
 
   return <>
     <PageMeta title={content.title} description={content.description} />
@@ -88,22 +95,23 @@ function ProductFamilyLanding({ platform }) {
           <SectionLabel>{content.eyebrow}</SectionLabel>
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-5">{content.heading}</h1>
           <p className="text-lg text-nx-muted max-w-3xl mx-auto leading-relaxed">{content.intro}</p>
-          <p className="inline-flex mt-6 rounded-full border border-amber-300/30 bg-amber-950/40 px-4 py-2 text-xs font-semibold text-amber-100">Planned · not available to install</p>
+          <div className="mt-7"><ButtonPrimary href={appRoutes.signup} disabled={!APP_SIGNUP_AVAILABLE}>Sign up to download</ButtonPrimary></div>
         </div>
       </section>
 
       <section className="px-6 pb-20">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 xl:grid-cols-3 gap-5">
           {productAreas.map((product, index) => <article key={product.id} className="bg-nx-surface border border-nx-border rounded-2xl p-7">
-            <div className="flex items-center justify-between gap-3 mb-5"><span className="text-xs font-bold text-nx-purple-light">PRODUCT AREA {String(index + 1).padStart(2, '0')}</span><span className="rounded-full border border-nx-border px-3 py-1 text-[11px] text-nx-muted">Planned</span></div>
-            <h2 className="text-2xl font-bold mb-3">Titan Zero {product.name}</h2>
+            <div className="text-xs font-bold text-nx-purple-light mb-4">{productLabel} {String(index + 1).padStart(2, '0')}</div>
+            <h2 className="text-2xl font-bold mb-3">Cleaning {product.name}</h2>
             <p className="text-sm text-nx-muted leading-relaxed mb-5">{isWordPress ? product.wordpress : product.chrome}</p>
-            <p className="border-t border-nx-border pt-4 text-xs text-nx-muted"><strong className="text-nx-text">AI Assist:</strong> {product.ai}</p>
+            <p className="border-t border-nx-border pt-4 text-xs text-nx-muted leading-relaxed"><strong className="text-nx-text">AI Assist:</strong> {product.ai}</p>
+            <div className="mt-5"><ButtonPrimary size="sm" href={appRoutes.signup} disabled={!APP_SIGNUP_AVAILABLE}>{isWordPress ? 'Get this plugin' : 'Get this extension'}</ButtonPrimary></div>
           </article>)}
         </div>
       </section>
 
-      <section className="px-6 py-20 border-y border-nx-border bg-nx-surface/40">
+      <section id="ai-assist" className="px-6 py-20 border-y border-nx-border bg-nx-surface/40">
         <div className="max-w-6xl mx-auto">
           <SectionLabel>AI Assist</SectionLabel>
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-5">{content.assistHeading}</h2>
@@ -114,9 +122,9 @@ function ProductFamilyLanding({ platform }) {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      <section id="install" className="px-6 py-20">
         <div className="max-w-6xl mx-auto">
-          <SectionLabel>{isWordPress ? 'Operating modes' : 'Browser workflow'}</SectionLabel>
+          <SectionLabel>{isWordPress ? 'WordPress setup' : 'Chrome setup'}</SectionLabel>
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-8">{content.platformHeading}</h2>
           <div className="grid md:grid-cols-2 gap-5">
             {content.platformSteps.map(([title, description], index) => <article key={title} className="border-t border-nx-border pt-6">
@@ -125,15 +133,17 @@ function ProductFamilyLanding({ platform }) {
               <p className="text-sm text-nx-muted leading-relaxed">{description}</p>
             </article>)}
           </div>
-          <p className="mt-9 rounded-2xl border border-nx-border bg-nx-surface p-6 text-sm text-nx-muted leading-relaxed">{content.close}</p>
-        </div>
-      </section>
-
-      <section className="px-6 pb-24">
-        <div className="max-w-6xl mx-auto flex flex-wrap gap-5 border-t border-nx-border pt-7">
-          <Link to="/works-everywhere" className="text-sm font-semibold text-nx-purple-light hover:text-white">Check release status →</Link>
-          <Link to={otherPath} className="text-sm font-semibold text-nx-purple-light hover:text-white">{otherLabel} →</Link>
-          <Link to="/fully-managed" className="text-sm font-semibold text-nx-purple-light hover:text-white">Managed service →</Link>
+          <div className="mt-9 rounded-2xl border border-nx-border bg-nx-surface p-6 sm:p-8">
+            <h3 className="text-xl font-bold mb-3">{content.installLabel}</h3>
+            <p className="text-sm text-nx-muted leading-relaxed mb-5">{content.installText}</p>
+            <ButtonPrimary href={appRoutes.signup} disabled={!APP_SIGNUP_AVAILABLE}>Create your account</ButtonPrimary>
+          </div>
+          <p className="mt-7 text-sm text-nx-muted leading-relaxed">{content.close}</p>
+          <div className="mt-8 flex flex-wrap gap-5">
+            <Link to={otherPath} className="text-sm font-semibold text-nx-purple-light hover:text-white">{otherLabel} →</Link>
+            <Link to="/works-everywhere" className="text-sm font-semibold text-nx-purple-light hover:text-white">See every way to work →</Link>
+            <Link to="/fully-managed" className="text-sm font-semibold text-nx-purple-light hover:text-white">Managed service →</Link>
+          </div>
         </div>
       </section>
     </main>
