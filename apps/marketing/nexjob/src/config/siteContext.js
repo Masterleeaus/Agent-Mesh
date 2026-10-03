@@ -66,7 +66,6 @@ const verticalNavigation = Object.freeze([
   { label: 'What is Titan Zero?', href: '/titan-zero' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Managed service', href: '/fully-managed' },
-  { label: 'Sign up', href: undefined, external: true, action: true, disabled: true },
 ])
 
 export function normalizeHostname(hostname = '') {
