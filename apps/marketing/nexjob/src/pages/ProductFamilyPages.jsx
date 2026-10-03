@@ -75,7 +75,7 @@ const pageContent = {
     ],
     assistHeading: 'A practical assistant for browser-based work.',
     assist: 'AI Assist can summarise approved page context, extract customer or service details, draft a quote or message, explain a job record and recommend a next action. AI output remains a draft until the appropriate person or configured rule authorises the business change.',
-    close: 'Each extension is a separate installable product. Together they cover five common cleaning workflows without creating five competing customer databases.',
+    close: 'Five separate installable products share the Cleaning workforce and browser runtime, covering five workflows without creating competing customer databases.',
   },
 }
 
