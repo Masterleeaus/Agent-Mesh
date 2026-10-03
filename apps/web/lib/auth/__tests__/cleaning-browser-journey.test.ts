@@ -290,7 +290,7 @@ describe("Cleaning first-run browser journey", () => {
         if (typeof selectedDelay === "number" && selectedDelay >= 280_000 && selectedDelay <= 300_000
           && !sessionStorage.getItem("titan-expiry-timer-fired")) {
           sessionStorage.setItem("titan-expiry-timer-fired", "1");
-          selectedDelay = 35;
+          selectedDelay = 15_000;
         }
         return nativeSetTimeout(callback, selectedDelay, ...args);
       }) as typeof window.setTimeout;
@@ -308,7 +308,7 @@ describe("Cleaning first-run browser journey", () => {
     expect(bCookie!.expires).toBeGreaterThan(Date.now() / 1000);
     expect(bCookie!.expires).toBeLessThanOrEqual(Date.now() / 1000 + 300);
 
-    await page.waitForURL(url => url.pathname === "/login" && url.searchParams.get("reason") === "session-expired", { timeout: 15_000 });
+    await page.waitForURL(url => url.pathname === "/login" && url.searchParams.get("reason") === "session-expired", { timeout: 25_000 });
     const loginUrl = new URL(page.url());
     expect(loginUrl.searchParams.get("next")).toBe("/app");
     await expectPage(page.getByRole("status")).toContainText("Your secure sign-in expired");
