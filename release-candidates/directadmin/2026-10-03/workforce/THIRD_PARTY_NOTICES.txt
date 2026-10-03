@@ -1,0 +1,20 @@
+THIRD-PARTY NOTICES
+
+Artifact: titan-workforce-directadmin
+First-party SPDX: LicenseRef-TitanZero-Proprietary
+
+--- First-party license ---
+SPDX-License-Identifier: LicenseRef-TitanZero-Proprietary
+
+PROPRIETARY SOFTWARE — ALL RIGHTS RESERVED
+
+Artifact: Titan Workforce 0.1.6 (titan_workforce)
+Archive: titan_workforce.tar.gz
+SHA-256: 100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26
+
+This artifact is proprietary. All rights in its contents remain with their respective rights holders. This repository publication and this notice do not grant a right or license to use, install, run, reproduce, modify, prepare derivative works from, distribute, publish, sublicense, or commercially exploit the artifact. Any permitted use requires separate written permission from the applicable rights holder(s).
+
+No license to any Titan, Titan Zero, DirectAdmin, or other name, logo, trademark, service mark, product identity, or trade dress is granted. This notice applies only to the exact installer archive identified above and does not license the repository, any other product, or third-party material.
+
+--- release-candidates/directadmin/2026-10-03/workforce/COMPONENT-NOTICES.txt ---
+No third-party runtime library or source components are redistributed in this archive. Its SDK bundle is generated from the first-party Titan DirectAdmin SDK inputs enumerated in SOURCE-MANIFEST.json. The build-only esbuild@0.28.1 package is MIT-licensed and is not included in this archive. Workforce depends on the separate first-party Titan Server Node 0.3.0 archive by its exact SHA-256; that archive is not embedded here.

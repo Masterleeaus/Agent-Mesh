@@ -69,6 +69,65 @@
       "component_ids": [],
       "notice_files": [],
       "reason": "No releasable WordPress plugin artifact exists in current main; the WordPress product owner must identify the artifact before licensing it."
+    },
+    {
+      "id": "titan-server-node-directadmin",
+      "kind": "directadmin-plugin-archive",
+      "source_root": "apps/directadmin/server-node",
+      "source_revision": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+      "source_manifest": {
+        "path": "release-candidates/directadmin/2026-10-03/server-node/SOURCE-MANIFEST.json",
+        "sha256": "f86be54bcefd65f1473db6f1fc5e5798b274e86357cd9c32e6da9c84dc3baff9"
+      },
+      "distribution_state": "approved",
+      "first_party_spdx": "LicenseRef-TitanZero-Proprietary",
+      "first_party_license_file": "release-candidates/directadmin/2026-10-03/server-node/LICENSE.txt",
+      "legal_approval_ref": "docs/contracts/owner-decisions/directadmin-installer-proprietary-2026-10-03.json",
+      "dependency_license_status": "complete",
+      "dependency_lockfiles": [],
+      "component_ids": [],
+      "notice_files": [
+        "release-candidates/directadmin/2026-10-03/server-node/COMPONENT-NOTICES.txt"
+      ],
+      "archive": {
+        "filename": "titan-server-node.tar.gz",
+        "sha256": "580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d",
+        "version": "0.3.0",
+        "plugin_id": "titan-server-node"
+      },
+      "reason": "Approved only for artifact-scoped proprietary distribution; does not license the source repository or grant open-source or trademark reuse rights."
+    },
+    {
+      "id": "titan-workforce-directadmin",
+      "kind": "directadmin-plugin-archive",
+      "source_root": "apps/directadmin/workforce",
+      "source_revision": "097d3eaf480331c78443e89f4f57257b01d5c98c",
+      "source_manifest": {
+        "path": "release-candidates/directadmin/2026-10-03/workforce/SOURCE-MANIFEST.json",
+        "sha256": "cb44bcbd547e0b118213157ab97184a33de9de81df76fac68cc0d33f9b687e5d"
+      },
+      "distribution_state": "approved",
+      "first_party_spdx": "LicenseRef-TitanZero-Proprietary",
+      "first_party_license_file": "release-candidates/directadmin/2026-10-03/workforce/LICENSE.txt",
+      "legal_approval_ref": "docs/contracts/owner-decisions/directadmin-installer-proprietary-2026-10-03.json",
+      "dependency_license_status": "complete",
+      "dependency_lockfiles": [
+        {
+          "path": "pnpm-lock.yaml",
+          "sha256": "0a10da0aaaf6c8d3df420326b9b1238debc1436e025670448623ab1093c76ad8"
+        }
+      ],
+      "component_ids": [],
+      "notice_files": [
+        "release-candidates/directadmin/2026-10-03/workforce/COMPONENT-NOTICES.txt"
+      ],
+      "archive": {
+        "filename": "titan_workforce.tar.gz",
+        "sha256": "100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26",
+        "version": "0.1.6",
+        "plugin_id": "titan_workforce"
+      },
+      "reason": "Approved only for artifact-scoped proprietary distribution; does not license the source repository or grant open-source or trademark reuse rights."
     }
   ],
   "components": [

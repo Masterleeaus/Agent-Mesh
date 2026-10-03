@@ -1,0 +1,116 @@
+{
+  "schema": "titan.directadmin.portfolio-candidate/v1",
+  "release_id": "directadmin-candidates-2026-10-03",
+  "created_at_utc": "2026-10-03T13:03:36+00:00",
+  "branch": "release/directadmin-candidates-20261003",
+  "base_commit": "512f623e065242b3d6066b493130148989a37ab7",
+  "issue_ref": "Refs #1157",
+  "status": "partial_repository_publication_waiting_for_portal_owner_commit",
+  "distribution": {
+    "repository_license_decision": "OWNER_DECISION_REQUIRED",
+    "this_scope_decision": "PROPRIETARY_ALL_RIGHTS_RESERVED",
+    "spdx_license_ref": "LicenseRef-TitanZero-Proprietary",
+    "owner_record": "docs/contracts/owner-decisions/directadmin-installer-proprietary-2026-10-03.json",
+    "scope": "Only these named installer artifacts; no repository-wide license, open-source reuse, or trademark license."
+  },
+  "artifacts": [
+    {
+      "display_name": "Titan Server Node",
+      "plugin_id": "titan-server-node",
+      "version": "0.3.0",
+      "path": "server-node/titan-server-node.tar.gz",
+      "sha256": "580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d",
+      "source_commit": "92856c4280a1fadc9c575fae48df36a51c4afb8c",
+      "source_tree_sha256": "ffb2ce077426dfd5400f37ebdba858d989b9db0c",
+      "source_manifest": "server-node/SOURCE-MANIFEST.json",
+      "license": "server-node/LICENSE.txt",
+      "notice": "server-node/THIRD_PARTY_NOTICES.txt",
+      "archive_bytes_unchanged": true,
+      "operational_status": "experimental; production RAW relay disabled; no live DirectAdmin certification"
+    },
+    {
+      "display_name": "Titan Workforce",
+      "plugin_id": "titan_workforce",
+      "version": "0.1.6",
+      "path": "workforce/titan_workforce.tar.gz",
+      "sha256": "100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26",
+      "source_commit": "097d3eaf480331c78443e89f4f57257b01d5c98c",
+      "source_tree_sha256": "abd77cbd382c1def96e8cdd705fa732d03933813",
+      "source_manifest": "workforce/SOURCE-MANIFEST.json",
+      "license": "workforce/LICENSE.txt",
+      "notice": "workforce/THIRD_PARTY_NOTICES.txt",
+      "archive_bytes_unchanged": true,
+      "sdk_bundle_sha256": "7c08d37f6ea274760f8e52092b2e86a07a93ae175fe4a6216df9156d1fc39681",
+      "current_source_pr": {
+        "number": 1405,
+        "head": "433902270dc6a58a5e70ae16ae541b4d9de49883",
+        "packaged_paths_changed_since_pin": false
+      },
+      "operational_status": "candidate; no live DirectAdmin Manager lifecycle or production session certification"
+    }
+  ],
+  "portal_pending_owner_commit": {
+    "display_name": "Developer Portal",
+    "plugin_id": "titan_dev_access",
+    "version": "1.3.10",
+    "target_directory": "developer-portal/",
+    "expected_filename": "titan_dev_access.tar.gz",
+    "expected_archive_sha256": "90261a3dd1d3bc05fa0425466b15b394d936523abfe1f8499d255d62c1f41c27",
+    "source_pr": 1391,
+    "source_commit": "10f5ee96626663abea770132de6397063b5b688c",
+    "workflow_run_id": 37077046801,
+    "workflow_artifact_zip_sha256": "715a65fe02801244fdb0fbf13675e0e9d1b569b55d472c15072b6ba0ced7a8d0",
+    "verified_files": 13,
+    "workflow_artifact_and_inner_archive_verified": true,
+    "release_branch_writer": "Portal owner will append exact archive and companion files; do not rewrite or repack."
+  },
+  "portfolio_dependencies": {
+    "workforce_requires_server_node": {
+      "version": "0.3.0",
+      "archive_sha256": "580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d"
+    },
+    "portal_independent_of_server_node": true
+  },
+  "verification": {
+    "sidecars": "Server Node and Workforce supplied sidecars match unchanged TAR bytes. Portal workflow artifact ZIP digest and inner TAR sidecar also match; owner branch write pending.",
+    "archive_structure": "Server Node 15/15 and Workforce 26/26 safe regular file members; executable modes retained. Portal 13/13 members byte-match exact source commit and package allowlist.",
+    "workforce_sdk": "Rebuilt with esbuild 0.28.1 exact flags; output matches packaged SDK SHA-256.",
+    "live_host_operations": false,
+    "source_pr_merges": false,
+    "focused_commands": [
+      {
+        "command": "node scripts/package-directadmin-plugin.mjs <source-at-92856> <temp-output>",
+        "result": "reproduced the exact Titan Server Node archive SHA-256 580676074d64c431f9d635908f1f71f05aae110b6882f8ace3c2aea0c06f975d"
+      },
+      {
+        "command": "buildPackage(<source-at-097d>, <temp-output>, <verified-sdk-module>)",
+        "result": "reproduced the exact 26-file Titan Workforce archive SHA-256 100ecd5c58d6de7f0cfb02636d58440ae05751293047d5cdce6bd61bcf556b26"
+      },
+      {
+        "command": "node --test apps/directadmin/workforce/tests/package.test.mjs (source commit 097d3eaf)",
+        "result": "5 passed, 0 failed"
+      },
+      {
+        "command": "python3 .github/scripts/check-distribution-provenance.py --check",
+        "result": "passed; 22 manifests audited. Repository-wide unknown rights remain blocked by design; these named artifact records are approved."
+      },
+      {
+        "command": "python3 .github/scripts/tests/test_distribution_provenance.py",
+        "result": "8 passed, 0 failed"
+      },
+      {
+        "command": "archive file/hash/path/mode audit for both packaged TARs",
+        "result": "Server Node 15/15 and Workforce 26/26 files match their manifests; no unsafe paths, links, or special files; required executable modes verified."
+      },
+      {
+        "command": "GitHub Actions run 37077046801 / artifact 11256863509 (Portal)",
+        "result": "artifact ZIP digest and inner TAR checksum verified; 13/13 inner package files byte-match source commit 10f5ee9."
+      }
+    ]
+  },
+  "limits": [
+    "These are candidate installer packages, not live-certified production releases.",
+    "Companion LICENSE and THIRD_PARTY_NOTICES files are outside the TARs; validated archive bytes and hashes remain unchanged.",
+    "The root repository remains without a repository-wide license."
+  ]
+}
