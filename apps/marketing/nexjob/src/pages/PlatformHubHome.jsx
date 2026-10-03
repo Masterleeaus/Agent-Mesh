@@ -4,12 +4,27 @@ import SectionLabel from '../components/SectionLabel'
 import { APP_ACCESS_AVAILABLE, appRoutes } from '../config'
 
 const cleaningServices = [
-  'Regular, one-off and deep cleans',
-  'End-of-lease and move-in / move-out cleans',
-  'Short-stay turnovers',
-  'Commercial and office cleaning',
-  'Carpet, upholstery and window cleaning',
-  'Pressure, post-construction and custom cleaning',
+  'Regular residential clean',
+  'One-off clean',
+  'Deep clean',
+  'End-of-lease / bond clean',
+  'Airbnb / short-stay turnover',
+  'Commercial site cleaning',
+  'Office cleaning',
+  'Move-in / move-out clean',
+  'Carpet cleaning',
+  'Upholstery cleaning',
+  'Window cleaning and window washing',
+  'Pressure cleaning and pressure washing',
+  'Post-construction clean',
+  'Custom cleaning service',
+]
+
+const plannedServiceExtensions = [
+  ['Construction-site cleaning', 'The current catalogue models post-construction cleaning after trade work is complete and the area is safe. Ongoing or active-site cleaning needs a defined scope and site-safety workflow before it can be represented as supported.'],
+  ['Medical equipment cleaning', 'A proposed specialist service line. Equipment types, compatible products, contamination controls, evidence and applicable standards need review before it is added to the catalogue.'],
+  ['Rubbish and junk removal', 'A proposed adjacent service line. Define what is collected, how it is handled, and the equipment and disposal arrangements before describing it as supported.'],
+  ['Home organising and reset', 'A proposed service line for decluttering and organising alongside cleaning, with clear scope and customer approval.'],
 ]
 
 const launchWorkflows = [
@@ -40,11 +55,19 @@ export default function PlatformHubHome() {
       <section id="features" className="px-6 py-20 border-y border-nx-border">
         <div className="max-w-6xl mx-auto">
           <SectionLabel>Cleaning vertical · in development</SectionLabel>
-          <h2 className="text-3xl sm:text-4xl font-extrabold mb-5">Built around the work cleaning teams already do.</h2>
-          <p className="text-nx-muted leading-relaxed max-w-3xl mb-8">The current source models 14 cleaning service variants and a connected workflow blueprint. The stages and examples below describe implementation work in progress; they are not a claim that a customer deployment is available.</p>
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-5">Fourteen cleaning service types are modelled in the current catalogue.</h2>
+          <p className="text-nx-muted leading-relaxed max-w-3xl mb-8">The repository defines service scope, quote hints, crew skills, checklists, evidence and safety boundaries for these variants. This shows the depth of the Cleaning implementation; it does not confirm a production release or customer installation.</p>
           <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
             {cleaningServices.map((service) => <li key={service} className="border-b border-nx-border py-3 text-sm text-nx-muted">{service}</li>)}
           </ul>
+          <div className="mt-16 border-t border-nx-border pt-8">
+            <SectionLabel>Potential next service lines · scope validation needed</SectionLabel>
+            <h3 className="text-2xl font-bold mt-3 mb-4">Broader Cleaning coverage on the roadmap.</h3>
+            <p className="text-nx-muted leading-relaxed max-w-3xl mb-7">These are proposed extensions from the wider Cleaning plan. They are not part of the current 14 service variants and are not presented as implemented or available.</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {plannedServiceExtensions.map(([title, description]) => <article key={title} className="border border-nx-border rounded-xl p-5"><h4 className="font-bold mb-2">{title}</h4><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}
+            </div>
+          </div>
         </div>
       </section>
 
