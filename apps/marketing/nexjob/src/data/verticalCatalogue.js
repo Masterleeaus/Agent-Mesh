@@ -152,7 +152,7 @@ export const availabilityOffers = Object.freeze({
     label: 'In development',
     state: 'in-development',
     evidenceRefs: ['apexSiteObservation', 'catalogueSource', 'noVerticalHostRelease'],
-    explanation: 'The apex v2 site is live. This separate 20-profile host-aware build remains a noindex review artifact, and the vertical hosts do not currently serve its content.',
+    explanation: 'The Cleaning-focused marketing build remains a noindex review preview and has not been published to the Cleaning hostname. Host routing and production publication remain pending.',
   },
   verticalHostnames: {
     label: 'Content not published',
