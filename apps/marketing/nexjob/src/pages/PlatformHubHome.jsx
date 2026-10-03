@@ -71,7 +71,7 @@ export default function PlatformHubHome() {
           <div className="max-w-3xl mb-12">
             <SectionLabel>AI workforce</SectionLabel>
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">Specialist roles work alongside your team.</h2>
-            <p className="text-nx-muted leading-relaxed">Six cleaning-focused AI roles handle the digital coordination around real cleaning work. Your owner, managers and cleaners remain part of the same operating picture, with permissions and approvals matched to each role.</p>
+            <p className="text-nx-muted leading-relaxed">Six cleaning-focused workforce functions coordinate the digital work around real cleaning jobs. Your owner, managers and cleaners remain part of the same operating picture, with permissions and approvals matched to each role.</p>
           </div>
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">{workforceRoles.map(([title, description], index) => <article key={title} className="border border-nx-border rounded-2xl bg-nx-bg p-6"><span className="text-xs font-bold text-nx-purple-light">ROLE 0{index + 1}</span><h3 className="text-xl font-bold mt-3 mb-2">{title}</h3><p className="text-sm text-nx-muted leading-relaxed">{description}</p></article>)}</div>
           <div className="mt-8"><Link to="/ai-workforce" className="text-sm font-semibold text-nx-purple-light hover:text-white">Explore the cleaning workforce →</Link></div>
