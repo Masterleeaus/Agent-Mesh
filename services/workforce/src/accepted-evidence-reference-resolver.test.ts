@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
+import { readFileSync } from "node:fs";
 // @ts-expect-error The production accepted-evidence owner is JavaScript.
 import { AcceptedEvidenceLedger } from "../../../packages/tools/accepted-evidence-ledger.mjs";
 // @ts-expect-error The production field-service composition is JavaScript.
@@ -9,6 +10,8 @@ import { createFieldServiceRuntime } from "./field-service-runtime.mjs";
 import { assertReplayTaskLineage, verifiedTaskLineageFromProducerEvent } from "./field-service-runtime.mjs";
 // @ts-expect-error The native business operation is JavaScript.
 import { createNativeWorkOrders } from "./native-work-orders.mjs";
+// @ts-expect-error Canonical authority persistence owners are JavaScript.
+import { SqliteAuthorityStore, SqliteWorkerAccessStore } from "../../../packages/runtime/authority/index.mjs";
 
 const at = "2026-10-03T09:00:00.000Z";
 type Criteria = Readonly<{ company_id: string; work_id: string; visit_id: string; work_order_id: string;
@@ -85,6 +88,58 @@ function createNativeOperationContextStore(withDisposition = true) {
     },
     close() { db.close(); },
   };
+}
+
+function createCanonicalV3NativeStore() {
+  const db = new DatabaseSync(":memory:");
+  db.exec("PRAGMA foreign_keys=ON");
+  for (const migration of ["0001_work_orders.sql", "0002_visit_tasks.sql", "0003_visit_checklist_state.sql"]) {
+    db.exec(readFileSync(new URL(`../../../db/sqlite/company-native/${migration}`, import.meta.url), "utf8"));
+  }
+  const queryDirect = async (sql: string, params: readonly unknown[] = []) => {
+    const values: any[] = [];
+    const normalized = sql.replace(/\$(\d+)/g, (_match, raw: string) => {
+      const index = Number(raw) - 1;
+      if (index < 0 || index >= params.length) throw new Error(`sqlite parameter $${raw} is not bound`);
+      values.push(params[index] as any);
+      return "?";
+    });
+    const statement = db.prepare(normalized);
+    if (statement.columns().length) {
+      const rows = statement.all(...values) as unknown[];
+      return { rows, rowCount: rows.length };
+    }
+    return { rows: [], rowCount: statement.run(...values).changes };
+  };
+  const storage: any = {
+    dialect: "sqlite",
+    query: queryDirect,
+    async transaction(action: (tx: any) => Promise<unknown>) {
+      db.exec("BEGIN IMMEDIATE");
+      let active = true;
+      const tx = { dialect: "sqlite", query: (sql: string, params: readonly unknown[] = []) => {
+        if (!active) return Promise.reject(new Error("sqlite-transaction-closed"));
+        return queryDirect(sql, params);
+      }, transaction: async () => { throw new Error("sqlite-nested-transaction-unsupported"); }, close: async () => {} };
+      try { const value = await action(tx); db.exec("COMMIT"); return value; }
+      catch (error) { db.exec("ROLLBACK"); throw error; }
+      finally { active = false; }
+    },
+    close() { db.close(); },
+  };
+  db.exec(`INSERT INTO companies(id,name) VALUES('company-a','Company A');
+    INSERT INTO clients(id,company_id,name) VALUES('client-a','company-a','Client A');
+    INSERT INTO properties(id,company_id,client_id,address) VALUES('property-a','company-a','client-a','1 Main St');
+    INSERT INTO jobs(id,company_id,client_id,property_id,title,created_by) VALUES('job-a','company-a','client-a','property-a','Job A','actor-a');
+    INSERT INTO work_orders(id,company_id,job_id,client_id,title,status,assigned_user_id,created_by)
+      VALUES('order-a','company-a','job-a','client-a','Order A','in_progress','actor-a','actor-a');
+    INSERT INTO work_order_tasks(id,company_id,work_order_id,label,required,completed,status)
+      VALUES('task-a','company-a','order-a','Inspect site',1,1,'done');
+    INSERT INTO visits(id,company_id,job_id,assigned_user_id,status,scheduled_start,scheduled_end,completed_at,work_order_id)
+      VALUES('visit-a','company-a','job-a','actor-a','completed','2026-10-03T08:00:00Z','2026-10-03T09:00:00Z','2026-10-03T09:00:00Z','order-a');
+    INSERT INTO visit_tasks(company_id,visit_id,work_order_id,task_id,item_key,section,disposition,note)
+      VALUES('company-a','visit-a','order-a','task-a','inspect-site','Field','fix_now','Observed in v3');`);
+  return storage;
 }
 
 async function fixture(workOrders?: { read?(input: unknown): Promise<unknown>; complete?(input: unknown): Promise<unknown> }) {
@@ -252,6 +307,86 @@ test("Zero project projection consumes accepted references only for its current 
       run_id: "run-a", correlation_id: "correlation-evidence-a", accepted_at: at,
     });
   } finally { await storage.close(); }
+});
+
+test("governed native v3 completion atomically produces the exact accepted reference consumed by Zero", async () => {
+  const companyStorage = createCanonicalV3NativeStore();
+  const nativeWorkOrders = createNativeWorkOrders();
+  const { storage, runtime } = await fixture({
+    async read(input: any) { return nativeWorkOrders.read({ ...input, companyStorage }); },
+    async complete(input: any) { return nativeWorkOrders.complete({ ...input, companyStorage }); },
+  });
+  const company_id = "company-a";
+  const actor_id = "actor-a";
+  const agent_id = "field-agent-a";
+  const work_id = "work-a";
+  const work_order_id = "order-a";
+  const run_id = "run-a";
+  const capability = "crm.work_order.complete";
+  const now = new Date().toISOString();
+  const expires_at = new Date(Date.now() + 60 * 60_000).toISOString();
+  const identity = { company_id, actor_id, agent_id, work_id, run_id, input: { work_order_id } };
+  try {
+    const currentBusiness = await nativeWorkOrders.read({ ...identity, work_order_id, companyStorage });
+    assert.deepEqual(currentBusiness.evidence_context, { company_id, work_order_id,
+      visit_id: "visit-a", task_id: "task-a", disposition: "fix_now" });
+    await runtime.workforceStore.putWorker({ company_id, worker_id: agent_id, kind: "digital", active: true,
+      capabilities: [capability] });
+
+    const proof_id = "field-completion-proof-a";
+    await storage.query("INSERT INTO evidence(id,company_id,subject_type,subject_id,evidence_type,provenance,payload) VALUES($1,$2,'work_order',$3,'field_completion',$4,$5)",
+      [proof_id, company_id, work_order_id, JSON.stringify({ source: "disposable-governed-test" }), JSON.stringify({ verified: true })]);
+    await storage.query("INSERT INTO authority_state(id,company_id,subject_type,subject_id,level,envelope) VALUES($1,$2,'worker_capability',$3,'scoped',$4)",
+      [`field-grant-${company_id}`, company_id, `${agent_id}/${capability}`, JSON.stringify({ company_id, worker_id: agent_id,
+        actor_id, work_order_id, capability, status: "active", policy_allows: true, governance_allows: true,
+        assurance_allows: true, risk: "low", expires_at, evidence_refs: [proof_id] })]);
+    await new SqliteWorkerAccessStore(storage).append({ company_id, assignment_id: "field-access-a", worker_id: agent_id,
+      permissions: [capability], status: "active", granted_by: "disposable-test-authority", granted_at: now, expires_at });
+    const authorityStore = new SqliteAuthorityStore(storage);
+    await authorityStore.appendAutonomySnapshot({ company_id, decision_id: "field-autonomy-a", capability,
+      effective_score: 60, status: "verified", source: "titan-autonomy", verified_at: now, expires_at,
+      trusted_auto_handshake: { platform: false, user: false, assurance: false }, predictive_ready: false }, { worker_id: agent_id });
+    await authorityStore.appendApproval({ company_id, approval_id: "field-approval-a", approval_scope: work_order_id,
+      status: "approved", approver_id: "independent-human-a", granted_at: now, expires_at });
+
+    const conversation_id = "conversation-a";
+    const run = { company_id, run_id, state: "RUNNING", conversation_id, agent_id, work_id,
+      updated_at: now, messages: [{ role: "user", content: `complete work order ${work_order_id}` }],
+      correlation_id: "correlation-a", idempotency_key: "idempotency-a" };
+    await runtime.runStore.create(run);
+    await runtime.workforceStore.put({ company_id, work_id, objective: "Complete the visit task", creator: actor_id,
+      origin: { actor_id, conversation_id, surface: "zero", correlation_id: "correlation-a" }, assignee: agent_id,
+      priority: 50, state: "IN_PROGRESS", dependencies: [], required_capabilities: [capability],
+      context_refs: [], evidence_refs: [], created_at: now, updated_at: now });
+
+    const decision = await runtime.authorityGateway.authorize(identity);
+    assert.equal(decision.status, "allowed");
+    const execution = await runtime.authorityGateway.execute({ ...identity, decision, signal: new AbortController().signal });
+    assert.equal(execution.state, "VERIFIED");
+    assert.deepEqual(execution.evidence.verification.evidence_context, currentBusiness.evidence_context);
+
+    const persistedRows = (await storage.query("SELECT id,payload FROM evidence WHERE company_id=$1 AND subject_type='work' AND subject_id=$2 AND evidence_type='gateway_execution' ORDER BY rowid", [company_id, work_id])).rows;
+    const terminal = persistedRows.map((row: any) => ({ id: row.id, payload: JSON.parse(row.payload) }))
+      .find(({ payload }: any) => payload.state === "VERIFIED");
+    assert.ok(terminal);
+    assert.equal(terminal.id, execution.evidence.evidence_id);
+    assert.equal(terminal.payload.accepted_evidence.factual, true);
+    assert.deepEqual(terminal.payload.accepted_evidence.request_summary.canonical_operation_context,
+      currentBusiness.evidence_context);
+    assert.deepEqual(terminal.payload.provenance, JSON.parse((await storage.query("SELECT provenance FROM evidence WHERE id=$1", [terminal.id])).rows[0].provenance));
+
+    const references = await runtime.resolveAcceptedEvidenceReferences({ company_id, work_id, ...currentBusiness.evidence_context });
+    assert.deepEqual(references.map((reference: any) => reference.evidence_id), [terminal.id]);
+    assert.deepEqual(await runtime.resolveAcceptedEvidenceReferences({ work_id,
+      ...currentBusiness.evidence_context, company_id: "company-b" }), []);
+
+    const completedRun = await runtime.runStore.get(company_id, run_id);
+    await runtime.runStore.save({ ...completedRun, state: "COMPLETED", updated_at: new Date(Date.now() + 1).toISOString() });
+    const view = await runtime.project({ company_id, actor_id, work_id });
+    assert.equal(view.outcome, "verified");
+    assert.deepEqual(view.accepted_evidence_references.map((reference: any) => reference.evidence_id), [terminal.id]);
+    assert.deepEqual(view.accepted_evidence_references[0], references[0]);
+  } finally { await storage.close(); companyStorage.close(); }
 });
 
 test("native context derivation denies wrong company and schemas without persisted disposition", async () => {
