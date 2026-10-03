@@ -9,7 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { randomBytes } from "node:crypto";
 import Database from "better-sqlite3";
 import { hash } from "bcryptjs";
-import { chromium, expect as expectPage, request as playwrightRequest, type Browser } from "@playwright/test";
+import { chromium, expect as expectPage, request as playwrightRequest, type Browser, type Page } from "@playwright/test";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   createIdentitySessionRegistry,
@@ -207,6 +207,19 @@ async function waitForServer(baseUrl: string, timeoutMs: number): Promise<void> 
   throw new Error(`next-dev-not-ready:${lastError}`);
 }
 
+async function switchCompany(page: Page, companyId: string): Promise<void> {
+  const navigation = page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30_000 });
+  const responsePromise = page.waitForResponse(response => response.url().endsWith("/api/v1/auth/switch-company")
+    && response.request().method() === "POST");
+  await page.getByLabel("Company").selectOption(companyId);
+  const response = await responsePromise;
+  if (!response.ok()) {
+    throw new Error(`Company switch to ${companyId} failed (${response.status()}): ${await response.text()}`);
+  }
+  await navigation;
+  await expectPage(page.getByLabel("Company")).toHaveValue(companyId, { timeout: 30_000 });
+}
+
 afterEach(async () => {
   await browser?.close().catch(() => undefined);
   browser = undefined;
@@ -328,8 +341,8 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByLabel("Password").fill(userA.password);
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
-    await page.getByLabel("Company").selectOption(companyB);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await switchCompany(page, companyB);
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
     const setupApiResponse = await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`);
     if (!setupApiResponse.ok()) throw new Error(`Cleaning setup GET ${setupApiResponse.status()}: ${await setupApiResponse.text()}\n${serverOutput}`);
     await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("company-provided prices are configured separately");
@@ -350,8 +363,8 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByLabel("Password").fill(userA.password);
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
-    await page.getByLabel("Company").selectOption(companyB);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await switchCompany(page, companyB);
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
 
     // Configure through the actual company-scoped browser form after the
     // expiry journey, then reload to prove saved rate and recurrence restore.
@@ -402,10 +415,7 @@ describe("Cleaning first-run browser journey", () => {
 
     // A different authenticated company with a non-Cleaning profile cannot
     // read or mutate the saved Cleaning configuration.
-    const returnToA = page.waitForNavigation({ waitUntil: "domcontentloaded" });
-    await page.getByLabel("Company").selectOption(companyA);
-    await returnToA;
-    await expectPage(page.getByLabel("Company")).toHaveValue(companyA);
+    await switchCompany(page, companyA);
     expect((await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(409);
     if (await page.getByLabel("Company").count() === 0) {
       throw new Error(`Company switcher is absent from authenticated app: ${await page.locator("body").innerText()}\n${serverOutput}`);
@@ -422,9 +432,7 @@ describe("Cleaning first-run browser journey", () => {
     // Switch the same authenticated actor through the real canonical selector.
     const beforeFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(beforeFirstSwitch).toBeTruthy();
-    const switchToC = page.waitForNavigation({ waitUntil: "domcontentloaded" });
-    await page.getByLabel("Company").selectOption(companyC);
-    await switchToC;
+    await switchCompany(page, companyC);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
     const afterFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
@@ -464,9 +472,7 @@ describe("Cleaning first-run browser journey", () => {
 
     const beforeSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(beforeSecondSwitch).toBeTruthy();
-    const switchBackToB = page.waitForNavigation({ waitUntil: "domcontentloaded" });
-    await page.getByLabel("Company").selectOption(companyB);
-    await switchBackToB;
+    await switchCompany(page, companyB);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await expectPage(page.getByLabel("Company")).toHaveValue(companyB);
     const afterSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
@@ -476,9 +482,7 @@ describe("Cleaning first-run browser journey", () => {
     await expectPage(page.getByLabel("Default frequency")).toHaveValue("weekly");
     expect(await page.getByLabel("Deep clean", { exact: false }).first().isChecked()).toBe(false);
 
-    const switchAgainToC = page.waitForNavigation({ waitUntil: "domcontentloaded" });
-    await page.getByLabel("Company").selectOption(companyC);
-    await switchAgainToC;
+    await switchCompany(page, companyC);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
     await expectPage(page.getByLabel("Deep clean fixed price")).toHaveValue("275");
