@@ -97,6 +97,8 @@ test('launch pages keep managed service internal and show accurate release state
   assert.match(hubSource, /not part of the current 14 service variants/)
   assert.match(hubSource, /managed-service offer remains part of Titan Zero/)
   assert.doesNotMatch(hubSource, /Personal Services|titanzero\.pro|Other industries/)
+  assert.match(catalogueSource, /The Cleaning-focused marketing build remains a noindex review preview/)
+  assert.doesNotMatch(catalogueSource, /The apex v2 site is live\. This separate 20-profile host-aware build remains/)
   const catalogueSource = readFileSync(new URL('../data/verticalCatalogue.js', import.meta.url), 'utf8')
   for (const service of [
     'Regular residential clean', 'One-off clean', 'Deep clean', 'End-of-lease / bond clean',
