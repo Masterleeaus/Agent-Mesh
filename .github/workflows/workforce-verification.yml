@@ -43,6 +43,7 @@ jobs:
           lib/company-storage/consumer.test.ts
           lib/company-storage/cleaning-profile-login.test.ts
           lib/company-storage/vertical-pack-profile.test.ts
+          lib/auth/__tests__/session-context.test.ts
           lib/visits/__tests__/native-checklist-route.test.ts
           lib/auth/__tests__/post-login-destination.unit.test.ts
 
