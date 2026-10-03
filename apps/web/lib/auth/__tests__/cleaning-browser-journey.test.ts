@@ -30,10 +30,12 @@ let origin: string;
 let issuer: string;
 const companyA = "browser-company-existing";
 const companyB = "browser-company-new";
+const companyC = "browser-company-cleaning-two";
 const actorId = "browser-cleaner-actor";
 const deviceId = "browser-web-device";
 const userA = { id: "browser-user-existing", email: "existing@example.test", password: "password-browser-a", account: companyA };
 const userB = { id: "browser-user-new", email: "new-cleaner@example.test", password: "password-browser-b", account: companyB };
+const userC = { id: "browser-user-cleaning-two", email: "cleaning-two@example.test", password: "password-browser-c", account: companyC };
 const ids = {
   client: "40000000-0000-4000-8000-000000000001",
   property: "40000000-0000-4000-8000-000000000002",
@@ -81,10 +83,12 @@ async function prepareLegacyDatabase(databasePath: string): Promise<void> {
   const addCompany = db.prepare("INSERT INTO companies(id,name) VALUES(?,?)");
   addCompany.run(companyA, "Existing Profile Company");
   addCompany.run(companyB, "New Cleaning Company");
+  addCompany.run(companyC, "Second Cleaning Company");
   const addUser = db.prepare(`INSERT INTO users(id,company_id,email,full_name,password_hash,role)
     VALUES(?,?,?,?,?, 'owner')`);
   addUser.run(userA.id, companyA, userA.email, "Existing Profile Owner", await hash(userA.password, 4));
   addUser.run(userB.id, companyB, userB.email, "New Cleaning Owner", await hash(userB.password, 4));
+  addUser.run(userC.id, companyC, userC.email, "Second Cleaning Owner", await hash(userC.password, 4));
   db.close();
 }
 
@@ -105,6 +109,7 @@ async function provisionCompanies(input: {
   for (const company of [
     { id: companyA, user: userA },
     { id: companyB, user: userB },
+    { id: companyC, user: userC },
   ]) {
     await identity.putCompany({ company_id: company.id, status: "active" }, null);
     await identity.putMembership({ actor_id: actorId, company_id: company.id, role: "owner", status: "active" }, null);
@@ -118,7 +123,7 @@ async function provisionCompanies(input: {
     }, null);
   }
 
-  for (const companyId of [companyA, companyB]) {
+  for (const companyId of [companyA, companyB, companyC]) {
     const isNewCleaningCompany = companyId === companyB;
     const placement = await provisionSqliteCompanyPlacement({
       registry: {
@@ -150,7 +155,7 @@ async function provisionCompanies(input: {
           },
         },
       }), companyA]);
-    } else {
+    } else if (companyId === companyB) {
       await store.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", [ids.client, companyB, "New Cleaning Client"]);
       await store.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", [ids.property, companyB, ids.client, "8 Cleaning Lane"]);
       await store.query("INSERT INTO jobs(id,company_id,client_id,property_id,title,created_by) VALUES($1,$2,$3,$4,$5,$6)", [ids.job, companyB, ids.client, ids.property, "Cleaning turnover", actorId]);
@@ -248,6 +253,7 @@ describe("Cleaning first-run browser journey", () => {
       TITAN_WEB_IDENTITY_BINDINGS_JSON: JSON.stringify([
         { legacy_user_id: userA.id, legacy_account_id: userA.account, company_id: companyA, actor_id: actorId, device_id: deviceId },
         { legacy_user_id: userB.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userC.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
       ]),
       TITAN_COMPANY_DATA_ROOT: storeRoot,
       E2E_DISABLE_LOGIN_RATE_LIMIT: "1",
@@ -398,6 +404,49 @@ describe("Cleaning first-run browser journey", () => {
         { job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
       ] } });
     } finally { await bStoreAfterA.close(); }
+
+    // A second Cleaning company configures a different service/rate/cadence;
+    // switching back must still show company B's original setup.
+    await page.goto(`${baseUrl}/login`);
+    await page.getByLabel("Email").fill(userC.email);
+    await page.getByLabel("Password").fill(userC.password);
+    await page.getByRole("button", { name: "Sign In" }).click();
+    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByLabel("Deep clean", { exact: false }).first()).toBeVisible({ timeout: 20_000 });
+    await page.getByLabel("Deep clean", { exact: false }).first().check();
+    await page.getByLabel("Deep clean fixed price").fill("275.00");
+    await page.getByLabel("Enable recurring configuration").check();
+    await page.getByRole("checkbox", { name: "Monthly" }).check();
+    await page.getByLabel("Default frequency").selectOption("monthly");
+    await page.getByRole("button", { name: "Save service setup" }).click();
+    await expectPage(page.getByRole("status").filter({ hasText: "Cleaning service setup saved" })).toBeVisible();
+    await page.getByRole("button", { name: "Reload saved setup" }).click();
+    await expectPage(page.getByLabel("Deep clean fixed price")).toHaveValue("275");
+    await expectPage(page.getByLabel("Default frequency")).toHaveValue("monthly");
+
+    const cPlacementId = placementIds.get(companyC);
+    if (!cPlacementId) throw new Error("company-c-placement-missing");
+    const cStore = createSqliteStorage(join(storeRoot, `${cPlacementId}.sqlite`));
+    try {
+      const settings = JSON.parse((await cStore.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyC])).rows[0]!.settings);
+      expect(settings).toMatchObject({ vertical_profile: { company_id: companyC, profile: { module_id: "titan.workforce.cleaning" } },
+        cleaning_service_setup: { company_id: companyC, revision: 1, data: {
+          selections: [{ job_type_id: "deep_clean", pricing: { mode: "fixed", fixed_price: 275 } }],
+          recurrence: { enabled: true, supported_frequencies: ["monthly"], default_frequency: "monthly" },
+        } } });
+    } finally { await cStore.close(); }
+
+    await context.clearCookies();
+    await page.goto(`${baseUrl}/login`);
+    await page.getByLabel("Email").fill(userB.email);
+    await page.getByLabel("Password").fill(userB.password);
+    await page.getByRole("button", { name: "Sign In" }).click();
+    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByLabel("Regular clean hourly rate")).toHaveValue("42.5");
+    await expectPage(page.getByLabel("Default frequency")).toHaveValue("weekly");
+    expect(await page.getByLabel("Deep clean", { exact: false }).first().isChecked()).toBe(false);
     await context.close();
   }, 180_000);
 });
