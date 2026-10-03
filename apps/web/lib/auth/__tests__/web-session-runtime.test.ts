@@ -278,6 +278,22 @@ describe("configured web authentication runtime", () => {
     const ownerRequest = new Request(ORIGIN + "/api/v1/users/" + targetLegacyUserId, {
       headers: { cookie: CURRENT_WEB_SESSION_COOKIE_NAME + "=" + owner.credential },
     });
+    const nonOwnerRequest = new Request(ORIGIN + "/api/v1/users/" + targetLegacyUserId, {
+      headers: { cookie: CURRENT_WEB_SESSION_COOKIE_NAME + "=" + targetA.credential },
+    });
+    const sessionIdRequest = new Request(ORIGIN + "/api/v1/users/" + targetLegacyUserId, {
+      headers: { cookie: CURRENT_WEB_SESSION_COOKIE_NAME + "=" + targetA.context.session_id },
+    });
+
+    await expect(runtime.restrictMembershipForLegacyChangeRequest(
+      nonOwnerRequest, targetLegacyUserId, "admin", "active", "tech", "active",
+    )).rejects.toMatchObject({ code: "WEB_MEMBERSHIP_RECONCILIATION_UNAVAILABLE" });
+    await expect(runtime.restrictMembershipForLegacyChangeRequest(
+      sessionIdRequest, targetLegacyUserId, "admin", "active", "tech", "active",
+    )).rejects.toMatchObject({ code: "WEB_MEMBERSHIP_RECONCILIATION_UNAVAILABLE" });
+    expect(await seedRegistry!.getMembership(targetActorId, companyId)).toMatchObject({
+      role: "admin", status: "active", revision: 1,
+    });
 
     await runtime.restrictMembershipForLegacyChangeRequest(
       ownerRequest, targetLegacyUserId, "admin", "active", "tech", "active",
