@@ -42,7 +42,51 @@ function fixtureAvailableSkills(company_id, worker_id, evidence_ref) {
 async function serveFixtureRelayClient(page) {
   await page.route('https://workforce.test/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs', route =>
     route.fulfill({ contentType: 'text/javascript', body: fixtureRelayClient }));
+  for (const rolePath of ['/CMD_PLUGINS_ADMIN', '/CMD_PLUGINS_RESELLER', '/CMD_PLUGINS']) {
+    const nonceUrl = `https://workforce.test${rolePath}/titan_workforce/bootstrap-nonce.raw?headers_to_env=yes&pipe_post=yes`;
+    const bootstrapUrl = `https://workforce.test${rolePath}/titan_workforce/bootstrap.raw?headers_to_env=yes&pipe_post=yes`;
+    await page.route(url => url.href === nonceUrl, route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ csrf_nonce: 'B'.repeat(43) }) }));
+    await page.route(url => url.href === bootstrapUrl, route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ csrf_token: 'C'.repeat(43) }) }));
+  }
 }
+
+test('role entrypoints request only their own same-origin bootstrap nonce RAW path', async () => {
+  const folder = await mkdtemp(join(tmpdir(), 'workforce-bootstrap-role-paths-'));
+  let browser;
+  try {
+    await cp(new URL('../', import.meta.url), folder, { recursive: true });
+    await writeFile(join(folder, 'images/sdk.mjs'), fixtureSdk);
+    const { renderEntry } = await import(pathToFileURL(join(folder, 'lib/entry.mjs')));
+    browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+    const context = await browser.newContext({ ignoreHTTPSErrors: true });
+    const page = await context.newPage();
+    const nonceRequests = [];
+    page.on('request', request => {
+      const url = new URL(request.url());
+      if (url.pathname.endsWith('/titan_workforce/bootstrap-nonce.raw')) nonceRequests.push({ method: request.method(), url: request.url(), headers: request.headers(), body: request.postData() });
+    });
+    await serveFixtureRelayClient(page);
+    const expected = { admin: '/CMD_PLUGINS_ADMIN', reseller: '/CMD_PLUGINS_RESELLER', user: '/CMD_PLUGINS' };
+    let activeRole = 'admin';
+    await page.route('https://workforce.test/', route => route.fulfill({ contentType: 'text/html', body: renderEntry(activeRole) }));
+    for (const role of Object.keys(expected)) {
+      activeRole = role;
+      await page.goto('https://workforce.test/');
+      await page.getByText('Current hosted projection', { exact: true }).waitFor();
+      const request = nonceRequests.at(-1);
+      assert.equal(request.method, 'POST');
+      assert.equal(new URL(request.url).pathname, `${expected[role]}/titan_workforce/bootstrap-nonce.raw`);
+      assert.equal(new URL(request.url).search, '?headers_to_env=yes&pipe_post=yes');
+      assert.equal(request.body, null, 'nonce RAW request has no body');
+      assert.equal(request.headers['content-type'], undefined, 'nonce RAW request has no content type');
+      assert.equal(request.headers.origin, 'https://workforce.test');
+    }
+    assert.equal(nonceRequests.length, 3);
+    await context.close();
+  } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
+});
 
 test('executable cockpit renders safely, submits bounded controls, and clears on denial', async () => {
   const folder = await mkdtemp(join(tmpdir(), 'workforce-browser-'));
@@ -176,6 +220,7 @@ test('company switch while Teams is open clears old memberships before loading t
       globalThis.fixtureWait = true;
       window.dispatchEvent(new Event('titan-context-changed'));
     });
+    await page.getByText('Loading current company context…', { exact: true }).waitFor();
     assert.match(await page.locator('#titan-workforce').innerText(), /Loading current company context/);
     assert.equal(await page.getByText('fixture-company', { exact: true }).count(), 0);
     assert.equal(await page.getByText('company-a-team', { exact: true }).count(), 0);
@@ -329,6 +374,7 @@ test('context change and page lifecycle erase the prior company before reconnect
       globalThis.fixtureCompany = 'new-company'; globalThis.fixtureWait = true;
       window.dispatchEvent(new Event('titan-context-changed'));
     });
+    await page.getByText('Loading current company context…', { exact: true }).waitFor();
     assert.match(await page.locator('#titan-workforce').innerText(), /Loading current company context/);
     assert.equal(await page.getByText('fixture-company', { exact: true }).count(), 0);
     assert.equal(await page.getByRole('navigation').count(), 0);

@@ -4,7 +4,7 @@ import { readFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { createServer } from 'node:http';
+import { createServer } from 'node:https';
 import { buildPackage, packageFiles } from '../tools/package.mjs';
 import { workforceContribution, verifiedOutcome } from '../images/presentation.mjs';
 import { WorkforceApi } from '../images/api.mjs';
@@ -254,17 +254,21 @@ test('executable role ignores hostile CGI input and fails closed without the Ser
   } finally { await browser?.close(); await rm(folder, { recursive: true, force: true }); }
 });
 
-test('packaged cockpit handles owner loss, governed cancel, context expiry and receipt invalidation in a real browser', async () => {
+test('packaged cockpit uses role RAW bootstrap with browser cookies across reload, switch, stale session and logout', async () => {
   const { execFileSync } = await import('node:child_process');
   const { chromium } = await import('@playwright/test');
   const folder = await mkdtemp(join(tmpdir(), 'workforce-browser-acceptance-'));
   const csrf = 'A'.repeat(43);
-  const cookie = 'titan_test_session=browser-fixture-only';
+  const cookie = '__Host-titan-da-session=browser-fixture-session';
+  const daCookies = { session: 'fixture-da-session', key: 'fixture-da-key' };
   // This lightweight browser fixture only lets consumer lifecycle tests keep
   // their existing same-origin host. The separate relay integration harness
   // loads #812's exact helper/RAW package and the #811 optional gateway.
   const fixtureRelayClient = 'export function createDirectAdminRelayFetch(fetchImpl = globalThis.fetch) { return async (input, init) => { globalThis.__workforceRelayCalls = (globalThis.__workforceRelayCalls || 0) + 1; return fetchImpl(input, init); }; }';
   const requests = [];
+  const nonceRequests = [];
+  const bootstrapRequests = [];
+  const issuedNonces = new Set();
   const acceptedIntents = [];
   let activeCompany = 'company-a';
   let contextLifetimeMs = 15 * 60_000;
@@ -276,6 +280,8 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
   let loggedOut = false;
   let unauthorizedResponses = 0;
   let holdNextContext = false;
+  let holdNextNonce = null;
+  let holdNextBootstrap = null;
   let controlCapabilitiesAvailable = true;
   let shortContextExpiresAt = null;
   let heldContext;
@@ -287,9 +293,9 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const promise = new Promise(done => { resolve = done; });
     return { promise, resolve };
   };
-  const json = (response, status, value) => {
+  const json = (response, status, value, headers = {}) => {
     if (response.destroyed || response.writableEnded) return;
-    response.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+    response.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store', ...headers });
     response.end(JSON.stringify(value));
   };
   const readBody = async request => {
@@ -311,43 +317,81 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
       status: { company_id,
         work: [{ company_id, work_id: `${company_id}-work`, assignee: `${company_id}-worker`, state: 'IN_PROGRESS', context_refs: [], evidence_refs: [] }] } } });
 
-  server = createServer(async (request, response) => {
+  const keyPath = join(folder, 'panel.key');
+  const certPath = join(folder, 'panel.crt');
+  execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', keyPath, '-out', certPath,
+    '-subj', '/CN=127.0.0.1', '-days', '1', '-addext', 'subjectAltName=IP:127.0.0.1'], { stdio: 'ignore' });
+  server = createServer({ key: await readFile(keyPath), cert: await readFile(certPath) }, async (request, response) => {
     try {
-      const url = new URL(request.url, 'http://127.0.0.1');
+      const url = new URL(request.url, `https://127.0.0.1:${server.address()?.port ?? 443}`);
       const body = request.method === 'POST' ? await readBody(request) : undefined;
       if (url.pathname === '/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs' && request.method === 'GET') {
         response.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' });
         response.end(fixtureRelayClient); return;
       }
-      if (url.pathname === '/v1/directadmin/bootstrap' && request.method === 'POST') {
-        if (request.headers['x-titan-da-bootstrap-csrf'] !== csrf ||
-            request.headers['sec-fetch-site'] !== 'same-origin' ||
-            request.headers.origin !== `http://127.0.0.1:${server.address().port}`) {
-          json(response, 403, { error: 'fixture-bootstrap-rejected' }); return;
+      const origin = `https://127.0.0.1:${server.address().port}`;
+      const roleBase = role => role === 'admin' ? '/CMD_PLUGINS_ADMIN' : role === 'reseller' ? '/CMD_PLUGINS_RESELLER' : '/CMD_PLUGINS';
+      const rawBase = `${roleBase('user')}/titan_workforce/`;
+      if (url.pathname === `${rawBase}bootstrap-nonce.raw` || url.pathname === `${rawBase}bootstrap.raw`) {
+        const isNonce = url.pathname.endsWith('bootstrap-nonce.raw');
+        const raw = { method: request.method, pathname: url.pathname, search: url.search, contentType: request.headers['content-type'] ?? null,
+          bodyLength: body === undefined ? 0 : Buffer.byteLength(JSON.stringify(body)), cookie: request.headers.cookie ?? null,
+          origin: request.headers.origin ?? null, secFetchSite: request.headers['sec-fetch-site'] ?? null,
+          nonceHeader: request.headers['x-titan-da-bootstrap-csrf'] ?? null };
+        (isNonce ? nonceRequests : bootstrapRequests).push(raw);
+        const expectedUrl = `?headers_to_env=yes&pipe_post=yes`;
+        if (request.method !== 'POST' || url.search !== expectedUrl || raw.contentType !== null || raw.bodyLength !== 0 ||
+            raw.origin !== origin || raw.secFetchSite !== 'same-origin' ||
+            !request.headers.cookie?.includes(`session=${daCookies.session}`) || !request.headers.cookie?.includes(`key=${daCookies.key}`) ||
+            request.headers.authorization || request.headers['x-titan-csrf']) {
+          json(response, 400, { error: 'fixture-bootstrap-raw-rejected', read_only: true }); return;
         }
-        json(response, 200, { csrf_token: csrf }); return;
+        if (isNonce) {
+          const value = `N${String(nonceRequests.length).padStart(42, '0')}`;
+          issuedNonces.add(value);
+          if (holdNextNonce) {
+            const held = holdNextNonce;
+            holdNextNonce = null;
+            held.entered.resolve();
+            await held.release.promise;
+          }
+          json(response, 200, { csrf_nonce: value }); return;
+        }
+        const nonce = request.headers['x-titan-da-bootstrap-csrf'];
+        if (!issuedNonces.delete(nonce)) { json(response, 403, { error: 'fixture-bootstrap-rejected', read_only: true }); return; }
+        if (holdNextBootstrap) {
+          const held = holdNextBootstrap;
+          holdNextBootstrap = null;
+          held.entered.resolve();
+          await held.release.promise;
+        }
+        json(response, 200, { csrf_token: csrf }, {
+          'set-cookie': `${cookie}; Path=/; Secure; HttpOnly; SameSite=Strict`,
+        }); return;
       }
-      requests.push({ method: request.method, path: url.pathname, headers: request.headers, body });
+      const observation = { method: request.method, path: url.pathname, headers: request.headers, body };
+      requests.push(observation);
       const protectedRequest = ['/v1/directadmin/context', '/v1/directadmin/titan_workforce/projection',
         '/v1/directadmin/titan_workforce/intents', '/v1/directadmin/logout'].includes(url.pathname);
       if (protectedRequest && (request.headers.cookie?.includes(cookie) !== true || request.headers['x-titan-csrf'] !== csrf ||
-          (request.method === 'POST' && request.headers.origin !== `http://127.0.0.1:${server.address().port}`))) {
+          (request.method === 'POST' && request.headers.origin !== origin))) {
         json(response, 403, { error: 'fixture-request-rejected' }); return;
       }
       if (url.pathname === '/v1/directadmin/context' && request.method === 'GET') {
-        if (loggedOut) { unauthorizedResponses++; json(response, 401, { error: 'session-expired' }); return; }
+        if (loggedOut) { unauthorizedResponses++; observation.status = 401; observation.code = 'session-expired'; json(response, 401, { error: 'session-expired' }); return; }
         if (holdNextContext) {
           holdNextContext = false;
           heldContext.entered.resolve();
           await heldContext.release.promise;
         }
-        json(response, 200, contextFor(activeCompany)); return;
+        observation.status = 200; json(response, 200, contextFor(activeCompany)); return;
       }
       if (url.pathname === '/v1/directadmin/titan_workforce/projection' && request.method === 'GET') {
-        if (loggedOut) { unauthorizedResponses++; json(response, 401, { error: 'session-expired' }); return; }
-        if (denyNextProjection) { denyNextProjection = false; json(response, 403, { error: 'fixture-projection-forbidden' }); return; }
-        if (!ownerAvailable) { json(response, 503, { error: 'owner-not-mounted' }); return; }
+        if (loggedOut) { unauthorizedResponses++; observation.status = 401; observation.code = 'session-expired'; json(response, 401, { error: 'session-expired' }); return; }
+        if (denyNextProjection) { denyNextProjection = false; observation.status = 403; observation.code = 'fixture-projection-forbidden'; json(response, 403, { error: 'fixture-projection-forbidden' }); return; }
+        if (!ownerAvailable) { observation.status = 503; observation.code = 'owner-not-mounted'; json(response, 503, { error: 'owner-not-mounted' }); return; }
         const company_id = activeCompany;
+        observation.status = 200;
         json(response, 200, { context: contextFor(company_id), projection: projectionFor(company_id) }); return;
       }
       if (url.pathname === '/v1/directadmin/titan_workforce/intents' && request.method === 'POST') {
@@ -377,7 +421,7 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
       }
       if (url.pathname === '/v1/directadmin/logout' && request.method === 'POST') {
         loggedOut = true;
-        json(response, 200, { status: 'reauthentication-required' }); return;
+        json(response, 200, { status: 'reauthentication-required' }, { 'set-cookie': '__Host-titan-da-session=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0' }); return;
       }
       if (url.pathname === '/' && request.method === 'GET') {
         response.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
@@ -404,18 +448,41 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     const result = await buildPackage({ outputDir: folder, sdkModulePath: sdkPath });
     execFileSync('tar', ['-xzf', result.archivePath, '-C', folder]);
     const rendered = execFileSync(join(folder, 'user/index.html'), [], { encoding: 'utf8' });
-    commissionedHtml = rendered.replace('<main ', `<meta name="titan-directadmin-csrf" content="${csrf}"><main `);
+    commissionedHtml = rendered;
     const sdk = await readFile(join(folder, 'images/sdk.mjs'), 'utf8');
     const sdkUrl = `data:text/javascript;base64,${Buffer.from(sdk).toString('base64')}`;
-    logoutHelperHtml = `<meta name="titan-directadmin-csrf" content="${csrf}"><script type="importmap">${JSON.stringify({ imports: { 'titan-sdk': sdkUrl } })}</script><script type="module">
+    logoutHelperHtml = `<script type="importmap">${JSON.stringify({ imports: { 'titan-sdk': sdkUrl } })}</script><script type="module">
       import { DirectAdminCockpitSession } from 'titan-sdk';
-      window.logoutSharedSession = async () => { const session = new DirectAdminCockpitSession(() => '${csrf}'); await session.connect(); await session.logout(); session.dispose(); };
+      import { createDirectAdminRelayFetch } from '/CMD_PLUGINS/titan-server-node/images/directadmin-relay-client.mjs';
+      const flags = '?headers_to_env=yes&pipe_post=yes';
+      let nonce = null;
+      const issueNonce = async () => { const response = await fetch('/CMD_PLUGINS/titan_workforce/bootstrap-nonce.raw' + flags, {
+        method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error', referrerPolicy: 'same-origin',
+        headers: { Accept: 'application/json' } }); const value = await response.json(); nonce = value.csrf_nonce; };
+      window.logoutSharedSession = async () => {
+        await issueNonce();
+        const relay = createDirectAdminRelayFetch();
+        const session = new DirectAdminCockpitSession(() => nonce, async (input, init = {}) => {
+          if (input === '/v1/directadmin/bootstrap') {
+            const csrf_nonce = nonce; nonce = null;
+            return fetch('/CMD_PLUGINS/titan_workforce/bootstrap.raw' + flags, { method: 'POST', credentials: 'same-origin',
+              cache: 'no-store', redirect: 'error', referrerPolicy: 'same-origin', signal: init.signal,
+              headers: { Accept: 'application/json', 'X-Titan-DA-Bootstrap-CSRF': csrf_nonce } });
+          }
+          return relay(input, init);
+        });
+        try { await session.connect(); await session.logout(); } finally { session.dispose(); }
+      };
     </script>`;
     await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-    const origin = `http://127.0.0.1:${server.address().port}`;
-    browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
-    const context = await browser.newContext();
-    await context.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
+    const origin = `https://127.0.0.1:${server.address().port}`;
+    browser = await chromium.launch({ headless: true, args: ['--ignore-certificate-errors'], ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+    const context = await browser.newContext({ ignoreHTTPSErrors: true });
+    const addDirectAdminCookies = browserContext => browserContext.addCookies([
+      { name: 'session', value: daCookies.session, url: origin, secure: true, httpOnly: true, sameSite: 'Strict' },
+      { name: 'key', value: daCookies.key, url: origin, secure: true, httpOnly: true, sameSite: 'Strict' },
+    ]);
+    await addDirectAdminCookies(context);
     const page = await context.newPage();
     const errors = [];
     const network = [];
@@ -437,8 +504,12 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     };
     await page.goto(origin);
     await page.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.').waitFor();
-    const bootstrapMeta = await page.evaluate(() => ({ csrfPresent: Boolean(document.querySelector('meta[name="titan-directadmin-csrf"]')?.getAttribute('content')),
-      relayCalls: globalThis.__workforceRelayCalls ?? 0, href: location.href }));
+    const bootstrapMeta = { nonceRequests: nonceRequests.length, bootstrapRequests: bootstrapRequests.length,
+      relayRequests: requests.map(item => item.path), cookieCount: (await context.cookies(origin)).length };
+    assert.equal(nonceRequests.length, 1, `first page load gets a nonce from the role-local RAW route; ${JSON.stringify(bootstrapMeta)}`);
+    assert.equal(bootstrapRequests.length, 1, `first page load redeems the nonce at the role-local RAW route; ${JSON.stringify(bootstrapMeta)}`);
+    assert.equal((await context.cookies(origin)).some(item => item.name === '__Host-titan-da-session' && item.httpOnly && item.secure), true,
+      'the same-origin bootstrap installs an HttpOnly Secure host cookie in the browser cookie jar');
     assert.equal(requests.filter(item => item.path === '/v1/directadmin/titan_workforce/projection').length, 1,
       `real shared SDK attempted the same-origin owner route; observed paths=${JSON.stringify(requests.map(item => item.path))}; page errors=${JSON.stringify(errors)}; bootstrap=${JSON.stringify(bootstrapMeta)}; network=${JSON.stringify(network)}`);
     assert.equal(await page.getByRole('navigation').count(), 0);
@@ -449,6 +520,72 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
     await page.getByText('company-a', { exact: true }).waitFor();
     assert.equal(await page.getByText('Current hosted projection', { exact: true }).count(), 1);
+
+    const broadcastInvalidation = () => page.evaluate(() => {
+      const channel = new BroadcastChannel('titan-directadmin-context');
+      channel.postMessage('invalidate');
+      channel.close();
+    });
+    await broadcastInvalidation();
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.', { exact: true }).waitFor();
+    const delayedBootstrap = { entered: deferred(), release: deferred() };
+    holdNextBootstrap = delayedBootstrap;
+    const bootstrapBeforeInvalidationRace = bootstrapRequests.length;
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await delayedBootstrap.entered.promise;
+    assert.equal(bootstrapRequests.length, bootstrapBeforeInvalidationRace + 1,
+      'the first reconnect reaches bootstrap.raw before the external invalidation');
+    await broadcastInvalidation();
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.', { exact: true }).waitFor();
+    const lateBootstrapRequest = page.waitForEvent('requestfinished', request =>
+      new URL(request.url()).pathname.endsWith('/titan_workforce/bootstrap.raw'));
+    delayedBootstrap.release.resolve();
+    await lateBootstrapRequest;
+    // The task boundary follows the downloaded body and its promise callbacks.
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)));
+    assert.equal(await page.getByText('company-a', { exact: true }).count(), 0,
+      'a late bootstrap response cannot restore company data after session invalidation');
+    const nonceBeforeRaceRecovery = nonceRequests.length;
+    const bootstrapBeforeRaceRecovery = bootstrapRequests.length;
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await page.getByText('company-a', { exact: true }).waitFor();
+    assert.equal(nonceRequests.length, nonceBeforeRaceRecovery + 1,
+      'recovery after late bootstrap invalidation obtains a fresh nonce');
+    assert.equal(bootstrapRequests.length, bootstrapBeforeRaceRecovery + 1,
+      'recovery after late bootstrap invalidation performs a new bootstrap');
+
+    const contextReadsBeforeNonceRace = requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/context').length;
+    await broadcastInvalidation();
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.', { exact: true }).waitFor();
+    const delayedNonce = { entered: deferred(), release: deferred() };
+    holdNextNonce = delayedNonce;
+    const nonceBeforeInvalidationRace = nonceRequests.length;
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await delayedNonce.entered.promise;
+    assert.equal(nonceRequests.length, nonceBeforeInvalidationRace + 1,
+      'the reconnect is held after issuing its nonce request');
+    await broadcastInvalidation();
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.', { exact: true }).waitFor();
+    const lateNonceRequest = page.waitForEvent('requestfinished', request =>
+      new URL(request.url()).pathname.endsWith('/titan_workforce/bootstrap-nonce.raw'));
+    delayedNonce.release.resolve();
+    await lateNonceRequest;
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)));
+    assert.equal(await page.getByText('company-a', { exact: true }).count(), 0,
+      'a stale nonce completion cannot reconnect with the retained SDK CSRF token');
+    assert.equal(requests.filter(item => item.method === 'GET' && item.path === '/v1/directadmin/context').length,
+      contextReadsBeforeNonceRace, 'an invalidated nonce prefetch does not send a context request');
+    assert.equal(bootstrapRequests.length, bootstrapBeforeRaceRecovery + 1,
+      'an invalidated nonce prefetch does not redeem bootstrap');
+    const nonceBeforeFreshRecovery = nonceRequests.length;
+    const bootstrapBeforeFreshRecovery = bootstrapRequests.length;
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await page.getByText('company-a', { exact: true }).waitFor();
+    assert.equal(nonceRequests.length, nonceBeforeFreshRecovery + 1,
+      'an explicit retry after stale nonce invalidation obtains a fresh nonce');
+    assert.equal(bootstrapRequests.length, bootstrapBeforeFreshRecovery + 1,
+      'an explicit retry after stale nonce invalidation bootstraps before restoring company data');
+
     await page.getByRole('button', { name: 'Host status', exact: true }).click();
     await page.getByText('controlled-test-http-owner', { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
@@ -521,9 +658,14 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     assert.equal(await page.getByText(switchReceipt, { exact: true }).count(), 0, 'BFCache reconnect loads no prior request receipt');
 
     const reloadReceipt = await submitCancel(page, 'company-b', 'Reload receipt fixture');
+    const cyclesBeforeReload = { nonce: nonceRequests.length, bootstrap: bootstrapRequests.length };
     await page.reload();
     await page.getByText('company-b', { exact: true }).waitFor();
     assert.equal(await page.getByText(reloadReceipt, { exact: true }).count(), 0, 'full reload starts with no in-memory receipt');
+    assert.equal(nonceRequests.length, cyclesBeforeReload.nonce + 1, 'a fresh document obtains a new one-time nonce');
+    assert.equal(bootstrapRequests.length, cyclesBeforeReload.bootstrap + 1, 'a fresh document renews through bootstrap.raw');
+    assert.equal(nonceRequests.at(-1).cookie.includes(cookie), true,
+      'reload nonce request carries the browser-managed HttpOnly Titan cookie for host-side filtering');
     await page.getByRole('button', { name: 'Receipts & evidence', exact: true }).click();
     await page.getByText('Submit a permitted governed request to inspect its receipt.').waitFor();
 
@@ -564,22 +706,23 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
     await page.getByText('company-b', { exact: true }).waitFor();
 
-    const expiryContext = await browser.newContext();
-    await expiryContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
-    const expiryPage = await expiryContext.newPage();
-    await expiryPage.goto(origin);
-    await expiryPage.getByText('company-b', { exact: true }).waitFor();
-    await expiryPage.getByRole('button', { name: 'Governed actions', exact: true }).click();
-    await expiryPage.getByLabel('Operation').selectOption('cancel');
-    await expiryPage.getByLabel('Work item').selectOption('company-b-work');
-    await expiryPage.getByLabel('Reason', { exact: true }).fill('Expired authorization acceptance fixture');
+    await page.getByRole('button', { name: 'Governed actions', exact: true }).click();
+    await page.getByLabel('Operation').selectOption('cancel');
+    await page.getByLabel('Work item').selectOption('company-b-work');
+    await page.getByLabel('Reason', { exact: true }).fill('Expired authorization acceptance fixture');
     expireNextIntent = true;
-    await expiryPage.getByRole('button', { name: 'Submit governed request' }).click();
-    await expiryPage.getByText('Context changed. Reconnect to load permitted Workforce.').waitFor();
-    assert.equal(await expiryPage.getByText('company-b', { exact: true }).count(), 0);
-    assert.equal(await expiryPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
-    assert.equal(await expiryPage.getByText('session-expired', { exact: true }).count(), 0, 'transport diagnostics are not rendered');
-    await expiryContext.close();
+    const noncesBeforeStale = nonceRequests.length;
+    await page.getByRole('button', { name: 'Submit governed request' }).click();
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.').waitFor();
+    assert.equal(nonceRequests.length, noncesBeforeStale + 1,
+      'a stale hosted session prefetches a role-local nonce for the next explicit reconnect');
+    assert.equal(nonceRequests.at(-1).cookie.includes(cookie), true,
+      'stale-session nonce request keeps cookie delivery in the browser');
+    assert.equal(await page.getByText('company-b', { exact: true }).count(), 0);
+    assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
+    assert.equal(await page.getByText('session-expired', { exact: true }).count(), 0, 'transport diagnostics are not rendered');
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await page.getByText('Current hosted projection', { exact: true }).waitFor();
 
     const logoutReceipt = await submitCancel(page, 'company-b', 'Logout receipt fixture');
     const helper = await context.newPage();
@@ -594,29 +737,35 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
 
     loggedOut = false;
     contextLifetimeMs = 6000;
-    const timerContext = await browser.newContext();
-    await timerContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
-    const timerPage = await timerContext.newPage();
-    timerPage.on('pageerror', error => errors.push(error.message));
-    await timerPage.goto(origin);
-    await timerPage.getByText('company-b', { exact: true }).waitFor();
-    await timerPage.getByText('Current hosted projection', { exact: true }).waitFor();
-    const timerReceipt = await submitCancel(timerPage, 'company-b', 'Local expiry receipt fixture');
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    try { await page.getByText('company-b', { exact: true }).waitFor({ timeout: 5000 }); }
+    catch { throw new Error(`post-logout reconnect failed; ui=${JSON.stringify(await page.locator('#titan-workforce').innerText())}; raw=${JSON.stringify({ nonce: nonceRequests.slice(-3), bootstrap: bootstrapRequests.slice(-3) })}; relay=${JSON.stringify(requests.slice(-5).map(item => ({ path: item.path, status: item.status, code: item.code })))}; errors=${JSON.stringify(errors)}`); }
+    await page.getByText('Current hosted projection', { exact: true }).waitFor();
+    const timerReceipt = await submitCancel(page, 'company-b', 'Local expiry receipt fixture');
     const localExpiresAt = shortContextExpiresAt;
     const unauthorizedBeforeTimer = unauthorizedResponses;
     assert.ok(Number.isFinite(localExpiresAt));
-    await timerPage.getByText('Context changed. Reconnect to load permitted Workforce.', { timeout: 10_000 }).waitFor();
+    await page.getByText('Context changed. Reconnect to load permitted Workforce.', { timeout: 10_000 }).waitFor();
     assert.ok(Date.now() >= localExpiresAt, 'the SDK local expiry timer fires at/after expires_at');
     assert.equal(unauthorizedResponses, unauthorizedBeforeTimer, 'local expiry does not depend on an HTTP 401 response');
-    assert.equal(await timerPage.getByText('company-b', { exact: true }).count(), 0, 'the SDK local expires_at timer invalidates the real cockpit session');
-    assert.equal(await timerPage.getByText(timerReceipt, { exact: true }).count(), 0, 'local expiry clears a previously visible receipt');
-    assert.equal(await timerPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
-    await timerContext.close();
-
+    assert.equal(await page.getByText('company-b', { exact: true }).count(), 0, 'the SDK local expires_at timer invalidates the real cockpit session');
+    assert.equal(await page.getByText(timerReceipt, { exact: true }).count(), 0, 'local expiry clears a previously visible receipt');
+    assert.equal(await page.getByRole('button', { name: 'Submit governed request' }).count(), 0);
+    const nonceBeforeLocalReconnect = nonceRequests.length;
+    const bootstrapBeforeLocalReconnect = bootstrapRequests.length;
+    contextLifetimeMs = 60_000;
+    await page.getByRole('button', { name: 'Reconnect / refresh' }).click();
+    await page.getByText('Current hosted projection', { exact: true }).waitFor();
+    assert.equal(nonceRequests.length, nonceBeforeLocalReconnect + 1,
+      'local expiry recovery obtains a fresh role-local nonce before bootstrap');
+    assert.equal(bootstrapRequests.length, bootstrapBeforeLocalReconnect + 1,
+      'local expiry recovery renews the session through bootstrap.raw');
+    assert.equal(nonceRequests.at(-1).cookie.includes(cookie), true,
+      'local expiry recovery leaves Titan cookie delivery to the browser');
     contextLifetimeMs = 15 * 60_000;
     controlCapabilitiesAvailable = false;
-    const readOnlyContext = await browser.newContext();
-    await readOnlyContext.addCookies([{ name: 'titan_test_session', value: 'browser-fixture-only', url: origin, sameSite: 'Strict' }]);
+    const readOnlyContext = await browser.newContext({ ignoreHTTPSErrors: true });
+    await addDirectAdminCookies(readOnlyContext);
     const readOnlyPage = await readOnlyContext.newPage();
     readOnlyPage.on('pageerror', error => errors.push(error.message));
     await readOnlyPage.goto(origin);
@@ -627,6 +776,23 @@ test('packaged cockpit handles owner loss, governed cancel, context expiry and r
     assert.equal(await readOnlyPage.getByRole('button', { name: 'Submit governed request' }).count(), 0);
     assert.equal(requests.filter(item => item.method === 'POST' && item.path === '/v1/directadmin/titan_workforce/intents').length, intentCountBeforeReadOnlyView);
     await readOnlyContext.close();
+    for (const item of nonceRequests) {
+      assert.equal(item.search, '?headers_to_env=yes&pipe_post=yes', 'nonce uses the exact RAW query');
+      assert.equal(item.method, 'POST');
+      assert.equal(item.contentType, null, 'nonce request has no Content-Type');
+      assert.equal(item.bodyLength, 0, 'nonce request body is empty');
+      assert.equal(item.origin, origin);
+      assert.equal(item.secFetchSite, 'same-origin');
+    }
+    for (const item of bootstrapRequests) {
+      assert.equal(item.search, '?headers_to_env=yes&pipe_post=yes', 'bootstrap uses the exact RAW query');
+      assert.equal(item.method, 'POST');
+      assert.equal(item.contentType, null, 'bootstrap request has no Content-Type');
+      assert.equal(item.bodyLength, 0, 'bootstrap request body is empty');
+      assert.equal(item.origin, origin);
+      assert.equal(item.secFetchSite, 'same-origin');
+      assert.match(item.nonceHeader, /^[A-Za-z0-9_-]{43,128}$/);
+    }
     for (const item of requests.filter(item => item.path.startsWith('/v1/directadmin/'))) {
       assert.equal(item.headers['x-titan-csrf'], csrf, 'shared SDK supplies its bootstrapped nonce');
       assert.equal(item.headers.cookie?.includes(cookie), true, 'same-origin requests retain the host cookie');

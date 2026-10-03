@@ -23,20 +23,30 @@ projection owner and optional `/v1/directadmin/*` Fetch-handler mount. A host wi
 no current manager grant publishes `controls: []` and stays read-only; the owner can
 publish only its typed `titan.workforce.reassign` control after resolving current
 company manager authority. All other lifecycle proposals remain unsupported. The API
-is not live-certified. Missing commissioned
-session/CSRF bootstrap, denied identity, invalid company data or unavailable host fail closed.
-The current implementation is **not certified complete or ready for production**.
-Authenticated host HTML must supply `<meta name="titan-directadmin-csrf" content="…">`
-with the separately bound nonce; the plugin never creates this nonce or an identity
-from DirectAdmin environment/role. The credential remains an HttpOnly cookie.
-A fixture-based passing test does not prove a commissioned host or identity bridge.
+is not live-certified. Missing commissioned session/bootstrap routes, denied
+identity, invalid company data or unavailable host fail closed. The current
+implementation is **not certified complete or ready for production**. The browser
+uses the #1300 role-local `bootstrap-nonce.raw` and `bootstrap.raw` contract; it
+never creates the nonce or an identity from DirectAdmin environment/role, and it
+never reads or forwards DirectAdmin cookies. The shared SDK retains the resulting
+credential only in its HttpOnly cookie. A fixture-based passing test does not
+prove a commissioned host or identity bridge.
 DirectAdmin role executables emit the HTML document only. They do not consume CGI
 POST stdin, PHP superglobals, query parameters, or host environment variables as
 identity/CSRF inputs. The browser SDK makes same-origin API requests; the direct
 DirectAdmin POST/environment bridge is not assumed to work. Installed Dev Access
 1.1.3 has a reported CSRF failure and #1048 is repairing and verifying that bridge.
-Until the host request owner proves it, session bootstrap and governed POSTs remain
-uncommissioned and the cockpit stays unavailable/denied.
+The #1300 host adapter draft #1395 (head `701d7e4f`) owns the role RAW
+entrypoints and package/install allowlist. Its cookie-jar regression now covers
+two nonce/bootstrap cycles: the nonce handler accepts one well-formed Titan
+HttpOnly cookie, strips it before private forwarding, and bootstrap retains it
+for renewal. The #1395 draft remains blocked on SQLite-backed native reruns
+because `better_sqlite3.node` is unavailable. A read-only security review found
+no boundary issue in that source; its simulated cookie jar does not prove
+browser enforcement or live DirectAdmin/Apache cookie isolation.
+This consumer candidate calls that route contract but does not package the RAW
+handlers yet. Keep it blocked on #1395 publication and package integration; do
+not claim host reload integration from fixture tests.
 DirectAdmin documents role entrypoints as executable scripts receiving request data
 through process environment; `pipe_post=yes` sets `POST=stdin=true` and delivers the
 POST body on stdin. The Workforce test now launches the packaged role executable as

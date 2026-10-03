@@ -11,6 +11,7 @@ let selectedAgent = null;
 let selectedTeam = null;
 let selectedControl = null;
 let workFilter = 'all';
+let reconnect = async () => {};
 const REASSIGN_CAPABILITY = 'titan.workforce.reassign';
 const node = (tag, text, attrs = {}) => {
   const element = document.createElement(tag);
@@ -62,7 +63,7 @@ function render(state) {
   if (state.receipt) selectedControl = null;
   const header = node('header'); const identity = node('div');
   identity.append(node('span', 'Cleaning operations · Workforce Manager', { class: 'eyebrow' }), node('h1', 'Titan Workforce'));
-  header.append(identity, button('Reconnect / refresh', () => controller.connect(), state.phase === 'submitting'));
+  header.append(identity, button('Reconnect / refresh', () => { void reconnect(); }, state.phase === 'submitting'));
   root.append(header);
   const live = node('p', state.phase === 'ready' ? (state.error ?? 'Current hosted projection') : state.phase === 'submitting' ? 'Submitting governed request…' : state.phase === 'loading' ? 'Loading current company context…' : state.error, { role: 'status', 'aria-live': 'polite' });
   root.append(live);
@@ -263,7 +264,8 @@ function renderControls(view, state, workers, work, selectedControl) {
 }
 
 // #1049 owns the real session, CSRF/origin protection, expiry and cross-plugin invalidation.
-// Commissioned authenticated HTML supplies this nonce; a DA role/environment never supplies identity.
+// #1300 owns the role-local RAW handlers. This browser adapter obtains only their
+// opaque one-time nonce; it never reads or forwards DirectAdmin cookies.
 async function start() {
   let relayFetch;
   try {
@@ -280,17 +282,155 @@ async function start() {
     );
     return;
   }
-  // #1049 owns session, CSRF, expiry and cross-plugin invalidation. Authenticated
-  // host HTML supplies the nonce; the Workforce role/CGI process never does.
+  const rolePath = ({ admin: '/CMD_PLUGINS_ADMIN', reseller: '/CMD_PLUGINS_RESELLER', user: '/CMD_PLUGINS' })[role];
+  if (!rolePath) {
+    root.replaceChildren(node('h1', 'Titan Workforce'), node('p', 'DirectAdmin role is unavailable. Reconnect through an authorized Workforce entrypoint.', { role: 'status', 'aria-live': 'polite' }));
+    return;
+  }
+  const transport = '?headers_to_env=yes&pipe_post=yes';
+  const nonceUrl = `${rolePath}/titan_workforce/bootstrap-nonce.raw${transport}`;
+  const bootstrapUrl = `${rolePath}/titan_workforce/bootstrap.raw${transport}`;
+  const validNonce = value => typeof value === 'string' && /^[A-Za-z0-9_-]{43,128}$/.test(value);
+  let pendingNonce = null;
+  let nonceForBootstrap = null;
+  let needsBootstrapNonce = true;
+  let invalidationGeneration = 0;
+  let nonceRequest = null;
+  const requestBootstrapNonce = async () => {
+    if (nonceRequest) return nonceRequest;
+    const requestGeneration = invalidationGeneration;
+    const operation = (async () => {
+      const response = await window.fetch(nonceUrl, {
+        method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error',
+        referrerPolicy: 'same-origin', signal: AbortSignal.timeout(10_000),
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) throw new Error('directadmin-bootstrap-nonce-unavailable');
+      let value;
+      try { value = await response.json(); } catch { throw new Error('directadmin-bootstrap-nonce-invalid'); }
+      if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).length !== 1 ||
+          !Object.hasOwn(value, 'csrf_nonce') || !validNonce(value.csrf_nonce)) {
+        throw new Error('directadmin-bootstrap-nonce-invalid');
+      }
+      if (requestGeneration !== invalidationGeneration) throw new Error('directadmin-bootstrap-context-changed');
+      pendingNonce = value.csrf_nonce;
+      needsBootstrapNonce = false;
+      return value.csrf_nonce;
+    })();
+    nonceRequest = operation;
+    try { return await operation; }
+    finally { if (nonceRequest === operation) nonceRequest = null; }
+  };
+  const takeBootstrapNonce = () => {
+    const value = pendingNonce;
+    pendingNonce = null;
+    nonceForBootstrap = value;
+    if (validNonce(value)) needsBootstrapNonce = false;
+    return validNonce(value) ? value : '';
+  };
+  const workforceFetch = async (input, init = {}) => {
+    let requestUrl;
+    try {
+      const raw = typeof input === 'string' ? input : input instanceof URL ? input.href : input?.url;
+      requestUrl = new URL(raw, window.location.href);
+    } catch { throw new Error('directadmin-route-invalid'); }
+    if (requestUrl.origin !== window.location.origin || requestUrl.username || requestUrl.password) {
+      throw new Error('directadmin-route-invalid');
+    }
+    if (requestUrl.pathname === '/v1/directadmin/bootstrap') {
+      const method = String(init.method ?? 'GET').toUpperCase();
+      const requestGeneration = invalidationGeneration;
+      const nonce = nonceForBootstrap;
+      nonceForBootstrap = null;
+      if (requestUrl.search || requestUrl.hash || method !== 'POST' || init.body !== '' || !validNonce(nonce)) {
+        needsBootstrapNonce = true;
+        throw new Error('directadmin-bootstrap-request-invalid');
+      }
+      let response;
+      try {
+        // Omit body entirely: even body:"" can cause browsers to add a
+        // Content-Type header, which the trusted RAW endpoint rejects.
+        response = await window.fetch(bootstrapUrl, {
+          method: 'POST', credentials: 'same-origin', cache: 'no-store', redirect: 'error',
+          referrerPolicy: 'same-origin', signal: init.signal,
+          headers: { Accept: 'application/json', 'X-Titan-DA-Bootstrap-CSRF': nonce },
+        });
+      } catch {
+        if (requestGeneration === invalidationGeneration) needsBootstrapNonce = true;
+        throw new Error('directadmin-bootstrap-unavailable');
+      }
+      if (!response.ok) {
+        if (requestGeneration === invalidationGeneration) needsBootstrapNonce = true;
+        return response;
+      }
+      let result;
+      try { result = await response.clone().json(); } catch {
+        if (requestGeneration === invalidationGeneration) needsBootstrapNonce = true;
+        return response;
+      }
+      if (!result || typeof result !== 'object' || Array.isArray(result) || Object.keys(result).length !== 1 ||
+          !Object.hasOwn(result, 'csrf_token') || !validNonce(result.csrf_token)) {
+        if (requestGeneration === invalidationGeneration) needsBootstrapNonce = true;
+      } else if (requestGeneration === invalidationGeneration) needsBootstrapNonce = false;
+      return response;
+    }
+    const requestGeneration = invalidationGeneration;
+    const response = await relayFetch(input, init);
+    if (requestGeneration === invalidationGeneration && requestUrl.pathname.startsWith('/v1/directadmin/') && [401, 409].includes(response.status)) {
+      // The shared SDK consumes its synchronous nonce callback after it sees
+      // a cleared session. Fetch the fresh nonce before returning the denial;
+      // this also prepares the operator's next explicit reconnect after an
+      // expired mutation or projection request.
+      needsBootstrapNonce = true;
+      try { await requestBootstrapNonce(); } catch { /* SDK and controller render a sanitized unavailable state. */ }
+    }
+    return response;
+  };
+  // #1049 owns session, CSRF, expiry and cross-plugin invalidation. The nonce
+  // callback stays synchronous because that is the shared SDK's contract; this
+  // adapter refreshes it before connect or before returning an expired context.
   const session = new SDK.DirectAdminCockpitSession(
-    () => document.querySelector('meta[name="titan-directadmin-csrf"]')?.getAttribute('content') ?? '',
-    relayFetch,
+    takeBootstrapNonce,
+    workforceFetch,
   );
   controller = new WorkforceController(new WorkforceApi(session), render);
-  session.subscribe(() => controller.invalidate());
+  session.subscribe(() => {
+    // The SDK also invalidates on its local expires_at timer, without an HTTP
+    // response to prepare a new nonce. Keep any one already prefetched for a
+    // 401/409; otherwise the next explicit reconnect obtains a fresh one.
+    invalidationGeneration++;
+    needsBootstrapNonce = true;
+    // Let a reconnect after invalidation issue its own nonce instead of
+    // joining a pre-invalidation request that can no longer be consumed.
+    nonceRequest = null;
+    controller.invalidate();
+  });
   window.addEventListener('pagehide', () => session.invalidate());
-  window.addEventListener('pageshow', event => { if (event.persisted) void controller.connect(); });
-  window.addEventListener('titan-context-changed', () => { session.invalidate(); void controller.connect(); });
-  void controller.connect();
+  reconnect = async () => {
+    const requestGeneration = invalidationGeneration;
+    const mustBootstrap = needsBootstrapNonce;
+    if (mustBootstrap && !pendingNonce) {
+      try { await requestBootstrapNonce(); }
+      catch { /* A failed or stale prefetch does not replace any newer nonce. */ }
+      // A logout, company change, pagehide, or expiry can invalidate this
+      // reconnect while the RAW nonce request is pending. Do not fall through
+      // to the SDK's retained CSRF token after that newer invalidation.
+      if (requestGeneration !== invalidationGeneration) return;
+    }
+    const unusedNonce = pendingNonce;
+    // A shared BroadcastChannel invalidation preserves the SDK's CSRF token,
+    // which is useful for a company switch but stale after another tab logs
+    // out. When this flow has a RAW nonce ready, clear the local SDK token so
+    // connect() consumes that nonce and re-establishes the session.
+    if (mustBootstrap && pendingNonce) session.invalidate(false, false);
+    await controller.connect();
+    // A valid existing SDK session can reconnect without consuming the nonce
+    // prefetched after an external invalidation. It is single-use server state;
+    // discard that local copy rather than reuse it later.
+    if (requestGeneration === invalidationGeneration && unusedNonce && pendingNonce === unusedNonce) pendingNonce = null;
+  };
+  window.addEventListener('pageshow', event => { if (event.persisted) void reconnect(); });
+  window.addEventListener('titan-context-changed', () => { session.invalidate(); void reconnect(); });
+  void reconnect();
 }
 void start();
