@@ -145,7 +145,7 @@ function runPackagedRoleRaw(action, role, request, url, body) {
   copy('content-length', 'Content-Length');
   copy('x-titan-da-bootstrap-csrf', 'X-Titan-DA-Bootstrap-CSRF');
   // Keep the packaged RAW child isolated from ambient CI/developer credentials.
-  const env = { NODE_ENV: 'test', REQUEST_METHOD: request.method,
+  const env = { NODE_ENV: 'test', TMPDIR: tmpdir(), REQUEST_METHOD: request.method,
     QUERY_STRING: url.search.slice(1), HEADERS: encodeURIComponent(lines.join('\r\n')) };
   if (request.method === 'POST') {
     env.POST = 'stdin=true';
@@ -218,12 +218,24 @@ try {
           origin: request.headers.origin ?? null, secFetchSite: request.headers['sec-fetch-site'] ?? null,
           cookie: request.headers.cookie ?? null, nonce: request.headers['x-titan-da-bootstrap-csrf'] ?? null };
         panelObservations.push(observed);
-        if (request.method !== 'POST' || url.search !== '?headers_to_env=yes&pipe_post=yes' ||
-            !url.pathname.startsWith(prefix) || observed.contentType !== null || body.byteLength !== 0 || request.headers.origin !== panelOrigin ||
-            request.headers['sec-fetch-site'] !== 'same-origin' ||
-            !request.headers.cookie?.includes('session=fixture-da-session') || !request.headers.cookie?.includes('key=fixture-da-key') ||
-            request.headers.authorization || request.headers['x-titan-csrf'] || (isNonce && observed.nonce) ||
-            (!isNonce && !/^[A-Za-z0-9_-]{43,128}$/.test(observed.nonce ?? ''))) {
+        const rejectedFields = [
+          request.method !== 'POST' && 'method',
+          url.search !== '?headers_to_env=yes&pipe_post=yes' && 'query',
+          !url.pathname.startsWith(prefix) && 'role-path',
+          observed.contentType !== null && 'content-type',
+          body.byteLength !== 0 && 'body',
+          request.headers.origin !== panelOrigin && 'origin',
+          request.headers['sec-fetch-site'] !== 'same-origin' && 'fetch-site',
+          !request.headers.cookie?.includes('session=fixture-da-session') && 'session-cookie',
+          !request.headers.cookie?.includes('key=fixture-da-key') && 'key-cookie',
+          Boolean(request.headers.authorization) && 'authorization',
+          Boolean(request.headers['x-titan-csrf']) && 'csrf-header',
+          isNonce && Boolean(observed.nonce) && 'nonce-on-nonce-route',
+          !isNonce && !/^[A-Za-z0-9_-]{43,128}$/.test(observed.nonce ?? '') && 'invalid-bootstrap-nonce',
+        ].filter(Boolean);
+        if (rejectedFields.length) {
+          observed.status = 400;
+          observed.rejectedFields = rejectedFields;
           response.writeHead(400, { 'content-type': 'application/json', 'cache-control': 'no-store' });
           response.end('{"error":"fixture-bootstrap-raw-rejected","read_only":true}'); return;
         }
@@ -642,8 +654,13 @@ try {
       { name: '__Host-titan-da-session', value: switchedCookie.value, url: panelOrigin, secure: true, httpOnly: true, sameSite: 'Strict' },
     ]);
     reloadPage = await reloadContext.newPage();
+    reloadPage.on('pageerror', error => pageErrors.push(safeError(error)));
     await reloadPage.goto(panelOrigin);
-    await reloadPage.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
+    try {
+      await reloadPage.getByText('Hosted Workforce is unavailable. Reconnect to retrieve current state.', { exact: true }).waitFor();
+    } catch {
+      throw new Error(`ambiguous reload did not render unavailable state; view=${JSON.stringify(await reloadPage.locator('#titan-workforce').innerText().catch(() => 'unavailable'))}; raw=${JSON.stringify(panelObservations.slice(-4).map(({ method, pathname, status, rejectedFields }) => ({ method, pathname, status, rejectedFields })))}; identityFetches=${JSON.stringify(bootstrapIdentityObservations.slice(-2).map(({ url, method, cookie, authorization, redirect, cache, credentials }) => ({ url, method, cookieNames: cookie?.split(';').map(part => part.trim().split('=', 1)[0]) ?? [], authorization, redirect, cache, credentials })))}; errors=${JSON.stringify(pageErrors)}`);
+    }
     assert.equal(await reloadPage.getByRole('navigation').count(), 0, 'ambiguous company context renders no stale view');
     assert.equal((await titanBrowserCookie(reloadContext, panelOrigin))?.value, switchedCookie.value,
       'a failed ambiguous nonce request does not replace or clear the still-canonical company B session');

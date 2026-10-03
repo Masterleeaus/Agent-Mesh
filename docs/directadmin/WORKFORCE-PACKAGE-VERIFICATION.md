@@ -555,6 +555,9 @@ is denied by the actual #811 owner, and the test verifies no business/event
 writes. The production relay default remains an explicit `503
 cookie_boundary_unverified`; the test-only relay configuration is injected
 in-process and does not certify Apache/CGI cookie isolation.
+The extracted RAW child receives only its CGI inputs, `NODE_ENV`, the matching
+`TMPDIR`, and the private test port-file path; it does not inherit ambient
+developer or CI environment variables.
 
 Focused verification on Node v22.23.3 and Chromium:
 
