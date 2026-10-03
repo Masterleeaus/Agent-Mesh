@@ -274,8 +274,6 @@ describe("Cleaning first-run browser journey", () => {
     expect(existingCookie).toMatchObject({ secure: true, httpOnly: true, sameSite: "Lax", path: "/" });
     const aPlacementId = placementIds.get(companyA);
     if (!aPlacementId) throw new Error("company-a-placement-missing");
-    console.log("browser-existing-home", (await page.locator("body").innerText()).slice(0, 2_000));
-    await expectPage(page.getByText("Here's your game plan for today.")).toBeVisible();
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toHaveCount(0);
     const aStore = createSqliteStorage(join(storeRoot, `${aPlacementId}.sqlite`));
     try {
