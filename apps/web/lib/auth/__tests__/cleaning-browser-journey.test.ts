@@ -9,7 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { randomBytes } from "node:crypto";
 import Database from "better-sqlite3";
 import { hash } from "bcryptjs";
-import { chromium, expect as expectPage, type Browser } from "@playwright/test";
+import { chromium, expect as expectPage, request as playwrightRequest, type Browser } from "@playwright/test";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   createIdentitySessionRegistry,
@@ -396,6 +396,9 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     expect((await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(409);
+    if (await page.getByLabel("Company").count() === 0) {
+      throw new Error(`Company switcher is absent from authenticated app: ${await page.locator("body").innerText()}\n${serverOutput}`);
+    }
     const bStoreAfterA = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
     try {
       const settings = JSON.parse((await bStoreAfterA.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyB])).rows[0]!.settings);
@@ -405,14 +408,23 @@ describe("Cleaning first-run browser journey", () => {
       ] } });
     } finally { await bStoreAfterA.close(); }
 
-    // A second Cleaning company configures a different service/rate/cadence;
-    // switching back must still show company B's original setup.
-    await page.goto(`${baseUrl}/login`);
-    await page.getByLabel("Email").fill(userC.email);
-    await page.getByLabel("Password").fill(userC.password);
-    await page.getByRole("button", { name: "Sign In" }).click();
-    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    // Switch the same authenticated actor through the real canonical selector.
+    const beforeFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
+    expect(beforeFirstSwitch).toBeTruthy();
+    await page.getByLabel("Company").selectOption(companyC);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
+    const afterFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
+    expect(afterFirstSwitch).toBeTruthy();
+    expect(afterFirstSwitch!.expires).toBeLessThanOrEqual(beforeFirstSwitch!.expires + 1);
+    const staleSession = await playwrightRequest.newContext({
+      ignoreHTTPSErrors: true,
+      extraHTTPHeaders: { cookie: `__Host-titan-web-session=${beforeFirstSwitch!.value}` },
+    });
+    try { expect((await staleSession.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(401); }
+    finally { await staleSession.dispose(); }
+
+    // Company C chooses distinct service/rate/cadence from company B.
     await expectPage(page.getByLabel("Deep clean", { exact: false }).first()).toBeVisible({ timeout: 20_000 });
     await page.getByLabel("Deep clean", { exact: false }).first().check();
     await page.getByLabel("Deep clean fixed price").fill("275.00");
@@ -437,16 +449,23 @@ describe("Cleaning first-run browser journey", () => {
         } } });
     } finally { await cStore.close(); }
 
-    await context.clearCookies();
-    await page.goto(`${baseUrl}/login`);
-    await page.getByLabel("Email").fill(userB.email);
-    await page.getByLabel("Password").fill(userB.password);
-    await page.getByRole("button", { name: "Sign In" }).click();
-    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
+    const beforeSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
+    expect(beforeSecondSwitch).toBeTruthy();
+    await page.getByLabel("Company").selectOption(companyB);
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByLabel("Company")).toHaveValue(companyB);
+    const afterSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
+    expect(afterSecondSwitch).toBeTruthy();
+    expect(afterSecondSwitch!.expires).toBeLessThanOrEqual(beforeSecondSwitch!.expires + 1);
     await expectPage(page.getByLabel("Regular clean hourly rate")).toHaveValue("42.5");
     await expectPage(page.getByLabel("Default frequency")).toHaveValue("weekly");
     expect(await page.getByLabel("Deep clean", { exact: false }).first().isChecked()).toBe(false);
+
+    await page.getByLabel("Company").selectOption(companyC);
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
+    await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
+    await expectPage(page.getByLabel("Deep clean fixed price")).toHaveValue("275");
+    await expectPage(page.getByLabel("Default frequency")).toHaveValue("monthly");
     await context.close();
   }, 180_000);
 });
