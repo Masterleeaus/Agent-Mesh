@@ -4,6 +4,7 @@ import { withAuth } from "@/lib/auth/middleware";
 import type { AuthSession } from "@/lib/auth/middleware";
 import { withTenantTransaction } from "@/lib/db/portable";
 import { appendAuditLog } from "@/lib/db/audit";
+import { lockOwnerMembershipChanges } from "@/lib/db/owner-membership-lock";
 import { logger } from "@/lib/logger";
 import { getPathId } from "@/lib/route-utils";
 
@@ -92,6 +93,21 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
 
   try {
     return await withTenantTransaction(session, async (client, accountId) => {
+      if (role !== undefined) {
+        await lockOwnerMembershipChanges(client, accountId);
+        const actorMembership = await client.query<{ role: string }>(
+          `SELECT role FROM business_memberships
+            WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+          [accountId, session.userId],
+        );
+        if (actorMembership.rows[0]?.role !== "owner") {
+          return NextResponse.json(
+            { error: { code: "FORBIDDEN", message: "Only current company owners can change roles", traceId: session.traceId } },
+            { status: 403 },
+          );
+        }
+      }
+
       const before = await client.query(
         `SELECT u.id, u.full_name, u.email, u.phone, bm.role
            FROM users u
@@ -104,7 +120,8 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
         return NextResponse.json({ error: { code: "NOT_FOUND", message: "User not found", traceId: session.traceId } }, { status: 404 });
       }
 
-      if (role !== undefined && role !== "owner" && isSelf) {
+      const previousRole = (before.rows[0] as { role: string }).role;
+      if (role !== undefined && previousRole === "owner" && role !== "owner") {
         const { rows: ownerRows } = await client.query<{ cnt: number }>(
           `SELECT COUNT(*)::int AS cnt FROM business_memberships
             WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
@@ -125,6 +142,12 @@ export const PATCH = withAuth(async (request: NextRequest, session: AuthSession)
       if (full_name !== undefined) { setClauses.push(`full_name = $${idx++}`); params.push(full_name); }
       if (email !== undefined) { setClauses.push(`email = $${idx++}`); params.push(email.toLowerCase().trim()); }
       if (phone !== undefined) { setClauses.push(`phone = $${idx++}`); params.push(phone || null); }
+      if (role !== undefined) {
+        // Legacy projection for users.account_id only. Sessions use the
+        // selected-company membership as their authority.
+        setClauses.push(`role = $${idx++}`);
+        params.push(role);
+      }
       params.push(id);
 
       const { rows } = await client.query(
@@ -183,6 +206,19 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
 
   try {
     return await withTenantTransaction(session, async (client, accountId) => {
+      await lockOwnerMembershipChanges(client, accountId);
+      const actorMembership = await client.query<{ role: string }>(
+        `SELECT role FROM business_memberships
+          WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+        [accountId, session.userId],
+      );
+      if (actorMembership.rows[0]?.role !== "owner") {
+        return NextResponse.json(
+          { error: { code: "FORBIDDEN", message: "Only current company owners can remove team members", traceId: session.traceId } },
+          { status: 403 },
+        );
+      }
+
       const before = await client.query(
         `SELECT u.id, u.full_name, u.email, bm.role, bm.status, bm.id AS membership_id
            FROM users u
@@ -214,6 +250,14 @@ export const DELETE = withAuth(async (request: NextRequest, session: AuthSession
         `UPDATE business_memberships SET status = 'revoked', updated_at = now()
           WHERE account_id = $1 AND user_id = $2 AND status <> 'revoked'`,
         [accountId, id],
+      );
+      // Keep account_id-scoped legacy consumers from seeing a removed owner.
+      // This is constrained to the user's primary account; other memberships
+      // and their role authority are untouched.
+      await client.query(
+        `UPDATE users SET role = 'tech', updated_at = now()
+          WHERE id = $1 AND account_id = $2`,
+        [id, accountId],
       );
 
       await appendAuditLog(client, {

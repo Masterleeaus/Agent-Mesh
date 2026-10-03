@@ -11,6 +11,7 @@ import { withTenantTransaction } from "../db/portable";
 import { loadAvailabilityForAccount } from "../workforce/availability";
 import { loadTechnicianSkills } from "../workforce/skills";
 import { loadFieldJobTemplates } from "../work-orders/field-job-templates";
+import { lockOwnerMembershipChanges } from "../db/owner-membership-lock";
 
 const enabled = !!process.env.TEST_DATABASE_URL && !!process.env.TEST_RUNTIME_DATABASE_URL;
 if (process.env.CI && !enabled) {
@@ -612,5 +613,66 @@ describe.skipIf(!enabled)("real restricted runtime database isolation", () => {
       [accountA, unassignedUserA],
     );
     expect(afterUserDelete.rows[0]).toEqual({ memberships: "0", skills: "0", availability: "0" });
+  });
+
+  it("serializes competing owner downgrades so at least one owner remains", async () => {
+    await admin.query(
+      `UPDATE business_memberships SET role = 'owner' WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+      [accountA, userATech],
+    );
+    const secondOwnerSession = { ...session, userId: userATech };
+    let releaseFirst!: () => void;
+    let signalFirstLocked!: () => void;
+    let signalSecondRequested!: () => void;
+    const firstLocked = new Promise<void>((resolve) => { signalFirstLocked = resolve; });
+    const secondRequested = new Promise<void>((resolve) => { signalSecondRequested = resolve; });
+    const holdFirst = new Promise<void>((resolve) => { releaseFirst = resolve; });
+
+    const first = withTenantTransaction(session, async (client) => {
+      await lockOwnerMembershipChanges(client, accountA);
+      signalFirstLocked();
+      await holdFirst;
+      const { rows } = await client.query<{ cnt: number }>(
+        `SELECT COUNT(*)::int AS cnt FROM business_memberships
+          WHERE account_id = $1 AND status = 'active' AND role = 'owner'`, [accountA],
+      );
+      expect(rows[0]?.cnt).toBe(2);
+      await client.query(
+        `UPDATE business_memberships SET role = 'tech'
+          WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+        [accountA, userA],
+      );
+    });
+
+    await firstLocked;
+    let remainingOwners = 0;
+    const second = withTenantTransaction(secondOwnerSession, async (client) => {
+      const lockRequest = lockOwnerMembershipChanges(client, accountA);
+      signalSecondRequested();
+      await lockRequest;
+      const { rows } = await client.query<{ cnt: number }>(
+        `SELECT COUNT(*)::int AS cnt FROM business_memberships
+          WHERE account_id = $1 AND status = 'active' AND role = 'owner'`, [accountA],
+      );
+      remainingOwners = rows[0]?.cnt ?? 0;
+      if (remainingOwners <= 1) return "blocked";
+      await client.query(
+        `UPDATE business_memberships SET role = 'tech'
+          WHERE account_id = $1 AND user_id = $2 AND status = 'active'`,
+        [accountA, userATech],
+      );
+      return "downgraded";
+    });
+    await secondRequested;
+    releaseFirst();
+    const [, secondResult] = await Promise.all([first, second]);
+    expect(secondResult).toBe("blocked");
+    expect(remainingOwners).toBe(1);
+    await withTenantTransaction(session, async (client) => {
+      expect((await client.query(
+        `SELECT user_id FROM business_memberships WHERE account_id = $1 AND status = 'active' AND role = 'owner'`,
+        [accountA],
+      )).rows).toEqual([{ user_id: userATech }]);
+    });
   });
 });
