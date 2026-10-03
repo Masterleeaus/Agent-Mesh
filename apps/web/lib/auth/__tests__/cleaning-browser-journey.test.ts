@@ -265,15 +265,15 @@ describe("Cleaning first-run browser journey", () => {
     const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
     // Existing non-Cleaning profile stays selected through the real password route.
-    const existingLogin = await context.request.post(`${baseUrl}/api/v1/auth/login`, {
-      data: { email: userA.email, password: userA.password },
-    });
-    expect(existingLogin.status(), JSON.stringify(await existingLogin.json())).toBe(200);
+    await page.goto(`${baseUrl}/login`);
+    await page.getByLabel("Email").fill(userA.email);
+    await page.getByLabel("Password").fill(userA.password);
+    await page.getByRole("button", { name: "Sign In" }).click();
+    await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     const existingCookie = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(existingCookie).toMatchObject({ secure: true, httpOnly: true, sameSite: "Lax", path: "/" });
     const aPlacementId = placementIds.get(companyA);
     if (!aPlacementId) throw new Error("company-a-placement-missing");
-    await page.goto(`${baseUrl}/app`);
     await expectPage(page.getByText("Here's your game plan for today.")).toBeVisible();
     await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toHaveCount(0);
     const aStore = createSqliteStorage(join(storeRoot, `${aPlacementId}.sqlite`));
