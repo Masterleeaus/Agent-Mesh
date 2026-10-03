@@ -42,12 +42,10 @@ function ConfiguredNavbar({ context }) {
   const mobileToggleRef = useRef(null)
   const nav = getSiteNavigation(context)
   const brand = context.kind === 'industry' ? 'Titan Zero Cleaning' : 'Titan Zero'
-  const accountActions = context.kind === 'hub'
-    ? [
-        { label: 'Sign in', href: appRoutes.login, external: true, action: true },
-        { label: 'Sign up', href: appRoutes.signup, external: true, action: true },
-      ]
-    : [{ label: 'Sign in', href: appRoutes.login, external: true, action: true }]
+  const accountActions = [
+    { label: 'Sign in', href: appRoutes.login, external: true, action: true },
+    { label: 'Sign up', href: appRoutes.signup, external: true, action: true },
+  ]
 
   useEffect(() => {
     if (!mobileOpen) return undefined
@@ -79,7 +77,7 @@ function ConfiguredNavbar({ context }) {
       <div className="mt-3 border-t border-nx-border pt-3">
         {accountActions.map((item) => <SiteLink key={item.label} item={item} closeMenu={() => setMobileOpen(false)} />)}
       </div>
-      {context.kind !== 'hub' && <a href="https://titanzero.io/" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-nx-muted">Titan Zero platform</a>}
+      {context.kind !== 'hub' && <Link to="/titan-zero" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm text-nx-muted">What is Titan Zero?</Link>}
     </div>}
   </nav>
 }
