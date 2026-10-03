@@ -5,7 +5,7 @@ import { isAbsolute, join, resolve } from "node:path";
 import { createSqliteCompanyFilePlacementRegistry, createSqliteCompanyPlacementRegistry, createSqliteCompanyPlacementRegistryWriter, type GlobalRegistryStorageInput } from "./company-placement-registry.js";
 import { createSqliteCompanyStoreOpener } from "./company-store-opener.js";
 import { verifyCompanyNativeSchemaAttestation } from "./company-native-schema-attestation.js";
-import { companyNativeWorkOrdersManifest } from "./company-native-schema-manifest.js";
+import { getCompanyNativeSchemaManifest } from "./company-native-schema-manifest.js";
 import { CompanyStorageResolutionError, type CompanyDatabasePlacementDescriptor } from "./company-storage-resolver.js";
 import { openExistingSqliteStorage } from "./sqlite-client.js";
 import { createCompanyPlacementOperationGate } from "./company-placement-operation-gate.js";
@@ -36,6 +36,12 @@ export interface CompanyPlacementBackupOptions extends GlobalRegistryStorageInpu
 
 function fail(code: string): never {
   throw new Error(`company-placement-backup-${code}`);
+}
+
+function nativeManifest(schemaVersion: string) {
+  const manifest = getCompanyNativeSchemaManifest(schemaVersion);
+  if (!manifest) fail("schema-version-unsupported");
+  return manifest;
 }
 
 function sha256(bytes: Uint8Array): string {
@@ -165,6 +171,7 @@ export async function createCompanyPlacementBackup(input: CompanyPlacementBackup
     company_id: database.company_id, placement_id: database.placement_id,
     placement_revision: database.placement_revision, provider: "sqlite", schema_version: database.schema_version,
   });
+  const schemaManifest = nativeManifest(placement.schema_version);
   const companyPath = join(dbRoot, `${placement.placement_id}.sqlite`);
   const filePath = join(fileRoot, files.file_placement_id);
   const id = randomUUID();
@@ -196,7 +203,7 @@ export async function createCompanyPlacementBackup(input: CompanyPlacementBackup
     const main = (await companyStorage.query<{ name: string; file: string }>("PRAGMA database_list")).rows
       .filter(row => row.name === "main");
     if (main.length !== 1 || await realpath(main[0].file) !== companyPath) fail("database-placement-invalid");
-    await verifyCompanyNativeSchemaAttestation({ storage: companyStorage, placement, manifest: companyNativeWorkOrdersManifest });
+    await verifyCompanyNativeSchemaAttestation({ storage: companyStorage, placement, manifest: schemaManifest });
     const integrity = (await companyStorage.query<{ integrity_check: string }>("PRAGMA integrity_check")).rows;
     if (integrity.length !== 1 || integrity[0].integrity_check !== "ok") fail("database-unhealthy");
     const databaseSnapshotPath = join(temporary, "database.sqlite");
@@ -287,6 +294,7 @@ export async function restoreCompanyPlacementBackup(input: CompanyPlacementBacku
     company_id: database.company_id, placement_id: database.placement_id,
     placement_revision: database.placement_revision, provider: "sqlite", schema_version: database.schema_version,
   });
+  const schemaManifest = nativeManifest(placement.schema_version);
   if (bundle.manifest.placement_id !== placement.placement_id
     || bundle.manifest.placement_revision !== placement.placement_revision
     || bundle.manifest.schema_version !== placement.schema_version
@@ -328,7 +336,7 @@ export async function restoreCompanyPlacementBackup(input: CompanyPlacementBacku
     for (const [key, contents] of bundle.fileBytes) await writeExclusive(join(stagedFiles, key), contents);
     const stagedClient = openExistingSqliteStorage(stagedDatabase);
     try {
-      await verifyCompanyNativeSchemaAttestation({ storage: stagedClient, placement, manifest: companyNativeWorkOrdersManifest });
+      await verifyCompanyNativeSchemaAttestation({ storage: stagedClient, placement, manifest: schemaManifest });
       const integrity = (await stagedClient.query<{ integrity_check: string }>("PRAGMA integrity_check")).rows;
       const foreignKeys = (await stagedClient.query("PRAGMA foreign_key_check")).rows;
       if (integrity.length !== 1 || integrity[0].integrity_check !== "ok" || foreignKeys.length !== 0) fail("database-unhealthy");
@@ -362,7 +370,7 @@ export async function restoreCompanyPlacementBackup(input: CompanyPlacementBacku
 
     const restored = openExistingSqliteStorage(databasePath);
     try {
-      await verifyCompanyNativeSchemaAttestation({ storage: restored, placement, manifest: companyNativeWorkOrdersManifest });
+      await verifyCompanyNativeSchemaAttestation({ storage: restored, placement, manifest: schemaManifest });
       const integrity = (await restored.query<{ integrity_check: string }>("PRAGMA integrity_check")).rows;
       if (integrity.length !== 1 || integrity[0].integrity_check !== "ok") fail("database-unhealthy");
     } finally { await restored.close(); }
