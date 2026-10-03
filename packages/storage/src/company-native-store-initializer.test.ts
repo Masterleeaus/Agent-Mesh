@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { verifyCompanyNativeSchemaAttestation } from "./company-native-schema-attestation.js";
-import { companyNativeCleaningJobsManifest, companyNativeVisitChecklistManifest, companyNativeWorkOrdersManifest, companyNativeWorkOrdersVisitsManifest } from "./company-native-schema-manifest.js";
+import { companyNativeVisitChecklistManifest, companyNativeWorkOrdersManifest, companyNativeWorkOrdersVisitsManifest } from "./company-native-schema-manifest.js";
 import { initializeFreshCompanyNativeStore } from "./company-native-store-initializer.js";
 import { computeCompanyNativeSchemaManifestDigest, fingerprintCompanyNativeSchema } from "./company-native-schema-attestation.js";
 import { createSqliteStorage } from "./sqlite-client.js";
@@ -308,31 +308,5 @@ describe("fresh native-visit-checklist-v3 schema producer", () => {
       "SELECT name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY name",
     )).rows;
     expect(after).toEqual(before);
-  });
-});
-
-describe("fresh native-cleaning-jobs-v4 schema producer", () => {
-  it("pins the additive setup/pricing snapshot and leaves prior jobs unbackfilled", async () => {
-    for (const migration of companyNativeCleaningJobsManifest.migrations) {
-      const bytes = await readFile(new URL(`../../../${migration.path}`, import.meta.url));
-      expect(createHash("sha256").update(bytes).digest("hex")).toBe(migration.sha256);
-    }
-    const storage = memoryStore();
-    const v4Placement = { ...placement, schema_version: companyNativeCleaningJobsManifest.schema_version };
-    await initializeFreshCompanyNativeStore({ storage, placement: v4Placement, company_profile: companyProfile });
-    const columns = (await storage.query<{ name: string }>("PRAGMA table_info(jobs)")).rows.map(row => row.name);
-    expect(columns).toContain("service_id");
-    expect(columns).toContain("service_setup_revision");
-    expect(columns).toContain("service_pricing_snapshot");
-    expect(columns).toContain("service_recurrence_snapshot");
-    await storage.query("INSERT INTO clients(id,company_id,name) VALUES('c1',$1,'Client')", [companyId]);
-    await storage.query("INSERT INTO jobs(id,company_id,client_id,title,created_by) VALUES('j1',$1,'c1','Old job','actor')", [companyId]);
-    await expect(storage.query("UPDATE jobs SET service_pricing_snapshot='[]' WHERE id='j1'"))
-      .rejects.toThrow();
-    await expect(verifyCompanyNativeSchemaAttestation({
-      storage,
-      placement: v4Placement,
-      manifest: companyNativeCleaningJobsManifest,
-    })).resolves.toMatchObject({ schema_version: companyNativeCleaningJobsManifest.schema_version });
   });
 });

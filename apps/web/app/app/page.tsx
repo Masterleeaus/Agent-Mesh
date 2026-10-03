@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getWebSessionRuntime } from "@/lib/auth/web-session-runtime";
 import {
-  companyNativeCleaningJobsManifest,
   companyNativeVisitChecklistManifest,
   companyNativeWorkOrdersManifest,
   companyNativeWorkOrdersVisitsManifest,
@@ -52,7 +51,6 @@ export default async function AppPage() {
       companyNativeWorkOrdersManifest.schema_version,
       companyNativeWorkOrdersVisitsManifest.schema_version,
       companyNativeVisitChecklistManifest.schema_version,
-      companyNativeCleaningJobsManifest.schema_version,
     ],
     operation: (storage, verifiedSession) => readCurrentCompanyVerticalProfile({
       scope: verifiedSession.scope,

@@ -1,7 +1,7 @@
 /** GET /api/v1/visits/[id]/checklist — read the registered company's checklist. */
 import { NextRequest, NextResponse } from "next/server";
 import { CompanyStorageResolutionError } from "../../../../../../../../packages/storage/src/company-storage-resolver";
-import { companyNativeCleaningJobsManifest, companyNativeVisitChecklistManifest } from "../../../../../../../../packages/storage/src/company-native-schema-manifest";
+import { companyNativeVisitChecklistManifest } from "../../../../../../../../packages/storage/src/company-native-schema-manifest";
 import { isWebAuthSetupRequiredError } from "../../../../../../lib/auth/web-session-runtime";
 import { logger } from "../../../../../../lib/logger";
 import { withWebNativeCompanyStore } from "../../../../../../lib/company-storage/request-runtime";
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const result = await withWebNativeCompanyStore({
       request,
-      requiredSchemaVersion: [companyNativeVisitChecklistManifest.schema_version, companyNativeCleaningJobsManifest.schema_version],
+      requiredSchemaVersion: companyNativeVisitChecklistManifest.schema_version,
       operation: (client, session) => listNativeVisitChecklist(client, session, visitId),
     });
     if (!result.authenticated) {

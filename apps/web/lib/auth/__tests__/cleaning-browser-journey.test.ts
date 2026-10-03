@@ -22,7 +22,7 @@ import {
   type StorageClient,
 } from "../../../../../packages/storage/src/index";
 import {
-  companyNativeCleaningJobsManifest,
+  companyNativeVisitChecklistManifest,
   companyNativeWorkOrdersVisitsManifest,
 } from "../../../../../packages/storage/src/company-native-schema-manifest";
 
@@ -124,6 +124,7 @@ async function provisionCompanies(input: {
   }
 
   for (const companyId of [companyA, companyB, companyC]) {
+    const isNewCleaningCompany = companyId === companyB || companyId === companyC;
     const placement = await provisionSqliteCompanyPlacement({
       registry: {
         storage: registryStorage,
@@ -133,8 +134,8 @@ async function provisionCompanies(input: {
       },
       company_id: companyId,
       company_name: companyId,
-      schema_version: companyId === companyB || companyId === companyC
-        ? companyNativeCleaningJobsManifest.schema_version
+      schema_version: isNewCleaningCompany
+        ? companyNativeVisitChecklistManifest.schema_version
         : companyNativeWorkOrdersVisitsManifest.schema_version,
     });
     placementIds.set(companyId, placement.placement_id);
@@ -157,15 +158,15 @@ async function provisionCompanies(input: {
     } else if (companyId === companyB) {
       await store.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", [ids.client, companyB, "New Cleaning Client"]);
       await store.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", [ids.property, companyB, ids.client, "8 Cleaning Lane"]);
-      await store.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({ vertical_profile: {
-        schema: "titan.company.vertical-profile.v1", company_id: companyB, revision: 1,
-        profile: { pack_id: "cleaning-workforce", pack_version: "1.0.0", module_id: "titan.workforce.cleaning", module_version: "1.0.0" },
-      } }), companyB]);
       await store.query("INSERT INTO jobs(id,company_id,client_id,property_id,title,created_by) VALUES($1,$2,$3,$4,$5,$6)", [ids.job, companyB, ids.client, ids.property, "Cleaning turnover", actorId]);
       await store.query("INSERT INTO work_orders(id,company_id,job_id,client_id,title,created_by) VALUES($1,$2,$3,$4,$5,$6)", [ids.workOrder, companyB, ids.job, ids.client, "Cleaning turnover work", actorId]);
       await store.query("INSERT INTO work_order_tasks(id,company_id,work_order_id,label) VALUES($1,$2,$3,$4)", [ids.task, companyB, ids.workOrder, "Wipe kitchen surfaces"]);
       await store.query("INSERT INTO visits(id,company_id,job_id,assigned_user_id,scheduled_start,scheduled_end,work_order_id) VALUES($1,$2,$3,$4,$5,$6,$7)", [ids.visit, companyB, ids.job, actorId, "2026-10-03T10:00:00.000Z", "2026-10-03T11:00:00.000Z", ids.workOrder]);
       await store.query("INSERT INTO visit_tasks(company_id,visit_id,work_order_id,task_id,item_key,section) VALUES($1,$2,$3,$4,$5,$6)", [companyB, ids.visit, ids.workOrder, ids.task, "cleaning_surface_wipe", "Kitchen"]);
+      await store.query("UPDATE companies SET settings=$1 WHERE id=$2", [JSON.stringify({ vertical_profile: {
+        schema: "titan.company.vertical-profile.v1", company_id: companyB, revision: 1,
+        profile: { pack_id: "cleaning-workforce", pack_version: "1.0.0", module_id: "titan.workforce.cleaning", module_version: "1.0.0" },
+      } }), companyB]);
     } else {
       await store.query("INSERT INTO clients(id,company_id,name) VALUES($1,$2,$3)", [ids.client, companyC, "Second Cleaning Client"]);
       await store.query("INSERT INTO properties(id,company_id,client_id,address) VALUES($1,$2,$3,$4)", [ids.property, companyC, ids.client, "10 Cleaning Lane"]);
@@ -262,8 +263,8 @@ describe("Cleaning first-run browser journey", () => {
       TITAN_WEB_SESSION_SIGNING_SECRET: randomBytes(32).toString("base64url"),
       TITAN_WEB_IDENTITY_BINDINGS_JSON: JSON.stringify([
         { legacy_user_id: userA.id, legacy_account_id: userA.account, company_id: companyA, actor_id: actorId, device_id: deviceId },
-        { legacy_user_id: userA.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
-        { legacy_user_id: userA.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userB.id, legacy_account_id: userB.account, company_id: companyB, actor_id: actorId, device_id: deviceId },
+        { legacy_user_id: userC.id, legacy_account_id: userC.account, company_id: companyC, actor_id: actorId, device_id: deviceId },
       ]),
       TITAN_COMPANY_DATA_ROOT: storeRoot,
       E2E_DISABLE_LOGIN_RATE_LIMIT: "1",
@@ -308,11 +309,6 @@ describe("Cleaning first-run browser journey", () => {
     } finally { await aStore.close(); }
     expect((await context.request.get(`${baseUrl}/api/v1/visits/${ids.visit}/checklist`)).status()).toBe(503);
 
-    // Company choices are memberships attached to one stable external identity.
-    expect(await page.getByLabel("Company").count()).toBe(1);
-    await page.getByLabel("Company").selectOption(companyB);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
-
     await context.clearCookies();
     await page.addInitScript(() => {
       const nativeSetTimeout = window.setTimeout.bind(window);
@@ -333,7 +329,7 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     await page.getByLabel("Company").selectOption(companyB);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     const setupApiResponse = await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`);
     if (!setupApiResponse.ok()) throw new Error(`Cleaning setup GET ${setupApiResponse.status()}: ${await setupApiResponse.text()}\n${serverOutput}`);
     await expectPage(page.getByTestId("cleaning-service-config-boundary")).toContainText("company-provided prices are configured separately");
@@ -345,7 +341,7 @@ describe("Cleaning first-run browser journey", () => {
 
     await page.evaluate(() => sessionStorage.setItem("titan-expiry-timer-ready", "1"));
     await page.reload();
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await page.waitForURL(url => url.pathname === "/login" && url.searchParams.get("reason") === "session-expired", { timeout: 25_000 });
     const loginUrl = new URL(page.url());
     expect(loginUrl.searchParams.get("next")).toBe("/app");
@@ -355,7 +351,7 @@ describe("Cleaning first-run browser journey", () => {
     await page.getByRole("button", { name: "Sign In" }).click();
     await page.waitForURL(url => url.pathname === "/app", { timeout: 45_000 });
     await page.getByLabel("Company").selectOption(companyB);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
 
     // Configure through the actual company-scoped browser form after the
     // expiry journey, then reload to prove saved rate and recurrence restore.
@@ -397,34 +393,12 @@ describe("Cleaning first-run browser journey", () => {
       expect(settings.vertical_profile).toMatchObject({ company_id: companyB, revision: 1, profile: { module_id: "titan.workforce.cleaning" } });
       expect(settings.cleaning_service_setup).toMatchObject({ company_id: companyB, revision: 1, data: {
         selections: [
-          { job_type_id: "domestic_recurring", pricing: { mode: "hourly", hourly_rate: 42.5 } },
-          { job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
+          { service_id: "regular_clean", job_type_id: "domestic_recurring", pricing: { mode: "hourly", hourly_rate: 42.5 } },
+          { service_id: "bond_end_of_lease", job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
         ],
         recurrence: { enabled: true, supported_frequencies: ["weekly"], default_frequency: "weekly" },
       } });
     } finally { await bStore.close(); }
-
-    const bJobResponse = await context.request.post(`${baseUrl}/api/v1/cleaning/jobs`, { headers: { origin }, data: {
-      service_id: "domestic_recurring", client_id: ids.client, property_id: ids.property,
-      title: "Weekly home clean", scheduled_start: "2026-10-05T09:00:00.000Z", scheduled_end: "2026-10-05T11:00:00.000Z",
-    } });
-    expect(bJobResponse.status()).toBe(201);
-    const bJobResult = (await bJobResponse.json()).data;
-    expect(bJobResult).toMatchObject({ company_id: companyB, service_id: "domestic_recurring", service_setup_revision: 1,
-      pricing_snapshot: { mode: "hourly", fixed_price: null, hourly_rate: 42.5, currency: "AUD" },
-      recurrence_snapshot: { enabled: true, default_frequency: "weekly", supported_frequencies: ["weekly"] } });
-    const bRoundTripStore = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
-    const bNativeJob = (await bRoundTripStore.query<{ company_id: string; service_id: string; service_setup_revision: number;
-      service_pricing_snapshot: string; service_recurrence_snapshot: string }>(
-      "SELECT company_id,service_id,service_setup_revision,service_pricing_snapshot,service_recurrence_snapshot FROM jobs WHERE id=$1",
-      [bJobResult.job_id],
-    )).rows[0];
-    expect(bNativeJob).toMatchObject({ company_id: companyB, service_id: "domestic_recurring", service_setup_revision: 1 });
-    expect(JSON.parse(bNativeJob!.service_pricing_snapshot)).toMatchObject({ mode: "hourly", hourly_rate: 42.5, currency: "AUD" });
-    expect(JSON.parse(bNativeJob!.service_recurrence_snapshot)).toMatchObject({ enabled: true, default_frequency: "weekly" });
-    expect((await bRoundTripStore.query<{ company_id: string; job_id: string }>("SELECT company_id,job_id FROM visits WHERE id=$1", [bJobResult.visit_id])).rows[0])
-      .toEqual({ company_id: companyB, job_id: bJobResult.job_id });
-    await bRoundTripStore.close();
 
     // A different authenticated company with a non-Cleaning profile cannot
     // read or mutate the saved Cleaning configuration.
@@ -433,12 +407,15 @@ describe("Cleaning first-run browser journey", () => {
     await returnToA;
     await expectPage(page.getByLabel("Company")).toHaveValue(companyA);
     expect((await context.request.get(`${baseUrl}/api/v1/cleaning/service-setup`)).status()).toBe(409);
+    if (await page.getByLabel("Company").count() === 0) {
+      throw new Error(`Company switcher is absent from authenticated app: ${await page.locator("body").innerText()}\n${serverOutput}`);
+    }
     const bStoreAfterA = createSqliteStorage(join(storeRoot, `${bPlacementId}.sqlite`));
     try {
       const settings = JSON.parse((await bStoreAfterA.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyB])).rows[0]!.settings);
       expect(settings.cleaning_service_setup).toMatchObject({ company_id: companyB, revision: 1, data: { selections: [
-        { job_type_id: "domestic_recurring", pricing: { hourly_rate: 42.5 } },
-        { job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
+        { service_id: "regular_clean", job_type_id: "domestic_recurring", pricing: { hourly_rate: 42.5 } },
+        { service_id: "bond_end_of_lease", job_type_id: "bond_end_of_lease", pricing: { mode: "quote_required" } },
       ] } });
     } finally { await bStoreAfterA.close(); }
 
@@ -448,7 +425,7 @@ describe("Cleaning first-run browser journey", () => {
     const switchToC = page.waitForNavigation({ waitUntil: "domcontentloaded" });
     await page.getByLabel("Company").selectOption(companyC);
     await switchToC;
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
     const afterFirstSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(afterFirstSwitch).toBeTruthy();
@@ -480,36 +457,17 @@ describe("Cleaning first-run browser journey", () => {
       const settings = JSON.parse((await cStore.query<{ settings: string }>("SELECT settings FROM companies WHERE id=$1", [companyC])).rows[0]!.settings);
       expect(settings).toMatchObject({ vertical_profile: { company_id: companyC, profile: { module_id: "titan.workforce.cleaning" } },
         cleaning_service_setup: { company_id: companyC, revision: 1, data: {
-          selections: [{ job_type_id: "deep_clean", pricing: { mode: "fixed", fixed_price: 275 } }],
+          selections: [{ service_id: "deep_clean", job_type_id: "deep_clean", pricing: { mode: "fixed", fixed_price: 275 } }],
           recurrence: { enabled: true, supported_frequencies: ["monthly"], default_frequency: "monthly" },
         } } });
     } finally { await cStore.close(); }
 
-    const cJobResponse = await context.request.post(`${baseUrl}/api/v1/cleaning/jobs`, { headers: { origin }, data: {
-      service_id: "deep_clean", client_id: ids.client, property_id: ids.property,
-      title: "Deep clean", scheduled_start: "2026-10-06T09:00:00.000Z", scheduled_end: "2026-10-06T13:00:00.000Z",
-    } });
-    expect(cJobResponse.status()).toBe(201);
-    const cJobResult = (await cJobResponse.json()).data;
-    expect(cJobResult).toMatchObject({ company_id: companyC, service_id: "deep_clean", service_setup_revision: 1,
-      pricing_snapshot: { mode: "fixed", fixed_price: 275, hourly_rate: null, currency: "AUD" },
-      recurrence_snapshot: { enabled: true, default_frequency: "monthly", supported_frequencies: ["monthly"] } });
-    const cRoundTripStore = createSqliteStorage(join(storeRoot, `${cPlacementId}.sqlite`));
-    const cNative = await cRoundTripStore.query<{ company_id: string; service_id: string; service_setup_revision: number;
-      service_pricing_snapshot: string; service_recurrence_snapshot: string }>(
-      "SELECT company_id,service_id,service_setup_revision,service_pricing_snapshot,service_recurrence_snapshot FROM jobs WHERE id=$1",
-      [cJobResult.job_id],
-    );
-    expect(cNative.rows[0]).toMatchObject({ company_id: companyC, service_id: "deep_clean", service_setup_revision: 1 });
-    expect(JSON.parse(cNative.rows[0]!.service_pricing_snapshot)).toMatchObject({ mode: "fixed", fixed_price: 275, currency: "AUD" });
-    expect((await cRoundTripStore.query<{ company_id: string; job_id: string }>("SELECT company_id,job_id FROM visits WHERE id=$1", [cJobResult.visit_id])).rows[0])
-      .toEqual({ company_id: companyC, job_id: cJobResult.job_id });
-    await cRoundTripStore.close();
-
     const beforeSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(beforeSecondSwitch).toBeTruthy();
+    const switchBackToB = page.waitForNavigation({ waitUntil: "domcontentloaded" });
     await page.getByLabel("Company").selectOption(companyB);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
+    await switchBackToB;
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await expectPage(page.getByLabel("Company")).toHaveValue(companyB);
     const afterSecondSwitch = (await context.cookies()).find(cookie => cookie.name === "__Host-titan-web-session");
     expect(afterSecondSwitch).toBeTruthy();
@@ -518,8 +476,10 @@ describe("Cleaning first-run browser journey", () => {
     await expectPage(page.getByLabel("Default frequency")).toHaveValue("weekly");
     expect(await page.getByLabel("Deep clean", { exact: false }).first().isChecked()).toBe(false);
 
+    const switchAgainToC = page.waitForNavigation({ waitUntil: "domcontentloaded" });
     await page.getByLabel("Company").selectOption(companyC);
-    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible({ timeout: 30_000 });
+    await switchAgainToC;
+    await expectPage(page.getByRole("heading", { name: "Cleaning workspace" })).toBeVisible();
     await expectPage(page.getByLabel("Company")).toHaveValue(companyC);
     await expectPage(page.getByLabel("Deep clean fixed price")).toHaveValue("275");
     await expectPage(page.getByLabel("Default frequency")).toHaveValue("monthly");

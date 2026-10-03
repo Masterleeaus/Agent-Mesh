@@ -142,41 +142,10 @@ export const companyNativeVisitChecklistManifest: CompanyNativeSchemaManifest = 
   ]),
 });
 
-/** Additive Cleaning launch profile. Existing attestations stay immutable; the
- * new profile snapshots setup inputs on each new native job. */
-export const companyNativeCleaningJobsManifest: CompanyNativeSchemaManifest = Object.freeze({
-  format: "titan-company-native-fsm-manifest/v1",
-  owner: "COMPANY_NATIVE_FSM",
-  profile_id: "native-cleaning-jobs-v4",
-  schema_version: "company-native-cleaning-jobs-v4",
-  schema_scope: companyNativeVisitChecklistManifest.schema_scope,
-  source_provenance: Object.freeze([
-    ...companyNativeVisitChecklistManifest.source_provenance,
-    Object.freeze({
-      path: "db/sqlite/company-native/0004_cleaning_job_snapshot.sql",
-      sha256: "744842e59e3214ce0c17efa9acc7a52de343538f786557335d6803b771f57be3",
-      included_objects: Object.freeze(["jobs.service_id", "jobs.service_setup_revision", "jobs.service_pricing_snapshot", "jobs.service_recurrence_snapshot"]),
-      excluded_objects: Object.freeze(["company settings remain authoritative for defaults", "no historical rows are backfilled"]),
-      adaptations: Object.freeze(["new jobs copy selected service id, setup revision, configured pricing and recurrence defaults from the retained company setup record"]),
-    }),
-  ]),
-  schema_fingerprint_sha256: "f14a7854c3d39d1ae9ece13d4c2a636e394186e2bdd7aa9acf1a6590fb6258c7",
-  migrations: Object.freeze([
-    ...companyNativeVisitChecklistManifest.migrations,
-    Object.freeze({
-      sequence: 4,
-      migration_id: "company-native-fsm/0004-cleaning-job-snapshot",
-      path: "db/sqlite/company-native/0004_cleaning_job_snapshot.sql",
-      sha256: "744842e59e3214ce0c17efa9acc7a52de343538f786557335d6803b771f57be3",
-    }),
-  ]),
-});
-
 const manifestsByVersion = new Map<string, CompanyNativeSchemaManifest>([
   [companyNativeWorkOrdersManifest.schema_version, companyNativeWorkOrdersManifest],
   [companyNativeWorkOrdersVisitsManifest.schema_version, companyNativeWorkOrdersVisitsManifest],
   [companyNativeVisitChecklistManifest.schema_version, companyNativeVisitChecklistManifest],
-  [companyNativeCleaningJobsManifest.schema_version, companyNativeCleaningJobsManifest],
 ]);
 
 export function getCompanyNativeSchemaManifest(schemaVersion: string): CompanyNativeSchemaManifest | null {
